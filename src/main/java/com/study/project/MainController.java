@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
 	
 	@GetMapping("/")
-	@ResponseBody
 	public String index() {
-		return "현재 페이지에 문구 출력";
+		return "index";
 	}
 }
