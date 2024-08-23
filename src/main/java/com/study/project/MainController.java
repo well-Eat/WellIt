@@ -16,4 +16,10 @@ public class MainController {
 	public String login() {
 		return "login";
 	}
+	
+	@GetMapping("/board")
+	@ResponseBody
+	public String board() {
+		return "board";
+	}
 }
