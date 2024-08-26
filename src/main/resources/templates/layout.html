@@ -449,10 +449,6 @@
 		.inforCarouselList img{
 			height: 250px;
 		}
-		#products {
-			background-color: pink;
-		}
-
 		@media (min-width: 1024px) {
 			.menu-btn {
 				display: none;
@@ -570,7 +566,7 @@
 		<!-- navbar 포함 -->
 		<div th:replace="navbar :: navbar"></div>
 		<div class="full-screen">
-			<video src="/main_movie_v4.mp4" autoplay muted playsinline loop></video>
+			<video src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline loop></video>
 			<form action="" class="videoBox">
 				<div class="row videoBoxText">
 					<div class="col">
@@ -658,14 +654,8 @@
 				</div>
 			</div>
 		</section>
-		<section id="products">
-			<div class="row my-5">
-				<div class="my-5">
-					<div class="col text-center my-5" style="font-size: 50px;">
-						오늘의 추천 제품
-					</div>
-				</div>
-			</div>
+		<section  th:replace="products :: products">
+			
 		</section>
 		<section id="information">
 			<div class="row my-5">
