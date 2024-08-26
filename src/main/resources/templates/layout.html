@@ -635,7 +635,6 @@
 			const close_btn = $(".close-btn");
 			const icons = $(".material-symbols-outlined")
 			var scrollPosition = $(window).scrollTop();
-			var height = $("#places").offset().top;
 			var hasClass = false;
 			var isMouseOver = false;
 
@@ -659,10 +658,10 @@
 				icons.removeClass("black-icons")
 				$(".custom-submenu").css({display: "none"})
 				if ($(window).scrollTop() > height) {
-													navbar.addClass("green-navbar")
-													menu_main.css({color: "black"})
-													icons.addClass("black-icons")
-												}
+					navbar.addClass("green-navbar")
+					menu_main.css({color: "black"})
+					icons.addClass("black-icons")
+				}
 			});
 
 			submenu.mouseover(function () {
@@ -682,15 +681,15 @@
 				icons.removeClass("black-icons")
 				$(".custom-submenu").css({display: "none"})
 				if ($(window).scrollTop() > height) {
-									navbar.addClass("green-navbar")
-									menu_main.css({color: "black"})
-									icons.addClass("black-icons")
-								}
+					navbar.addClass("green-navbar")
+					menu_main.css({color: "black"})
+					icons.addClass("black-icons")
+				}
 			});
 			var height = $("#places").offset().top;
 			$(window).on("scroll", () => {
 				if (isMouseOver) return;
-				
+
 				if ($(window).scrollTop() > height && !hasClass) {
 					navbar.addClass("green-navbar")
 					icons.addClass("black-icons")
@@ -704,7 +703,7 @@
 					hasClass = false;
 				}
 			})
-			
+
 			//작은 화면 메뉴 슬라이드
 			small_menu_btn.click(function () {
 				small_header.stop().slideDown();
