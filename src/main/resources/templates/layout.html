@@ -197,7 +197,7 @@
 			display: flex;
 			justify-content: space-between;
 			background-color: transparent;
-			position: absolute;
+			position: fixed;
 			z-index: 30;
 		}
 
@@ -241,12 +241,12 @@
 
 		/* 하단 서브메뉴 */
 		.custom-menu.custom-sub {
-			background-color: #fff;
 			width: 100%;
+			top: 100px;
 			display: flex;
 			justify-content: space-around;
-			position: absolute;
-			z-index: 1;
+			position: fixed;
+			z-index: 29;
 		}
 
 		.custom-menu.custom-sub .custom-submenu {
@@ -311,7 +311,7 @@
 			left: 0;
 			background-color: #f2e8cf;
 			overflow-x: hidden;
-			z-index: 2;
+			z-index: 31;
 
 		}
 
@@ -340,6 +340,7 @@
 		/* 아이콘들 크기 */
 		.material-symbols-outlined {
 			font-size: 2em;
+			color: white;
 		}
 
 		.small-search {
@@ -422,6 +423,15 @@
 				display: block;
 			}
 		}
+
+		.green-navbar {
+			background-color: #386641;
+			color: black;
+		}
+
+		.black-icons {
+			color: black;
+		}
 	</style>
 </head>
 
@@ -469,7 +479,7 @@
 
 			</form>
 		</div>
-		<section>
+		<section id="places">
 			<div class="row my-5">
 				<div class="col text-center my-5" style="font-size: 50px;">
 					오늘의 추천 장소
@@ -614,33 +624,87 @@
 				recommendedPlace.removeClass("active")
 				$(this).addClass("active")
 			})
+			const navbar = $("header")
 			const menu = $(".custom-menu");
+			const menu_main = $("ul.custom-main li a")
 			const submenu = $(".custom-menu.custom-sub");
 			const small_menu_btn = $(".menu-btn");
 			const small_header = $("#small-header");
 			const small_category = $(".small-category");
 			const small_submenu = $(".small-submenu");
 			const close_btn = $(".close-btn");
+			const icons = $(".material-symbols-outlined")
+			var scrollPosition = $(window).scrollTop();
+			var height = $("#places").offset().top;
+			var hasClass = false;
+			var isMouseOver = false;
 
 			// 하단 서브메뉴 슬라이드
 			submenu.css({display: "none"});
 			small_header.css({display: "none"});
 
 			menu.mouseover(function () {
-				submenu.stop().slideDown(300);
+				isMouseOver = true;
+				submenu.stop().slideDown();
+				navbar.addClass("green-navbar");
+				menu_main.css({color: "black"})
+				icons.addClass("black-icons")
+				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 			menu.mouseout(function () {
-				submenu.stop().slideUp(300);
+				isMouseOver = false;
+				submenu.stop().slideUp();
+				navbar.removeClass("green-navbar");
+				menu_main.css({color: "white"})
+				icons.removeClass("black-icons")
+				$(".custom-submenu").css({display: "none"})
+				if ($(window).scrollTop() > height) {
+													navbar.addClass("green-navbar")
+													menu_main.css({color: "black"})
+													icons.addClass("black-icons")
+												}
 			});
 
 			submenu.mouseover(function () {
-				submenu.stop().slideDown(300);
+				isMouseOver = true;
+				submenu.stop().slideDown();
+				navbar.addClass("green-navbar");
+				menu_main.css({color: "black"})
+				icons.addClass("black-icons")
+				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 
 			submenu.mouseout(function () {
-				submenu.stop().slideUp(300);
+				isMouseOver = false;
+				submenu.stop().slideUp();
+				navbar.removeClass("green-navbar");
+				menu_main.css({color: "white"})
+				icons.removeClass("black-icons")
+				$(".custom-submenu").css({display: "none"})
+				if ($(window).scrollTop() > height) {
+									navbar.addClass("green-navbar")
+									menu_main.css({color: "black"})
+									icons.addClass("black-icons")
+								}
 			});
-
+			var height = $("#places").offset().top;
+			$(window).on("scroll", () => {
+				if (isMouseOver) return;
+				
+				if ($(window).scrollTop() > height && !hasClass) {
+					navbar.addClass("green-navbar")
+					icons.addClass("black-icons")
+					menu_main.css({color: "black"})
+					hasClass = true;
+				}
+				if ($(window).scrollTop() < height && hasClass) {
+					navbar.removeClass("green-navbar")
+					icons.removeClass("black-icons")
+					menu_main.css({color: "white"})
+					hasClass = false;
+				}
+			})
+			
 			//작은 화면 메뉴 슬라이드
 			small_menu_btn.click(function () {
 				small_header.stop().slideDown();
@@ -661,7 +725,9 @@
 					$(this).closest("li").find(".small-submenu").stop().slideUp();
 				}
 			);
+			//
 		})
+
 
 	</script>
 </body>
