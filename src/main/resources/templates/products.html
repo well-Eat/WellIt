@@ -4,8 +4,14 @@
 
 <!--!!!!!!!!!!!!! goods Swiper style !!!!!!!!!!!!!!!!!-->
 <style>
-	section#product{
-		background-color: #eee;
+		:root{
+    --swiper-pagination-bullet-size: 10px;
+        --swiper-pagination-bullet-height: 10px;
+        --swiper-pagination-bullet-horizontal-gap: 6px;
+        --swiper-pagination-color: #a7c957;
+		}
+	section#products{
+		/*background-color: #eee;*/
 	}
 	/*goods Swiper style Start*/
 	.goodsSwiper {
@@ -14,8 +20,8 @@
 		height: 60vh;
 	}
 	#products{
-				background-color: #F2E8CF;
-			}
+				background-color: rgba(242, 232, 207, 0.30);
+	}
 	.goodsSwiper .swiper-slide {
 		background-position: center;
 		background-size: cover;
@@ -47,6 +53,9 @@
 	}
 	.goodsSwiper .imgBox#goods06{
 		background-image: url("/imgs/main/goods06.jpg");
+	}
+	.goodsSwiper .imgBox#goods07{
+		background-image: url("/imgs/main/goods07.jpg");
 	}
 	
 	/*goods 텍스트 스타일*/
@@ -81,7 +90,7 @@
 		bottom: 0;
 	}
 	.goodsSwiper .descBox  a.btn{
-		background-color: rgba(106, 153, 78, 0.5);
+		background-color: rgba(255, 255, 255, 0.2);
 		color: #fff;
 	}
 	.goodsSwiper .descBox  a.btn:hover{
@@ -108,7 +117,7 @@
 	}
 	
 	.goodsSwiper .swiper-btn.swiper-next {
-		left: calc(75% + 20px);
+		left: calc(75% + 5px);
 	}
 	
 	.goodsSwiper .swiper-btn .btnBox {
@@ -119,12 +128,15 @@
 	}
 	
 	.goodsSwiper .swiper-prev .btnBox {
-		background: url("/imgs/main/prev-btn.png") center no-repeat;
+		background: url("/imgs/main/prev-btn.png") no-repeat;
 		background-size: contain;
+			background-position-y: 50%;
+			background-position-x: 50%;
 	}
+
 	
 	.goodsSwiper .swiper-next .btnBox {
-		background: url("/imgs/main/next-btn.png") center no-repeat;
+		background: #fff url("/imgs/main/next-btn.png") center no-repeat;
 		background-size: contain;
 	}
 	
@@ -146,11 +158,59 @@
 		50% {transform: translateX(10px);}
 		100% {transform: translateX(0px);}
 	}
-	
-	.goodsSwiper .swiper-btn.swiper-next {
-		right: 0;
-	}
+  .goodsSwiper .swiper-prev:active .btnBox,
+  .goodsSwiper .swiper-next:active .btnBox{
+      filter: drop-shadow(0 3px 2px rgba(167, 201, 87, 0.50));
+		  animation: none;
+  }
+  /*페이지네이션 버튼*/
+  .goodsSwiper .pagination {
+      height: 20px;
+      z-index: 9;
+      bottom: 0px;
+      position: absolute;
+      width: 100%;
+		  justify-content: center;
+  }
 	/*goods Swiper style End*/
+	
+	@media (max-width: 768px) {
+      /*goods tablet 이하에서 버튼 변경*/
+      .goodsSwiper .swiper-btn.swiper-prev{
+		      left: 20px;
+      }
+      .goodsSwiper .swiper-prev .btnBox {
+          background: url("/imgs/main/prev-btn_v2.png") no-repeat;
+          background-size: 100px;
+          background-position-y: 50%;
+          background-position-x: 50%;
+          border-radius: 50%;
+          /*padding: 10px;*/
+		      opacity: 0.8;
+      }
+      .goodsSwiper .swiper-btn.swiper-next{
+		      right: 20px;
+		      left: auto;
+      }
+      .goodsSwiper .swiper-next .btnBox {
+          background: url("/imgs/main/next-btn_v2.png") no-repeat;
+          background-size: 100px;
+          background-position-y: 50%;
+          background-position-x: 50%;
+          border-radius: 50%;
+          /*padding: 10px;*/
+          opacity: 0.6;
+      }
+      .goodsSwiper .swiper-btn .btnBox {
+          top: calc(50% + 60px);
+      }
+  }
+	@media (min-width: 768px) {
+			/*goods pc사이즈에서 pagination 숨김*/
+			.pagination{
+					visibility: hidden;
+			}
+  }
 	
 </style>
 	
@@ -169,7 +229,7 @@
 	
 	<!--goods 슬라이드-->
 	<div class="swiper-wrapper">
-		<div class="swiper-slide active">
+		<div class="swiper-slide">
 			<div class="imgBox" id="goods01">
 				<div class="descBox">
 					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
@@ -247,33 +307,56 @@
 			</div>
 		</div> <!--//goods06-->
 		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods07">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods06-->
+		
 	</div> <!--//wrapper-->
-
+	<div class="pagination" style=""></div>
 </div>
 
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-	var goods_swiper = new Swiper(".goodsSwiper", {
-		effect: "coverflow",
-		centeredSlides: true,
-		slidesPerView: 2,
-		loop: true,
-		coverflowEffect: {
-			rotate: 20,
-			stretch: -50,
-			depth: 50,
-			modifier: 1,
-			slideShadows: true,
-			scale: 0.8,
-		},
-		navigation: {
-			nextEl: '.swiper-next',
-			prevEl: '.swiper-prev',
-		},
-	});
+    var goods_swiper = new Swiper(".goodsSwiper", {
+        centeredSlides: true,
+        loop: true,
+        navigation: {
+            nextEl: '.swiper-next',
+            prevEl: '.swiper-prev',
+        },
+        pagination: {
+            el: ".pagination",
+        },
+        // 기본 설정
+        slidesPerView: "1",
+        // effect: "slide",
+        effect: "coverflow",
+        coverflowEffect: {
+            rotate: 20,
+            stretch: -50,
+            depth: 50,
+            modifier: 1,
+            slideShadows: true,
+            scale: 0.8,
+        },
+        breakpoints: {
+            768: {
+                slidesPerView: 2,
+            },
+        },
+    });
 	
-	// 각 슬라이드에 클릭 이벤트 추가
+	// prev,next slide 클릭 시 슬라이드
 	goods_swiper.slides.forEach(function(slide) {
 		slide.addEventListener('click', function() {
 			var realIndex = slide.getAttribute('data-swiper-slide-index');
