@@ -1,0 +1,61 @@
+header {
+	position: relative;
+	background-color: #386641;
+}
+
+.selectRegion {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+.mapWrapper{
+	min-height: 700px;
+}
+.selectRegion h1 {}
+
+.selectRegionForm {}
+
+#map {
+	width: 60%;
+	height: 500px;
+	float: right;
+}
+#restaurantList {
+    margin-bottom: 20px;
+	width: 40%;
+	float: right;
+	padding: 40px 20px;
+}
+#restaurantList div{
+	margin-bottom: 20px;
+	border: 1px solid #6a994e;
+	padding: 25px;
+	border-radius: 45px;
+}
+#pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	z-index: 3;
+	position: relative;
+	top: 550px;
+}
+
+#pagination button {
+    margin: 0 10px;
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+.getUserLocationBtn{
+	margin-left: 20px;
+}
