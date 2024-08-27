@@ -1,37 +1,20 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<html layout:decorate="~{shop/layout_shop}">
+<html layout:decorate="~{layout}">
 <head>
 	<title>상품 리스트</title>
-	<!--부트스트랩 cdn : 나중에 layout으로 뺄 것-->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-	      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-	        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-	        crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-	        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-	        crossorigin="anonymous"></script>
-
-	<!-- font font-awesome CDN : 나중에 layout으로 뺄 것-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-	integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-	crossorigin="anonymous" referrerpolicy="no-referrer" />
 	
-	<!--shop style link-->
-	<link rel="stylesheet" th:href="@{/css/index_tmp.css}">
-	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	<!-- font font-awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer" />
 	
-	<!--shop style link 임시 적용-->
-	<link rel="stylesheet" href="../../static/css/index_tmp.css">
-	<link rel="stylesheet" href="../../static/css/shop.css">
-	
-
 </head>
-
-<div class="navbar" style="height: 80px; background-color:#386641;">대강 내브바</div>
-
 <div layout:fragment="content" class="container">
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	<link rel="stylesheet" th:href="@{/css/layout.css}">
+	
 	<!--페이지 제목-->
 	<div class="row my-5">
 		<div class="pageTitle col text-center">
@@ -39,154 +22,121 @@
 		</div>
 	</div>
 	
-	<!-- 카테고리 선택 리스트 -->
-	<div class="prodCateLiRow row my-5 py-4 rounded-sm">
+	<!-- 카테고리 선택 리스트 박스 -->
+	<div class="prodCateLiRow row my-4 py-4 rounded-2">
 		<div class="col">
 			<ul class="row row-cols-1 row-cols-sm-2 row-cols-md-3 justify-content-start  pl-4">
-				<li class="prodCate col py-1 py-sm-2"><a href="#">모두보기</a></li><!-- all -->
-				<li class="prodCate col py-1 py-sm-2 active"><a href="#">밀키트</a></li><!-- mealkit -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">반찬배송</a></li><!-- sidedish -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">유기농식재료</a></li><!-- organicfood -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">오가닉 제품</a></li><!-- organicgoods -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">베이비</a></li><!-- babygoods -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">펫</a></li><!-- petgoods -->
-				<li class="prodCate col py-1 py-sm-2"><a href="#">웨릿 굿즈</a></li><!-- wellitgoods -->
+				<li class="prodCate col py-1 py-sm-2 active" id="all"><a href="javascript:void(0);" class="prodCateLink">모두보기</a></li><!-- all -->
+				<li class="prodCate col py-1 py-sm-2" id="mealkit"><a href="javascript:void(0);" class="prodCateLink">밀키트</a></li><!-- mealkit -->
+				<li class="prodCate col py-1 py-sm-2" id="sidedish"><a href="javascript:void(0);" class="prodCateLink">반찬배송</a></li><!-- sidedish -->
+				<li class="prodCate col py-1 py-sm-2" id="organicfood"><a href="javascript:void(0);" class="prodCateLink">유기농식재료</a></li><!-- organicfood -->
+				<li class="prodCate col py-1 py-sm-2" id="organicgoods"><a href="javascript:void(0);" class="prodCateLink">오가닉 제품</a></li><!-- organicgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="babygoods"><a href="javascript:void(0);" class="prodCateLink">베이비</a></li><!-- babygoods -->
+				<li class="prodCate col py-1 py-sm-2" id="petgoods"><a href="javascript:void(0);" class="prodCateLink">펫</a></li><!-- petgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="wellitgoods"><a href="javascript:void(0);" class="prodCateLink">웨릿 굿즈</a></li><!-- wellitgoods -->
 			</ul>
 		</div>
 	</div>
-
-	<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 justify-content-start">
-
-		<!-- 상품(prodItem) : of001 -->
-		<div class="prodItem col mb-5 of001" data-prodcate="mealkit" id="of001">
-			<div class="card">
-				
-				<!-- 상품이미지 -->
-				<div class="card-img-wrapper rounded-lg mb-3">
-					<div class="card-img-box"></div>
-				</div>
-				
-				<!-- 담기버튼 -->
-				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
-				
-				<!-- 상품설명 -->
-				<div class="card-body"> 
-					<h5 class="prodName card-title">[웨릿농장] 맛있는 국내산 햇감자 mealkit</h5>
-					<p class="prodDesc card-text">자연이 준 최고의 선물, 웨릿 오가닉 감자를 만나보세요</p>
-					<p class="prodOrgPrice card-text">50,000원</p>
-					<p class="prodDiscount card-text mr-2">20%</p>
-					<p class="prodFinalPrice card-text">40,000원</p>
-					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> 9,999+</p>
-					<div class="prodTags">
-						<span class="badge badge-success">👑히트상품</span>
-					</div>
-
-				</div> <!-- //card-body -->
-			</div> <!-- //card -->
-		</div> <!-- ///////// prodItem -->
-
-
-		<!-- 상품(prodItem) : of002 -->
-		<div class="prodItem col mb-4 of001" data-prodcate="sidedish" id="of002">
-			<div class="card">
-				
-				<!-- 상품이미지 -->
-				<div class="card-img-wrapper rounded mb-3">
-					<div class="card-img-box"></div>
-				</div>
-				
-				<!-- 담기버튼 -->
-				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
-				
-				<!-- 상품설명 -->
-				<div class="card-body"> 
-					<h5 class="prodName card-title">[웨릿농장] 맛있는 국내산 햇감자 sidedish</h5>
-					<p class="prodDesc card-text">자연이 준 최고의 선물, 웨릿 오가닉 감자를 만나보세요</p>
-					<p class="prodOrgPrice card-text">50,000원</p>
-					<p class="prodDiscount card-text mr-2">20%</p>
-					<p class="prodFinalPrice card-text">40,000원</p>
-					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> 9,999+</p>
-					<div class="prodTags">
-
-					</div>
-
-				</div> <!-- //card-body -->
-			</div> <!-- //card -->
-		</div> <!-- ///////// prodItem -->
-
-
-		<!-- 상품(prodItem) : of003 -->
-		<div class="prodItem col mb-4 of001" data-prodcate="organicfood" id="of003">
-			<div class="card">
-				
-				<!-- 상품이미지 -->
-				<div class="card-img-wrapper rounded mb-3">
-					<div class="card-img-box"></div>
-				</div>
-				
-				<!-- 담기버튼 -->
-				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
-				
-				<!-- 상품설명 -->
-				<div class="card-body"> 
-					<h5 class="prodName card-title">[웨릿농장] 맛있는 국내산 햇감자 organicfood</h5>
-					<p class="prodDesc card-text">자연이 준 최고의 선물, 웨릿 오가닉 감자를 만나보세요</p>
-					<p class="prodOrgPrice card-text">50,000원</p>
-					<p class="prodDiscount card-text mr-2">20%</p>
-					<p class="prodFinalPrice card-text">40,000원</p>
-					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> 9,999+</p>
-					<div class="prodTags">
-
-					</div>
-
-				</div> <!-- //card-body -->
-			</div> <!-- //card -->
-		</div> <!-- ///////// prodItem -->
-
-
-		<!-- 상품(prodItem) : of004 -->
-		<div class="prodItem col mb-4 of001" data-prodcate="organicgoods" id="of004">
-			<div class="card">
-				
-				<!-- 상품이미지 -->
-				<div class="card-img-wrapper rounded mb-3">
-					<div class="card-img-box"></div>
-				</div>
-				
-				<!-- 담기버튼 -->
-				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
-				
-				<!-- 상품설명 -->
-				<div class="card-body"> 
-					<h5 class="prodName card-title">[웨릿농장] 맛있는 국내산 햇감자 organicgoods</h5>
-					<p class="prodDesc card-text">자연이 준 최고의 선물, 웨릿 오가닉 감자를 만나보세요</p>
-					<p class="prodOrgPrice card-text">50,000원</p>
-					<p class="prodDiscount card-text mr-2">20%</p>
-					<p class="prodFinalPrice card-text">40,000원</p>
-					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> 9,999+</p>
-					<div class="prodTags">
-
-					</div>
-
-				</div> <!-- //card-body -->
-			</div> <!-- //card -->
-		</div> <!-- ///////// prodItem -->
-
-
-
+	
+	<div class="row mb-3">
+		<div class="col">
+			<ul class="sortBox d-flex justify-content-end">
+				<li><a href="javascript:void(0);" class="active">추천순</a></li>
+				<li><a href="javascript:void(0);">신상품순</a></li>
+				<li><a href="javascript:void(0);">판매량순</a></li>
+				<li><a href="javascript:void(0);">낮은 가격순</a></li>
+				<li><a href="javascript:void(0);">높은 가격순</a></li>
+			</ul>
+		</div>
 	</div>
-
+	
+	<!--판매 상품 리스트-->
+	<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+		
+		<!-- 상품(prodItem) 템플릿 -->
+		<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${prodlist}">
+			<div class="card">
+				
+				<!-- 상품이미지 -->
+				<div class="card-img-wrapper rounded-2 mb-3">
+					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+					<div class="card-img-box" th:style="|background-image: url(@{  ${item.imgSrc}  });|"></div>
+					</a>
+				</div>
+				
+				<!-- 담기버튼 -->
+				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
+				
+				<!-- 상품설명 -->
+				<div class="card-body">
+					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+					<h5 class="prodName card-title" th:text="${item.prodName}"></h5>
+					<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+					
+					<!--할인율 있는 경우 가격 표시 -->
+					<th:block th:if="${item.prodDiscount != null and item.prodDiscount > 0}">
+						<p class="prodOrgPrice card-text" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
+						<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,2,0)}"></p>
+						<p class="prodFinalPrice card-text" th:text="|${#numbers.formatInteger( item.prodOrgPrice - item.prodOrgPrice * item.prodDiscount ,3,'COMMA') }원|"></p>
+					</th:block>
+					
+					<!--할인율 없는 경우 가격 표시-->
+					<p class="prodFinalPrice card-text" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
+					
+					
+					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> [[${#numbers.formatInteger(item.prodReview,3,'COMMA')}]]</p>
+					<div class="prodTags">
+						<!--할인율 있는 경우 세일상품 태그 표시-->
+						<span class="badge text-bg-success" th:text="️세일상품"  th:if="${item.prodDiscount != null and item.prodDiscount > 0}"></span>
+						<span class="badge text-bg-success" th:text="️인기상품"  th:if="${item.prodReview != null and item.prodReview > 1000}"></span>
+					</div>
+				</a>
+				</div> <!-- //card-body -->
+			</div> <!-- //card -->
+		</div> <!-- ///////// prodItem -->
+	
+	
+	
+	</div>
+	
 	<script>
-		$(function(){
+      $(function(){
 
-		});
+          /* 카테고리 아이템 리스트 get */
+          $("a.prodCateLink").on("click", function(e) {
+              e.preventDefault();
 
-		function selectProdCate(){
-			console.log($(this));
-		}
+              //카테고리 선택상자의 id와 아이템카드의 data-prodcate의 값이
+		          //같은 경우 display:block;
+              let clickedCate = $(this).parent().attr('id');
+              let allList = $(".prodItem");
+
+              if (clickedCate === 'all') {
+                  // 모든 항목을 표시
+                  allList.removeClass('d-none');
+              } else {
+                  // 선택된 카테고리만 표시하고, 나머지는 숨김
+                  allList.each(function() {
+                      let prod = $(this);
+                      let prodCate = prod.attr('data-prodcate');
+
+                      if (prodCate === clickedCate) {
+                          prod.removeClass('d-none');
+                      } else {
+                          prod.addClass('d-none');
+                      }
+                  });
+              }
+
+              // 모든 카테고리의 active 클래스 제거하고 클릭된 항목의 부모 li 요소에만 추가
+              $(".prodCate").removeClass('active');
+              $(this).parent().addClass('active');
+          });
+      });
+
 	</script>
-	
-	
+
+
 </div> <!--//layout::content-->
 
 <!-- <script layout:fragmsent="script"> -->
