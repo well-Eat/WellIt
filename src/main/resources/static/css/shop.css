@@ -1,0 +1,197 @@
+/* 폰트 임포트 테스트 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+/* 웹페이지 전체 공통 (추후 제외할 내용) */
+* {margin: 0;padding: 0;}
+body{
+    background-color : #fff;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+
+/* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
+li a{
+    text-decoration: none !important;
+}
+
+
+/* 디폴트 스타일 reset */
+ul {
+    margin-bottom: 0;
+}
+
+/********** 임시 적용 사항 ************/
+/********** 임시 적용 사항 ************/
+/********** 임시 적용 사항 ************/
+
+/*컨텐츠 컨테이너*/
+.navbar ~ .container {
+    /* border: 1px solid red; */
+}
+
+/*네브바 애니메이션 안보이게*/
+nav header{
+    background-color: #386641;
+}
+nav #small-header,
+nav .custom-menu.custom-sub{
+    display: none;
+}
+
+
+
+
+
+
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+.navbar ~ .container {
+    position: relative;
+}
+
+/*** 페이지 타이틀 ***/
+.pageTitle{
+    /* !!!!!!!!!!!! 왜 헤더부분이랑 겹치게 배치되는지 확인 필요*/
+    /*위치 다시 잡아야함!!!!!!!*/
+    /* padding-top: 100px; */
+    font-size: 32px;
+    font-weight: 800;
+}
+
+/*** 카테고리 박스 ***/
+.prodCateLiRow{
+    border: 1px solid #ddd;
+}
+
+li.prodCate {
+    /*border: 1px solid deeppink;*/
+}
+
+li.prodCate a{
+    color: #333;
+    font-size: 14px;
+    display: inline-block;
+}
+
+li.prodCate.active a,
+li.prodCate a:hover{
+    color: #386641;
+    font-weight: 700;
+}
+
+
+/******* 상품 리스트 (카드) *******/
+.prodList{
+
+}
+
+
+/******* 상품 아이템 (카드) *******/
+
+.prodItem .card-img-wrapper{
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+.prodItem .card-img-box{
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.prodItem a.addCartBtn:active,
+.prodItem a.addCartBtn:focus,
+.prodItem a.addCartBtn:hover{
+    background-color: transparent !important;
+    color: #666 !important;
+    box-shadow: none !important;
+}
+.prodItem a.addCartBtn:active{
+    font-weight: 600;
+}
+
+.prodItem .card{
+    border-width: 0;
+}
+.prodItem .card-body{
+    padding: 20px 0;
+}
+
+.prodItem p{
+    /* 기본 부여 스타일 리셋 */
+    margin-bottom: 5px;
+}
+
+.prodItem h5.prodName{
+    font-weight: 700;
+}
+.prodItem p.prodDesc{
+    color : #999;
+    font-size: 16px;
+}
+.prodItem p.prodOrgPrice{
+    color: #999;
+    text-decoration: line-through;
+}
+.prodItem p.prodDiscount{
+    font-size: 18px;
+    color: rgb(255, 102, 46);
+    font-weight: bold;
+    display: inline-block;
+}
+.prodItem p.prodFinalPrice{
+    font-size: 20px;
+    font-weight: 700;
+        display: inline-block;
+}
+.prodItem p.prodReview{
+    font-size: 16px;
+    color:#bbb;
+}
+
+
+
+
+
+/* 상품별 이미지 insert */
+.of001 .card-img-box{
+    background : #386641 url('../imgs/main/goods07.jpg') no-repeat center center/cover;
+}
+
+
+
+
+
+@media (min-width: 576px) {
+    /* 상품 리스트 좌우 여백 재조정 */
+    .prodList {
+        margin-left: -30px;
+        margin-right: -30px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
