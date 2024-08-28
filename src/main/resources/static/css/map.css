@@ -12,9 +12,6 @@ header {
 .mapWrapper{
 	min-height: 700px;
 }
-.selectRegion h1 {}
-
-.selectRegionForm {}
 
 #map {
 	width: 60%;

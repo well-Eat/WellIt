@@ -2,7 +2,7 @@
 	<header>
 		<!-- 로고 -->
 		<div class="custom-logo">
-			<a href="#"><img src="/imgs/main/logo_white.png" alt="로고" /></a>
+			<a th:href="@{/}"><img src="/imgs/main/logo_white.png" alt="로고" /></a>
 		</div>
 		<!-- 메뉴 -->
 		<div class="custom-menu">
@@ -38,9 +38,9 @@
 		<!-- 중간 서브메뉴 -->
 		<div class="custom-submenu custom-submenu2">
 			<ul>
-				<li><a href="#">지역별 장소</a></li>
-				<li><a href="#">내 주변 장소</a></li>
-				<li><a href="#">추천 장소</a></li>
+				<li><a th:href="@{/load/map}">지역별 장소</a></li>
+				<li><a th:href="@{/load/map}">내 주변 장소</a></li>
+				<li><a th:href="@{/load/place}">추천 장소</a></li>
 			</ul>
 			<ul>
 				<li><a href="#">비건이란?</a></li>
@@ -96,9 +96,9 @@
 					<!-- 호버시 내려올 놈들 -->
 					<div class="small-submenu">
 						<ul>
-							<li><a href="#">지역별 장소</a></li>
-							<li><a href="#">내 주변 장소</a></li>
-							<li><a href="#">추천 장소</a></li>
+							<li><a th:href="@{/load/map}">지역별 장소</a></li>
+							<li><a th:href="@{/load/map}">내 주변 장소</a></li>
+							<li><a th:href="@{/load/place}">추천 장소</a></li>
 						</ul>
 					</div>
 				</li>
