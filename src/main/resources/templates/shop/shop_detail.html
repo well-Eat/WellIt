@@ -23,8 +23,11 @@
 		</div>
 	</div>
 	
+	<!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
+	
+	
 	<!-- 상품 정보 요약 & 주문 폼 -->
-	<div class="prodInfo row my-4 py-4 rounded-2">
+	<section class="prodInfo row my-4 py-4 rounded-2">
 		<div class="prodImg col-6">
 			<!-- 상품이미지 -->
 			<div class="card-img-wrapper rounded-2 mb-3">
@@ -112,14 +115,36 @@
 
 						<a href="#" class="btn btn-outline-success"><i class="fa-solid fa-cart-shopping" style="color: #6A994E;"></i></a>
 						<a href="#" class="btn btn-outline-success"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
-						<input class="btn btn-success btn-block" type="submit" value="구매하기">
-
+						<input class="btn btn-success" type="submit" value="구매하기">
 					</div>
 				</form>
 				
 			</div> <!-- //card-body -->
 		</div> <!--col-6 card-->
-	</div> 	<!--prodInfo-->
+	</section> 	<!--prodInfo-->
+	
+	<!--todo: 관련 상품 -->
+	
+	
+	<!--todo: sticky bar + scrollspy 상품평 상세페이지 -->
+	
+	
+	<!--상품 상세 정보 이미지 출력-->
+	<section class="prodDetail container">
+		<div class="prodDetailImgBox text-center">
+			<img class="img-fluid" th:src="@{|${productDTO.getProdDetailImg()}|}" th:alt="${productDTO.getProdName()}">
+		</div>
+	</section>
+	
+	<!--todo: 구매 한 사람만 리뷰 쓸 수 있게 -->
+	
+	<!--상품별 리뷰 -->
+	<section class="prodReview container">
+		<div class="prodDetailImgBox text-center">
+			<img class="img-fluid" th:src="@{|${productDTO.getProdDetailImg()}|}" th:alt="${productDTO.getProdName()}">
+		</div>
+	</section>
+	
 	
 	
 

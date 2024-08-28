@@ -34,7 +34,6 @@ public class ShopService {
     /*상품 리스트 리턴*/
     public List<ProductDTO> getProdCateList(){
 
-        log.info(prodList);
         return prodList;
     }
 
@@ -67,6 +66,7 @@ public class ShopService {
         p1.setProdDiscount(0.2);
         p1.setProdReview(365);
         p1.setProdCate("mealkit");
+        p1.setProdDetailImg("http://yoonseo35.dothome.co.kr/wellit/imgs/detail_of001.png");
         prodList.add(p1);
 
 
@@ -79,6 +79,7 @@ public class ShopService {
         p2.setProdDiscount(null);
         p2.setProdReview(3650);
         p2.setProdCate("sidedish");
+        p2.setProdDetailImg("http://yoonseo35.dothome.co.kr/wellit/imgs/detail_of001.png");
         prodList.add(p2);
 
         
@@ -91,6 +92,7 @@ public class ShopService {
         p3.setProdDiscount(0.3);
         p3.setProdReview(3650);
         p3.setProdCate("organicfood");
+        p3.setProdDetailImg("http://yoonseo35.dothome.co.kr/wellit/imgs/detail_of001.png");
         prodList.add(p3);
 
         
