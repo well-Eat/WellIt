@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8" />
@@ -16,614 +17,27 @@
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<style>
-		.custom-bg {
-			background-color: #386641;
-		}
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28da3dbc8c389b574e0c32075b4e02ba"></script>
+	<link rel="stylesheet" href="./css/layout.css" />
 
-		* {
-			margin: 0;
-			padding: 0;
-			font-family: 'NanumGothic';
-		}
-
-		ul li,
-		ol li {
-			list-style: none;
-		}
-
-		html,
-		body {
-			height: 100%;
-		}
-
-		footer {
-			position: relative;
-			bottom: 0;
-			width: 100%;
-			height: 100%;
-		}
-
-		.custom-line-height {
-			line-height: 1.2;
-		}
-
-		a {
-			text-decoration: none;
-			color: black;
-		}
-
-		.full-screen {
-			width: 100% !important;
-			height: 100vh !important;
-			overflow: hidden;
-			position: relative;
-			display: flex;
-			justify-content: center;
-		}
-
-		.full-screen video {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-		}
-
-		.videoBox {
-			width: 1000px;
-			max-width: 1300px;
-			text-align: center;
-			position: absolute;
-			z-index: 1;
-			top: 70%;
-			height: 20vh;
-			background-color: #F2E8CF;
-			border-radius: 45px;
-			display: block;
-		}
-
-		.videoBox select {
-			width: 100%;
-			position: relative;
-			background-color: #F2E8CF;
-			border: none;
-			margin-top: 10px;
-			font-weight: bold;
-		}
-
-		.selectVegetarian {
-			position: relative;
-		}
-
-		.selectVegetarian::after {
-			content: "";
-			position: absolute;
-			top: 50%;
-			right: -20px;
-			/* 원하는 간격만큼 조정 */
-			transform: translateY(-50%);
-			width: 3px;
-			height: 100%;
-			border: 1px solid gray;
-			background-color: gray;
-		}
-
-		.location-select {
-			display: flex;
-			gap: 1rem;
-		}
-
-		.select-wrapper {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-		}
-
-		.select-wrapper select {
-			width: 200px;
-			padding: 0.5rem;
-			font-size: 1rem;
-		}
-
-		.videoBox form {
-			width: 100%;
-		}
-
-		.recommendButton {
-			background-color: #6a994e;
-			height: 60px;
-			line-height: 60px;
-			margin-left: -80px;
-		}
-
-		.recommendButton button {
-			width: 100%;
-			font-size: 20px;
-			font-weight: bold;
-			white-space: nowrap;
-		}
-
-		.row {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-around;
-		}
-
-		.videoBoxText {
-			font-size: 30px;
-			margin: 20px;
-			color: #6a994e;
-			font-weight: bold;
-		}
-
-		label {
-			color: gray;
-		}
-
-		section {
-			height: 100vh;
-		}
-
-		.recommendedPlace {
-			overflow: hidden;
-			float: left;
-			transition: width 0.5s;
-			width: 5%;
-			height: 500px;
-			margin: 0 1%;
-		}
-
-		.recommendedPlace.active {
-			width: 75%;
-		}
-
-		.recommendedPlace img {
-			float: left;
-			width: 350px;
-			height: 500px;
-		}
-
-		.recommendedPlaceText {
-			float: left;
-			padding: 50px;
-			background-color: #6a994e;
-			height: 500px;
-			width: calc(100% - 350px);
-		}
-
-		/* 네브바 */
-		header {
-			width: 100%;
-			height: 100px;
-			display: flex;
-			justify-content: space-between;
-			background-color: transparent;
-			position: fixed;
-			z-index: 30;
-		}
-
-		/* 로고 들어갈 곳 */
-		header .custom-logo {
-			display: flex;
-			align-items: center;
-			width: 25%;
-		}
-
-		header .custom-logo img {
-			width: 100px;
-			height: 50px;
-		}
-
-		header .custom-menu {
-			width: 50%;
-		}
-
-		/* 상단 네브바 메뉴 */
-		header .custom-menu ul.custom-main {
-			display: flex;
-			justify-content: space-around;
-			height: 100px;
-		}
-
-		header .custom-menu ul.custom-main li {
-			width: 150px;
-			height: 100px;
-			text-align: center;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-weight: bold;
-
-		}
-
-		header .custom-menu ul.custom-main li a {
-			color: white;
-		}
-
-		/* 하단 서브메뉴 */
-		.custom-menu.custom-sub {
-			width: 100%;
-			top: 100px;
-			display: flex;
-			justify-content: space-around;
-			position: fixed;
-			z-index: 29;
-		}
-
-		.custom-menu.custom-sub .custom-submenu {
-			height: 200px;
-			background-color: #386641;
-		}
-
-		/* 로고 아래 서브메뉴*/
-		.custom-menu.custom-sub .custom-submenu1 {
-			width: 25%;
-		}
-
-		/* 메뉴 아래 서브메뉴 */
-		.custom-menu.custom-sub .custom-submenu2 {
-			display: flex;
-			width: 50%;
-		}
-
-		.custom-menu.custom-sub .custom-submenu2 ul {
-			width: 100%;
-			text-align: center;
-		}
-
-		.custom-menu.custom-sub .custom-submenu2 ul li {
-			padding: 8px;
-		}
-
-		/* 아이콘들 아래 서브메뉴 */
-		.custom-menu.custom-sub .custom-submenu3 {
-			width: 25%;
-		}
-
-		.custom-right {
-			width: 25%;
-			list-style: none;
-			display: flex;
-			align-items: center;
-			justify-content: space-around;
-		}
-
-		/* 햄버거 버튼, 닫기 버튼 */
-		.menu-btn,
-		.close-btn {
-			position: absolute;
-			right: 5%;
-			font-size: 2em;
-		}
-
-		.close-btn {
-			top: 5%;
-		}
-
-		/* 화면 작을 때 gnb */
-		#small-header {
-			list-style: none;
-			display: flex;
-			flex-direction: column;
-			width: 100%;
-			height: 100vh;
-			position: fixed;
-			top: 0;
-			left: 0;
-			background-color: #f2e8cf;
-			overflow-x: hidden;
-			z-index: 31;
-
-		}
-
-		#small-header a {
-			color: black;
-		}
-
-		ul.small-main .small-bold {
-			font-weight: bold;
-		}
-
-		/* 작은 화면 gnb 상단 버튼 */
-		.small-buttons {
-			display: flex;
-			position: relative;
-			justify-content: space-around;
-			top: 5%;
-			width: 30%;
-			left: 5%;
-		}
-
-		.small-buttons li {
-			margin-right: 20px;
-		}
-
-		/* 아이콘들 크기 */
-		.material-symbols-outlined {
-			font-size: 2em;
-			color: white;
-		}
-
-		.small-search {
-			position: absolute;
-			display: flex;
-			top: 50%;
-			right: 5%;
-		}
-
-		.small-search input {
-			width: 300px;
-			border: none;
-			background-color: #6A994E;
-			border-radius: 45px;
-			padding: 10px 20px;
-			outline: none;
-			color: white;
-			margin-right: 30px;
-		}
-
-		.all-menu {
-			position: relative;
-			height: 20vh;
-			width: 100%;
-			top: 5vh;
-		}
-
-		#small-header .hr {
-			width: 90%;
-			border: 1px solid wheat;
-			height: 1px;
-			position: relative;
-			margin-top: 5vh;
-			left: 5%;
-		}
-
-		.small-menu {
-			position: relative;
-			height: 80vh;
-			padding: 50px;
-		}
-
-		.small-main>li {
-			position: relative;
-			margin: 20px 0;
-		}
-
-		.small-category {
-			font-size: 30PX;
-		}
-
-		.small-submenu li {
-			margin: 20px;
-		}
-
-		.small-submenu li a {
-			font-size: 20px;
-		}
-
-		@media (min-width: 1025px) {
-			.menu-btn {
-				display: none;
-			}
-
-			#small-header {
-				display: none;
-			}
-		}
-
-		@media (max-width: 1024px) {
-			.custom-menu {
-				display: none;
-			}
-
-			.custom-right li {
-				display: none;
-			}
-
-			.menu-btn {
-				display: block;
-			}
-		}
-
-		.green-navbar {
-			background-color: #386641;
-			color: black;
-		}
-
-		.black-icons {
-			color: black;
-		}
-	</style>
 </head>
 
 <body>
-	<div class="d-flex flex-column min-vh-100">
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
 		<!-- navbar 포함 -->
 		<div th:replace="navbar :: navbar"></div>
-		<div class="full-screen">
-			<video src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline loop></video>
-			<form action="" class="videoBox">
-				<div class="row videoBoxText">
-					<div class="col">
-						지역별 취향별 추천하는 가게를 만나보세요~!
-					</div>
-				</div>
-				<div class="row">
-					<div class="selectVegetarian col-3">
-						<label for="vegetarian">나의 채식 취향</label>
-						<select class="form-select" required aria-label="select example" name="vegetarian"
-							id="vegetarian">
-							<option value="비건">비건</option>
-							<option value="프루테리언">프루테리언</option>
-							<option value="락토 베지테리언">락토 베지테리언</option>
-							<option value="오보 베지테리언">오보 베지테리언</option>
-							<option value="락토 오보 베지테리언">락토 오보 베지테리언</option>
-							<option value="페스코 베지테리언">페스코 베지테리언</option>
-							<option value="폴로 베지테리언">폴로 베지테리언</option>
-							<option value="플렉시테리언">플렉시테리언</option>
-						</select>
-					</div>
-					<div class="location-select col-6">
-						<div class="select-wrapper">
-							<label for="sido">시/도</label>
-							<select id="sido" name="sido"></select>
-						</div>
-						<div class="select-wrapper">
-							<label for="sigungu">시/군/구</label>
-							<select id="sigungu" name="sigungu"></select>
-						</div>
-					</div>
-					<div class="col-1 recommendButton">
-						<button type="submit" class="btn">확인</button>
-					</div>
-				</div>
+		<!--기본 템플릿 안에 삽입될 내용 start-->
+		<th:block layout:fragment="content"></th:block>
 
-			</form>
-		</div>
-		<section id="places">
-			<div class="row my-5">
-				<div class="col text-center my-5" style="font-size: 50px;">
-					오늘의 추천 장소
-				</div>
-			</div>
-			<div class="container">
-				<div class="recommendedPlace active">
-					<img src="https://img1.kakaocdn.net/cthumb/local/R736x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fee0a5fcf195d70cd05d6ebc70814fa6c0be1db96%3Foriginal"
-						class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjW5FJ3AVWCVZkC5uUQedQgpB_Dg_vQEUUog&s"
-						class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://image.ajunews.com/content/image/2021/08/12/20210812142052223738.jpg" class=""
-						alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://cdn.newspenguin.com/news/photo/202106/4851_15936_4212.jpg" class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-			</div>
-		</section>
-		<footer class="custom-bg text-white py-4">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 custom-line-height">
-						<h3>Well It</h3>
-						<p>주식회사 웨릿</p>
-						<br />
-						<p>경기 수원시 팔달구 덕영대로 905 아이메카 7층 그린컴퓨터아카데미 수원(16455)</p>
-						<p>| Tel : 070-7671-3078 | E-mail: rufp3078@naver.com</p>
-						<p>Copyrightⓒ 2024. wellit. All rights reserved.</p>
-					</div>
-					<div class="col-md-4 mt-4">
-						<p class="d-flex align-items-center mb-5">
-							<span>
-								| <a href="#" class="text-white">이용약관</a> | <a href="#" class="text-white">개인정보처리방침</a>
-								|
-								<a href="#">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
-										viewBox="0 0 50 50" class="ms-2">
-										<path
-											d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z">
-										</path>
-									</svg>
-								</a>
-							</span>
-						</p>
-						<ul class="list-unstyled">
-							<li><a href="#" class="text-white">로고</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</footer>
+
+		<!--기본 템플릿 안에 삽입될 내용 end-->
+		<!--자바스크립트 start-->
+		<th:block layout:fragment="script"></th:block>
+		<!--자바스크립트 end-->
+		<footer th:replace="footer :: footer"></footer>
 	</div>
 	<script>
-		const sidoSelect = document.getElementById('sido');
-		const sigunguSelect = document.getElementById('sigungu');
-
-		// 시/도 데이터
-		const sido = [
-			'서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시', '대전광역시', '울산광역시',
-			'세종특별자치시', '경기도', '강원도', '충청북도', '충청남도', '전라북도', '전라남도', '경상북도', '경상남도', '제주특별자치도'
-		];
-
-		// 시/군/구 데이터 (예시)
-		const sigungu = {
-			'서울특별시': ['종로구', '중구', '용산구', '성동구', '광진구', '동대문구', '중랑구', '성북구', '강북구', '도봉구', '노원구', '은평구', '서대문구', '마포구', '양천구', '강서구', '구로구', '금천구', '영등포구', '동작구', '관악구', '서초구', '강남구', '송파구', '강동구'],
-			'부산광역시': ['중구', '서구', '동구', '영도구', '부산진구', '동래구', '남구', '북구', '해운대구', '사하구', '금정구', '강서구', '연제구', '수영구', '사상구', '기장군'],
-			'대구광역시': ['중구', '동구', '서구', '남구', '북구', '수성구', '달서구', '달성군'],
-			'인천광역시': ['중구', '동구', '남구', '연수구', '남동구', '부평구', '계양구', '서구', '강화군', '옹진군'],
-			'광주광역시': ['동구', '서구', '남구', '북구', '광산구'],
-			'대전광역시': ['동구', '중구', '서구', '유성구', '대덕구'],
-			'울산광역시': ['중구', '남구', '동구', '북구', '울주군'],
-			'세종특별자치시': ['조치원읍', '연기면', '연동면', '부강면', '금남면', '장군면', '연서면', '전의면', '전동면', '소정면', '한솔동', '도담동', '아름동', '종촌동', '고운동', '대평동', '보람동', '새롬동', '다정동', '어진동', '종래동'],
-			'경기도': ['수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', '여주시', '연천군', '가평군', '양평군'],
-			'강원도': ['춘천시', '원주시', '강릉시', '동해시', '태백시', '속초시', '삼척시', '홍천군', '횡성군', '영월군', '평창군', '정선군', '철원군', '화천군', '양구군', '인제군', '고성군', '양양군'],
-			'충청북도': ['청주시', '충주시', '제천시', '보은군', '옥천군', '영동군', '증평군', '진천군', '괴산군', '음성군', '단양군'],
-			'충청남도': ['천안시', '공주시', '보령시', '아산시', '서산시', '논산시', '계룡시', '당진시', '금산군', '부여군', '서천군', '청양군', '홍성군', '예산군', '태안군'],
-			'전라북도': ['전주시', '군산시', '익산시', '정읍시', '남원시', '김제시', '완주군', '진안군', '무주군', '장수군', '임실군', '순창군', '고창군', '부안군'],
-			'전라남도': ['목포시', '여수시', '순천시', '나주시', '광양시', '담양군', '곡성군', '구례군', '고흥군', '보성군', '화순군', '장흥군', '강진군', '해남군', '영암군', '무안군', '함평군', '영광군', '장성군', '완도군', '진도군', '신안군'],
-			'경상북도': ['포항시', '경주시', '김천시', '안동시', '구미시', '영주시', '영천시', '상주시', '문경시', '경산시', '군위군', '의성군', '청송군', '영양군', '영덕군', '청도군', '고령군', '성주군', '칠곡군', '예천군', '봉화군', '울진군', '울릉군'],
-			'경상남도': ['창원시', '진주시', '통영시', '사천시', '김해시', '밀양시', '거제시', '양산시', '의령군', '함안군', '창녕군', '고성군', '남해군', '하동군', '산청군', '함양군', '거창군', '합천군'],
-			'제주특별자치도': ['제주시', '서귀포시']
-		};
-
-		// 시/도 옵션 생성
-		sido.forEach(s => {
-			const option = document.createElement('option');
-			option.value = s;
-			option.text = s;
-			sidoSelect.add(option);
-		});
-
-		// 시/군/구 옵션 생성 (서울특별시 기본)
-		updateSigungu('서울특별시');
-
-		// 시/도 선택 시 시/군/구 업데이트
-		sidoSelect.addEventListener('change', () => {
-			const selectedSido = sidoSelect.value;
-			updateSigungu(selectedSido);
-		});
-
-		function updateSigungu(selectedSido) {
-			sigunguSelect.innerHTML = '';
-			sigungu[selectedSido].forEach(sg => {
-				const option = document.createElement('option');
-				option.value = sg;
-				option.text = sg;
-				sigunguSelect.add(option);
-			});
-		}
-		$(function () {
-			let recommendedPlace = $(".recommendedPlace")
-			recommendedPlace.mouseover(function () {
-				recommendedPlace.removeClass("active")
-				$(this).addClass("active")
-			})
+		$(document).ready(() => {
 			const navbar = $("header")
 			const menu = $(".custom-menu");
 			const menu_main = $("ul.custom-main li a")
@@ -634,16 +48,14 @@
 			const small_submenu = $(".small-submenu");
 			const close_btn = $(".close-btn");
 			const icons = $(".material-symbols-outlined")
-			var scrollPosition = $(window).scrollTop();
 			var hasClass = false;
-			var isMouseOver = false;
-
+			var isMouseOverPlace = false;
 			// 하단 서브메뉴 슬라이드
 			submenu.css({display: "none"});
 			small_header.css({display: "none"});
 
 			menu.mouseover(function () {
-				isMouseOver = true;
+				isMouseOverPlace = true;
 				submenu.stop().slideDown();
 				navbar.addClass("green-navbar");
 				menu_main.css({color: "black"})
@@ -651,12 +63,12 @@
 				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 			menu.mouseout(function () {
-				isMouseOver = false;
+				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");
 				menu_main.css({color: "white"})
 				icons.removeClass("black-icons")
-				$(".custom-submenu").css({display: "none"})
+				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")
 					menu_main.css({color: "black"})
@@ -665,7 +77,7 @@
 			});
 
 			submenu.mouseover(function () {
-				isMouseOver = true;
+				isMouseOverPlace = true;
 				submenu.stop().slideDown();
 				navbar.addClass("green-navbar");
 				menu_main.css({color: "black"})
@@ -674,42 +86,26 @@
 			});
 
 			submenu.mouseout(function () {
-				isMouseOver = false;
+				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");
 				menu_main.css({color: "white"})
 				icons.removeClass("black-icons")
-				$(".custom-submenu").css({display: "none"})
+				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")
 					menu_main.css({color: "black"})
 					icons.addClass("black-icons")
 				}
 			});
-			var height = $("#places").offset().top;
-			$(window).on("scroll", () => {
-				if (isMouseOver) return;
-
-				if ($(window).scrollTop() > height && !hasClass) {
-					navbar.addClass("green-navbar")
-					icons.addClass("black-icons")
-					menu_main.css({color: "black"})
-					hasClass = true;
-				}
-				if ($(window).scrollTop() < height && hasClass) {
-					navbar.removeClass("green-navbar")
-					icons.removeClass("black-icons")
-					menu_main.css({color: "white"})
-					hasClass = false;
-				}
-			})
-
 			//작은 화면 메뉴 슬라이드
 			small_menu_btn.click(function () {
 				small_header.stop().slideDown();
+				$("html").css("overflow", "hidden");
 			});
 			close_btn.click(function () {
 				small_header.stop().slideUp();
+				$("html").css("overflow", "scroll");
 			});
 
 			$(".small-submenu").hide();
@@ -724,10 +120,25 @@
 					$(this).closest("li").find(".small-submenu").stop().slideUp();
 				}
 			);
-			//
+			var height = $("#places").offset().top - 40;
+			$(window).on("scroll", () => {
+
+				if (isMouseOverPlace) return;
+
+				if ($(window).scrollTop() > height && !hasClass) {
+					navbar.addClass("green-navbar")
+					icons.addClass("black-icons")
+					menu_main.css({color: "black"})
+					hasClass = true;
+				}
+				if ($(window).scrollTop() < height && hasClass) {
+					navbar.removeClass("green-navbar")
+					icons.removeClass("black-icons")
+					menu_main.css({color: "white"})
+					hasClass = false;
+				}
+			})
 		})
-
-
 	</script>
 </body>
 
