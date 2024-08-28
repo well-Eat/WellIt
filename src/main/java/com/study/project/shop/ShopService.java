@@ -1,20 +1,57 @@
 package com.study.project.shop;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
+@Log4j2
 public class ShopService {
+
+    /*tmp : 테스트용 임시 상품 리스트*/
+    private List<ProductDTO> prodList;
+
+    public ShopService() {
+        List<ProductDTO> rawList = makingTestProdDTO();
+        Iterator<ProductDTO> iterator = rawList.iterator();
+
+        while (iterator.hasNext()){
+            ProductDTO dto = iterator.next();
+            if (dto.getProdDiscount() == null || dto.getProdDiscount() == 0){
+                dto.setProdFinalPrice(dto.getProdOrgPrice());
+            } else {
+                dto.setProdFinalPrice(
+                      (int) (Math.round(dto.getProdOrgPrice() * (1 - dto.getProdDiscount()) / 100f) * 100));
+            }
+        }
+
+        this.prodList = rawList;
+    }
 
     /*상품 리스트 리턴*/
     public List<ProductDTO> getProdCateList(){
 
-        List<ProductDTO> prodList = makingTestProdDTO(); //테스트용 임시 데이터 만드는 메서드
-
+        log.info(prodList);
         return prodList;
     }
+
+
+    /*상품DTO 1품목 리턴*/
+    public ProductDTO getOneProd(Integer prodId){
+
+        //prodId로 검색 후 dto리턴
+        ProductDTO productDTO = prodList.stream()
+                       .filter(product -> product.getProdId().equals(prodId))
+                       .findFirst()
+                       .orElse(null);
+
+        return productDTO;
+    }
+
+
 
     /*상품 리스트 임시 dto 메서드*/
     private List<ProductDTO> makingTestProdDTO(){
