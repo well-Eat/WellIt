@@ -42,6 +42,11 @@ public class MainController {
 		return "update_profile";
 	}
 	
+	@GetMapping("/order_info")
+	public String orderinfo() {
+		return "order_info";
+	}
+	
 	@GetMapping("/board")
 	@ResponseBody
 	public String board() {
