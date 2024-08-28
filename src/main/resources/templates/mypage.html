@@ -1,514 +1,197 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<title>마이 페이지</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-			integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-			crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-			integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-			crossorigin="anonymous"></script>
-		<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic.css" rel="stylesheet">
-		<link rel="stylesheet"
-			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="./css/map.css" />
 	<style>
-		.custom-bg {
-			background-color: #386641;
-		}
-
-		* {
-			margin: 0;
-			padding: 0;
-			font-family: 'NanumGothic';
-		}
-
-		ul li,
-		ol li {
-			list-style: none;
-		}
-
-		html,
-		body {
-			height: 100%;
-		}
-
-		footer {
-			position: relative;
-			bottom: 0;
-			width: 100%;
-			/*height: 100%; */
-		}
-
-		.custom-line-height {
-			line-height: 1.2;
-		}
-
-		a {
-			text-decoration: none;
-			color: black;
-		}
-
-		section {
-			height: 100vh;
-		}
-
-		/* 네브바 */
-		header {
-			width: 100%;
-			height: 100px;
-			display: flex;
-			justify-content: space-between;
-			background-color: #386641;
-			position: absolute;
-			z-index: 30;
-		}
-
-		/* 로고 들어갈 곳 */
-		header .custom-logo {
-			display: flex;
-			align-items: center;
-			width: 25%;
-		}
-
-		header .custom-logo img {
-			width: 100px;
-			height: 50px;
-		}
-
-		header .custom-menu {
-			width: 50%;
-		}
-
-		/* 상단 네브바 메뉴 */
-		header .custom-menu ul.custom-main {
-			display: flex;
-			justify-content: space-around;
-			height: 100px;
-		}
-
-		header .custom-menu ul.custom-main li {
-			width: 150px;
-			height: 100px;
-			text-align: center;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-weight: bold;
-
-		}
-
-		header .custom-menu ul.custom-main li a {
-			color: black;
-		}
-
-		/* 하단 서브메뉴 */
-		.custom-menu.custom-sub {
-			width: 100%;
+		#mypage {
 			top: 100px;
-			display: flex;
-			justify-content: space-around;
-			position: absolute;
-			z-index: 29;
 		}
 
-		.custom-menu.custom-sub .custom-submenu {
-			height: 200px;
-			background-color: #386641;
-		}
-
-		/* 로고 아래 서브메뉴*/
-		.custom-menu.custom-sub .custom-submenu1 {
-			width: 25%;
-		}
-
-		/* 메뉴 아래 서브메뉴 */
-		.custom-menu.custom-sub .custom-submenu2 {
-			display: flex;
-			width: 50%;
-		}
-
-		.custom-menu.custom-sub .custom-submenu2 ul {
-			width: 100%;
-			text-align: center;
-		}
-
-		.custom-menu.custom-sub .custom-submenu2 ul li {
-			padding: 8px;
-		}
-
-		/* 아이콘들 아래 서브메뉴 */
-		.custom-menu.custom-sub .custom-submenu3 {
-			width: 25%;
-		}
-
-		.custom-right {
-			width: 25%;
-			list-style: none;
-			display: flex;
-			align-items: center;
-			justify-content: space-around;
-		}
-
-		/* 햄버거 버튼, 닫기 버튼 */
-		.menu-btn,
-		.close-btn {
-			position: absolute;
-			right: 5%;
-			font-size: 2em;
-		}
-
-		.close-btn {
-			top: 5%;
-		}
-
-		/* 화면 작을 때 gnb */
-		#small-header {
-			list-style: none;
-			display: flex;
-			flex-direction: column;
-			width: 100%;
-			height: 100vh;
-			position: fixed;
-			top: 0;
-			left: 0;
-			background-color: #f2e8cf;
-			overflow-x: hidden;
-			z-index: 31;
-
-		}
-
-		#small-header a {
-			color: black;
-		}
-
-		ul.small-main .small-bold {
-			font-weight: bold;
-		}
-
-		/* 작은 화면 gnb 상단 버튼 */
-		.small-buttons {
-			display: flex;
-			position: relative;
-			justify-content: space-around;
-			top: 5%;
-			width: 30%;
-			left: 5%;
-		}
-
-		.small-buttons li {
-			margin-right: 20px;
-		}
-
-		/* 아이콘들 크기 */
-		.material-symbols-outlined {
-			font-size: 2em;
-			color: black;
-		}
-
-		.small-search {
-			position: absolute;
-			display: flex;
-			top: 50%;
-			right: 5%;
-		}
-
-		.small-search input {
-			width: 300px;
-			border: none;
-			background-color: #6A994E;
-			border-radius: 45px;
-			padding: 10px 20px;
-			outline: none;
-			color: white;
-			margin-right: 30px;
-		}
-
-		.all-menu {
-			position: relative;
-			height: 20vh;
-			width: 100%;
-			top: 5vh;
-		}
-
-		#small-header .hr {
-			width: 90%;
-			border: 1px solid wheat;
-			height: 1px;
-			position: relative;
-			margin-top: 5vh;
-			left: 5%;
-		}
-
-		.small-menu {
-			position: relative;
-			height: 80vh;
-			padding: 50px;
-		}
-
-		.small-main>li {
-			position: relative;
-			margin: 20px 0;
-		}
-
-		.small-category {
-			font-size: 30PX;
-		}
-
-		.small-submenu li {
-			margin: 20px;
-		}
-
-		.small-submenu li a {
-			font-size: 20px;
-		}
-
-		@media (min-width: 1025px) {
-			.menu-btn {
-				display: none;
-			}
-
-			#small-header {
-				display: none;
-			}
-		}
-
-		@media (max-width: 1024px) {
-			.custom-menu {
-				display: none;
-			}
-
-			.custom-right li {
-				display: none;
-			}
-
-			.menu-btn {
-				display: block;
-			}
-		}
-
-		.green-navbar {
-			background-color: #386641;
-			color: black;
-		}
-
-		.black-icons {
-			color: black;
-		}
-
-		.eye-icon {
-			position: absolute;
-			right: 0;
-			top: 0;
-			height: 100%;
-		}
-
-		.eye {
-			cursor: pointer;
-		}
-
-		.formStyle {
-			background-color: #f2e8cf;
-		}
-
-		.greenBtn {
-			background-color: #6A994E;
-		}
-
-		.greenBtn:hover {
-			background-color: #A7C957;
-		}
-		#mypage{
-			top:200px;	
-		}
-		.sidebar{
+		.sidebar {
 			background-color: lightgray;
 		}
-		.sidebar li .submenu{ 
-			list-style: none; 
-			margin: 0; 
-			padding: 0; 
-			padding-left: 1rem; 
+
+		.sidebar li .submenu {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			padding-left: 1rem;
 			padding-right: 1rem;
 		}
-		.nav-link{
-			color:black
+
+		.nav-link {
+			color: black
 		}
-		
-</style>
-</head>
-<body>
-	<div th:replace="navbar :: navbar"></div>
-	<section id="mypage" class="h-100 position-relative">
+	</style>
+	<section id="mypage" class="position-relative">
 		<div class="container-fluid">
-					<div class="row">
-					  <div class="col-2">
-						<nav class="sidebar card py-2 mb-4 h-100">
-						<ul class="nav nav-tabs flex-column tabnav" id="nav_accordion">
+			<div class="row">
+				<div class="col-xl-3 col-xs-12">
+					<nav class="sidebar card py-2 mb-4">
+						<ul class="nav nav-tabs flex-xs-row flex-xl-column tabnav" id="nav_accordion">
 							<li class="nav-item has-submenu mt-3">
-							    <a class="nav-link disabled fw-bolder" href="#">프로필</a>
-							    <ul class="submenu">
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보 확인/수정</a></li>
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#shipping-info">배송정보 확인/수정</a></li>
-							    </ul>
+								<a class="nav-link disabled fw-bolder" href="#">프로필</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보
+											확인/수정</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#shipping-info">배송정보
+											확인/수정</a></li>
+								</ul>
 							</li>
 							<li class="nav-item has-submenu mt-3">
-							    <a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
-							    <ul class="submenu">
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#cart">장바구니</a></li>
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#order-info">주문내역</a></li>
-							    </ul>
+								<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cart">장바구니</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#"
+											data-target="#order-info">주문내역</a></li>
+								</ul>
 							</li>
 							<li class="nav-item has-submenu mt-3">
-							    <a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
-							    <ul class="submenu">
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#faq">자주묻는 질문</a></li>
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
-							        <li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및 처리방침</a></li>
-							    </ul>
+								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및
+											처리방침</a></li>
+								</ul>
 							</li>
 						</ul>
-						</nav>
-					  </div>
-					  <div class="col-10 tabcontent">
-						<div id="user-profile" class="container border">
-							<h1>사용자 정보</h1>
-							<img src="" alt="프로필 사진" />
-							<p>사용자 이름</p>
-							<p>이메일</p>
-							<p>회원가입 일시</p>
-						</div>
-						<div id="check-password" class="container">
-							비밀번호 입력 : 
-							<input type="password" id="c-password" name="c-password"/>
-						</div>
-						<div id="cart" class="container border">
-							<div class="row">
-								<table class="table">
-								  <thead>
-								    <tr>
-								      <th scope="col">상품정보</th>
-								      <th scope="col">금액</th>
-								      <th scope="col">수량</th>
-								      <th scope="col">가격</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <tr>
-								      <th scope="row">1</th>
-								      
-								    </tr>
-								    <tr>
-								      <th scope="row">2</th>
-								      
-								    </tr>
-								    <tr>
-								      <th scope="row">3</th>
-								      
-								    </tr>
-								  </tbody>
-								</table>
-							</div>
-						</div>
-						<div id="order-info" class="container border">
-							<div class="row">
-								<table class="table">
-								  <thead>
-								    <tr>
-								      <th scope="col">주문번호</th>
-								      <th scope="col">주문일</th>
-								      <th scope="col">주문상품</th>
-								      <th scope="col">주문금액</th>
-									  <th scope="col">주문상태</th>
-									  <th scope="col">상세정보</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <tr>
-								      <th scope="row">1</th>
-								      
-								    </tr>
-								    <tr>
-								      <th scope="row">2</th>
-								      
-								    </tr>
-								    <tr>
-								      <th scope="row">3</th>
-								      
-								    </tr>
-								  </tbody>
-								</table>
-							</div>
-						</div>
-					  </div>
+					</nav>
 				</div>
-		</div>
-	</section>
-	<footer class="custom-bg text-white py-4">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 custom-line-height">
-						<h3>Well It</h3>
-						<p>주식회사 웨릿</p>
-						<br />
-						<p>경기 수원시 팔달구 덕영대로 905 아이메카 7층 그린컴퓨터아카데미 수원(16455)</p>
-						<p>| Tel : 070-7671-3078 | E-mail: rufp3078@naver.com</p>
-						<p>Copyrightⓒ 2024. wellit. All rights reserved.</p>
+				<div class="col-xl-9 col-xs-12  tabcontent">
+					<div id="user-profile" class="container border">
+						<h1 class="mb-5">사용자 정보</h1>
+						<div class="row">
+							<div class="col-4">
+								<img src="https://i.namu.wiki/i/Bge3xnYd4kRe_IKbm2uqxlhQJij2SngwNssjpjaOyOqoRhQlNwLrR2ZiK-JWJ2b99RGcSxDaZ2UCI7fiv4IDDQ.webp"
+									alt="프로필 사진" class="rounded" width="150px" height="150px" />
+							</div>
+							<div class="col-8">
+								<div class="row align-middle">
+									<div class="col">
+										<p>사용자 이름 : username</p>
+										<p>이메일 : email</p>
+									</div>
+									<div class="col">
+										<p>마일리지 : mileage</p>
+										<p>회원가입 일시 : regDate</p>
+									</div>
+								</div>
+								<div class="row mt-3">
+									<div class="col">
+										<a href="/enter_password" class="btn btn-warning"
+											data-target="#check-password">회원정보 수정</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="col-md-4 mt-4">
-						<p class="d-flex align-items-center mb-5">
-							<span>
-								| <a href="#" class="text-white">이용약관</a> | <a href="#" class="text-white">개인정보처리방침</a>
-								|
-								<a href="#">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
-										viewBox="0 0 50 50" class="ms-2">
-										<path
-											d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z">
-										</path>
-									</svg>
-								</a>
-							</span>
-						</p>
-						<ul class="list-unstyled">
-							<li><a href="#" class="text-white">로고</a></li>
-						</ul>
+					<div id="cart" class="container border">
+						<h1>장바구니</h1>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">상품정보</th>
+										<th scope="col">금액</th>
+										<th scope="col">수량</th>
+										<th scope="col">가격</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>
+											<img src="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg"
+												alt="" class="img-fluid" width="100px" height="100px" />
+											ddddddd
+										</td>
+										<td>
+											ddddddd
+										</td>
+										<td>
+											dddddddd
+										</td>
+										<td>
+											ddddddddd
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div id="order-info" class="container border">
+						<h1>주문내역</h1>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">주문번호</th>
+										<th scope="col">주문일</th>
+										<th scope="col">주문상품</th>
+										<th scope="col">주문금액</th>
+										<th scope="col">주문상태</th>
+										<th scope="col">상세정보</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
-		</footer>
-		<script>
-			document.addEventListener('DOMContentLoaded', function() {
-			    const links = document.querySelectorAll('.nav-link[data-target]');
-			    const sections = document.querySelectorAll('.tabcontent > div.container');
+		</div>
+	</section>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const links = document.querySelectorAll('.nav-link[data-target]');
+			const sections = document.querySelectorAll('.tabcontent > div.container');
 
-			    // Hide all sections initially
-			    sections.forEach(section => section.style.display = 'none');
+			// Hide all sections initially
+			sections.forEach(section => section.style.display = 'none');
 
-			    // Show the first section by default
-			    if (sections.length > 0) {
-			        sections[0].style.display = 'block';
-			    }
+			// Show the first section by default
+			if (sections.length > 0) {
+				sections[0].style.display = 'block';
+			}
 
-			    // Add click event to each link
-			    links.forEach(link => {
-			        link.addEventListener('click', function(e) {
-			            e.preventDefault();
-			            
-			            // Hide all sections
-			            sections.forEach(section => section.style.display = 'none');
+			// Add click event to each link
+			links.forEach(link => {
+				link.addEventListener('click', function (e) {
+					e.preventDefault();
 
-			            // Show the selected section
-			            const target = document.querySelector(this.getAttribute('data-target'));
-			            if (target) {
-			                target.style.display = 'block';
-			            }
-			        });
-			    });
+					// Hide all sections
+					sections.forEach(section => section.style.display = 'none');
+
+					// Show the selected section
+					const target = document.querySelector(this.getAttribute('data-target'));
+					if (target) {
+						target.style.display = 'block';
+					}
+				});
 			});
-		</script>
-</body>
+		});
+	</script>
+</div>
+
 </html>

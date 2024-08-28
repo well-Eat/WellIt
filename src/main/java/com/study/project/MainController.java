@@ -13,8 +13,13 @@ public class MainController {
 	}
 	
 	@GetMapping("/map")
-	public String login() {
+	public String map() {
 		return "map";
+	}
+	
+	@GetMapping("/login")
+	public String login() {
+		return "login";
 	}
 	
 	@GetMapping("/register")
@@ -25,6 +30,16 @@ public class MainController {
 	@GetMapping("/mypage")
 	public String mypage() {
 		return "mypage";
+	}
+	
+	@GetMapping("/enter_password")
+	public String enterpassword() {
+		return "enter_password";
+	}
+	
+	@GetMapping("/update_profile")
+	public String updateprofile() {
+		return "update_profile";
 	}
 	
 	@GetMapping("/board")

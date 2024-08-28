@@ -1,306 +1,7 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8" />
-	<title>로그인</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-		integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-		crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-		integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-		crossorigin="anonymous"></script>
-	<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic.css" rel="stylesheet">
-	<link rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<style>
-	.custom-bg {
-		background-color: #386641;
-	}
-
-	* {
-		margin: 0;
-		padding: 0;
-		font-family: 'NanumGothic';
-	}
-
-	ul li,
-	ol li {
-		list-style: none;
-	}
-
-	html,
-	body {
-		height: 100%;
-	}
-
-	footer {
-		position: relative;
-		bottom: 0;
-		width: 100%;
-		/*height: 100%; */
-	}
-
-	.custom-line-height {
-		line-height: 1.2;
-	}
-
-	a {
-		text-decoration: none;
-		color: black;
-	}
-
-	section {
-		height: 100vh;
-	}
-
-	/* 네브바 */
-	header {
-		width: 100%;
-		height: 100px;
-		display: flex;
-		justify-content: space-between;
-		background-color: #386641;
-		position: absolute;
-		z-index: 30;
-	}
-
-	/* 로고 들어갈 곳 */
-	header .custom-logo {
-		display: flex;
-		align-items: center;
-		width: 25%;
-	}
-
-	header .custom-logo img {
-		width: 100px;
-		height: 50px;
-	}
-
-	header .custom-menu {
-		width: 50%;
-	}
-
-	/* 상단 네브바 메뉴 */
-	header .custom-menu ul.custom-main {
-		display: flex;
-		justify-content: space-around;
-		height: 100px;
-	}
-
-	header .custom-menu ul.custom-main li {
-		width: 150px;
-		height: 100px;
-		text-align: center;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: bold;
-
-	}
-
-	header .custom-menu ul.custom-main li a {
-		color: black;
-	}
-
-	/* 하단 서브메뉴 */
-	.custom-menu.custom-sub {
-		width: 100%;
-		top: 100px;
-		display: flex;
-		justify-content: space-around;
-		position: absolute;
-		z-index: 29;
-	}
-
-	.custom-menu.custom-sub .custom-submenu {
-		height: 200px;
-		background-color: #386641;
-	}
-
-	/* 로고 아래 서브메뉴*/
-	.custom-menu.custom-sub .custom-submenu1 {
-		width: 25%;
-	}
-
-	/* 메뉴 아래 서브메뉴 */
-	.custom-menu.custom-sub .custom-submenu2 {
-		display: flex;
-		width: 50%;
-	}
-
-	.custom-menu.custom-sub .custom-submenu2 ul {
-		width: 100%;
-		text-align: center;
-	}
-
-	.custom-menu.custom-sub .custom-submenu2 ul li {
-		padding: 8px;
-	}
-
-	/* 아이콘들 아래 서브메뉴 */
-	.custom-menu.custom-sub .custom-submenu3 {
-		width: 25%;
-	}
-
-	.custom-right {
-		width: 25%;
-		list-style: none;
-		display: flex;
-		align-items: center;
-		justify-content: space-around;
-	}
-
-	/* 햄버거 버튼, 닫기 버튼 */
-	.menu-btn,
-	.close-btn {
-		position: absolute;
-		right: 5%;
-		font-size: 2em;
-	}
-
-	.close-btn {
-		top: 5%;
-	}
-
-	/* 화면 작을 때 gnb */
-	#small-header {
-		list-style: none;
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		height: 100vh;
-		position: fixed;
-		top: 0;
-		left: 0;
-		background-color: #f2e8cf;
-		overflow-x: hidden;
-		z-index: 31;
-
-	}
-
-	#small-header a {
-		color: black;
-	}
-
-	ul.small-main .small-bold {
-		font-weight: bold;
-	}
-
-	/* 작은 화면 gnb 상단 버튼 */
-	.small-buttons {
-		display: flex;
-		position: relative;
-		justify-content: space-around;
-		top: 5%;
-		width: 30%;
-		left: 5%;
-	}
-
-	.small-buttons li {
-		margin-right: 20px;
-	}
-
-	/* 아이콘들 크기 */
-	.material-symbols-outlined {
-		font-size: 2em;
-		color: black;
-	}
-
-	.small-search {
-		position: absolute;
-		display: flex;
-		top: 50%;
-		right: 5%;
-	}
-
-	.small-search input {
-		width: 300px;
-		border: none;
-		background-color: #6A994E;
-		border-radius: 45px;
-		padding: 10px 20px;
-		outline: none;
-		color: white;
-		margin-right: 30px;
-	}
-
-	.all-menu {
-		position: relative;
-		height: 20vh;
-		width: 100%;
-		top: 5vh;
-	}
-
-	#small-header .hr {
-		width: 90%;
-		border: 1px solid wheat;
-		height: 1px;
-		position: relative;
-		margin-top: 5vh;
-		left: 5%;
-	}
-
-	.small-menu {
-		position: relative;
-		height: 80vh;
-		padding: 50px;
-	}
-
-	.small-main>li {
-		position: relative;
-		margin: 20px 0;
-	}
-
-	.small-category {
-		font-size: 30PX;
-	}
-
-	.small-submenu li {
-		margin: 20px;
-	}
-
-	.small-submenu li a {
-		font-size: 20px;
-	}
-
-	@media (min-width: 1025px) {
-		.menu-btn {
-			display: none;
-		}
-
-		#small-header {
-			display: none;
-		}
-	}
-
-	@media (max-width: 1024px) {
-		.custom-menu {
-			display: none;
-		}
-
-		.custom-right li {
-			display: none;
-		}
-
-		.menu-btn {
-			display: block;
-		}
-	}
-
-	.green-navbar {
-		background-color: #386641;
-		color: black;
-	}
-
-	.black-icons {
-		color: black;
-	}
-
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="./css/map.css" />
+	<style>
 	.eye-icon {
 		position: absolute;
 		right: 0;
@@ -310,6 +11,7 @@
 
 	.eye {
 		cursor: pointer;
+		color:black;
 	}
 
 	.formStyle {
@@ -324,9 +26,7 @@
 		background-color: #A7C957;
 	}
 </style>
-
 <body>
-	<div th:replace="navbar :: navbar"></div>
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
 			<div class="row py-5 justify-content-center">
@@ -375,39 +75,6 @@
 			</div>
 		</div>
 	</section>
-	<footer class="custom-bg text-white py-4">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8 custom-line-height">
-					<h3>Well It</h3>
-					<p>주식회사 웨릿</p>
-					<br />
-					<p>경기 수원시 팔달구 덕영대로 905 아이메카 7층 그린컴퓨터아카데미 수원(16455)</p>
-					<p>| Tel : 070-7671-3078 | E-mail: rufp3078@naver.com</p>
-					<p>Copyrightⓒ 2024. wellit. All rights reserved.</p>
-				</div>
-				<div class="col-md-4 mt-4">
-					<p class="d-flex align-items-center mb-5">
-						<span>
-							| <a href="#" class="text-white">이용약관</a> | <a href="#" class="text-white">개인정보처리방침</a>
-							|
-							<a href="#">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"
-									viewBox="0 0 50 50" class="ms-2">
-									<path
-										d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z">
-									</path>
-								</svg>
-							</a>
-						</span>
-					</p>
-					<ul class="list-unstyled">
-						<li><a href="#" class="text-white">로고</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</footer>
 	<script>
 		function checkSave() {
 			const checkbox = document.getElementById("exampleCheck1");
@@ -420,7 +87,7 @@
 
 		document.addEventListener("DOMContentLoaded", function () {
 			const eyeIcon = document.querySelector('.eye');
-			const passwordInput = document.getElementById('floatingPassword');
+			const passwordInput = document.getElementById('password');
 
 			eyeIcon.addEventListener('click', function () {
 				const inputType = passwordInput.getAttribute('type');
@@ -436,5 +103,5 @@
 		});
 	</script>
 </body>
-
+</div>
 </html>
