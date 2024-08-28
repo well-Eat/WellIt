@@ -47,6 +47,16 @@ public class MainController {
 		return "order_info";
 	}
 	
+	@GetMapping("/order_form")
+	public String orderform() {
+		return "order_form";
+	}
+	
+	@GetMapping("/question_form")
+	public String questionform() {
+		return "question_form";
+	}
+	
 	@GetMapping("/board")
 	@ResponseBody
 	public String board() {
