@@ -1,0 +1,196 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>상품 상세페이지</title>
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+</head>
+<div layout:fragment="content" class="container">
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	<!--	<link rel="stylesheet" th:href="@{/css/layout.css}">-->
+	<!--	<link rel="stylesheet" href="/css/layout.css">-->
+	
+	<!--페이지 제목-->
+	<div class="row my-5">
+		<div class="pageTitle col text-center">
+			상품 상세페이지
+		</div>
+	</div>
+	
+	<!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
+	
+	
+	<!-- 상품 정보 요약 & 주문 폼 -->
+	<section class="prodInfo row my-4 py-4 rounded-2">
+		<div class="prodImg col-6">
+			<!-- 상품이미지 -->
+			<div class="card-img-wrapper rounded-2 mb-3">
+				<div class="card-img-box" th:style="|background-image: url(@{  ${productDTO.imgSrc}  });|"></div>
+			</div>
+		</div> <!--prodImg-->
+		<div class="col-6 card">
+			<!-- 상품정보 -->
+			<div class="card-body">
+				<div class="prodTags mb-3">
+					<!--할인율 있는 경우 세일상품 태그 표시-->
+					<span class="badge text-bg-success" th:if="${productDTO.prodDiscount != null and productDTO.prodDiscount > 0}">세일상품</span>
+					<span class="badge text-bg-success" th:if="${productDTO.prodReview != null and productDTO.prodReview > 1000}">인기상품</span>
+				</div>
+				<h5 class="prodName card-title" th:text="${productDTO.prodName}"></h5>
+				<p class="prodDesc card-text" th:text="${productDTO.prodDesc}"></p>
+				
+				<!--할인율 있는 경우 가격 표시 -->
+				<th:block th:if="${productDTO.prodDiscount != null and productDTO.prodDiscount > 0}">
+					<p class="prodOrgPrice card-text"
+					   th:text="|${#numbers.formatInteger(productDTO.prodOrgPrice,3,'COMMA')}원|"></p>
+					<p class="prodDiscount card-text mr-4"
+					   th:text="${#numbers.formatPercent(productDTO.prodDiscount,2,0)}"></p>
+					<p class="prodFinalPrice card-text"
+					   th:text="|${#numbers.formatInteger( productDTO.prodOrgPrice - productDTO.prodOrgPrice * productDTO.prodDiscount ,3,'COMMA') }원|"></p>
+				</th:block>
+				
+				<!--할인율 없는 경우 가격 표시-->
+				<th:block th:if="${productDTO.prodDiscount == null or productDTO.prodDiscount == 0}"></th:block>
+				<p class="prodFinalPrice card-text"
+				   th:if="${productDTO.prodDiscount == null or productDTO.prodDiscount == 0}"
+				   th:text="|${#numbers.formatInteger(productDTO.prodOrgPrice,3,'COMMA')}원|"></p>
+				
+				<form>
+					<!--quantity : 구매수량 input, 버튼-->
+					
+					<div class="mb-3 quantityBox d-flex align-items-center">
+						<label for="quantity" class="form-label pr-3 align-self-center">구매수량</label>
+						<div class="number-input rounded-1">
+							<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
+							<input type="number" min="1" max="100" class="form-control rounded-0" value="1" id="quantity"/>
+							<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
+						</div>
+					</div>
+					
+					<!--총 구매 금액-->
+					<h3 class="prodTotalPrice card-text border my-5 text-end" th:text="|${#numbers.formatInteger(productDTO.prodOrgPrice,3,'COMMA')}원|"></h3>
+					
+					<!--총 구매 금액 calculate-->
+					<script th:inline="javascript">
+						$(function () {
+							const finalPrice = /*[[${productDTO.prodFinalPrice}]]*/ 0;
+							
+							/* 구매수량 - 버튼 */
+							$(".minus").on("click", function(e) {
+								e.preventDefault();
+								let $input = $(this).next("input");
+								let minValue = parseInt($input.attr("min"));
+								if (parseInt($input.val()) > minValue) {
+									$input.val(parseInt($input.val()) - 1);
+								}
+								updateTotalPrice(finalPrice, $input.val());
+							});
+							
+							/* 구매수량 + 버튼 */
+							$(".plus").on("click", function(e) {
+								e.preventDefault();
+								let $input = $(this).prev("input");
+								let maxValue = parseInt($input.attr("max"));
+								if (parseInt($input.val()) < maxValue) {
+									$input.val(parseInt($input.val()) + 1);
+								}
+								updateTotalPrice(finalPrice, $input.val());
+							});
+							
+							function updateTotalPrice(finalPrice, quantity) {
+								const totalPrice = finalPrice * quantity;
+								$(".prodTotalPrice").text(totalPrice.toLocaleString() + "원");
+							}
+						});
+					</script>
+
+					<!--버튼 라인-->
+					<div class="mb-3 btns row border gx-1">
+
+						<a href="#" class="btn btn-outline-success"><i class="fa-solid fa-cart-shopping" style="color: #6A994E;"></i></a>
+						<a href="#" class="btn btn-outline-success"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+						<input class="btn btn-success" type="submit" value="구매하기">
+					</div>
+				</form>
+				
+			</div> <!-- //card-body -->
+		</div> <!--col-6 card-->
+	</section> 	<!--prodInfo-->
+	
+	<!--todo: 관련 상품 -->
+	
+	
+	<!--todo: sticky bar + scrollspy 상품평 상세페이지 -->
+	
+	
+	<!--상품 상세 정보 이미지 출력-->
+	<section class="prodDetail container">
+		<div class="prodDetailImgBox text-center">
+			<img class="img-fluid" th:src="@{|${productDTO.getProdDetailImg()}|}" th:alt="${productDTO.getProdName()}">
+		</div>
+	</section>
+	
+	<!--todo: 구매 한 사람만 리뷰 쓸 수 있게 -->
+	
+	<!--상품별 리뷰 -->
+	<section class="prodReview container">
+		<div class="prodDetailImgBox text-center">
+			<img class="img-fluid" th:src="@{|${productDTO.getProdDetailImg()}|}" th:alt="${productDTO.getProdName()}">
+		</div>
+	</section>
+	
+	
+	
+
+
+</div> <!--//layout::content-->
+
+<!-- <script layout:fragmsent="script"> -->
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

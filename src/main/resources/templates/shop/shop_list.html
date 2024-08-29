@@ -1,0 +1,183 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>상품 리스트</title>
+	
+	<!-- font font-awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer" />
+	
+</head>
+<div layout:fragment="content" class="container">
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	
+	<!--페이지 제목-->
+	<div class="row my-5">
+		<div class="pageTitle col text-center">
+			Shop
+		</div>
+	</div>
+	
+	<!-- 카테고리 선택 리스트 박스 -->
+	<div class="prodCateLiRow row my-4 py-4 rounded-2">
+		<div class="col">
+			<ul class="row row-cols-1 row-cols-sm-2 row-cols-md-3 justify-content-start  pl-4">
+				<li class="prodCate col py-1 py-sm-2 active" id="all"><a href="javascript:void(0);" class="prodCateLink">모두보기</a></li><!-- all -->
+				<li class="prodCate col py-1 py-sm-2" id="mealkit"><a href="javascript:void(0);" class="prodCateLink">밀키트</a></li><!-- mealkit -->
+				<li class="prodCate col py-1 py-sm-2" id="sidedish"><a href="javascript:void(0);" class="prodCateLink">반찬배송</a></li><!-- sidedish -->
+				<li class="prodCate col py-1 py-sm-2" id="organicfood"><a href="javascript:void(0);" class="prodCateLink">유기농식재료</a></li><!-- organicfood -->
+				<li class="prodCate col py-1 py-sm-2" id="organicgoods"><a href="javascript:void(0);" class="prodCateLink">오가닉 제품</a></li><!-- organicgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="babygoods"><a href="javascript:void(0);" class="prodCateLink">베이비</a></li><!-- babygoods -->
+				<li class="prodCate col py-1 py-sm-2" id="petgoods"><a href="javascript:void(0);" class="prodCateLink">펫</a></li><!-- petgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="wellitgoods"><a href="javascript:void(0);" class="prodCateLink">웨릿 굿즈</a></li><!-- wellitgoods -->
+			</ul>
+		</div>
+	</div>
+	
+	<div class="row mb-3">
+		<div class="col">
+			<ul class="sortBox d-flex justify-content-end">
+				<li><a href="javascript:void(0);" class="active">추천순</a></li>
+				<li><a href="javascript:void(0);">신상품순</a></li>
+				<li><a href="javascript:void(0);">판매량순</a></li>
+				<li><a href="javascript:void(0);">낮은 가격순</a></li>
+				<li><a href="javascript:void(0);">높은 가격순</a></li>
+			</ul>
+		</div>
+	</div>
+	
+	<!--판매 상품 리스트-->
+	<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+		
+		<!-- 상품(prodItem) 템플릿 -->
+		<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${prodlist}">
+			<div class="card">
+				
+				<!-- 상품이미지 -->
+				<div class="card-img-wrapper rounded-2 mb-3">
+					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+					<div class="card-img-box" th:style="|background-image: url(@{  ${item.imgSrc}  });|"></div>
+					</a>
+				</div>
+				
+				<!-- 담기버튼 -->
+				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
+				
+				<!-- 상품설명 -->
+				<div class="card-body">
+					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+					<h5 class="prodName card-title" th:text="${item.prodName}"></h5>
+					<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+					
+					<!--할인율 있는 경우 가격 표시 -->
+					<th:block th:if="${item.prodDiscount != null and item.prodDiscount > 0}">
+						<p class="prodOrgPrice card-text" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
+						<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,2,0)}"></p>
+						<p class="prodFinalPrice card-text" th:text="|${#numbers.formatInteger( item.prodOrgPrice - item.prodOrgPrice * item.prodDiscount ,3,'COMMA') }원|"></p>
+					</th:block>
+					
+					<!--할인율 없는 경우 가격 표시-->
+					<p class="prodFinalPrice card-text" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
+					
+					
+					<p class="prodReview card-text"><i class="fa-regular fa-comment-dots"></i> [[${#numbers.formatInteger(item.prodReview,3,'COMMA')}]]</p>
+					<div class="prodTags">
+						<!--할인율 있는 경우 세일상품 태그 표시-->
+						<span class="badge text-bg-success" th:text="️세일상품"  th:if="${item.prodDiscount != null and item.prodDiscount > 0}"></span>
+						<span class="badge text-bg-success" th:text="️인기상품"  th:if="${item.prodReview != null and item.prodReview > 1000}"></span>
+					</div>
+				</a>
+				</div> <!-- //card-body -->
+			</div> <!-- //card -->
+		</div> <!-- ///////// prodItem -->
+	
+	
+	
+	</div>
+	
+	<script>
+      $(function(){
+
+          /* 카테고리 아이템 리스트 get */
+          $("a.prodCateLink").on("click", function(e) {
+              e.preventDefault();
+
+              //카테고리 선택상자의 id와 아이템카드의 data-prodcate의 값이
+		          //같은 경우 display:block;
+              let clickedCate = $(this).parent().attr('id');
+              let allList = $(".prodItem");
+
+              if (clickedCate === 'all') {
+                  // 모든 항목을 표시
+                  allList.removeClass('d-none');
+              } else {
+                  // 선택된 카테고리만 표시하고, 나머지는 숨김
+                  allList.each(function() {
+                      let prod = $(this);
+                      let prodCate = prod.attr('data-prodcate');
+
+                      if (prodCate === clickedCate) {
+                          prod.removeClass('d-none');
+                      } else {
+                          prod.addClass('d-none');
+                      }
+                  });
+              }
+
+              // 모든 카테고리의 active 클래스 제거하고 클릭된 항목의 부모 li 요소에만 추가
+              $(".prodCate").removeClass('active');
+              $(this).parent().addClass('active');
+          });
+      });
+
+	</script>
+
+
+</div> <!--//layout::content-->
+
+<!-- <script layout:fragmsent="script"> -->
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

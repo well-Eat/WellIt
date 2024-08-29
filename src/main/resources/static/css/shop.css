@@ -1,0 +1,336 @@
+/* 폰트 임포트 테스트 */
+/*@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');*/
+
+/* 웹페이지 전체 공통 (추후 제외할 내용) */
+* {margin: 0;padding: 0;}
+body{
+    background-color : #fff;
+    /*font-family: 'Noto Sans KR', sans-serif;*/
+    color: #333;
+}
+
+
+/* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
+li a{
+    text-decoration: none !important;
+}
+
+
+/* 디폴트 스타일 reset */
+ul {
+    margin-bottom: 0;
+}
+
+
+
+/********************** common *********************/
+/********************** common *********************/
+/********************** common *********************/
+section {
+    height: auto;
+}
+
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+nav header {
+    background-color: #386641;
+    position: relative;
+}
+
+nav {
+    position: relative;
+}
+
+nav ~ .container {
+    position: relative;
+}
+
+
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+.navbar ~ .container {
+    position: relative;
+}
+
+/*** 페이지 타이틀 ***/
+.pageTitle{
+    /* !!!!!!!!!!!! 왜 헤더부분이랑 겹치게 배치되는지 확인 필요*/
+    /*위치 다시 잡아야함!!!!!!!*/
+    /* padding-top: 100px;*/
+    font-size: 32px;
+    font-weight: 800;
+}
+
+/*** 카테고리 박스 ***/
+.prodCateLiRow{
+    border: 1px solid #ddd;
+}
+
+li.prodCate a{
+    color: #333;
+    font-size: 14px;
+    display: inline-block;
+}
+
+li.prodCate.active a,
+li.prodCate a:hover{
+    color: #386641;
+    font-weight: 700;
+}
+
+/*** 소트 박스 ***/
+ul.sortBox a{
+    font-size: 12px;
+    color: #999;
+}
+ul.sortBox a.active {
+    color: #386641;
+}
+ul.sortBox li:not(:last-of-type)::after{
+    content: " ";
+    width: 1px;
+    height: 12px;
+    background-color: #bbb;
+    text-indent: -9999px;
+    color:transparent;
+    overflow: hidden;
+    display: inline-block;
+    margin: 0 7px;
+    vertical-align: middle;
+}
+
+
+/******* 상품 아이템 (카드) *******/
+/*상품 이미지*/
+.prodItem .card-img-wrapper{
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+.prodItem .card-img-box{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: transform 300ms ease;
+}
+.prodItem .card-img-box:hover{
+    transform: scale(1.05);
+}
+/*담기 버튼*/
+.prodItem a.addCartBtn:active,
+.prodItem a.addCartBtn:focus,
+.prodItem a.addCartBtn:hover{
+    background-color: transparent !important;
+    color: #666 !important;
+    box-shadow: none !important;
+}
+/*왜 안되지*/
+.prodItem a.addCartBtn:hover{
+    font-weight: 500 !important;
+}
+.prodItem a.addCartBtn:active{
+    color: #386641 !important;
+}
+
+/*기본 스타일 리셋*/
+.prodItem .card{
+    border-width: 0;
+}
+.prodItem .card-body{
+    padding: 20px 0;
+}
+
+.prodItem p{
+    margin-bottom: 5px;
+}
+
+/*card-body : 아이템 정보*/
+/**** shop/list, shop/detail 공통 *****/
+.prodInfo h5.prodName,
+.prodItem h5.prodName{
+    font-weight: 700;
+}
+.prodInfo p.prodDesc,
+.prodItem p.prodDesc{
+    color : #999;
+    font-size: 16px;
+}
+.prodInfo p.prodOrgPrice,
+.prodItem p.prodOrgPrice{
+    color: #999;
+    text-decoration: line-through;
+}
+.prodInfo p.prodDiscount,
+.prodItem p.prodDiscount{
+    font-size: 18px;
+    color: rgb(255, 102, 46);
+    font-weight: bold;
+    display: inline-block;
+}
+.prodInfo p.prodFinalPrice,
+.prodItem p.prodFinalPrice{
+    font-size: 20px;
+    font-weight: 700;
+        display: inline-block;
+}
+.prodInfo p.prodReview,
+.prodItem p.prodReview{
+    font-size: 16px;
+    color:#bbb;
+}
+
+
+
+/******* shop_detail : 상품 상세페이지 *******/
+/******* shop_detail : 상품 상세페이지 *******/
+/******* shop_detail : 상품 상세페이지 *******/
+/*상품 이미지*/
+.prodInfo .card-img-wrapper{
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+.prodInfo .card-img-box{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: transform 300ms ease;
+}
+
+/*카드 기본 스타일 리셋*/
+.prodInfo .card{
+    border-width: 0;
+}
+.prodInfo .card-body{
+    padding: 0;
+}
+
+
+
+/*폼 스타일 */
+/*구매 수량 quantity input*/
+.quantityBox label.form-label{
+ margin-bottom: 0;
+    padding-right: 50px;
+}
+.number-input {
+    display: flex;
+    height: 30px;
+    align-items: stretch;
+    border: 1px solid #bbb;
+    width: fit-content;
+}
+
+.number-input input[type="number"] {
+    border: 0;
+    padding: 1px;
+    text-align: center;
+    width: 60px;
+    -moz-appearance: textfield; /* Firefox에서 기본 스핀 버튼 숨기기 */
+    color: #333333;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.number-input input[type="number"]:active, .number-input input[type="number"]:focus {
+    box-shadow: none;
+}
+.number-input input[type="number"]::-webkit-outer-spin-button,
+.number-input input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* 기본 스핀 버튼 숨기기 */
+}
+
+.number-input button {
+    background-color: transparent;
+    border: none;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 30px;
+    text-align: center;
+}
+
+.number-input button i{
+    color: var(--bs-success);
+    opacity: 0.7;
+}
+.number-input button:active i{
+    color: var(--bs-success);
+    opacity: 1;
+}
+
+/*폼 버튼 라인*/
+.prodInfo .btns{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    justify-content: start;
+}
+.prodInfo .btns a.btn{
+    width: 50px;
+    height: 100%;
+    display: inline-block;
+    align-items: stretch;
+    align-self: stretch;
+    justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 576px) {
+    /* 상품 리스트 좌우 여백 재조정 */
+    .prodList {
+        margin-left: -24px;
+        margin-right: -24px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
