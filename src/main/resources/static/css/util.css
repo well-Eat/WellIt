@@ -1,0 +1,28 @@
+/******* util Style *********/
+/******* util Style *********/
+/******* util Style *********/
+.f14{
+    font-size: 14px;
+}
+.f20{
+    font-size: 20px;
+}
+.f28 {
+    font-size: 28px;
+}
+.c333{
+    color: #333333 !important;
+}
+.c666{
+    color: #666666 !important;
+}
+.c999{
+    color: #999999;
+}
+
+.fw500{
+    font-weight: 500;
+}
+.fw700{
+    font-weight: 700;
+}
