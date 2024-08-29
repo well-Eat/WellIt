@@ -1,0 +1,283 @@
+<section th:fragment="product" id="product">
+<!-- Link Swiper's CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!--!!!!!!!!!!!!! goods Swiper style !!!!!!!!!!!!!!!!!-->
+<style>
+	section#product{
+		background-color: #eee;
+	}
+	/*goods Swiper style Start*/
+	.goodsSwiper {
+		width: 100%;
+		/*병합 후 높이 수정할 것!!!*/
+		height: 60vh;
+	}
+	
+	.goodsSwiper .swiper-slide {
+		background-position: center;
+		background-size: cover;
+		width: 100%;
+		height: 100%;
+	}
+	
+	/*goods 이미지 스타일*/
+	.goodsSwiper .imgBox{
+		width: 100%;
+		height: 100%;
+		background: aquamarine center no-repeat;
+		background-size: cover;
+	}
+	.goodsSwiper .imgBox#goods01{
+		background-image: url("/imgs/main/goods01.jpg");
+	}
+	.goodsSwiper .imgBox#goods02{
+		background-image: url("/imgs/main/goods02.jpg");
+	}
+	.goodsSwiper .imgBox#goods03{
+		background-image: url("/imgs/main/goods03_v2.jpg");
+	}
+	.goodsSwiper .imgBox#goods04{
+		background-image: url("/imgs/main/goods04_v2.jpg");
+	}
+	.goodsSwiper .imgBox#goods05{
+		background-image: url("/imgs/main/goods05.jpg");
+	}
+	.goodsSwiper .imgBox#goods06{
+		background-image: url("/imgs/main/goods06.jpg");
+	}
+	
+	/*goods 텍스트 스타일*/
+	.goodsSwiper .descBox {
+		width: 100%;
+		height: 100%;
+		padding: 5%;
+		color: #fff;
+		box-sizing: border-box;
+	}
+	.goodsSwiper .descBox h2.goodsTitle{
+		font-size: 32px;
+		/*text-shadow: 1px 1px 3px #333;*/
+	}
+	.goodsSwiper .descBox h4.goodsName{
+		font-size: 24px;
+		/*text-shadow: 3px 3px 8px #333;*/
+	}
+	.goodsSwiper .descBox h5.goodsPrice{
+		font-size: 24px;
+		/*text-shadow: 1px 1px 1px #333;*/
+	}
+	.goodsSwiper .descBox .goodsBottomLine{
+		position: absolute;
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		align-items: center;
+		margin: 0 0 50px -5%;
+		box-sizing: border-box;
+		padding: 0 7%;
+		bottom: 0;
+	}
+	.goodsSwiper .descBox  a.btn{
+		background-color: rgba(106, 153, 78, 0.5);
+		color: #fff;
+	}
+	.goodsSwiper .descBox  a.btn:hover{
+		background-color: rgba(106, 153, 78, 0.95);
+	}
+	
+	
+	.goodsSwiper .swiper-slide:not(.swiper-slide-active) .descBox{
+		display: none;
+	}
+	
+	/*goods 네비게이션 버튼*/
+	.goodsSwiper .swiper-btn {
+		width: 60px;
+		height: 100%;
+		position: absolute;
+		background-color: transparent;
+		z-index: 99;
+		cursor: pointer;
+	}
+	
+	.goodsSwiper .swiper-btn.swiper-prev {
+		left: calc(25% - 75px);
+	}
+	
+	.goodsSwiper .swiper-btn.swiper-next {
+		left: calc(75% + 20px);
+	}
+	
+	.goodsSwiper .swiper-btn .btnBox {
+		width: 60px;
+		height: 60px;
+		position: relative;
+		top: calc(50% - 60px);
+	}
+	
+	.goodsSwiper .swiper-prev .btnBox {
+		background: url("/imgs/main/prev-btn.png") center no-repeat;
+		background-size: contain;
+	}
+	
+	.goodsSwiper .swiper-next .btnBox {
+		background: url("/imgs/main/next-btn.png") center no-repeat;
+		background-size: contain;
+	}
+	
+	/* goods 버튼 호버 시 */
+	.goodsSwiper .swiper-prev:hover .btnBox {
+		animation: goPrev 500ms ease-in-out infinite;
+	}
+	@keyframes goPrev {
+		0%   {transform: translateX(0px);}
+		50% {transform: translateX(-10px);}
+		100% {transform: translateX(0px);}
+	}
+
+	.goodsSwiper .swiper-next:hover .btnBox {
+		animation: goNext 500ms ease-in-out infinite;
+	}
+	@keyframes goNext {
+		0%   {transform: translateX(0px);}
+		50% {transform: translateX(10px);}
+		100% {transform: translateX(0px);}
+	}
+	
+	.goodsSwiper .swiper-btn.swiper-next {
+		right: 0;
+	}
+	/*goods Swiper style End*/
+	
+</style>
+	
+	<div class="row my-5">
+		<div class="col text-center my-5" style="font-size: 50px;">
+			오늘의 추천 상품
+		</div>
+	</div>
+
+
+<!-- Swiper -->
+<div class="swiper goodsSwiper">
+	<!--네비게이션버튼-->
+	<div class="swiper-btn swiper-prev"><div class="btnBox"></div></div>
+	<div class="swiper-btn swiper-next"><div class="btnBox"></div></div>
+	
+	<!--goods 슬라이드-->
+	<div class="swiper-wrapper">
+		<div class="swiper-slide active">
+			<div class="imgBox" id="goods01">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods01-->
+		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods02">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods02-->
+		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods03">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods03-->
+		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods04">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods04-->
+		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods05">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods05-->
+		
+		<div class="swiper-slide">
+			<div class="imgBox" id="goods06">
+				<div class="descBox">
+					<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
+					<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
+					<div class="goodsBottomLine">
+						<h5 class="goodsPrice">₩129,800</h5>
+						<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
+					</div>
+				</div>
+			</div>
+		</div> <!--//goods06-->
+		
+	</div> <!--//wrapper-->
+
+</div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+	var goods_swiper = new Swiper(".goodsSwiper", {
+		effect: "coverflow",
+		centeredSlides: true,
+		slidesPerView: 2,
+		loop: true,
+		coverflowEffect: {
+			rotate: 20,
+			stretch: -50,
+			depth: 50,
+			modifier: 1,
+			slideShadows: true,
+			scale: 0.8,
+		},
+		navigation: {
+			nextEl: '.swiper-next',
+			prevEl: '.swiper-prev',
+		},
+	});
+	
+	// 각 슬라이드에 클릭 이벤트 추가
+	goods_swiper.slides.forEach(function(slide) {
+		slide.addEventListener('click', function() {
+			var realIndex = slide.getAttribute('data-swiper-slide-index');
+			goods_swiper.slideToLoop(realIndex);
+		});
+	});
+
+</script>
+</section>
