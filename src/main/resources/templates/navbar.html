@@ -1,3 +1,146 @@
+
+<nav th:fragment="navbar">
+	<header>
+		<!-- 로고 -->
+		<div class="custom-logo">
+			<a th:href="@{/}"><img src="/imgs/main/logo_white.png" alt="로고" /></a>
+		</div>
+		<!-- 메뉴 -->
+		<div class="custom-menu">
+			<ul class="custom-main">
+				<li><a href="#">채식로드</a></li>
+				<li><a href="#">라이프</a></li>
+				<li><a href="#">오가닉 샵</a></li>
+				<li><a href="#">notice</a></li>
+			</ul>
+		</div>
+		<!-- 오른쪽 메뉴 -->
+		<div class="custom-right">
+			<!--로그인-->
+			<li>
+				<a href=""><span class="material-symbols-outlined">person</span></a>
+			</li>
+			<!--회원가입-->
+			<li>
+				<a href=""><span class="material-symbols-outlined">person_add</span></a>
+			</li>
+			<!--장바구니-->
+			<li>
+				<a href=""><span class="material-symbols-outlined">shopping_cart</span></a>
+			</li>
+			<!-- 햄버거 버튼 -->
+			<a href="#" class="menu-btn"><span class="material-symbols-outlined">menu</span></a>
+		</div>
+	</header>
+	<!-- 서브메뉴 -->
+	<div class="custom-menu custom-sub">
+		<!-- 왼쪽 서브메뉴 -->
+		<div class="custom-submenu custom-submenu1"></div>
+		<!-- 중간 서브메뉴 -->
+		<div class="custom-submenu custom-submenu2">
+			<ul>
+				<li><a th:href="@{/load/map}">지역별 장소</a></li>
+				<li><a th:href="@{/load/map}">내 주변 장소</a></li>
+				<li><a th:href="@{/load/place}">추천 장소</a></li>
+			</ul>
+			<ul>
+				<li><a href="#">비건이란?</a></li>
+				<li><a href="#">레시피</a></li>
+				<li><a href="#">행사</a></li>
+			</ul>
+			<ul>
+				<li><a href="#">푸드</a></li>
+				<li><a href="#">펫</a></li>
+				<li><a href="#">베이비</a></li>
+				<li><a href="#">굿즈</a></li>
+			</ul>
+			<ul>
+				<li><a href="#">공지사항</a></li>
+				<li><a href="#">Q&A</a></li>
+			</ul>
+		</div>
+		<!-- 오른쪽 서브메뉴 -->
+		<div class="custom-submenu custom-submenu3"></div>
+	</div>
+
+	<!-- 태블릿/모바일 메뉴 -->
+	<div id="small-header">
+		<div class="all-menu">
+			<a href="#"><span class="material-symbols-outlined close-btn">close</span></a><!--닫기-->
+			<!-- 상단 버튼들 -->
+			<div class="small-buttons">
+				<li>
+					<a href=""><span class="material-symbols-outlined">person</span></a>
+				</li>
+				<!--로그인-->
+				<li>
+					<a href=""><span class="material-symbols-outlined">person_add</span></a>
+				</li>
+				<!--회원가입-->
+				<li>
+					<a href=""><span class="material-symbols-outlined">shopping_cart</span></a>
+				</li>
+				<!--장바구니-->
+			</div>
+			<!-- 검색 기능 -->
+			<div class="small-search">
+				<input type="text" placeholder="검색어를 입력해주세요" /> <a href=""><span
+						class="material-symbols-outlined">search</span></a>
+			</div>
+		</div>
+		<div class="hr"></div>
+		<!-- 메뉴 -->
+		<div class="small-menu">
+			<ul class="small-main">
+				<li>
+					<a href="#" class="small-bold small-category">채식로드</a>
+					<!-- 호버시 내려올 놈들 -->
+					<div class="small-submenu">
+						<ul>
+							<li><a th:href="@{/load/map}">지역별 장소</a></li>
+							<li><a th:href="@{/load/map}">내 주변 장소</a></li>
+							<li><a th:href="@{/load/place}">추천 장소</a></li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<a href="#" class="small-bold small-category">라이프</a>
+					<div class="small-submenu">
+						<ul>
+							<li><a href="#">비건이란?</a></li>
+							<li><a href="#">레시피</a></li>
+							<li><a href="#">행사</a></li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<a href="#" class="small-bold small-category">오가닉 샵</a>
+					<div class="small-submenu">
+						<ul>
+							<li><a href="#">푸드</a></li>
+							<li><a href="#">펫</a></li>
+							<li><a href="#">베이비</a></li>
+							<li><a href="#">굿즈</a></li>
+						</ul>
+					</div>
+				</li>
+				<li>
+					<a href="#" class="small-bold small-category">notice</a>
+					<div class="small-submenu">
+						<ul>
+							<li><a href="#">공지사항</a></li>
+							<li><a href="#">Q&A</a></li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="icons"></div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+
+	</script>
 <nav th:fragment="navbar">
 	<header>
 		<!-- 로고 -->

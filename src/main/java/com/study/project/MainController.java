@@ -12,11 +12,17 @@ public class MainController {
 		return "index";
 	}
 	
-	@GetMapping("/map")
-	public String map() {
-		return "map";
+
+	@GetMapping("load/map")
+	public String login() {
+		return "/load/map";
 	}
 	
+  @GetMapping("load/place")
+	public String login() {
+		return "/load/place";
+	}
+  
 	@GetMapping("/login")
 	public String login() {
 		return "login";

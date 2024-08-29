@@ -1,0 +1,234 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="content">
+	<link rel="stylesheet" href="/css/place.css" />
+	<div class="d-flex justify-content-center">
+		<form action="" class="videoBox my-5 pt-2 col">
+			<div class="row videoBoxText">
+				<div class="col">
+					지역별 취향별 추천하는 가게를 만나보세요~!
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="selectVegetarian col-3 select-wrapper">
+					<label for="vegetarian">나의 채식 취향</label>
+					<select required aria-label="select example" name="vegetarian" id="vegetarian">
+						<option value="비건">비건</option>
+						<option value="프루테리언">프루테리언</option>
+						<option value="락토 베지테리언">락토 베지테리언</option>
+						<option value="오보 베지테리언">오보 베지테리언</option>
+						<option value="락토 오보 베지테리언">락토 오보 베지테리언</option>
+						<option value="페스코 베지테리언">페스코 베지테리언</option>
+						<option value="폴로 베지테리언">폴로 베지테리언</option>
+						<option value="플렉시테리언">플렉시테리언</option>
+					</select>
+				</div>
+				<div class="location-select col-7">
+					<div class="select-wrapper">
+						<label for="sido">시/도</label>
+						<select id="sido" name="sido"></select>
+					</div>
+					<div class="select-wrapper">
+						<label for="sigungu">시/군/구</label>
+						<select id="sigungu" name="sigungu"></select>
+					</div>
+				</div>
+				<div class="col-1 recommendButton">
+					<button type="submit" class="btn">확인</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="container">
+		<h1 class="text-center my-4">맞춤 추천</h1>
+		<div class="row" id="restaurant-cards">
+			<div class="col-md-2 mb-4 card recommendationCard" th:each="store : ${stores}">
+				<img th:src="@{${store.image}}" class="card-img-top mt-2" alt="식당 이름" th:alt="${store.name}">
+				<div class="card-body">
+					<h5 class="card-title" th:text="${store.name}">식당 이름</h5>
+					<p class="card-text" th:text="${store.content}">식당 설명</p>
+					<a th:href="@{/store/{id}(id=${store.id})}" class="btn btn-primary">자세히 보기</a>
+				</div>
+			</div>
+		</div>
+		<div class="text-center my-4">
+			<button id="load-more" class="btn btn-secondary">더보기</button>
+		</div>
+
+	</div>
+	<div class="container">
+		<h1 class="text-center my-5">오늘의 추천</h1>
+		<div class="card mb-5">
+			<div class="row g-0">
+				<div class="col-md-6">
+					<img th:src="@{${stores[7].image}}" class="img-fluid rounded-start" alt="식당 이미지">
+				</div>
+				<div class="col-md-6">
+					<div class="card-body p-5">
+						<h5 class="card-title" th:text="${stores[7].name}">식당 이름</h5>
+						<p class="card-text" th:text="${stores[7].content}">식당 설명</p>
+						<a th:href="@{/store/{id}(id=${stores[7].id})}" class="btn btn-primary w-100">자세히 보기</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card mb-5">
+			<div class="row g-0">
+				<div class="col-md-6">
+					<img th:src="@{${stores[8].image}}" class="img-fluid rounded-start" alt="식당 이미지">
+				</div>
+				<div class="col-md-6">
+					<div class="card-body p-5">
+						<h5 class="card-title" th:text="${stores[8].name}">식당 이름</h5>
+						<p class="card-text" th:text="${stores[8].content}">식당 설명</p>
+						<a th:href="@{/store/{id}(id=${stores[8].id})}" class="btn btn-primary w-100">자세히 보기</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<h1 class="text-center my-5">이런 곳은 어때요?</h1>
+		<div id="carouselExampleCaptions1" class="carousel slide my-5 row" data-bs-ride="carousel">
+			<button class="carousel-control-prev col-1" type="button" data-bs-target="#carouselExampleCaptions1"
+				data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<div class="carousel-inner my-5 col-10">
+				<div th:each="i : ${#numbers.sequence(0, (stores.size() - 1) / 4)}"
+					th:class="${i == 0} ? 'carousel-item active' : 'carousel-item'">
+					<div class="row">
+						<div th:each="j : ${#numbers.sequence(0, 3)}" class="col">
+							<div th:if="${(i * 4 + j) < stores.size()}" class="restaurant-item">
+								<img th:src="@{${stores[i * 4 + j].image}}" class="d-block w-100" alt="식당 이름"
+									th:alt="${stores[i * 4 + j].name}">
+								<div class="carousel-caption d-none d-md-block">
+									<h5 th:text="${stores[i * 4 + j].name}">식당 이름</h5>
+									<p th:text="${stores[i * 4 + j].content}">식당 설명</p>
+								</div>
+							</div>
+							<div th:if="${(i * 4 + j) >= stores.size()}" class="empty-col"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<button class="carousel-control-next col-1" type="button" data-bs-target="#carouselExampleCaptions1"
+				data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+		<div id="carouselExampleCaptions2" class="carousel slide my-5 row" data-bs-ride="carousel">
+			<button class="carousel-control-prev col-1" type="button" data-bs-target="#carouselExampleCaptions2"
+				data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<div class="carousel-inner my-5 col-10">
+				<div th:each="i : ${#numbers.sequence(0, (stores.size() - 1) / 4)}"
+					th:class="${i == 0} ? 'carousel-item active' : 'carousel-item'">
+					<div class="row">
+						<div th:each="j : ${#numbers.sequence(0, 3)}" class="col">
+							<div th:if="${(i * 4 + j) < stores.size()}" class="restaurant-item">
+								<img th:src="@{${stores[i * 4 + j].image}}" class="d-block w-100" alt="식당 이름"
+									th:alt="${stores[i * 4 + j].name}">
+								<div class="carousel-caption d-none d-md-block">
+									<h5 th:text="${stores[i * 4 + j].name}">식당 이름</h5>
+									<p th:text="${stores[i * 4 + j].content}">식당 설명</p>
+								</div>
+							</div>
+							<div th:if="${(i * 4 + j) >= stores.size()}" class="empty-col"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<button class="carousel-control-next col-1" type="button" data-bs-target="#carouselExampleCaptions2"
+				data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+	</div>
+	<script>
+		const sidoSelect = document.getElementById('sido');
+		const sigunguSelect = document.getElementById('sigungu');
+
+		// 시/도 데이터
+		const sido = [
+			'서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시', '대전광역시', '울산광역시',
+			'세종특별자치시', '경기도', '강원도', '충청북도', '충청남도', '전라북도', '전라남도', '경상북도', '경상남도', '제주특별자치도'
+		];
+
+		// 시/군/구 데이터 (예시)
+		const sigungu = {
+			'서울특별시': ['종로구', '중구', '용산구', '성동구', '광진구', '동대문구', '중랑구', '성북구', '강북구', '도봉구', '노원구', '은평구', '서대문구', '마포구', '양천구', '강서구', '구로구', '금천구', '영등포구', '동작구', '관악구', '서초구', '강남구', '송파구', '강동구'],
+			'부산광역시': ['중구', '서구', '동구', '영도구', '부산진구', '동래구', '남구', '북구', '해운대구', '사하구', '금정구', '강서구', '연제구', '수영구', '사상구', '기장군'],
+			'대구광역시': ['중구', '동구', '서구', '남구', '북구', '수성구', '달서구', '달성군'],
+			'인천광역시': ['중구', '동구', '남구', '연수구', '남동구', '부평구', '계양구', '서구', '강화군', '옹진군'],
+			'광주광역시': ['동구', '서구', '남구', '북구', '광산구'],
+			'대전광역시': ['동구', '중구', '서구', '유성구', '대덕구'],
+			'울산광역시': ['중구', '남구', '동구', '북구', '울주군'],
+			'세종특별자치시': ['조치원읍', '연기면', '연동면', '부강면', '금남면', '장군면', '연서면', '전의면', '전동면', '소정면', '한솔동', '도담동', '아름동', '종촌동', '고운동', '대평동', '보람동', '새롬동', '다정동', '어진동', '종래동'],
+			'경기도': ['수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', '여주시', '연천군', '가평군', '양평군'],
+			'강원도': ['춘천시', '원주시', '강릉시', '동해시', '태백시', '속초시', '삼척시', '홍천군', '횡성군', '영월군', '평창군', '정선군', '철원군', '화천군', '양구군', '인제군', '고성군', '양양군'],
+			'충청북도': ['청주시', '충주시', '제천시', '보은군', '옥천군', '영동군', '증평군', '진천군', '괴산군', '음성군', '단양군'],
+			'충청남도': ['천안시', '공주시', '보령시', '아산시', '서산시', '논산시', '계룡시', '당진시', '금산군', '부여군', '서천군', '청양군', '홍성군', '예산군', '태안군'],
+			'전라북도': ['전주시', '군산시', '익산시', '정읍시', '남원시', '김제시', '완주군', '진안군', '무주군', '장수군', '임실군', '순창군', '고창군', '부안군'],
+			'전라남도': ['목포시', '여수시', '순천시', '나주시', '광양시', '담양군', '곡성군', '구례군', '고흥군', '보성군', '화순군', '장흥군', '강진군', '해남군', '영암군', '무안군', '함평군', '영광군', '장성군', '완도군', '진도군', '신안군'],
+			'경상북도': ['포항시', '경주시', '김천시', '안동시', '구미시', '영주시', '영천시', '상주시', '문경시', '경산시', '군위군', '의성군', '청송군', '영양군', '영덕군', '청도군', '고령군', '성주군', '칠곡군', '예천군', '봉화군', '울진군', '울릉군'],
+			'경상남도': ['창원시', '진주시', '통영시', '사천시', '김해시', '밀양시', '거제시', '양산시', '의령군', '함안군', '창녕군', '고성군', '남해군', '하동군', '산청군', '함양군', '거창군', '합천군'],
+			'제주특별자치도': ['제주시', '서귀포시']
+		};
+
+		// 시/도 옵션 생성
+		sido.forEach(s => {
+			const option = document.createElement('option');
+			option.value = s;
+			option.text = s;
+			sidoSelect.add(option);
+		});
+
+		// 시/군/구 옵션 생성 (서울특별시 기본)
+		updateSigungu('서울특별시');
+
+		// 시/도 선택 시 시/군/구 업데이트
+		sidoSelect.addEventListener('change', () => {
+			const selectedSido = sidoSelect.value;
+			updateSigungu(selectedSido);
+		});
+
+		function updateSigungu(selectedSido) {
+			sigunguSelect.innerHTML = '';
+			sigungu[selectedSido].forEach(sg => {
+				const option = document.createElement('option');
+				option.value = sg;
+				option.text = sg;
+				sigunguSelect.add(option);
+			});
+		}
+
+		$(document).ready(function () {
+			// 처음 8개 카드만 보이도록 설정
+			$('.recommendationCard').slice(0, 8).show();
+
+			let currentIndex = 8; // 현재 보이는 카드 인덱스
+
+			$('#load-more').click(function () {
+				// 다음 4개 카드 보이기
+				$('.recommendationCard').slice(currentIndex, currentIndex + 4).show();
+				currentIndex += 4;
+
+				// 더 이상 카드가 없으면 버튼 숨기기
+				if (currentIndex >= $('.recommendationCard').length) {
+					$(this).hide();
+				}
+			});
+		});
+
+	</script>
+</div>
+
+</html>
