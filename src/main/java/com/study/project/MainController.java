@@ -14,59 +14,54 @@ public class MainController {
 	
 
 	@GetMapping("load/map")
-	public String login() {
+	public String map() {
 		return "/load/map";
-	}
-	
-  @GetMapping("load/place")
-	public String login() {
-		return "/load/place";
 	}
   
 	@GetMapping("/login")
 	public String login() {
-		return "login";
+		return "member/login";
 	}
 	
-	@GetMapping("/register")
+	@GetMapping("member/register")
 	public String register() {
-		return "register";
+		return "member/register";
 	}
 	
-	@GetMapping("/mypage")
+	@GetMapping("member/mypage")
 	public String mypage() {
-		return "mypage";
+		return "member/mypage";
 	}
 	
 	@GetMapping("/enter_password")
 	public String enterpassword() {
-		return "enter_password";
+		return "member/enter_password";
 	}
 	
 	@GetMapping("/update_profile")
 	public String updateprofile() {
-		return "update_profile";
+		return "member/update_profile";
 	}
 	
 	@GetMapping("/order_info")
 	public String orderinfo() {
-		return "order_info";
+		return "member/order_info";
 	}
 	
-	@GetMapping("/order_form")
+	@GetMapping("member/order_form")
 	public String orderform() {
-		return "order_form";
+		return "member/order_form";
 	}
 	
 	@GetMapping("/question_form")
 	public String questionform() {
-		return "question_form";
+		return "member/question_form";
 	}
 	
-	@GetMapping("/board")
+	@GetMapping("member//board")
 	@ResponseBody
 	public String board() {
-		return "board";
+		return "member/board";
 	}
 	
 	
