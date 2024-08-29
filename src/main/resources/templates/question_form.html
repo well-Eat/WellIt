@@ -1,0 +1,28 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="./css/map.css" />
+	<div id="qna-form" class="container h-100 d-block">
+		<h1>질문 등록</h1>
+		<form>
+			<div class="mb-3">
+				<label for="exampleInputEmail1" class="form-label">질문 제목</label>
+				<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+			</div>
+			<div class="mb-3">
+				<div class="form-floating">
+					<textarea class="form-control" id="question" name="question" style="height: 300px"></textarea>
+					<label for="floatingTextarea2">내용</label>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary float-end mb-3">등록</button>
+		</form>
+		<div>
+			<div class="form-floating mt-5">
+				<textarea class="form-control" id="answer" name="answer" style="height: 100px" readonly></textarea>
+				<label for="floatingTextarea2">답변</label>
+			</div>
+		</div>
+	</div>
+</div>
+
+</html>

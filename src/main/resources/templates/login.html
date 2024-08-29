@@ -1,10 +1,107 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<title>Document</title>
-</head>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="./css/map.css" />
+	<style>
+	.eye-icon {
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 100%;
+	}
+
+	.eye {
+		cursor: pointer;
+		color:black;
+	}
+
+	.formStyle {
+		background-color: #f2e8cf;
+	}
+
+	.greenBtn {
+		background-color: #6A994E;
+	}
+
+	.greenBtn:hover {
+		background-color: #A7C957;
+	}
+</style>
 <body>
-	로그인 페이지
+	<section class="d-flex justify-content-center align-items-center py-5">
+		<div class="container py-5 align-middle">
+			<div class="row py-5 justify-content-center">
+				<div class="col-md-6 col-xs-8 py-5 border rounded formStyle">
+					<h1 class="text-center mb-3">WellIt</h1>
+					<form>
+						<div class="container">
+							<div class="form-floating mb-3">
+								<input type="email" class="form-control" id="email" name="email">
+								<label for="email">이메일</label>
+							</div>
+							<div class="form-floating">
+								<input type="password" class="form-control" id="password">
+								<label for="password">비밀번호</label>
+								<div class="eye-icon">
+									<div class="d-flex h-100 justify-content-end align-items-center">
+										<span class="material-symbols-outlined eye">
+											visibility_off
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group form-check mt-2">
+								<input type="checkbox" class="form-check-input" id="exampleCheck1"
+									onchange="checkSave()">
+								<label class="form-check-label" for="exampleCheck1">아이디 저장</label>
+							</div>
+							<div class="row mt-3">
+								<button type="submit" class="btn btn-block greenBtn">로그인</button>
+							</div>
+							<div class="row mt-3">
+								<div class="col d-flex justify-content-between">
+									<a th:href="@{/register}">회원가입</a>
+									<a href="">아이디/비밀번호 찾기</a>
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="d-grid gap-2 col-8 mx-auto">
+								  <button class="btn btn-warning" type="button">카카오로 시작</button>
+								  <button class="btn btn-success" type="button">네이버로 로그인</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script>
+		function checkSave() {
+			const checkbox = document.getElementById("exampleCheck1");
+			if (checkbox.checked) {
+				if (!confirm("아이디를 저장하시겠습니까?")) {
+					checkbox.checked = false;
+				}
+			}
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const eyeIcon = document.querySelector('.eye');
+			const passwordInput = document.getElementById('password');
+
+			eyeIcon.addEventListener('click', function () {
+				const inputType = passwordInput.getAttribute('type');
+
+				if (inputType === 'password') {
+					passwordInput.setAttribute('type', 'text');
+					eyeIcon.textContent = 'visibility';
+				} else {
+					passwordInput.setAttribute('type', 'password');
+					eyeIcon.textContent = 'visibility_off';
+				}
+			});
+		});
+	</script>
 </body>
+</div>
 </html>
