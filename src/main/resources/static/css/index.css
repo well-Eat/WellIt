@@ -1,0 +1,264 @@
+.full-screen {
+	width: 100% !important;
+	height: 100vh !important;
+	overflow: hidden;
+	position: relative;
+	display: flex;
+	justify-content: center;
+}
+
+.full-screen video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.videoBox {
+	width: 1000px;
+	max-width: 1300px;
+	text-align: center;
+	position: absolute;
+	z-index: 1;
+	top: 70%;
+	height: 20vh;
+	background-color: #F2E8CF;
+	border-radius: 45px;
+	display: block;
+}
+
+.videoBox select {
+	width: 100%;
+	position: relative;
+	background-color: #F2E8CF;
+	border: none;
+	margin-top: 10px;
+	font-weight: bold;
+	outline: 0;
+}
+
+.selectVegetarian {
+	position: relative;
+}
+
+.selectVegetarian::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: -20px;
+	/* 원하는 간격만큼 조정 */
+	transform: translateY(-50%);
+	width: 3px;
+	height: 100%;
+	border: 1px solid gray;
+	background-color: gray;
+}
+
+.location-select {
+	display: flex;
+	gap: 1rem;
+}
+
+.select-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.select-wrapper select {
+	width: 200px;
+	padding: 0.5rem;
+	font-size: 1rem;
+}
+
+.videoBox form {
+	width: 100%;
+}
+
+.recommendButton {
+	background-color: #6a994e;
+	height: 60px;
+	line-height: 60px;
+	margin-left: -80px;
+}
+
+.recommendButton button {
+	width: 100%;
+	font-size: 20px;
+	font-weight: bold;
+	white-space: nowrap;
+}
+.videoBoxText {
+	font-size: 30px;
+	margin: 20px;
+	color: #6a994e;
+	font-weight: bold;
+}
+
+label {
+	color: gray;
+}
+
+section {
+	height: 100vh;
+}
+
+.recommendedPlace {
+	overflow: hidden;
+	float: left;
+	transition: width 0.5s;
+	width: 5%;
+	height: 500px;
+	margin: 0 1%;
+}
+
+.recommendedPlace.active {
+	width: 75%;
+}
+
+.recommendedPlace img {
+	float: left;
+	width: 350px;
+	height: 500px;
+}
+
+.recommendedPlaceText {
+	float: left;
+	padding: 50px;
+	background-color: #6a994e;
+	height: 500px;
+	width: calc(100% - 350px);
+}
+.inforCarousel {
+	display: flex;
+	align-items: center;
+}
+
+.mobileInforCarousel {
+	display: none;
+	align-items: center;
+}
+
+.inforCarouselList {
+	height: 50%;
+	display: flex;
+	flex-wrap: nowrap;
+	position: relative;
+	padding-left: 0;
+}
+
+.mobileInforCarouselList {
+	height: 50%;
+	display: flex;
+	flex-wrap: nowrap;
+	position: relative;
+	padding-left: 0;
+}
+
+.inforCarousel ul li,
+.mobileInforCarousel ul li {
+	float: left;
+	width: 300px;
+	overflow: hidden;
+	margin: 25px;
+}
+
+.inforCarouselList img {
+	height: 250px;
+}
+
+header {
+	height: 100px;
+
+}
+
+
+header .custom-logo img {
+	height: 50px;
+}
+/* 상단 네브바 메뉴 */
+header .custom-menu ul.custom-main {
+
+	height: 100px;
+}
+
+header .custom-menu ul.custom-main li {
+	height: 100px;
+
+
+}
+
+header .custom-menu ul.custom-main li a {
+	color: white;
+}
+
+/* 하단 서브메뉴 */
+.custom-menu.custom-sub {
+	top: 100px;
+
+}
+@media (max-width: 600px) {
+	.select-wrapper select {
+		width: 20vw;
+		font-size: 0.8rem;
+		padding: 0.3rem;
+	}
+
+	.videoBox label {
+		font-size: 2.5vw;
+	}
+
+	.recommendButton {
+		margin-top: 25px;
+		height: 80px;
+		line-height: 80px;
+	}
+}
+@media (max-width: 768px) {
+	.videoBox {
+		width: 95%;
+	}
+
+	.videoBoxText {
+		font-size: 3vw;
+	}
+
+	.recommendButton {
+		margin-top: 15px;
+	}
+
+	.recommendedPlace img {
+		width: 100%;
+		height: 250px;
+	}
+
+	.recommendedPlaceText {
+		width: 100%;
+		height: 250px;
+		padding: 20px;
+	}
+}
+@media (max-width: 1024px) {
+
+	.videoBox {
+		width: 700px;
+		height: 25vh;
+	}
+
+	.select-wrapper select {
+		width: 150px;
+	}
+
+	.recommendButton {
+		margin-left: 0;
+		width: 80%;
+		margin-top: 10px;
+	}
+
+	.recommendedPlace img {
+		width: 250px;
+	}
+
+	.recommendedPlaceText {
+		width: calc(100% - 250px);
+	}
+}

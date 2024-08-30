@@ -28,7 +28,11 @@
 		<div th:replace="navbar :: navbar"></div>
 		<!--기본 템플릿 안에 삽입될 내용 start-->
 		<th:block layout:fragment="content"></th:block>
-
+		<button class="scroll-to-top" id="scrollToTopBtn" title="맨 위로 가기">
+			<svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" fill="white" class="bi bi-arrow-up" viewBox="0 0 16 16">
+			  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+			</svg>
+		</button>
 
 		<!--기본 템플릿 안에 삽입될 내용 end-->
 		<!--자바스크립트 start-->
@@ -50,6 +54,12 @@
 			const icons = $(".material-symbols-outlined")
 			var hasClass = false;
 			var isMouseOverPlace = false;
+			const scrollToTopBtn = $("#scrollToTopBtn")
+			
+			scrollToTopBtn.on("click", function(){
+				$('html, body').animate({scrollTop: '0'}, 680);
+			})
+			
 			// 하단 서브메뉴 슬라이드
 			submenu.css({display: "none"});
 			small_header.css({display: "none"});
