@@ -126,22 +126,22 @@ public class DataLoader implements CommandLineRunner {
 			String regionCity, String contact, String address, String image, String operatingHours, String closedDays,
 			String recommendedMenu, String parkingInfo, double latitude, double longitude, String isOpen) {
 		Store store = new Store();
-		store.setSto_name(name);
-		store.setSto_title(title);
-		store.setSto_content(content);
-		store.setSto_category(category);
-		store.setSto_regionProvince(regionProvince);
-		store.setSto_regionCity(regionCity);
-		store.setSto_contact(contact);
-		store.setSto_address(address);
-		store.setSto_image(image);
-		store.setSto_operatingHours(operatingHours);
-		store.setSto_closedDays(closedDays);
-		store.setSto_recommendedMenu(recommendedMenu);
-		store.setSto_parkingInfo(parkingInfo);
-		store.setSto_latitude(latitude);
-		store.setSto_longitude(longitude);
-		store.setSto_isOpen(isOpen);
+		store.setStoName(name);
+		store.setStoTitle(title);
+		store.setStoContent(content);
+		store.setStoCategory(category);
+		store.setStoRegionProvince(regionProvince);
+		store.setStoRegionCity(regionCity);
+		store.setStoContact(contact);
+		store.setStoAddress(address);
+		store.setStoImage(image);
+		store.setStoOperatingHours(operatingHours);
+		store.setStoClosedDays(closedDays);
+		store.setStoRecommendedMenu(recommendedMenu);
+		store.setStoParkingInfo(parkingInfo);
+		store.setStoLatitude(latitude);
+		store.setStoLongitude(longitude);
+		store.setStoIsOpen(isOpen);
 		return store;
 	}
 }

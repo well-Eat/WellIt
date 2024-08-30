@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "store")
@@ -18,51 +19,52 @@ public class Store {
     }
 	
 	// 장소 ID를 매개변수로 받는 생성자
-    public Store(Long sto_id) {
-        this.sto_id = sto_id;
+    public Store(Long stoId) {
+        this.stoId = stoId;
     }
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sto_id;
+    @Column(name = "stoId")
+    private Long stoId;
 
     @Column(nullable = false)
-    private String sto_name;
+    private String stoName;
 
-    private String sto_title;
+    private String stoTitle;
     
     @Lob
-    private String sto_content;
+    private String stoContent;
 
-    private String sto_category;
+    private String stoCategory;
 
     @Column(name = "view_count", columnDefinition = "NUMBER DEFAULT 0")
-    private int sto_viewCount = 0;
+    private int stoViewCount = 0;
 
     @Column(name = "recommendation_count", columnDefinition = "NUMBER DEFAULT 0")
-    private int sto_recommendationCount = 0;
+    private double stoRecommendationCount = 0;
 
-    private String sto_regionProvince;
-    private String sto_regionCity;
+    private String stoRegionProvince;
+    private String stoRegionCity;
 
     @Column(name = "created_at", updatable = false)
-    private Timestamp sto_createdAt;
+    private Timestamp stoCreatedAt;
 
     @Column(name = "updated_at")
-    private Timestamp sto_updatedAt;
+    private Timestamp stoUpdatedAt;
 
-    private String sto_contact;
-    private String sto_address;
-    private String sto_image;
-    private String sto_operatingHours;
-    private String sto_closedDays;
-    private String sto_recommendedMenu;
-    private String sto_parkingInfo;
-    private Double sto_latitude;
-    private Double sto_longitude;
+    private String stoContact;
+    private String stoAddress;
+    private String stoImage;
+    private String stoOperatingHours;
+    private String stoClosedDays;
+    private String stoRecommendedMenu;
+    private String stoParkingInfo;
+    private Double stoLatitude;
+    private Double stoLongitude;
 
     @Column(name = "is_open", columnDefinition = "CHAR(1) DEFAULT 'Y'")
-    private String sto_isOpen = "Y";
+    private String stoIsOpen = "Y";
 
     public Store(Integer placeId) {
 		// TODO Auto-generated constructor stub
@@ -70,12 +72,15 @@ public class Store {
 
 	@PrePersist
     protected void onCreate() {
-        sto_createdAt = Timestamp.valueOf(LocalDateTime.now());
-        sto_updatedAt = Timestamp.valueOf(LocalDateTime.now());
+        stoCreatedAt = Timestamp.valueOf(LocalDateTime.now());
+        stoUpdatedAt = Timestamp.valueOf(LocalDateTime.now());
     }
 
     @PreUpdate
     protected void onUpdate() {
-        sto_updatedAt = Timestamp.valueOf(LocalDateTime.now());
+        stoUpdatedAt = Timestamp.valueOf(LocalDateTime.now());
     }
+    
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<StoreReview> storeReviews;
 }

@@ -2,109 +2,249 @@
 <html layout:decorate="~{layout}">
 
 <head>
-    <title>상품 상세페이지</title>
+	<title>상품 상세페이지</title>
 </head>
 <div layout:fragment="content" class="container">
-    <!--shop style link-->
-    <link rel="stylesheet" th:href="@{/css/place_detail.css}">
-    <!--페이지 제목-->
-    <div class="row my-5">
-        <div class="pageTitle col text-center">
-            가게 상세페이지
-        </div>
-    </div>
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/place_detail.css}">
+	<!--페이지 제목-->
+	<div class="row my-5">
+		<div class="pageTitle col text-center">
+			가게 상세페이지
+		</div>
+	</div>
 
-    <!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
+	<!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
 
-    <!-- 가게 정보 요약 & 주문 폼 -->
-    <section class="placeInfo row my-4 py-4 rounded-2">
-        <div class="placeImg col-6">
-            <!-- 상품이미지 -->
-            <div class="card-img-wrapper rounded-2 mb-3">
-                <div class="card-img-box" th:style="|background-image: url(@{  ${store.sto_image}  });|"></div>
-            </div>
-        </div> <!--placeImg-->
-        <div class="col-6 card">
-            <!-- 상품정보 -->
-            <div class="card-body">
-                <h5 class="placeName card-title" th:text="${store.sto_name}"></h5>
-                <p class="placeDesc card-text" th:text="${store.sto_content}"></p>
-                <p class="card-text"><strong>제목:</strong> <span th:text="${store.sto_title}"></span></p>
-                <p class="card-text"><strong>카테고리:</strong> <span th:text="${store.sto_category}"></span></p>
-                <p class="card-text"><strong>조회수:</strong> <span th:text="${store.sto_viewCount}"></span></p>
-                <p class="card-text"><strong>추천수:</strong> <span th:text="${store.sto_recommendationCount}"></span></p>
-                <p class="card-text"><strong>지역:</strong> <span
-                        th:text="${store.sto_regionProvince} + ' ' + ${store.sto_regionCity}"></span></p>
-                <p class="card-text"><strong>연락처:</strong> <span th:text="${store.sto_contact}"></span></p>
-                <p class="card-text"><strong>주소:</strong> <span th:text="${store.sto_address}"></span></p>
-                <p class="card-text"><strong>운영 시간:</strong> <span th:text="${store.sto_operatingHours}"></span></p>
-                <p class="card-text"><strong>휴무일:</strong> <span th:text="${store.sto_closedDays}"></span></p>
-                <p class="card-text"><strong>추천 메뉴:</strong> <span th:text="${store.sto_recommendedMenu}"></span></p>
-                <p class="card-text"><strong>주차 정보:</strong> <span th:text="${store.sto_parkingInfo}"></span></p>
-                <p class="card-text"><strong>위도:</strong> <span th:text="${store.sto_latitude}"></span></p>
-                <p class="card-text"><strong>경도:</strong> <span th:text="${store.sto_longitude}"></span></p>
-                <p class="card-text"><strong>영업 여부:</strong> <span
-                        th:text="${store.sto_isOpen} == 'Y' ? '영업 중' : '휴업 중'"></span></p>
-            </div> <!-- //card-body -->
-        </div> <!--col-6 card-->
-    </section> <!--placeInfo-->
+	<!-- 가게 정보 요약 & 주문 폼 -->
+	<section class="placeInfo row my-4 py-4 rounded-2">
+		<div class="placeImg col-6">
+			<!-- 상품이미지 -->
+			<div class="card-img-wrapper rounded-2 mb-3">
+				<div class="card-img-box" th:style="|background-image: url(@{  ${store.stoImage}  });|"></div>
+			</div>
+		</div> <!--placeImg-->
+		<div class="col-6 card">
+			<!-- 상품정보 -->
+			<div class="card-body">
+				<h5 class="placeName card-title" th:text="${store.stoName}"></h5>
+				<p class="placeDesc card-text" th:text="${store.stoContent}"></p>
+				<p class="card-text"><strong>제목:</strong> <span th:text="${store.stoTitle}"></span></p>
+				<p class="card-text"><strong>카테고리:</strong> <span th:text="${store.stoCategory}"></span></p>
+				<p class="card-text"><strong>조회수:</strong> <span th:text="${store.stoViewCount}"></span></p>
+				<p class="card-text"><strong>추천수:</strong> <span th:text="${store.stoRecommendationCount}"></span></p>
+				<p class="card-text"><strong>지역:</strong> <span
+						th:text="${store.stoRegionProvince} + ' ' + ${store.stoRegionCity}"></span></p>
+				<p class="card-text"><strong>연락처:</strong> <span th:text="${store.stoContact}"></span></p>
+				<p class="card-text"><strong>주소:</strong> <span th:text="${store.stoAddress}"></span></p>
+				<p class="card-text"><strong>운영 시간:</strong> <span th:text="${store.stoOperatingHours}"></span></p>
+				<p class="card-text"><strong>휴무일:</strong> <span th:text="${store.stoClosedDays}"></span></p>
+				<p class="card-text"><strong>추천 메뉴:</strong> <span th:text="${store.stoRecommendedMenu}"></span></p>
+				<p class="card-text"><strong>주차 정보:</strong> <span th:text="${store.stoParkingInfo}"></span></p>
+				<p class="card-text"><strong>위도:</strong> <span th:text="${store.stoLatitude}"></span></p>
+				<p class="card-text"><strong>경도:</strong> <span th:text="${store.stoLongitude}"></span></p>
+				<p class="card-text"><strong>영업 여부:</strong> <span
+						th:text="${store.stoIsOpen} == 'Y' ? '영업 중' : '휴업 중'"></span></p>
+			</div> <!-- //card-body -->
+		</div> <!--col-6 card-->
+	</section> <!--placeInfo-->
 
-    <!--상품별 리뷰 -->
-    <section class="placeReview container">
-        <h1 class="text-center">상품 리뷰</h1>
+	<!-- 상점별 리뷰 -->
+	<section class="storeReview my-5 p-3">
+		<h3 class="text-center my-3">상점 후기</h3>
 
-        <h2 class="mt-4">리뷰 작성하기</h2>
-        <button class="btn btn-primary mb-3" id="toggleReviewForm">리뷰 쓰기</button>
+		<!-- 이미지 보기 -->
+		<div class="revImgWrapper row">
+			<div class="revImgContainer">
+				<div class="hiddenBox d-flex flex-wrap">
+					<th:block th:each="review, iterStat : ${filteredReviews}">
 
-        <div class="review-form" id="reviewForm">
-            <h2>리뷰 작성하기</h2>
-            <form>
-                <div class="form-group">
-                    <label for="reviewerName">이름</label>
-                    <input type="text" class="form-control" id="reviewerName" placeholder="이름을 입력하세요" required>
-                </div>
-                <div class="form-group">
-                    <label for="reviewText">리뷰</label>
-                    <textarea class="form-control" id="reviewText" rows="4" placeholder="리뷰를 작성하세요" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="reviewRating">평점</label>
-                    <select class="form-control" id="reviewRating" required>
-                        <option value="">평점을 선택하세요</option>
-                        <option value="1">1 - 매우 나쁨</option>
-                        <option value="2">2 - 나쁨</option>
-                        <option value="3">3 - 보통</option>
-                        <option value="4">4 - 좋음</option>
-                        <option value="5">5 - 매우 좋음</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">리뷰 제출</button>
-            </form>
-        </div>
+						<a href="#" class="revImgLink d-block">
+							<div class="revImgBox" th:style="'background-image: url(' + ${review.revImg} + ');'">
+							</div>
+						</a>
+					</th:block>
+				</div>
 
-        <h2 class="mt-4">작성된 리뷰</h2>
-        <div id="reviews">
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h5 class="card-title">홍길동</h5>
-                    <p class="card-text">정말 맛있어요! 재구매 의사 100%입니다.</p>
-                    <p class="card-text"><small class="text-muted">평점: 5</small></p>
-                </div>
-            </div>
-            <!-- 추가 리뷰는 여기에 삽입 -->
-        </div>
-    </section>
-    <script>
-        // 리뷰 폼 토글 기능
-        document.getElementById('toggleReviewForm').addEventListener('click', function () {
-            var reviewForm = document.getElementById('reviewForm');
-            if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
-                reviewForm.style.display = 'block';
-            } else {
-                reviewForm.style.display = 'none';
-            }
-        });
-    </script>
+			</div>
+		</div>
+
+
+		<div th:if="${filteredReviewsCount > 8}" class="loadMoreContainer row">
+			<button id="loadMoreBtn" class="btn btn-primary">더보기</button>
+		</div>
+		<!-- 리뷰 보기 블록 -->
+		<div id="reviews my-3">
+			<div class="row border-bottom">
+				<span class="my-2">총
+					<span th:text="${store.storeReviews.size()}"></span>
+					개
+				</span>
+			</div>
+			<div class="row border-bottom border-success reviewBlock py-2 my-3"
+				th:each="review : ${store.storeReviews}">
+
+				<div class="col-md-2 writer">사용자 닉네임</div>
+				<div class="col-md-10">
+					<div class="row revText justify-content-start mb-3 revStoName">
+						<div class="col">[[${store.stoName}]]</div>
+					</div>
+
+					<div class="row revText justify-content-start my-3">
+						<div class="col">[[${review.revText}]]</div>
+					</div>
+					<div class="row revImgRow justify-content-start">
+						<div class="col">
+							<div class="revImgBox" th:if="${review.revImg != null}"
+								th:style="'background-image: url(' + ${review.revImg} + ');'">
+							</div>
+							<div class="col" id="ratingContainer" th:if="${review.revRating == 1}">별점: ★☆☆☆☆</div>
+							<div class="col" id="ratingContainer" th:if="${review.revRating == 2}">별점: ★★☆☆☆</div>
+							<div class="col" id="ratingContainer" th:if="${review.revRating == 3}">별점: ★★★☆☆</div>
+							<div class="col" id="ratingContainer" th:if="${review.revRating == 4}">별점: ★★★★☆</div>
+							<div class="col" id="ratingContainer" th:if="${review.revRating == 5}">별점: ★★★★★</div>
+						</div>
+					</div>
+					<div class="row createdAt justify-content-start my-3">
+						<div class="col">
+							<small th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"></small>
+						</div>
+					</div>
+					<button class="delete-review btn btn-danger" th:data-rev-id="${review.revId}">삭제</button>
+
+				</div>
+			</div>
+		</div>
+		<!-- 리뷰 추가 폼 -->
+		<form id="reviewForm" enctype="multipart/form-data" class="p-4">
+			<h3 class="my-3">후기 작성</h3>
+			<h5>장소 만족도</h5>
+			<div id="starRating">
+				<span class="star" data-value="1">★</span>
+				<span class="star" data-value="2">★</span>
+				<span class="star" data-value="3">★</span>
+				<span class="star" data-value="4">★</span>
+				<span class="star" data-value="5">★</span>
+			</div>
+			<h5 class="my-2">장소 후기</h5>
+			<textarea id="revText" placeholder="상점 후기를 남겨주세요" required class="my-2 p-4 row"></textarea>
+			<input type="hidden" id="revRating" required />
+			<div class="row my-4">
+				<h5>사진 올리기</h5>
+				<input type="file" id="revImg" accept="image/*" />
+			</div>
+			<button type="submit" class="btn btn-info">리뷰 추가</button>
+		</form>
+	</section>
+
+	<script>
+		document.getElementById('loadMoreBtn').addEventListener('click', function () {
+			var moreReviews = document.getElementById('moreReviews');
+			this.style.display = 'none'; // 버튼 숨기기
+			$(".revImgContainer").css("height", "calc( 20vw + 30px )")
+		});
+		document.addEventListener('DOMContentLoaded', function () {
+			const stars = document.querySelectorAll('.star');
+			const revRatingInput = document.getElementById('revRating');
+
+			stars.forEach(star => {
+				star.addEventListener('click', function () {
+					const rating = this.getAttribute('data-value');
+					revRatingInput.value = rating; // 평점 값을 숨겨진 입력 필드에 저장
+					updateStarDisplay(rating); // 별점 표시 업데이트
+				});
+			});
+
+			function updateStarDisplay(rating) {
+				stars.forEach(star => {
+					if (star.getAttribute('data-value') <= rating) {
+						star.classList.add('selected'); // 선택된 별점에 스타일 추가
+					} else {
+						star.classList.remove('selected');
+					}
+				});
+			}
+
+			document.getElementById('reviewForm').addEventListener('submit', function (event) {
+				event.preventDefault(); // 기본 폼 제출 방지
+
+				const formData = new FormData();
+				formData.append('revText', document.getElementById('revText').value);
+				formData.append('revRating', revRatingInput.value); // 평점 추가
+
+				// 파일이 선택되지 않았더라도 리뷰를 추가할 수 있도록 수정
+				const revImg = document.getElementById('revImg').files[0];
+				if (revImg) {
+					formData.append('revImg', revImg); // 파일 추가
+				}
+
+				const pathParts = window.location.pathname.split('/'); // 경로를 '/'로 나누기
+				const placeId = pathParts[pathParts.length - 1]; // 마지막 부분이 placeId
+
+				// 리뷰 추가 API 호출
+				fetch(`http://localhost:8080/load/place/${placeId}/reviews`, {
+					method: 'POST',
+					body: formData
+				})
+					.then(response => {
+						if (response.ok) {
+							return response.json(); // JSON 응답을 반환
+						} else {
+							throw new Error('리뷰 추가에 실패했습니다.');
+						}
+					})
+					.then(data => {
+						// 성공적으로 리뷰가 추가되면 UI 업데이트
+						alert('리뷰가 추가되었습니다!');
+						document.getElementById('reviewForm').reset(); // 폼 초기화
+						location.reload(); // 페이지 새로고침
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('오류가 발생했습니다: ' + error.message);
+					});
+			});
+		});
+
+		// 리뷰 삭제 기능
+		document.querySelectorAll('.delete-review').forEach(button => {
+			button.addEventListener('click', function () {
+				const revId = this.getAttribute('data-rev-id'); // 리뷰 ID 가져오기
+				const confirmed = confirm('정말로 이 리뷰를 삭제하시겠습니까?'); // 삭제 확인
+				const pathParts = window.location.pathname.split('/'); // 경로를 '/'로 나누기
+				const placeId = pathParts[pathParts.length - 1]; // 마지막 부분이 placeId
+				if (confirmed) {
+					// 리뷰 삭제 API 호출
+					fetch(`http://localhost:8080/load/place/${placeId}/reviews/${revId}`, {
+						method: 'DELETE'
+					})
+						.then(response => {
+							if (response.ok) {
+								alert('리뷰가 삭제되었습니다!');
+								location.reload(); // 페이지 새로고침
+							} else {
+								throw new Error('리뷰 삭제에 실패했습니다.');
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+							alert('오류가 발생했습니다: ' + error.message);
+						});
+				}
+			});
+		});
+		window.onload = function () {
+			const pathParts = window.location.pathname.split('/'); // 경로를 '/'로 나누기
+			const placeId = pathParts[pathParts.length - 1]; // 마지막 부분이 placeId
+			// 리뷰 추가 API 호출
+			fetch(`http://localhost:8080/load/place/${placeId}/reviews`)
+				.then(response => response.json())
+				.then(data => {
+					data.forEach(review => addReviewToUI(review));
+				})
+				.catch(error => console.error('Error fetching reviews:', error));
+		};
+	</script>
 </div> <!--//layout::content-->
 
 <!-- <script layout:fragment="script"> -->

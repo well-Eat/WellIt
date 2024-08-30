@@ -1,58 +1,93 @@
 package com.wellit.project.store;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/load/place/{sto_id}/reviews") // 장소 ID를 포함한 경로
+@RequestMapping("/load/place/{stoId}/reviews")
 public class StoreReviewController {
 
-    private final StoreReviewService storeReviewService;
-
     @Autowired
-    public StoreReviewController(StoreReviewService storeReviewService) {
-        this.storeReviewService = storeReviewService;
+    private StoreReviewService storeReviewService;
+
+    @PostMapping(consumes = { "multipart/form-data" })
+    public ResponseEntity<StoreReview> createReview(
+            @PathVariable("stoId") Long stoId,
+            @RequestParam("revText") String revText,
+            @RequestParam("revRating") int revRating,
+            @RequestParam(value = "revImg", required = false) MultipartFile revImg) {
+        
+        // 리뷰 유효성 검사
+        if (revText == null || revText.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build(); // 잘못된 요청
+        }
+
+        // Store 엔티티 설정
+        StoreReview review = new StoreReview();
+        review.setRevText(revText);
+        review.setRevRating(revRating);
+        review.setStore(new Store(stoId));
+
+        // 이미지 처리 (예: 파일 저장)
+        if (revImg != null && !revImg.isEmpty()) {
+            // 이미지 저장 로직 추가 (예: 파일 시스템에 저장하고 URL 반환)
+            String imageUrl = saveImage(revImg); // saveImage 메서드는 구현 필요
+            review.setRevImg(imageUrl);
+        }
+
+        StoreReview savedReview = storeReviewService.saveReview(review);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedReview);
     }
 
     @GetMapping
-    public List<StoreReview> getAllReviews(@PathVariable Integer sto_id) {
-        // 특정 장소에 대한 리뷰를 가져오는 로직을 추가해야 합니다.
-        return storeReviewService.getAllReviewsByPlaceId(sto_id);
-    }
+    public ResponseEntity<Map<String, Object>> getReviews(@PathVariable("stoId") Long stoId) {
+        List<StoreReview> reviews = storeReviewService.getReviewsByStoreId(stoId);
+		return null;
+        
 
-    @GetMapping("/{revId}")
-    public ResponseEntity<StoreReview> getReviewById(@PathVariable Integer sto_id, @PathVariable Integer revId) {
-        StoreReview review = storeReviewService.getReviewById(revId);
-        if (review != null) {
-            return ResponseEntity.ok(review);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
-
-    @PostMapping
-    public StoreReview createReview(@PathVariable Integer sto_id, @RequestBody StoreReview storeReview) {
-        // 장소 ID를 설정하여 리뷰를 생성합니다.
-        storeReview.setStore(new Store(sto_id)); // Store 객체를 생성하여 설정
-        return storeReviewService.createReview(storeReview);
-    }
-
-    @PutMapping("/{revId}")
-    public ResponseEntity<StoreReview> updateReview(@PathVariable Integer sto_id, @PathVariable Integer revId, @RequestBody StoreReview updatedReview) {
-        StoreReview review = storeReviewService.updateReview(revId, updatedReview);
-        if (review != null) {
-            return ResponseEntity.ok(review);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    
+    
     @DeleteMapping("/{revId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Integer sto_id, @PathVariable Integer revId) {
-        storeReviewService.deleteReview(revId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteReview(@PathVariable("revId") Long revId) {
+        boolean isDeleted = storeReviewService.deleteReviewById(revId); // 서비스 메서드 호출
+        if (isDeleted) {
+            return ResponseEntity.ok().build(); // 삭제 성공
+        } else {
+            return ResponseEntity.notFound().build(); // 리뷰를 찾을 수 없음
+        }
+    }
+
+    private String saveImage(MultipartFile file) {
+        // 저장할 디렉토리 경로
+        String directory = "C:/Users/GREEN/git/WellIte/src/main/resources/static/imgs/place"; // 실제 경로로 변경
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename(); // 고유한 파일 이름 생성
+        Path filePath = Paths.get(directory, fileName);
+
+        try {
+            // 디렉토리가 존재하지 않으면 생성
+            Files.createDirectories(filePath.getParent());
+            // 파일 저장
+            file.transferTo(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null; // 저장 실패 시 null 반환
+        }
+
+        // 저장된 파일의 URL 또는 경로 반환
+        return "/imgs/place/" + fileName; // 웹에서 접근할 수 있는 URL로 변경
     }
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class StoreReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer revId;
+    private Long revId;
 
     private String revImg;
 
@@ -35,5 +35,6 @@ public class StoreReview {
     private String writer;
 
     @ManyToOne
+    @JoinColumn(name = "stoId")
     private Store store;
 }

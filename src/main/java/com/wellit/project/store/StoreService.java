@@ -19,7 +19,7 @@ public class StoreService {
         return storeRepository.save(store);
     }
     
-    public Store getStoreById(Long id) {
-        return storeRepository.findById(id).orElse(null); // ID로 스토어 찾기
+    public Store getStoreById(Long stoId) {
+        return storeRepository.findById(stoId).orElse(null); // ID로 스토어 찾기
     }
 }

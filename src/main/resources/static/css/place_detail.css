@@ -7,12 +7,124 @@
 	padding: 0;
 }
 
+
 body {
 	background-color: #fff;
 	/*font-family: 'Noto Sans KR', sans-serif;*/
 	color: #333;
 }
 
+.storeReview {
+	position: relative;
+	border-radius: 10px;
+}
+
+.revStoName {
+	color: gray;
+}
+
+.revImgContainer {
+	border: 1px solid #386641;
+	border-radius: 10px;
+	overflow: hidden;
+	width: 100%;
+	height: calc(10vw + 20px);
+	padding: 10px;
+}
+
+.revImgWrapper {
+	width: 100%;
+}
+
+.revImgWrapper button {
+	position: relative;
+}
+
+#starRating {
+	font-size: 40px;
+	/* 별 크기 조정 */
+	cursor: pointer;
+	/* 마우스 커서 변경 */
+	background-color: lightgray;
+	width: 250px;
+	text-align: center;
+}
+
+.hiddenBox {
+	overflow: hidden;
+
+}
+
+.revImgBoxHidden {
+	position: absolute;
+	top: 0;
+}
+
+
+#loadMoreBtn {
+	opacity: 0.4;
+	/* 투명도 설정 */
+	background-color: rgba(20, 123, 255, 1);
+	/* 버튼 배경색을 약간 투명하게 설정 */
+	padding: 10px 20px;
+	/* 패딩 조정 */
+	border-radius: 5px;
+	/* 모서리 둥글게 */
+	cursor: pointer;
+	/* 커서 모양 변경 */
+	
+}
+
+#loadMoreBtn:hover {
+	opacity: 0.6;
+	/* 호버 시 투명도 증가 */
+}
+
+.hiddenBox .revImgLink {
+	position: relative;
+	margin: 0px 5px 10px;
+}
+
+#reviewForm {
+	border: 1px solid paleturquoise;
+}
+
+.star {
+	color: gray;
+	/* 기본 별 색상 */
+}
+
+.createdAt small {
+	font-size: 10px;
+	color: gray;
+}
+
+#revText {
+	width: 60%;
+	resize: none;
+	height: 100px;
+}
+#moreReviews .revImgLink {
+	position: relative;
+	margin: 0px 5px 10px;
+}
+.star.selected {
+	color: gold;
+	/* 선택된 별 색상 */
+}
+
+.revImgBox {
+	width: 10vw;
+	height: 10vw;
+	background-position: center;
+	background-size: cover;
+	border-radius: 5px;
+}
+
+.revImgRow .revImgBox {
+	width: 100px;
+	height: 100px;
+}
 
 /* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
 li a {
@@ -25,6 +137,9 @@ ul {
 	margin-bottom: 0;
 }
 
+.hidden {
+	display: none;
+}
 
 
 /********************** common *********************/
