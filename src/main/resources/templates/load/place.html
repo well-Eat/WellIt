@@ -43,31 +43,31 @@
 		<h1 class="text-center my-4">맞춤 추천</h1>
 		<div class="row" id="restaurant-cards">
 			<div class="col-md-2 mb-4 card recommendationCard" th:each="store : ${stores}">
-				<img th:src="@{${store.image}}" class="card-img-top mt-2" alt="식당 이름" th:alt="${store.name}">
+				<img th:src="@{${store.sto_image}}" class="card-img-top mt-2" alt="식당 이름" th:alt="${store.sto_name}">
 				<div class="card-body">
-					<h5 class="card-title" th:text="${store.name}">식당 이름</h5>
-					<p class="card-text" th:text="${store.content}">식당 설명</p>
-					<a th:href="@{/store/{id}(id=${store.id})}" class="btn btn-primary">자세히 보기</a>
+					<h5 class="card-title" th:text="${store.sto_name}">식당 이름</h5>
+					<p class="card-text" th:text="${store.sto_content}">식당 설명</p>
+					<a th:href="@{/load/place/{id}(id=${store.sto_id})}" class="btn btn-primary">자세히 보기</a>
 				</div>
 			</div>
 		</div>
 		<div class="text-center my-4">
 			<button id="load-more" class="btn btn-secondary">더보기</button>
 		</div>
-
 	</div>
+
 	<div class="container">
 		<h1 class="text-center my-5">오늘의 추천</h1>
 		<div class="card mb-5">
 			<div class="row g-0">
 				<div class="col-md-6">
-					<img th:src="@{${stores[7].image}}" class="img-fluid rounded-start" alt="식당 이미지">
+					<img th:src="@{${stores[7].sto_image}}" class="img-fluid rounded-start" alt="식당 이미지">
 				</div>
 				<div class="col-md-6">
 					<div class="card-body p-5">
-						<h5 class="card-title" th:text="${stores[7].name}">식당 이름</h5>
-						<p class="card-text" th:text="${stores[7].content}">식당 설명</p>
-						<a th:href="@{/store/{id}(id=${stores[7].id})}" class="btn btn-primary w-100">자세히 보기</a>
+						<h5 class="card-title" th:text="${stores[7].sto_name}">식당 이름</h5>
+						<p class="card-text" th:text="${stores[7].sto_content}">식당 설명</p>
+						<a th:href="@{/store/{id}(id=${stores[7].sto_id})}" class="btn btn-primary w-100">자세히 보기</a>
 					</div>
 				</div>
 			</div>
@@ -75,18 +75,19 @@
 		<div class="card mb-5">
 			<div class="row g-0">
 				<div class="col-md-6">
-					<img th:src="@{${stores[8].image}}" class="img-fluid rounded-start" alt="식당 이미지">
+					<img th:src="@{${stores[8].sto_image}}" class="img-fluid rounded-start" alt="식당 이미지">
 				</div>
 				<div class="col-md-6">
 					<div class="card-body p-5">
-						<h5 class="card-title" th:text="${stores[8].name}">식당 이름</h5>
-						<p class="card-text" th:text="${stores[8].content}">식당 설명</p>
-						<a th:href="@{/store/{id}(id=${stores[8].id})}" class="btn btn-primary w-100">자세히 보기</a>
+						<h5 class="card-title" th:text="${stores[8].sto_name}">식당 이름</h5>
+						<p class="card-text" th:text="${stores[8].sto_content}">식당 설명</p>
+						<a th:href="@{/store/{id}(id=${stores[8].sto_id})}" class="btn btn-primary w-100">자세히 보기</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="container">
 		<h1 class="text-center my-5">이런 곳은 어때요?</h1>
 		<div id="carouselExampleCaptions1" class="carousel slide my-5 row" data-bs-ride="carousel">
@@ -101,18 +102,17 @@
 					<div class="row">
 						<div th:each="j : ${#numbers.sequence(0, 3)}" class="col">
 							<div th:if="${(i * 4 + j) < stores.size()}" class="restaurant-item">
-								<img th:src="@{${stores[i * 4 + j].image}}" class="d-block w-100" alt="식당 이름"
-									th:alt="${stores[i * 4 + j].name}">
+								<img th:src="@{${stores[i * 4 + j].sto_image}}" class="d-block w-100" alt="식당 이름"
+									th:alt="${stores[i * 4 + j].sto_name}">
 								<div class="carousel-caption d-none d-md-block">
-									<h5 th:text="${stores[i * 4 + j].name}">식당 이름</h5>
-									<p th:text="${stores[i * 4 + j].content}">식당 설명</p>
+									<h5 th:text="${stores[i * 4 + j].sto_name}">식당 이름</h5>
+									<p th:text="${stores[i * 4 + j].sto_content}">식당 설명</p>
 								</div>
 							</div>
 							<div th:if="${(i * 4 + j) >= stores.size()}" class="empty-col"></div>
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<button class="carousel-control-next col-1" type="button" data-bs-target="#carouselExampleCaptions1"
 				data-bs-slide="next">
@@ -132,18 +132,17 @@
 					<div class="row">
 						<div th:each="j : ${#numbers.sequence(0, 3)}" class="col">
 							<div th:if="${(i * 4 + j) < stores.size()}" class="restaurant-item">
-								<img th:src="@{${stores[i * 4 + j].image}}" class="d-block w-100" alt="식당 이름"
-									th:alt="${stores[i * 4 + j].name}">
+								<img th:src="@{${stores[i * 4 + j].sto_image}}" class="d-block w-100" alt="식당 이름"
+									th:alt="${stores[i * 4 + j].sto_name}">
 								<div class="carousel-caption d-none d-md-block">
-									<h5 th:text="${stores[i * 4 + j].name}">식당 이름</h5>
-									<p th:text="${stores[i * 4 + j].content}">식당 설명</p>
+									<h5 th:text="${stores[i * 4 + j].sto_name}">식당 이름</h5>
+									<p th:text="${stores[i * 4 + j].sto_content}">식당 설명</p>
 								</div>
 							</div>
 							<div th:if="${(i * 4 + j) >= stores.size()}" class="empty-col"></div>
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<button class="carousel-control-next col-1" type="button" data-bs-target="#carouselExampleCaptions2"
 				data-bs-slide="next">

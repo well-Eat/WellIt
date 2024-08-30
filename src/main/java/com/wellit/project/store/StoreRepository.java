@@ -1,4 +1,4 @@
-package com.study.project.store;
+package com.wellit.project.store;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

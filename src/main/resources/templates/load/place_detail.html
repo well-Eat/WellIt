@@ -1,0 +1,112 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+
+<head>
+    <title>상품 상세페이지</title>
+</head>
+<div layout:fragment="content" class="container">
+    <!--shop style link-->
+    <link rel="stylesheet" th:href="@{/css/place_detail.css}">
+    <!--페이지 제목-->
+    <div class="row my-5">
+        <div class="pageTitle col text-center">
+            가게 상세페이지
+        </div>
+    </div>
+
+    <!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
+
+    <!-- 가게 정보 요약 & 주문 폼 -->
+    <section class="placeInfo row my-4 py-4 rounded-2">
+        <div class="placeImg col-6">
+            <!-- 상품이미지 -->
+            <div class="card-img-wrapper rounded-2 mb-3">
+                <div class="card-img-box" th:style="|background-image: url(@{  ${store.sto_image}  });|"></div>
+            </div>
+        </div> <!--placeImg-->
+        <div class="col-6 card">
+            <!-- 상품정보 -->
+            <div class="card-body">
+                <h5 class="placeName card-title" th:text="${store.sto_name}"></h5>
+                <p class="placeDesc card-text" th:text="${store.sto_content}"></p>
+                <p class="card-text"><strong>제목:</strong> <span th:text="${store.sto_title}"></span></p>
+                <p class="card-text"><strong>카테고리:</strong> <span th:text="${store.sto_category}"></span></p>
+                <p class="card-text"><strong>조회수:</strong> <span th:text="${store.sto_viewCount}"></span></p>
+                <p class="card-text"><strong>추천수:</strong> <span th:text="${store.sto_recommendationCount}"></span></p>
+                <p class="card-text"><strong>지역:</strong> <span
+                        th:text="${store.sto_regionProvince} + ' ' + ${store.sto_regionCity}"></span></p>
+                <p class="card-text"><strong>연락처:</strong> <span th:text="${store.sto_contact}"></span></p>
+                <p class="card-text"><strong>주소:</strong> <span th:text="${store.sto_address}"></span></p>
+                <p class="card-text"><strong>운영 시간:</strong> <span th:text="${store.sto_operatingHours}"></span></p>
+                <p class="card-text"><strong>휴무일:</strong> <span th:text="${store.sto_closedDays}"></span></p>
+                <p class="card-text"><strong>추천 메뉴:</strong> <span th:text="${store.sto_recommendedMenu}"></span></p>
+                <p class="card-text"><strong>주차 정보:</strong> <span th:text="${store.sto_parkingInfo}"></span></p>
+                <p class="card-text"><strong>위도:</strong> <span th:text="${store.sto_latitude}"></span></p>
+                <p class="card-text"><strong>경도:</strong> <span th:text="${store.sto_longitude}"></span></p>
+                <p class="card-text"><strong>영업 여부:</strong> <span
+                        th:text="${store.sto_isOpen} == 'Y' ? '영업 중' : '휴업 중'"></span></p>
+            </div> <!-- //card-body -->
+        </div> <!--col-6 card-->
+    </section> <!--placeInfo-->
+
+    <!--상품별 리뷰 -->
+    <section class="placeReview container">
+        <h1 class="text-center">상품 리뷰</h1>
+
+        <h2 class="mt-4">리뷰 작성하기</h2>
+        <button class="btn btn-primary mb-3" id="toggleReviewForm">리뷰 쓰기</button>
+
+        <div class="review-form" id="reviewForm">
+            <h2>리뷰 작성하기</h2>
+            <form>
+                <div class="form-group">
+                    <label for="reviewerName">이름</label>
+                    <input type="text" class="form-control" id="reviewerName" placeholder="이름을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewText">리뷰</label>
+                    <textarea class="form-control" id="reviewText" rows="4" placeholder="리뷰를 작성하세요" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reviewRating">평점</label>
+                    <select class="form-control" id="reviewRating" required>
+                        <option value="">평점을 선택하세요</option>
+                        <option value="1">1 - 매우 나쁨</option>
+                        <option value="2">2 - 나쁨</option>
+                        <option value="3">3 - 보통</option>
+                        <option value="4">4 - 좋음</option>
+                        <option value="5">5 - 매우 좋음</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">리뷰 제출</button>
+            </form>
+        </div>
+
+        <h2 class="mt-4">작성된 리뷰</h2>
+        <div id="reviews">
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title">홍길동</h5>
+                    <p class="card-text">정말 맛있어요! 재구매 의사 100%입니다.</p>
+                    <p class="card-text"><small class="text-muted">평점: 5</small></p>
+                </div>
+            </div>
+            <!-- 추가 리뷰는 여기에 삽입 -->
+        </div>
+    </section>
+    <script>
+        // 리뷰 폼 토글 기능
+        document.getElementById('toggleReviewForm').addEventListener('click', function () {
+            var reviewForm = document.getElementById('reviewForm');
+            if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
+                reviewForm.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'none';
+            }
+        });
+    </script>
+</div> <!--//layout::content-->
+
+<!-- <script layout:fragment="script"> -->
+
+</html>

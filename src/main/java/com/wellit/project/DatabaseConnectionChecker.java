@@ -1,4 +1,4 @@
-package com.study.project;
+package com.wellit.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

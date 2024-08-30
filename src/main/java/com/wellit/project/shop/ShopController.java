@@ -1,4 +1,4 @@
-package com.study.project.shop;
+package com.wellit.project.shop;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

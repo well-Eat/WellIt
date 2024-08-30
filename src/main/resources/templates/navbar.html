@@ -40,9 +40,9 @@
 		<!-- 중간 서브메뉴 -->
 		<div class="custom-submenu custom-submenu2">
 			<ul>
-				<li><a href="#">지역별 장소</a></li>
-				<li><a href="#">내 주변 장소</a></li>
-				<li><a href="#">추천 장소</a></li>
+				<li><a th:href="@{|/load/map|}">지역별 장소</a></li>
+				<li><a th:href="@{|/load/map|}">내 주변 장소</a></li>
+				<li><a th:href="@{|/load/place|}">추천 장소</a></li>
 			</ul>
 			<ul>
 				<li><a href="#">비건이란?</a></li>
@@ -50,8 +50,8 @@
 				<li><a href="#">행사</a></li>
 			</ul>
 			<ul>
-				<li><a href="#">푸드</a></li>
-				<li><a href="#">펫</a></li>
+				<li><a th:href="@{|/shop/list|}">푸드</a></li>
+				<li><a th:href="@{|/shop/detail|}">펫</a></li>
 				<li><a href="#">베이비</a></li>
 				<li><a href="#">굿즈</a></li>
 			</ul>

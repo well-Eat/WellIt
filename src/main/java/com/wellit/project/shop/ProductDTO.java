@@ -1,4 +1,4 @@
-package com.study.project.shop;
+package com.wellit.project.shop;
 
 import lombok.Data;
 

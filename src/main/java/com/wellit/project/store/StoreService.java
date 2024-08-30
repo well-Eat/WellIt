@@ -1,4 +1,4 @@
-package com.study.project.store;
+package com.wellit.project.store;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,5 +17,9 @@ public class StoreService {
 
     public Store saveStore(Store store) {
         return storeRepository.save(store);
+    }
+    
+    public Store getStoreById(Long id) {
+        return storeRepository.findById(id).orElse(null); // ID로 스토어 찾기
     }
 }

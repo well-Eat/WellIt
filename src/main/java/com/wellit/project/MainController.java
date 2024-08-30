@@ -1,4 +1,4 @@
-package com.study.project;
+package com.wellit.project;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +13,8 @@ public class MainController {
 	}
 	
 
-	@GetMapping("load/map")
-	public String map() {
-		return "/load/map";
-	}
   
-	@GetMapping("/login")
+	@GetMapping("member/login")
 	public String login() {
 		return "member/login";
 	}
