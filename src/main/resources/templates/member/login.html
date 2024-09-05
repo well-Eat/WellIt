@@ -26,21 +26,20 @@
 		background-color: #A7C957;
 	}
 </style>
-<body>
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
 			<div class="row py-5 justify-content-center">
 				<div class="col-md-6 col-xs-8 py-5 border rounded formStyle">
 					<h1 class="text-center mb-3">WellIt</h1>
-					<form>
+					<form th:action="@{/member/login}" method="post">
 						<div class="container">
 							<div class="form-floating mb-3">
-								<input type="email" class="form-control" id="email" name="email">
-								<label for="email">이메일</label>
+								<input type="text" class="form-control" id="memberId" name="username">
+								<label for="memberId">아이디</label>
 							</div>
 							<div class="form-floating">
-								<input type="password" class="form-control" id="password">
-								<label for="password">비밀번호</label>
+								<input type="password" class="form-control" id="memberPassword" name="password">
+								<label for="memberPassword">비밀번호</label>
 								<div class="eye-icon">
 									<div class="d-flex h-100 justify-content-end align-items-center">
 										<span class="material-symbols-outlined eye">
@@ -87,7 +86,7 @@
 
 		document.addEventListener("DOMContentLoaded", function () {
 			const eyeIcon = document.querySelector('.eye');
-			const passwordInput = document.getElementById('password');
+			const passwordInput = document.getElementById('memberPassword');
 
 			eyeIcon.addEventListener('click', function () {
 				const inputType = passwordInput.getAttribute('type');
@@ -102,6 +101,5 @@
 			});
 		});
 	</script>
-</body>
 </div>
 </html>

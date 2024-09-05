@@ -70,10 +70,13 @@
 							<div class="col-8">
 								<div class="row align-middle">
 									<div class="col">
-										<p>사용자 이름 : username</p>
-										<p>이메일 : email</p>
-										<p>회원가입 일시 : regDate</p>
-										<p>비건 종류 : </p>
+										<p>사용자 이름 : <span th:text="${member.memberId}"></span></p>
+										<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
+										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
+										<p>비건 종류 : 
+											<span th:if="${member.memberVeganType == null}">없음</span>
+											<span th:unless="${member.memberVeganType == null}" th:text="${member.memberVeganType}"></span>
+										</p>
 									</div>
 									<div class="col">
 										<p>마일리지 : mileage</p>
@@ -82,7 +85,7 @@
 								</div>
 								<div class="row mt-3 float-end">
 									<div class="col">
-										<a href="/enter_password" class="btn btn-warning"
+										<a th:href="@{/member/enter_password}" class="btn btn-warning"
 											data-target="#check-password">회원정보 수정</a>
 									</div>
 								</div>
