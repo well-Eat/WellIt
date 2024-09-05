@@ -32,13 +32,13 @@ public class Member {
 	 	@Column
 	    private String memberName; //이름
 
-	 	@Column(unique = true)
+	 	@Column
 	 	private String memberAlias; //닉네임
 
-	 	@Column(unique = true)
+	 	@Column
 	    private String memberEmail;
 	    
-	 	@Column(unique = true)
+	 	@Column
 	    private String memberPhone;
 	    
 	    @Column

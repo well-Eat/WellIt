@@ -22,6 +22,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	
 
 	public List<Member> findAllMembers() {
 		return memberRepository.findAll();
@@ -72,4 +73,8 @@ public class MemberService {
 			throw new DataNotFoundException("해당 회원이 없습니다.");
 		}
 	}
+	//아이디 중복 체크
+	public boolean isIdExists(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
+    }
 }
