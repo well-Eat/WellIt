@@ -1,0 +1,45 @@
+/* 폰트 임포트 테스트 */
+/*@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');*/
+
+/* 웹페이지 전체 공통 (추후 제외할 내용) */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+
+body {
+	background-color: #fff;
+	/*font-family: 'Noto Sans KR', sans-serif;*/
+	color: #333;
+}
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+nav header {
+	background-color: #386641;
+	position: relative;
+}
+
+nav {
+	position: relative;
+}
+
+nav~.container {
+	position: relative;
+}
+.rowTitle{
+	background-color: #f2e8cf;
+	height: 200px;
+	display: flex;
+	align-items: center;
+}
+/*** 페이지 타이틀 ***/
+.pageTitle {
+	font-size: 3rem;
+	font-weight: bold;
+	color: #6a994e; /* 블루 색상 */
+}
+
+
+

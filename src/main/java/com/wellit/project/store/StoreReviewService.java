@@ -1,6 +1,7 @@
 package com.wellit.project.store;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,11 @@ public class StoreReviewService {
     }
 
     public List<StoreReview> getReviewsByStoreId(Long stoId) {
-        return storeReviewRepository.findByStore_StoId(stoId);
+        List<StoreReview> reviews = storeReviewRepository.findByStore_StoId(stoId);
+        // 생성일자 기준으로 내림차순 정렬
+        reviews.sort(Comparator.comparing(StoreReview::getCreatedAt).reversed());
+
+        return reviews;
     }
 
     public void deleteReview(Long revId) {

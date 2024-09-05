@@ -3,6 +3,12 @@
 
 <head>
 	<title>상품 상세페이지</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Bootstrap JS (필요한 경우 Popper.js 포함) -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <div layout:fragment="content" class="container">
 	<!--shop style link-->
@@ -54,25 +60,55 @@
 		<h3 class="text-center my-3">상점 후기</h3>
 
 		<!-- 이미지 보기 -->
-		<div class="revImgWrapper row">
-			<div class="revImgContainer">
-				<div class="hiddenBox d-flex flex-wrap">
-					<th:block th:each="review, iterStat : ${filteredReviews}">
-
-						<a href="#" class="revImgLink d-block">
-							<div class="revImgBox" th:style="'background-image: url(' + ${review.revImg} + ');'">
+		<div th:if="${filteredReviewsCount <= 8}">
+			<div class="revImgWrapper">
+				<div class="revImgContainer ">
+					<div class="carousel-inner justify-content-start">
+						<th:block th:each="review, iterStat : ${filteredReviews}">
+							<div class="carousel-item "
+								th:class="'carousel-item ' + (${iterStat.index < 8} ? 'active' : '')">
+								<a href="#" class="revImgLink d-block">
+									<div class="revImgBox"
+										th:style="'background-image: url(' + ${review.revImg} + ');'" 									th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
+																	th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
+																	th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
+																	onclick="openModal(this)"></div>
+								</a>
 							</div>
-						</a>
-					</th:block>
-				</div>
-
-			</div>
+						</th:block>
+					</div> <!-- carousel-inner -->
+				</div> <!-- revImgContainer -->
+			</div> <!-- revImgWrapper -->
 		</div>
+		<div id="reviewCarousel" class="carousel slide" th:if="${filteredReviewsCount > 8}">
+			<div class="revImgWrapper">
+				<div class="revImgContainer">
+					<div class="carousel-inner">
+						<th:block th:each="review, iterStat : ${filteredReviews}">
+							<div class="carousel-item "
+								th:class="'carousel-item ' + (${iterStat.index < 8} ? 'active' : '')">
+								<span class="revImgLink d-block">
+									<div class="revImgBox"
+										th:style="'background-image: url(' + ${review.revImg} + ');'" 									th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
+																	th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
+																	th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
+																	onclick="openModal(this)"></div>
+								</span>
+							</div>
+						</th:block>
+					</div> <!-- carousel-inner -->
+					<a class="carousel-control-prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">이전</span>
+					</a>
+					<a class="carousel-control-next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">다음</span>
+					</a>
+				</div> <!-- revImgContainer -->
+			</div> <!-- revImgWrapper -->
+		</div> <!-- reviewCarousel -->
 
-
-		<div th:if="${filteredReviewsCount > 8}" class="loadMoreContainer row">
-			<button id="loadMoreBtn" class="btn btn-primary">더보기</button>
-		</div>
 		<!-- 리뷰 보기 블록 -->
 		<div id="reviews my-3">
 			<div class="row border-bottom">
@@ -96,7 +132,11 @@
 					<div class="row revImgRow justify-content-start">
 						<div class="col">
 							<div class="revImgBox" th:if="${review.revImg != null}"
-								th:style="'background-image: url(' + ${review.revImg} + ');'">
+								th:style="'background-image: url(' + ${review.revImg} + ');'"
+								th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
+								th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
+								th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
+								onclick="openModal(this)">
 							</div>
 							<div class="col" id="ratingContainer" th:if="${review.revRating == 1}">별점: ★☆☆☆☆</div>
 							<div class="col" id="ratingContainer" th:if="${review.revRating == 2}">별점: ★★☆☆☆</div>
@@ -107,11 +147,38 @@
 					</div>
 					<div class="row createdAt justify-content-start my-3">
 						<div class="col">
-							<small th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"></small>
+							<small th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd.hh.mm.ss')}"></small>
 						</div>
 					</div>
 					<button class="delete-review btn btn-danger" th:data-rev-id="${review.revId}">삭제</button>
 
+				</div>
+			</div>
+			<button id="loadMoreButton" class="btn btn-primary my-3" style="display: none;">리뷰 더보기</button>
+		</div>
+		<!-- 모달 구조 -->
+		<div id="imageModal" class="modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">사진 후기</h5>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-7 ">
+								<img id="modalImage" src="" alt="리뷰 이미지" class="img-fluid">
+							</div>
+							<div class="col-5">
+								<p>가게명 : <span id="modalStoName"></span></p>
+								<p>내용 : <span id="modalRevText"></span></p>
+								<p id="modalRevRating"></p>
+								<p>작성일 : <small id="modalCreatedAt"></small></p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" onclick="closeModal()">닫기</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -138,15 +205,29 @@
 	</section>
 
 	<script>
-		document.getElementById('loadMoreBtn').addEventListener('click', function () {
-			var moreReviews = document.getElementById('moreReviews');
-			this.style.display = 'none'; // 버튼 숨기기
-			$(".revImgContainer").css("height", "calc( 20vw + 30px )")
-		});
+		function openModal(element) {
+			const imgUrl = element.getAttribute('data-img-url');
+			const stoName = element.getAttribute('data-sto-name');
+			const revText = element.getAttribute('data-rev-text');
+			const revRating = element.getAttribute('data-rev-rating');
+			const createdAt = element.getAttribute('data-created-at');
+
+			// 모달에 정보 설정
+			document.getElementById('modalImage').src = imgUrl; // 이미지 URL 설정
+			document.getElementById('modalStoName').innerText = stoName; // 상호명 설정
+			document.getElementById('modalRevText').innerText = revText; // 리뷰 텍스트 설정
+			document.getElementById('modalRevRating').innerText = `별점: ${'★'.repeat(revRating)}${'☆'.repeat(5 - revRating)}`; // 별점 설정
+			document.getElementById('modalCreatedAt').innerText = createdAt; // 생성 날짜 설정
+
+			$('#imageModal').modal('show'); // Bootstrap 모달 열기
+		}
+
+		function closeModal() {
+			$('#imageModal').modal('hide'); // Bootstrap 모달 닫기
+		}
 		document.addEventListener('DOMContentLoaded', function () {
 			const stars = document.querySelectorAll('.star');
 			const revRatingInput = document.getElementById('revRating');
-
 			stars.forEach(star => {
 				star.addEventListener('click', function () {
 					const rating = this.getAttribute('data-value');
@@ -204,6 +285,37 @@
 						alert('오류가 발생했습니다: ' + error.message);
 					});
 			});
+
+			const reviewBlocks = document.querySelectorAll('.reviewBlock'); // 모든 리뷰 블록 선택
+			const loadMoreButton = document.getElementById('loadMoreButton'); // "더보기" 버튼 선택
+
+			let currentIndex = 0; // 현재 보여주는 리뷰 인덱스
+
+			// 초기 5개 리뷰만 보여주는 함수
+			function showInitialReviews() {
+				const totalReviews = reviewBlocks.length; // 총 리뷰 수
+				for (let i = 0; i < totalReviews; i++) {
+					if (i < 5) {
+						reviewBlocks[i].style.display = 'flex'; // 처음 5개 리뷰 보이기
+					} else {
+						reviewBlocks[i].style.display = 'none'; // 나머지 리뷰 숨기기
+					}
+				}
+				currentIndex = 5; // 현재 인덱스 업데이트
+				loadMoreButton.style.display = currentIndex < totalReviews ? 'block' : 'none'; // "더보기" 버튼 표시
+			}
+
+			// "더보기" 버튼 클릭 시 호출되는 함수
+			loadMoreButton.addEventListener('click', function () {
+				const totalReviews = reviewBlocks.length; // 총 리뷰 수
+				for (let i = currentIndex; i < currentIndex + 5 && i < totalReviews; i++) {
+					reviewBlocks[i].style.display = 'flex'; // 다음 5개 리뷰 보이기
+				}
+				currentIndex += 5; // 현재 인덱스 업데이트
+				loadMoreButton.style.display = currentIndex < totalReviews ? 'block' : 'none'; // "더보기" 버튼 표시
+			});
+
+			showInitialReviews(); // 초기 리뷰 표시
 		});
 
 		// 리뷰 삭제 기능
@@ -244,6 +356,42 @@
 				})
 				.catch(error => console.error('Error fetching reviews:', error));
 		};
+		$(document).ready(function () {
+			const carouselItems = $('#reviewCarousel .carousel-item');
+			const totalItems = carouselItems.length;
+			let nextcurrentIndex = 7;
+			let prevcurrentIndex = 0;
+
+			// 다음 버튼 클릭 이벤트
+			$('.carousel-control-next').click(function () {
+				if (nextcurrentIndex < totalItems - 1) {
+					// 현재 아이템에서 active 클래스 제거
+					carouselItems.eq(prevcurrentIndex).removeClass('active');
+					prevcurrentIndex++;
+					// 인덱스 증가
+					nextcurrentIndex++;
+					// 다음 아이템에 active 클래스 추가
+					carouselItems.eq(nextcurrentIndex).addClass('active');
+				} else {
+					alert("다음 이미지가 없습니다.")
+				}
+			});
+
+			// 이전 버튼 클릭 이벤트
+			$('.carousel-control-prev').click(function () {
+				if (prevcurrentIndex > 0) {
+					// 현재 아이템에서 active 클래스 제거
+					carouselItems.eq(nextcurrentIndex).removeClass('active');
+					nextcurrentIndex--;
+					// 인덱스 감소
+					prevcurrentIndex--;
+					// 이전 아이템에 active 클래스 추가
+					carouselItems.eq(prevcurrentIndex).addClass('active');
+				} else {
+					alert("이전 이미지가 없습니다.")
+				}
+			});
+		});
 	</script>
 </div> <!--//layout::content-->
 

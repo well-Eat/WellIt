@@ -26,10 +26,9 @@ body {
 .revImgContainer {
 	border: 1px solid #386641;
 	border-radius: 10px;
-	overflow: hidden;
 	width: 100%;
-	height: calc(10vw + 20px);
 	padding: 10px;
+	display: flex;
 }
 
 .revImgWrapper {
@@ -50,16 +49,15 @@ body {
 	text-align: center;
 }
 
-.hiddenBox {
-	overflow: hidden;
-
+.carousel-control-next {
+	background-color: purple;
+	margin-right: -50px;
 }
 
-.revImgBoxHidden {
-	position: absolute;
-	top: 0;
+.carousel-control-prev {
+	background-color: purple;
+	margin-left: -50px;
 }
-
 
 #loadMoreBtn {
 	opacity: 0.4;
@@ -72,7 +70,7 @@ body {
 	/* 모서리 둥글게 */
 	cursor: pointer;
 	/* 커서 모양 변경 */
-	
+
 }
 
 #loadMoreBtn:hover {
@@ -80,9 +78,9 @@ body {
 	/* 호버 시 투명도 증가 */
 }
 
-.hiddenBox .revImgLink {
-	position: relative;
-	margin: 0px 5px 10px;
+.revImgLink {
+	margin: 0px 5px;
+	cursor: pointer;
 }
 
 #reviewForm {
@@ -104,28 +102,67 @@ body {
 	resize: none;
 	height: 100px;
 }
+
 #moreReviews .revImgLink {
 	position: relative;
 	margin: 0px 5px 10px;
 }
+
 .star.selected {
 	color: gold;
 	/* 선택된 별 색상 */
 }
 
 .revImgBox {
-	width: 10vw;
-	height: 10vw;
+	width: 100%;
+	height: auto;
+	/* 높이를 자동으로 설정 */
+	aspect-ratio: 1;
+	/* 정사각형 비율 유지 */
 	background-position: center;
 	background-size: cover;
 	border-radius: 5px;
 }
 
+.carousel-item {
+	flex: 0 0 12.5%;
+	/* 100% / 8 = 12.5% */
+	max-width: 12.5%;
+	/* 최대 너비를 12.5%로 설정 */
+	width: 12.5%;
+	margin-right: 0;
+}
+
 .revImgRow .revImgBox {
 	width: 100px;
 	height: 100px;
+	cursor: pointer;
 }
 
+.carousel-inner {
+	display: flex;
+	justify-content: space-around;
+}
+/* 모달 크기 조정 */
+    .modal-dialog {
+        max-width: 60%; /* 모달의 최대 너비를 60%로 설정 */
+        margin: auto; /* 중앙 정렬 */
+		display: flex; /* Flexbox 사용 */
+		        align-items: center; /* 세로 중앙 정렬 */
+		        height: 100vh; /* 전체 화면 높이 */
+    }
+
+    /* 모달의 내용이 화면 중앙에 위치하도록 조정 */
+    .modal-content {
+        text-align: center; /* 내용 중앙 정렬 */
+    }
+	#modalImage{
+		max-height: 600px;
+	}
+	.modal-body .col-5{
+		text-align: start;
+	}
+	
 /* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
 li a {
 	text-decoration: none !important;

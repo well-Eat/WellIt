@@ -1,6 +1,7 @@
 package com.wellit.project.store;
 
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,8 @@ public class StoreController {
     @GetMapping("/place/{stoId}")
     public String getStoreDetail(@PathVariable("stoId") Long stoId, Model model) {
         System.out.println("Requested store ID: " + stoId); // 로그 추가
-        Store store = storeService.getStoreById(stoId);
+        // 조회수 증가
+        Store store = storeService.incrementViewCount(stoId);
         
         if (store == null) {
             return "error/store_not_found"; // 에러 페이지 경로
@@ -55,6 +57,7 @@ public class StoreController {
         // 필터링된 리뷰 리스트 생성
         List<StoreReview> filteredReviews = reviews.stream()
             .filter(review -> review.getRevImg() != null)
+            .sorted(Comparator.comparing(StoreReview::getCreatedAt).reversed())
             .collect(Collectors.toList());
         
         // 평균 평점 계산

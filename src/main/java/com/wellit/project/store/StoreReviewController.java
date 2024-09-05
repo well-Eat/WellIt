@@ -56,8 +56,6 @@ public class StoreReviewController {
     public ResponseEntity<Map<String, Object>> getReviews(@PathVariable("stoId") Long stoId) {
         List<StoreReview> reviews = storeReviewService.getReviewsByStoreId(stoId);
 		return null;
-        
-
     }
     
     
@@ -90,4 +88,5 @@ public class StoreReviewController {
         // 저장된 파일의 URL 또는 경로 반환
         return "/imgs/place/" + fileName; // 웹에서 접근할 수 있는 URL로 변경
     }
+    
 }
