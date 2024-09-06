@@ -102,18 +102,18 @@
 						<div class="row justify-content-start mt-3">
 							<label for="address" class="form-label">주소</label>
 							<div class="col-sm-4">
-								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호">
+								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호" th:field="*{zipcode}">
 							</div>
 							<div class="col-sm-3">
 								<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
 									value="우편번호 찾기"><br>
 							</div>
 							<div class="col-12 mt-1">
-								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소">
+								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소" th:field="*{roadAddress}">
 								<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
 							</div>
 							<div class="col-12 mt-1">
-								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소">
+								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소" th:field="*{addressDetail}">
 								<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
 							</div>
 							<input type="hidden" id="fullAddress" name="fullAddress" th:field="*{memberAddress}">

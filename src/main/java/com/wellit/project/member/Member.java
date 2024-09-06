@@ -42,9 +42,15 @@ public class Member {
 	    private String memberPhone;
 	    
 	    @Column
+	    private String zipcode;
+		private String roadAddress;
+		private String addressDetail;
 	    private String memberAddress;
 	    
 	    @Column
+	    private String birth_year;
+	    private String birth_month;
+	    private String birth_day;
 	    private String memberBirth; //생일
 	    
 	    @Column
