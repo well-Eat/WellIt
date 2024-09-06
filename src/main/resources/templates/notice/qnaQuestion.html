@@ -1,0 +1,54 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/announcement.css}">
+	<!--페이지 제목-->
+	<div class="row rowTitle">
+		<div class="pageTitle col text-center">
+			질문 작성
+		</div>
+	</div>
+	<div class="container my-5">
+		<!-- 공지사항 작성 폼 -->
+		<div class="mb-4">
+			<form action="#" th:action="@{/notice/qnaQuestion}" method="post" enctype="multipart/form-data">
+				<div class="mb-3">
+					<label for="qAuthor" class="form-label">작성자</label>
+					<input type="text" class="form-control" id="qAuthor" name="qAuthor" th:value="${session.UserId}"
+						readonly>
+				</div>
+				<div class="mb-3">
+					<label for="qTitle" class="form-label">제목</label>
+					<input type="text" class="form-control" id="qTitle" name="qTitle" required>
+				</div>
+				<div class="mb-3">
+					<label for="qContent" class="form-label">내용</label>
+					<textarea name="qContent" class="form-control" id="qContent" cols="30" rows="10"></textarea>
+				</div>
+
+				<div class="mb-3">
+					<label for="qImageUrl" class="form-label">이미지 업로드</label>
+					<input type="file" class="form-control" id="qImageUrl" name="qImage">
+				</div>
+				<div class="mb-3">
+					<label for="qCategory" class="form-label">카테고리</label><br>
+					<div>
+						<input type="radio" id="deliveryInquiry" name="qCategory" value="배송문의">
+						<label for="deliveryInquiry">배송문의</label>
+					</div>
+					<div>
+						<input type="radio" id="productInquiry" name="qCategory" value="상품문의">
+						<label for="productInquiry">상품문의</label>
+					</div>
+					<div>
+						<input type="radio" id="etc" name="qCategory" value="기타">
+						<label for="etc">기타</label>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">질문 등록</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+</html>

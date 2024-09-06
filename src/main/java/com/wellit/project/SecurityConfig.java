@@ -28,8 +28,8 @@ public class SecurityConfig {
 		// XFrameOptionsHeader 값으로 SAMEORIGIN을 설정하면 프레임에 포함된 웹 페이지가 동일한 사이트에 제공할 때만 사용이 허락된다.
 			 // 폼 로그인 설정
 	            .formLogin(form -> form
-	                .loginPage("/member/login")        // 로그인 페이지 경로
-	                .defaultSuccessUrl("/member/mypage")            // 로그인 성공 시 리다이렉트 경로
+	            	.loginPage("/member/login")
+	            	.successHandler(new CustomAuthenticationSuccessHandler()) // 커스텀 성공 핸들러 설정
 	            )
 	            
 	            // 로그아웃 설정
