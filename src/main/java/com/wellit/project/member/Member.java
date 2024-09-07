@@ -2,15 +2,10 @@ package com.wellit.project.member;
 
 import java.time.LocalDateTime;
 
+import com.wellit.project.order.Cart;
+import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -69,4 +64,14 @@ public class Member {
 	    protected void onUpdate() {
 	        this.memberUpdateDate = LocalDateTime.now();
 	    }
+
+
+		@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+		private Cart cart;
+
+
+
+
+
+
 }

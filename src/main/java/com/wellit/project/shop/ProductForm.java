@@ -29,6 +29,9 @@ public class ProductForm {
 
     private Integer prodFinalPrice; //판매 가격(할인율 반영)
 
+    private Long prodStock; //재고수량
+
+
     private List<MultipartFile> prodImages; // 이미지 리스트
 
 
@@ -45,6 +48,7 @@ public class ProductForm {
         this.prodDesc = product.getProdDesc();
         this.prodOrgPrice = product.getProdOrgPrice();
         this.prodDiscount = product.getProdDiscount();
+        this.prodStock = product.getProdStock();
         this.prodCate = product.getProdCate();
         this.prodContent = product.getProdContent();
         this.prodFinalPrice = product.getProdFinalPrice();

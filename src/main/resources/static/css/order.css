@@ -16,34 +16,6 @@ ul {
     margin-bottom: 0;
 }
 
-/******* util Style *********/
-/******* util Style *********/
-/******* util Style *********/
-.f14{
-    font-size: 14px;
-}
-.f20{
-    font-size: 20px;
-}
-.c333{
-    color: #333333 !important;
-}
-.c666{
-    color: #666666 !important;
-}
-.c999{
-    color: #999999;
-}
-.f28 {
-    font-size: 28px;
-}
-.fw500{
-    font-weight: 500;
-}
-.fw700{
-    font-weight: 700;
-}
-
 
 
 /********************** common *********************/
@@ -81,9 +53,145 @@ nav ~ .container {
 
 /*** 페이지 타이틀 ***/
 .pageTitle{
-    /* !!!!!!!!!!!! 왜 헤더부분이랑 겹치게 배치되는지 확인 필요*/
-    /*위치 다시 잡아야함!!!!!!!*/
     /* padding-top: 100px;*/
     font-size: 32px;
     font-weight: 800;
 }
+
+
+
+/*********************************************************************/
+
+/*폼 스타일 */
+/*구매 수량 quantity input*/
+.quantityBox label.form-label{
+    margin-bottom: 0;
+       padding-right: 50px;
+   }
+   .number-input {
+       display: flex;
+       height: 30px;
+       align-items: stretch;
+       border: 1px solid #bbb;
+       width: fit-content;
+   }
+   
+   .number-input input[type="number"] {
+       border: 0;
+       padding: 1px;
+       text-align: center;
+       width: 60px;
+       -moz-appearance: textfield; /* Firefox에서 기본 스핀 버튼 숨기기 */
+       color: #333333;
+       font-weight: 600;
+       font-size: 14px;
+   }
+   
+   .number-input input[type="number"]:active, .number-input input[type="number"]:focus {
+       box-shadow: none;
+   }
+   .number-input input[type="number"]::-webkit-outer-spin-button,
+   .number-input input[type="number"]::-webkit-inner-spin-button {
+       -webkit-appearance: none;
+       margin: 0; /* 기본 스핀 버튼 숨기기 */
+   }
+   
+   .number-input button {
+       background-color: transparent;
+       border: none;
+       padding: 0 10px;
+       cursor: pointer;
+       font-size: 18px;
+       width: 30px;
+       text-align: center;
+   }
+   
+   .number-input button i{
+       color: var(--bs-success);
+       opacity: 0.7;
+   }
+   .number-input button:active i{
+       color: var(--bs-success);
+       opacity: 1;
+   }
+
+
+
+
+
+
+
+
+
+.cartItemList h5.prodName{
+    font-weight: 700;
+}
+
+.cartItemList p.prodOrgPrice{
+    color: #999;
+    text-decoration: line-through;
+    display: inline-block;
+    margin-right: 10px;
+}
+.cartItemList p.prodDiscount{
+    font-size: 14px;
+    color: rgb(255, 102, 46);
+    font-weight: bold;
+    display: inline-block;
+}
+.cartItemList p.prodFinalPrice{
+    font-size: 20px;
+    font-weight: 700;
+        display: inline-block;
+}
+.cartItemList .prodFinalPrice{
+    font-size: 24px;
+    font-weight: 700;
+        display: inline-block;
+}
+.cartItemList p.prodReview{
+    font-size: 16px;
+    color:#bbb;
+}
+
+
+.cartItemList .prodTotalPrice{
+    font-weight: 600;
+    font-size: 20px;
+}
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

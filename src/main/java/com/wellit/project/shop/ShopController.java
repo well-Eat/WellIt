@@ -1,5 +1,6 @@
 package com.wellit.project.shop;
 
+import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,9 @@ public class ShopController {
 
         Product product = shopService.getOneProd(prodId);
         List<ProdReview> imgReviewList = shopService.getImgReviews(product);
+        CartItemRequest cartItemRequest = new CartItemRequest();
+
+        model.addAttribute("cartItemRequest", cartItemRequest);
 
 
         model.addAttribute("product", product);

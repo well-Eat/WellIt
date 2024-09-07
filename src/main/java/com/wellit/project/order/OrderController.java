@@ -35,7 +35,7 @@ public class OrderController {
     private final ShopService shopService;
     private final MemberService memberService;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/imgs/order/review";
+    private static final String UPLOAD_DIR = "C:/uploads/";
 
 
     /*Get : 상품 리뷰 폼 열기*/
@@ -109,5 +109,76 @@ public class OrderController {
 
 
 
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -644,6 +644,60 @@ function updateCardOrderNumbers() {
 }
 
 
+
+    /** 장바구니 상품 추가 **/
+    function addToCart(prodId, quantity){
+        const cartItem = {
+            prodId: prodId,
+            quantity: quantity
+        };
+
+        fetch('/cart/data/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cartItem)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cart updated successfully', data);
+
+                // SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
+                Swal.fire({
+                    title: '상품이 장바구니에 추가되었습니다!',
+                    text: "장바구니로 이동하시겠습니까?",
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: '장바구니로 이동',
+                    cancelButtonText: '쇼핑 계속하기',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // '장바구니로 이동'을 선택한 경우
+                        window.location.href = '/cart';
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        // '쇼핑 계속하기'를 선택한 경우
+                        Swal.fire('계속 쇼핑해주세요!', '', 'info');
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('오류 발생', '상품을 장바구니에 추가하는 중 오류가 발생했습니다.', 'error');
+            });
+    }
+
+
+    // SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
+
+
+
+
+
+
+
+
 /******* Common Util : END *********/
 // 작성자 ID 마스킹 함수
 function maskWriter(writer) {

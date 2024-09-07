@@ -24,6 +24,10 @@
 	
 	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 	
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	
 	
 	<!--shop style link-->
 	<link rel="stylesheet" th:href="@{/css/util.css}">
@@ -91,14 +95,14 @@
 				</p>
 
 				<p class="card-text mt-5">
-					<form>
+					<form th:object="${cartItemRequest}">
 						<!--quantity : 구매수량 input, 버튼-->
 						
 						<div class="mb-3 quantityBox d-flex align-items-center">
 							<label for="quantity" class="form-label pr-5 align-self-center fw700 c333">구매수량</label>
 							<div class="number-input rounded-1">
 								<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
-								<input type="number" min="1" max="100" class="form-control rounded-0" value="1" id="quantity"/>
+								<input type="number" min="1" max="100" class="form-control rounded-0" value="1" id="quantity" name="quantity"/>
 								<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
 							</div>
 						</div>
@@ -106,6 +110,7 @@
 				
 				
 				<input type="hidden" id="finalPrice" th:value="${product.prodFinalPrice}" />
+				<input type="hidden" id="totalPrice" name="totalPrice">
 						
 						<!--총 구매 금액-->
 						<div class="text-end">
@@ -118,7 +123,7 @@
 						<!--버튼 라인-->
 						<div class="mb-3 btns gx-1 d-flex align-items-stretch">
 							
-							<a href="#" class="btn btn-outline-success"><i class="fa-solid fa-cart-shopping"
+							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-outline-success"><i class="fa-solid fa-cart-shopping"
 							                                               style="color: #6A994E;"></i></a>
 							<a href="#" class="btn btn-outline-success"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
 							<input class="btn btn-success" type="submit" value="구매하기">

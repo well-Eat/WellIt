@@ -78,20 +78,26 @@
 								<input type="text" class="form-control" id="prodDesc" th:field="*{prodDesc}">
 							</div>
 							<div class="row">
-								<div class="infoGroup col-md-4">
+								<div class="infoGroup col-md-6">
 									<label for="prodOrgPrice" class="form-label">기준판매가격</label>
 									<input type="number" class="form-control" id="prodOrgPrice" th:field="*{prodOrgPrice}"
 									       th:value="${prodOrgPrice == null? 10000 : prodOrgPrice}" step="1000">
 								</div>
 								
 								
-								<div class="infoGroup col-md-4">
+								<div class="infoGroup col-md-6">
 									<label for="prodDiscount" class="form-label">할인율</label>
 									<input type="number" step="0.05" class="form-control" id="prodDiscount" th:field="*{prodDiscount}"
 									       th:value="0">
 								</div>
-								
-								<div class="infoGroup col-md-4">
+							</div>
+							<div class="row">
+								<div class="infoGroup col-md-6">
+									<label for="prodStock" class="form-label">재고수량</label>
+									<input type="number" class="form-control" id="prodStock" th:field="*{prodStock}"
+									       th:value="${prodStock == null? 1000 : prodStock}" step="10">
+								</div>
+								<div class="infoGroup col-md-6">
 									<label for="prodCate" class="form-label">카테고리</label>
 									<select class="form-select" aria-label="Default select example" id="prodCate" th:field="*{prodCate}">
 										<option value="mealkit" selected>밀키트</option>
