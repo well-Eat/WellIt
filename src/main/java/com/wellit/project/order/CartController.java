@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.ArrayList;
+
 import java.util.List;
 
 @Controller
@@ -24,6 +25,7 @@ public class CartController {
     public String getCartPage(Model model, Principal principal){
 
         List<CartItem> cartItemList = cartService.getCartItemList(principal.getName());
+
 
         String memberAddress = cartService.getMemberAddress(principal.getName());
 
@@ -46,8 +48,6 @@ public class CartController {
         model.addAttribute("cartItemList", cartItemList);
         model.addAttribute("memAddr", memberAddress);
         model.addAttribute("orderForm", orderForm);
-
-
 
         return "/order/order_cart";
     }

@@ -1,14 +1,19 @@
 package com.wellit.project.member;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import com.wellit.project.order.Cart;
-import jakarta.persistence.*;
-import org.hibernate.validator.constraints.Length;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wellit.project.store.FavoriteStore;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,16 +35,22 @@ public class Member {
 	 	@Column
 	 	private String memberAlias; //닉네임
 
-	 	@Column
+	 	@Column(unique = true)
 	    private String memberEmail;
 	    
 	 	@Column
 	    private String memberPhone;
 	    
 	    @Column
+	    private String zipcode;
+		private String roadAddress;
+		private String addressDetail;
 	    private String memberAddress;
 	    
 	    @Column
+	    private String birth_year;
+	    private String birth_month;
+	    private String birth_day;
 	    private String memberBirth; //생일
 	    
 	    @Column
@@ -64,6 +75,14 @@ public class Member {
 	    protected void onUpdate() {
 	        this.memberUpdateDate = LocalDateTime.now();
 	    }
+
+	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
+
+	    private Integer mileage;
+
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @JsonManagedReference // 추가
+	    private List<FavoriteStore> favoriteStores;
 
 
 		@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
