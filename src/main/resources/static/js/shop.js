@@ -370,6 +370,7 @@ $(function () {
 
 
     $(document).on('click', '.addRow', function () {
+        const curIndex = $(this).index();
         const rowCount = $('#prodInfoList tr').length;
         const newRow = `
     <tr>
@@ -378,7 +379,9 @@ $(function () {
       <td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[${rowCount}].infoValue" placeholder="양"></td>
       <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
     </tr>`;
-        $('#prodInfoList').append(newRow);
+        // + 클릭 시 바로 다음에 행추가 & 키로 포커스 이동
+        $('#prodInfoList tr').eq(curIndex).after(newRow);
+        $('.infoKey').eq(curIndex+1).focus();
         updateProdInfoIndices(); // 인덱스를 다시 업데이트
     });
 
@@ -662,6 +665,7 @@ function updateCardOrderNumbers() {
             .then(response => response.json())
             .then(data => {
                 console.log('Cart updated successfully', data);
+                updateCartBadge();
 
                 // SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
                 Swal.fire({
@@ -675,10 +679,10 @@ function updateCardOrderNumbers() {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // '장바구니로 이동'을 선택한 경우
-                        window.location.href = '/cart';
+                        window.location.href = '/cart/list';
                     } else if (result.dismiss === Swal.DismissReason.cancel) {
                         // '쇼핑 계속하기'를 선택한 경우
-                        Swal.fire('계속 쇼핑해주세요!', '', 'info');
+                        //Swal.fire('계속 쇼핑해주세요!', '', 'info');
                     }
                 });
             })

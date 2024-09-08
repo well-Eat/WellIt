@@ -77,4 +77,6 @@ public class MemberService {
 	public boolean isIdExists(String memberId) {
         return memberRepository.existsByMemberId(memberId);
     }
+
+
 }

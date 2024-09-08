@@ -23,7 +23,10 @@ public class CartController {
 
         List<CartItem> cartItemList = cartService.getCartItemList(principal.getName());
 
+        String memberAddress = cartService.getMemberAddress(principal.getName());
+
         model.addAttribute("cartItemList", cartItemList);
+        model.addAttribute("memAddr", memberAddress);
 
         return "/order/order_cart";
     }

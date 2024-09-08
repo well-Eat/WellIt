@@ -61,6 +61,35 @@ nav ~ .container {
 
 
 /*********************************************************************/
+body > .container * {
+    color: #333333;
+}
+
+.removeItem {
+    color: #666666ad;
+}
+
+.removeItem:hover {
+    cursor: pointer;
+}
+
+.removeItem:active {
+    color: #333333ad;
+}
+
+.contRightSide * {
+    /* border: 1px solid lightsteelblue; */
+    box-sizing: border-box;
+}
+
+.dlvrAddrCard p input {
+    padding: 0;
+}
+
+.stickyBox {
+    position: sticky;
+    top: 28px;
+}
 
 /*폼 스타일 */
 /*구매 수량 quantity input*/
@@ -160,38 +189,3 @@ nav ~ .container {
     font-size: 20px;
 }
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
