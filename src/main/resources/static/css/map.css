@@ -27,8 +27,15 @@ header {
 #restaurantList div{
 	margin-bottom: 20px;
 	border: 1px solid #6a994e;
-	padding: 25px;
+	padding: 0 25px 25px;
 	border-radius: 45px;
+	cursor: pointer;
+
+}
+.solo{
+	max-height: 50px;
+	line-height: 50px;
+	margin-bottom: 0;
 }
 #pagination {
     display: flex;
@@ -38,7 +45,15 @@ header {
 	position: relative;
 	top: 550px;
 }
+.restaurant-item {
+    overflow: hidden;
+    max-height: 50px; /* 기본 높이 */
+    transition: max-height 0.5s ease; /* 부드러운 애니메이션 */
+}
 
+.restaurant-item.expanded {
+	max-height: 700px;
+}
 #pagination button {
     margin: 0 10px;
     padding: 10px 15px;
