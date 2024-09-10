@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wellit.project.email.EmailService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -264,7 +267,7 @@ public class MemberController {
     
     @PostMapping("/update_profile")
     public String updateProfile(@Valid MemberUpdateForm memberUpdateForm, BindingResult bindingResult,
-                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
     	if (bindingResult.hasErrors()) {
             // 에러 메시지를 추출하여 줄바꿈으로 구분된 문자열로 변환
             String errorMessages = bindingResult.getAllErrors().stream()
@@ -340,7 +343,7 @@ public class MemberController {
                 		memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
                 		memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(),
                                            imageFile, existingImagePath);
-
+                
                 session.removeAttribute("emailVerified");
                 session.removeAttribute("verificationCode");
                 redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
@@ -362,10 +365,10 @@ public class MemberController {
                 return "/member/update_profile";
             }
         } else {
-            return "redirect:/login";
+            return "redirect:/member/login";
         }
-        model.addAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인 해주세요.");
-        return "redirect:/member/login";
+        model.addAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+        return "/member/login";
     }
     
     @GetMapping("/delete_password")
@@ -417,7 +420,6 @@ public class MemberController {
                 return "/member/delete_password";
             }
         }
-        model.addAttribute("deletemassage", "회원 정보가 삭제되었습니다."); // 다시 member 정보도 전달
         return "/";
     }
     

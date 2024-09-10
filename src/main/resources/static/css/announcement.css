@@ -40,6 +40,14 @@ nav~.container {
 	font-weight: bold;
 	color: #6a994e; /* 블루 색상 */
 }
+.questionImg{
+	max-height: 400px;
+	width: auto;
+}
 
-
-
+textarea{
+	resize: none;
+}
+.card{
+	width: 60%;
+}
