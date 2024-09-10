@@ -1,6 +1,9 @@
 /******* util Style *********/
 /******* util Style *********/
 /******* util Style *********/
+.f12{
+    font-size: 12px;
+}
 .f14{
     font-size: 14px;
 }
@@ -28,6 +31,12 @@
 }
 .c333{
     color: #333333 !important;
+}
+.c444{
+    color: #444444 !important;
+}
+.c555{
+    color: #555555 !important;
 }
 .c666{
     color: #666666 !important;

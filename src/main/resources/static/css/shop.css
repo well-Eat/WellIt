@@ -293,7 +293,7 @@ ul.sortBox li:not(:last-of-type)::after{
     justify-content: start;
     height: 45px;
 }
-.prodInfo .btns a.btn{
+.prodInfo .btns a.heart{
     width: 50px;
     /*height: 100%;*/
     display: inline-flex;
@@ -303,8 +303,8 @@ ul.sortBox li:not(:last-of-type)::after{
     margin-right: 5px;
 }
 
-.prodInfo input[type=submit]{
-    width: calc(100% - 110px);
+.prodInfo .btns a.goToCart{
+    width: calc(100% - 60px);
 }
 
 /***** 상세페이지 리뷰 섹션 ******/

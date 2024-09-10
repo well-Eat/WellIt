@@ -40,14 +40,7 @@ public class ShopService {
         this.prodReviewImgRepository = prodReviewImgRepository;
         this.prodImageRepository = prodImageRepository;
 
-        // 데이터베이스 초기화 후에 테스트 데이터 삽입을 위해 메서드 호출
-        try {
-            //makingTestProdDTO();
-            //makingTestProdReviews();
-        } catch (Exception e) {
-            log.error("테스트 데이터 생성 실패........", e);
-            throw new RuntimeException(e);
-        }
+
     }
 
     /*상품 리스트 리턴*/
@@ -118,7 +111,7 @@ public class ShopService {
         product.setProdName(productForm.getProdName());
         product.setProdCate(productForm.getProdCate());
         product.setProdDesc(productForm.getProdDesc());
-        product.setProdContent(productForm.getProdContent());
+        product.setProdStock(productForm.getProdStock());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
 
         if (productForm.getProdDiscount() == null) {
@@ -202,7 +195,7 @@ public class ShopService {
         product.setProdName(productForm.getProdName());
         product.setProdCate(productForm.getProdCate());
         product.setProdDesc(productForm.getProdDesc());
-        product.setProdContent(productForm.getProdContent());
+        product.setProdStock(productForm.getProdStock());
         product.setProdDiscount(productForm.getProdDiscount());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
 

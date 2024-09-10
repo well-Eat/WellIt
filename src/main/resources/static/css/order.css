@@ -189,3 +189,102 @@ body > .container * {
     font-size: 20px;
 }
    
+
+
+
+
+/*********** order_po : 주문서 스타일 ***************/
+/*********** order_po : 주문서 스타일 ***************/
+/*********** order_po : 주문서 스타일 ***************/
+.order_po{
+    max-width: 800px;
+}
+.order_po table th,
+.order_po table td{
+    color:#333;
+}
+
+.order_po table:not(.priceTable) th{
+    max-width: 250px !important;
+    width: 25%;
+}
+
+
+section.orderItem *{
+    /* border : 1px solid lightblue; */
+    
+}
+
+/* 주문상품 섹션 */
+.orderItemTable .prodImageBoxWrpper{
+    width: 25%;
+    max-width: 100px;
+}
+
+/* 주문서 섹션 제목 구분선 */
+section.row > p.subtle::after {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background-color: #1a1a1a3f;
+    position: relative;
+    display: block;
+    margin-top: 12px;
+}
+
+
+/* 주문서 :결제금액 카드 */
+.priceCard{
+    width: fit-content;
+    overflow: hidden;
+    background-color: #eeeeee2f;
+    border: 0;
+}
+.priceCard .card-body{
+    position: relative;
+}
+
+
+.priceCard .tableWrapper {
+    
+    height: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    padding: 10px;
+}
+
+.priceCard table{
+    margin-bottom: 0;
+}
+
+.priceCard table tr th{
+    padding-right: 60px;
+    padding-bottom: 4px;
+    
+}
+.priceCard table tr td{
+    text-align: end;
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+.priceCard table tr.totalFinal th,
+.priceCard table tr.totalFinal td{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 18px;
+}
+.priceCard table tr.milege th,
+.priceCard table tr.milege td{
+    padding-bottom: 15px;
+}
+
+
+.priceCard .sm {
+    padding-top: 0;
+    padding-bottom: 0;
+    color: #999999;
+    font-weight: 500;
+    font-size: 14px;
+}

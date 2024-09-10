@@ -146,6 +146,7 @@
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
+			/*common javascript code : by yoonseo*/
 			//장바구니 아이템 개수 뱃지
       async function updateCartBadge() {
           try {
@@ -171,5 +172,26 @@
       }
       // 페이지 로드 시 실행하여 장바구니 개수를 업데이트
       document.addEventListener('DOMContentLoaded', updateCartBadge);
+
+      document.addEventListener("DOMContentLoaded", function() {
+          // 모든 'formatted-number' 클래스를 가진 요소를 선택
+          var formattedElements = document.querySelectorAll('.commaNums');
+
+          formattedElements.forEach(function(element) {
+              var nums = element.getAttribute('data-nums');
+              element.textContent = formatNumberWithComma(nums);
+          });
+      });
+
+      // 숫자 형식(,)
+      function formatNumberWithComma(number) {
+          number = parseInt(number); // 숫자로 변환
+          if (number >= 1000 || number <= -1000) {
+              return number.toLocaleString(); // 콤마로 구분된 형식
+          } else {
+              return number; // 그대로 출력
+          }
+      }
+      
 	</script>
 </nav>

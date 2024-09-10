@@ -4,6 +4,7 @@
 <head>
 	<title>카트</title>
 </head>
+<body>
 <div layout:fragment="content" class="container">
 	
 	<!--todo: 카트아이템 0개 시-->
@@ -22,186 +23,171 @@
 	<link rel="stylesheet" th:href="@{/css/util.css}">
 	
 	
-	
-	<div class="row justify-content-center">
-		
-		<!-- 장바구니 물품 목록 -->
-		<div class="col-md-8 col-lg-6 contLeftSide cartItemTable">
+	<form action="/order/create" method="post" th:object="${orderForm}" id="orderForm">
+		<div class="row justify-content-center">
 			
-			<div class="card mb-3"> <!-- 아이템 리스트 출력 박스 -->
-				<div class="card-header">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
-						<label class="form-check-label f14 c777 fw700" for="checkAll"> 전체선택</label>
-						<span class="printCheckedNumber">
-							(
-							<span id="checkedItem"></span>
-							/
-							<span id="allItem"></span>
-							)
-						</span>
-					</div>
-				</div> <!-- //card-header -->
+			<!-- 장바구니 물품 목록 -->
+			<div class="col-md-8 col-lg-6 contLeftSide cartItemTable">
 				
-				<th:block th:each="cartItem, iterStat : ${cartItemList}">
-
-					<div class="card-body border-bottom d-flex gap-3">
-						
-						<input type="hidden" th:value="${cartItem.product.prodId}" class="itemId" th:data-org-price="${cartItem.product.prodOrgPrice}" th:data-final-price="${cartItem.product.prodFinalPrice}"/>
-						<input type="hidden" class="hdSumOrgPrice">
-						<input type="hidden" class="hdSumFinalPrice">
-						
-						<i class="fa-solid fa-xmark removeItem" style="position: absolute; right: 15px;"></i>
-						<div class="vstack w-25 gap-2 clearfix">
-							<input class="form-check-input itemCheck" type="checkbox" value="" id="" checked>
-							<div class="prodImageBox border"
-							     style="width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;"
-							     th:style="|background-image: url(@{  ${cartItem.product.prodMainImg}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|"></div>
+				<div class="card mb-3"> <!-- 아이템 리스트 출력 박스 -->
+					<div class="card-header">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
+							<label class="form-check-label f14 c777 fw700" for="checkAll"> 전체선택</label>
+							<span class="printCheckedNumber">
+								(
+								<span id="checkedItem"></span>
+								/
+								<span id="allItem"></span>
+								)
+							</span>
 						</div>
-						
-						<div class="vstack w-75 pl-3 ml-3 calcItem">
-							<h5 class="card-title fw700 c666 f18 mt-4" th:text="${cartItem.product.prodName}"></h5>
+					</div> <!-- //card-header -->
+					
+					<th:block th:each="cartItem, iterStat : ${cartItemList}">
+						<div class="card-body border-bottom d-flex gap-3">
 							
-							<th:block th:if="${cartItem.product.prodDiscount != null and cartItem.product.prodDiscount > 0}">
-								<div>
-									<p class="prodOrgPrice card-text mb-1 c999 f14 text-decoration-line-through d-inline-block"
-									   th:text="|${#numbers.formatInteger(cartItem.product.prodOrgPrice  * cartItem.quantity ,3,'COMMA')}원|">50,000원</p>
-									<span>&nbsp;</span>
-									<p class="prodDiscount card-text mr-4 d-inline-block f14 fw700" style="color:orangered;"
-									   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,2,0)}">20%</p>
-								</div>
-							</th:block>
-							<p class="card-text d-inline-block">
-                <span class="prodTotalPrice card-text text-end d-inline-block c333 fw700"
-                      th:text="|${#numbers.formatInteger(cartItem.product.prodFinalPrice * cartItem.quantity ,3,'COMMA')}|" >40,000</span>
-								<span class="f14">원</span>
-							</p>
+							<!--주문 아이템 : prodId-->
+							<input type="hidden" th:value="${cartItem.product.prodId}" class="itemId"
+							       th:data-org-price="${cartItem.product.prodOrgPrice}"
+							       th:data-final-price="${cartItem.product.prodFinalPrice}"
+							       th:field="*{orderItemQuantityList[__${iterStat.index}__].prodId}"/>
 							
-							
-							<!--quantity : 구매수량 input, 버튼-->
-							<div class="mb-3 quantityBox d-flex align-items-center">
-								<div class="number-input rounded-1">
-									<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
-									<input type="number" min="1" max="100" class="form-control rounded-0 quantity" th:value="${cartItem.quantity}"
-									       th:id="|quantity[${iterStat.index}]|"
-									       th:name="|quantity[${iterStat.index}]|"/>
-									<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
-								</div>
+							<i class="fa-solid fa-xmark removeItem" style="position: absolute; right: 15px;"></i>
+							<div class="vstack w-25 gap-2 clearfix">
+								
+								<input class="form-check-input itemCheck" type="checkbox"
+								       th:field="*{orderItemQuantityList[__${iterStat.index}__].booleanOrder}" checked="checked"/>
+								
+								<div class="prodImageBox border"
+								     style="width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;"
+								     th:style="|background-image: url(@{  ${cartItem.product.prodMainImg}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|"></div>
 							</div>
 							
-							<!--1개가격-->
-							<input type="hidden" th:id="|orgPrice[${iterStat.index}]|" th:value="${cartItem.product.prodOrgPrice}"
-							       class="orgPrice"/>
-							<input type="hidden" th:id="|finalPrice[${iterStat.index}]|" th:value="${cartItem.product.prodFinalPrice}"
-							       class="finalPrice"/>
-							
-							<!--곱한가격-->
-							<input type="hidden" th:id="|sumOrgPrice[${iterStat.index}]|" class="sumOrgPrice" th:name="|sumOrgPrice[${iterStat.index}]|" th:value="${cartItem.product.prodOrgPrice * cartItem.quantity}">
-							<input type="hidden" th:id="|sumFinalPrice[${iterStat.index}]|" class="sumFinalPrice" th:name="|sumFinalPrice[${iterStat.index}]|" th:value="${cartItem.product.prodFinalPrice * cartItem.quantity}">
-
+							<!--상품명-->
+							<div class="vstack w-75 pl-3 ml-3 calcItem">
+								<h5 class="card-title fw700 c666 f18 mt-4" th:text="${cartItem.product.prodName}"></h5>
+								
+								<!--할인율 > 0 일때-->
+								<th:block th:if="${cartItem.product.prodDiscount != null and cartItem.product.prodDiscount > 0}">
+									<div>
+										<p class="prodOrgPrice card-text mb-1 c999 f14 text-decoration-line-through d-inline-block"
+										   th:text="|${#numbers.formatInteger(cartItem.product.prodOrgPrice  * cartItem.quantity ,3,'COMMA')}원|"></p>
+										<span>&nbsp;</span>
+										<p class="prodDiscount card-text mr-4 d-inline-block f14 fw700" style="color:orangered;"
+										   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,2,0)}"></p>
+									</div>
+								</th:block>
+								<!--할인 후 가격 * 수량-->
+								<p class="card-text d-inline-block">
+                    <span class="prodTotalPrice card-text text-end d-inline-block c333 fw700"
+                          th:text="|${#numbers.formatInteger(cartItem.product.prodFinalPrice * cartItem.quantity ,3,'COMMA')}|">40,000</span>
+									<span class="f14 won">원</span>
+								</p>
+								
+								
+								<!--quantity : 구매수량 input, 버튼-->
+								<div class="mb-3 quantityBox d-flex align-items-center">
+									<div class="number-input rounded-1">
+										<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
+										<input type="number" min="1" max="100" class="form-control rounded-0 quantity"
+										       th:value="${cartItem.quantity}"
+										       th:id="|quantity[${iterStat.index}]|"
+										       th:field="*{orderItemQuantityList[__${iterStat.index}__].quantity}"/>
+										<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
+									</div>
+								</div>
+								
+								<th:block class="hiddenInput">
+									<!--1개가격-->
+									<input type="hidden" th:id="|orgPrice[${iterStat.index}]|" th:value="${cartItem.product.prodOrgPrice}"
+									       class="orgPrice"/>
+									<input type="hidden" th:id="|finalPrice[${iterStat.index}]|"
+									       th:value="${cartItem.product.prodFinalPrice}" class="finalPrice"/>
+									
+									<!--곱한가격-->
+									<input type="hidden" th:id="|sumOrgPrice[${iterStat.index}]|" class="sumOrgPrice"
+									       th:field="*{orderItemQuantityList[__${iterStat.index}__].sumOrgPrice}"
+									       th:value="${cartItem.product.prodOrgPrice * cartItem.quantity}">
+									<input type="hidden" th:id="|sumFinalPrice[${iterStat.index}]|" class="sumFinalPrice"
+									       th:name="|sumFinalPrice[${iterStat.index}]|"
+									       th:value="${cartItem.product.prodFinalPrice * cartItem.quantity}">
+									<input type="hidden" th:id="|sumDiscPrice[${iterStat.index}]|" class="sumDiscPrice" th:field="*{orderItemQuantityList[__${iterStat.index}__].sumDiscPrice}" >
+								</th:block>
+							</div>
 						
-						</div>
+						
+						</div> <!-- //card-body -->
+					</th:block> <!--//cartItemList-->
 					
+					<!-- 체크 금액 합계 -->
 					
-					</div> <!-- //card-body -->
-				</th:block>
+					<div class="card-footer text-center">
+						<p style="margin-bottom: 5px;" class="f14 c888 fw700">상품 금액 합계</p>
+						<h3 class="fw700 f22 d-inline-block totalFinalPrice"></h3><span class="d-inline-block">&nbsp;원</span>
+					</div>
 				
-				<!-- 체크 금액 합계 -->
 				
-				<div class="card-footer text-center">
-					<p style="margin-bottom: 5px;" class="f14 c888 fw700">상품 금액 합계</p>
-					<h3 class="fw700 f22 d-inline-block totalFinalPrice"></h3><span class="d-inline-block">&nbsp;원</span>
-				</div>
+				</div> <!-- //card -->
+			</div> <!-- //col-md-6 contLeftSide cartItemTable 왼쪽열 -->
 			
 			
-			</div> <!-- //card -->
-		
-		
-		</div> <!-- //col-md-6 contLeftSide cartItemTable 왼쪽열 -->
-		
-		
-		<div class="col-md-4 contRightSide">
-			
-			<div class="stickyBox border-success vstack gap-3 ">
+			<div class="col-md-4 contRightSide">
 				
-				<div class="card addrCard">
-					<div class="card-body">
-						<h5 class="card-title mb-3 f16 c666 fw700">배송지</h5>
-						<a href="#" class="btn btn-sm card-link addrChangeBtn border float-end" onclick="sample4_execDaumPostcode()">&nbsp; 변경 &nbsp;</a>
-						<p class="card-subtitle text-body-secondary w-75">
+				<div class="stickyBox border-success vstack gap-3 ">
+					
+					<div class="card addrCard">
+						<div class="card-body">
+							<h5 class="card-title mb-3 f16 c666 fw700">배송지</h5>
+							<a href="#" class="btn btn-sm card-link addrChangeBtn border float-end"
+							   onclick="sample4_execDaumPostcode()">&nbsp; 변경 &nbsp;</a>
+							
 							<div class=" text-left c666 addr"></div> <!--주소 출력-->
 							<input type="hidden" class="form-control-plaintext text-left c666 addr"
-							       th:value="${memAddr}" th:name="${deliveryAddr}" tabindex="-1" id="roadAddress"/>
-						<input type="text" id="sangseAddress" class="form-control" placeholder="상세주소" style="display:none;"/>
-						<input type="hidden" th:name="fullAddr">
-						
-						
-						
-						
-						
-						<!-- 주소 -->
-						<div class="row justify-content-start mt-3" style="display: none">
-							<label for="address" class="form-label">주소</label>
-							<div class="col-sm-4">
-								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호">
+							       th:value="${memAddr}" th:field="*{addr1}" tabindex="-1" id="roadAddress"/>
+							<input type="text" id="sangseAddress" class="form-control" placeholder="상세주소" style="display:none;"  th:field="*{addr2}"/>
+							
+							
+						</div>
+					</div> <!-- //card deliveryAddress-->
+					
+					
+					<div class="card totalPriceCard">
+						<div class="card-body">
+							
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">상품 금액</div>
+								<div class="col-6 text-end price fw700"><span class=" totalOrgPrice"></span> <span class="won">원</span></div>
 							</div>
-							<div class="col-sm-3">
-								<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
-								       value="우편번호 찾기"><br>
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">할인 금액</div>
+								<div class="col-6 text-end price fw700 "><span class=" totalDiscPrice"></span> <span class="won">원</span></div>
 							</div>
-							<div class="col-12 mt-1">
-								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소">
-								<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom ">배송비</div>
+								<div class="col-6 text-end price fw700"><span class=" deliveryFee"></span> <span class="won">원</span></div>
 							</div>
-							<div class="col-12 mt-1">
-								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소">
-								<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
+							<hr>
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">최종 결제 금액</div>
+								<div class="col-6 text-end price fw700 "><span class=" totalFinalCalcedPrice"></span> <span class="won">원</span>
+								</div>
 							</div>
-							<input type="hidden" id="fullAddress" name="fullAddress" >
-							<span id="guide" style="color:#999;display:none" hidden></span>
 						</div>
-						
-						
-						
-						
-						
-						</p>
-					</div>
-				</div> <!-- //card deliveryAddress-->
-				<div class="card totalPriceCard">
-					<div class="card-body">
-						
-						<div class="row pricePart my-2">
-							<div class="col-6 part c888 f14 fw700 align-text-bottom">상품 금액</div>
-							<div class="col-6 text-end price fw700 totalOrgPrice">50,000원</div>
-						</div>
-						<div class="row pricePart my-2">
-							<div class="col-6 part c888 f14 fw700 align-text-bottom">할인 금액</div>
-							<div class="col-6 text-end price fw700 totalDiscPrice">-2,000원</div>
-						</div>
-						<div class="row pricePart my-2">
-							<div class="col-6 part c888 f14 fw700 align-text-bottom ">배송비</div>
-							<div class="col-6 text-end price fw700 deliveryFee">3,000원</div>
-						</div>
-						<hr>
-						<div class="row pricePart my-2">
-							<div class="col-6 part c888 f14 fw700 align-text-bottom">최종 결제 금액</div>
-							<div class="col-6 text-end price fw700 totalFinalCalcedPrice">45,000원</div>
-						</div>
-					</div>
-				</div> <!-- //card deliveryAddress-->
-				<div class="card">
-					<a href="#" class="card-link btn text-bg-success">결제하기</a>
-				</div> <!-- // 결제하기 버튼 -->
+					</div> <!-- //card deliveryAddress-->
+					<div class="card">
+						<input class="card-link btn text-bg-success" type="submit" value="주문하기"/>
+						<!--<a href="#" class="card-link btn text-bg-success" onclick="event.preventDefault(); orderFoam.submit();">결제하기</a>-->
+					</div> <!-- // 결제하기 버튼 -->
+				
+				
+				</div> <!-- //stickyBox -->
 			
 			
-			</div> <!-- //stickyBox -->
-		
-		
-		</div> <!-- //contRightSide -->
-	
-	
-	</div> <!-- //전체 row -->
+			</div> <!-- //contRightSide -->
+			
+		</div> <!-- //전체 row -->
+	</form>
 	
 	
 	<!--daum 주소 입력 api-->
@@ -217,6 +203,6 @@
 
 </script>
 
-
+</body>
 </html>
 

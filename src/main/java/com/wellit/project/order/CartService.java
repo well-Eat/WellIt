@@ -73,11 +73,7 @@ public class CartService {
 
     /*카트 아이템 수 반환*/
     public int getCartItemCountByUser(String username){
-
         Cart cart = cartRepository.findByMember_MemberId(username).orElseThrow();
-
-        log.info(cartItemRepository.countCartItemsByCart(cart));
-
         return cartItemRepository.countCartItemsByCart(cart);
     }
 

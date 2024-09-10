@@ -3,67 +3,95 @@
 $(function () {
     calcTotalPrice();
     updateAddr();
-
-  // 구매수량 - 버튼
-  $(".minus").on("click", function (e) {
-      e.preventDefault();
-      let $input = $(this).next("input");
-      let minValue = parseInt($input.attr("min"));
-      if (parseInt($input.val()) > minValue) {
-          $input.val(parseInt($input.val()) - 1);
-      }
-      let $orgPrice =  $(this).parents('.calcItem').find('.orgPrice').val();
-      let $finalPrice =  $(this).parents('.calcItem').find('.finalPrice').val();
-      let $sumOrgPrice = $(this).parents('.calcItem').find('.sumOrgPrice');
-      let $sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice');
-
-      $sumOrgPrice.val($orgPrice * $input.val() );
-      $sumFinalPrice.val($finalPrice * $input.val() );
-
-      $(this).parents('.calcItem').find('.prodTotalPrice').text(
-          Number($sumFinalPrice.val()).toLocaleString() // 1000단위 콤마 추가
-      );
-      calcTotalPrice();
-  });
-
-  // 구매수량 + 버튼
-  $(".plus").on("click", function (e) {
-      e.preventDefault();
-      let $input = $(this).prev("input");
-      let maxValue = parseInt($input.attr("max"));
-      if (parseInt($input.val()) < maxValue) {
-          $input.val(parseInt($input.val()) + 1);
-      }
-      let $orgPrice =  $(this).parents('.calcItem').find('.orgPrice').val();
-      let $finalPrice =  $(this).parents('.calcItem').find('.finalPrice').val();
-      let $sumOrgPrice = $(this).parents('.calcItem').find('.sumOrgPrice');
-      let $sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice');
-
-      $sumOrgPrice.val($orgPrice * $input.val() );
-      $sumFinalPrice.val($finalPrice * $input.val() );
+    updateItemPriceInput();
 
 
-      $(this).parents('.calcItem').find('.prodTotalPrice').text(
-          Number($sumFinalPrice.val()).toLocaleString() // 1000단위 콤마 추가
-      );
-      $(this).parents('.calcItem').find('.prodOrgPrice').text(
-          Number($sumOrgPrice.val()).toLocaleString() // 1000단위 콤마 추가
-      );
-      calcTotalPrice();
-  });
+    // 구매수량 - 버튼
+    $(".minus").on("click", function (e) {
+        e.preventDefault();
+        let $input = $(this).next("input");
+        let minValue = parseInt($input.attr("min"));
+        if (parseInt($input.val()) > minValue) {
+            $input.val(parseInt($input.val()) - 1);
+        }
+        let $orgPrice = $(this).parents('.calcItem').find('.orgPrice').val();
+        let $finalPrice = $(this).parents('.calcItem').find('.finalPrice').val();
+        let $sumOrgPrice = $(this).parents('.calcItem').find('.sumOrgPrice');
+        let $sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice');
+
+        $sumOrgPrice.val($orgPrice * $input.val());
+        $sumFinalPrice.val($finalPrice * $input.val());
+
+        let $sumDiscPrice = $sumFinalPrice.val() - $sumOrgPrice.val();
+        $(this).parents('.calcItem').find('.sumDiscPrice').val($sumDiscPrice);  //아이템당 총 할인금액
+
+        $(this).parents('.calcItem').find('.prodTotalPrice').text(
+            Number($sumFinalPrice.val()).toLocaleString() // 1000단위 콤마 추가
+        );
+        calcTotalPrice();
+    });
+
+    // 구매수량 + 버튼
+    $(".plus").on("click", function (e) {
+        e.preventDefault();
+        let $input = $(this).prev("input");
+        let maxValue = parseInt($input.attr("max"));
+        if (parseInt($input.val()) < maxValue) {
+            $input.val(parseInt($input.val()) + 1);
+        }
+        let $orgPrice = $(this).parents('.calcItem').find('.orgPrice').val();
+        let $finalPrice = $(this).parents('.calcItem').find('.finalPrice').val();
+        let $sumOrgPrice = $(this).parents('.calcItem').find('.sumOrgPrice');
+        let $sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice');
+        $sumOrgPrice.val($orgPrice * $input.val());
+        $sumFinalPrice.val($finalPrice * $input.val());
+
+        let $sumDiscPrice = $sumFinalPrice.val() - $sumOrgPrice.val();
+        $(this).parents('.calcItem').find('.sumDiscPrice').val($sumDiscPrice);  //아이템당 총 할인금액
+
+        $(this).parents('.calcItem').find('.prodTotalPrice').text(
+            Number($sumFinalPrice.val()).toLocaleString() // 1000단위 콤마 추가
+        );
+        $(this).parents('.calcItem').find('.prodOrgPrice').text(
+            Number($sumOrgPrice.val()).toLocaleString() // 1000단위 콤마 추가
+        );
+        calcTotalPrice();
+    });
 
 
 }); // $(function(){}); jQuery END
 /** order_cart : totalPriceCard : 총 구매 금액 calculate **/
 /** order_cart : totalPriceCard : 총 구매 금액 calculate **/
 
+function updateItemPriceInput(){
+    $(".calcItem").each(function (){
+        let $input = $(this).find('.quantity')
+        let $orgPrice = $(this).find('.orgPrice').val();
+        let $finalPrice = $(this).find('.finalPrice').val();
+        let $sumOrgPrice = $(this).find('.sumOrgPrice');
+        let $sumFinalPrice = $(this).find('.sumFinalPrice');
+        $sumOrgPrice.val($orgPrice * $input.val());
+        $sumFinalPrice.val($finalPrice * $input.val());
+
+        let $sumDiscPrice = $sumFinalPrice.val() - $sumOrgPrice.val();
+        $(this).find('.sumDiscPrice').val($sumDiscPrice);  //아이템당 총 할인금액
+
+        $(this).find('.prodTotalPrice').text(
+            Number($sumFinalPrice.val()).toLocaleString() // 1000단위 콤마 추가
+        );
+        $(this).find('.prodOrgPrice').text(
+            Number($sumOrgPrice.val()).toLocaleString() // 1000단위 콤마 추가
+        );
+        calcTotalPrice();
+    })
+}
 
 /** order_cart : item input checkbox 전체선택 연동 **/
 /** order_cart : item input checkbox 전체선택 연동 **/
-$(function (){
+$(function () {
 
     //체크박스 : 전체 선택,해제
-    $('#checkAll').on('change', function (){
+    $('#checkAll').on('change', function () {
         $(".cartItemTable input[type='checkbox']").prop("checked", this.checked)
         calcTotalPrice();
     })
@@ -88,7 +116,7 @@ $(function (){
         const minusBtnIcon = $('.minus i');
         if ($('#quantity').val() == 1) {
             minusBtnIcon.toggleClass('fa-minus fa-trash-can fa-solid fa-regular opacity-50');
-        } else if ($(this).find(".fa-trash-can")){
+        } else if ($(this).find(".fa-trash-can")) {
 
         }
     })
@@ -104,7 +132,7 @@ $(function (){
 
 
 /** order_cart : 총 금액 재계산 **/
-function calcTotalPrice(){
+function calcTotalPrice() {
     let totalOrgPrice = 0; //상품금액
     let totalFinalPrice = 0; //합계금액(최종상품금액)
     let totalDiscPrice = 0; //할인금액
@@ -115,134 +143,110 @@ function calcTotalPrice(){
         let $itemId = $(this).parents(".card-body").find(".itemId");
         let $quantity = $(this).parents(".card-body").find(".quantity").val();
 
-        totalOrgPrice += (Number( $itemId.attr('data-org-price')) * $quantity);
+        totalOrgPrice += (Number($itemId.attr('data-org-price')) * $quantity);
         totalFinalPrice += ($itemId.attr('data-final-price') * $quantity);
     })
 
     totalDiscPrice = totalFinalPrice - totalOrgPrice; // 할인금액
 
     //50000원 이상 배송비 무료
-    if (totalFinalPrice < 50000) deliveryFee = 3000;
+    if (totalFinalPrice < 50000 && totalFinalPrice>0) deliveryFee = 3000;
     else deliveryFee = 0;
 
     totalFinalCalcedPrice = totalFinalPrice + deliveryFee;
 
     //출력
-    $(".totalFinalPrice").text( Number( totalFinalPrice).toLocaleString()); //카드푸터
-    $(".totalOrgPrice").text( Number( totalOrgPrice).toLocaleString()+"원"); //
-    $(".totalDiscPrice").text( Number( totalDiscPrice).toLocaleString()+"원"); //
-    $(".deliveryFee").text( Number( deliveryFee).toLocaleString()+"원"); //
-    $(".totalFinalCalcedPrice").text( Number( totalFinalCalcedPrice).toLocaleString()+"원"); //
+    $(".totalFinalPrice").text(Number(totalFinalPrice).toLocaleString()); //카드푸터
+    $(".totalOrgPrice").text(Number(totalOrgPrice).toLocaleString()); //
+    if (totalDiscPrice == 0){
+        $(".totalDiscPrice").text("-");
+        $(".totalDiscPrice").next('.won').text('');
+    } else {
+        $(".totalDiscPrice").text(Number(totalDiscPrice).toLocaleString());
+        $(".totalDiscPrice").next('.won').text('원');
+    }
+
+    if (deliveryFee == 0){
+        $(".deliveryFee").text("-");
+        $(".deliveryFee").next('.won').text('');
+    } else{
+        $(".deliveryFee").text(Number(deliveryFee).toLocaleString()); //
+        $(".deliveryFee").next('.won').text('원');
+    }
+    $(".totalFinalCalcedPrice").text(Number(totalFinalCalcedPrice).toLocaleString()); //
 
     updateCheckedItem();
 }
 
 
-
-$(function (){
+$(function () {
 
     //카트 아이템 x버튼 클릭
-    $("i.removeItem").on("click", function (){
+    $("i.removeItem").on("click", function () {
         let prodId = Number($(this).siblings(".itemId").val());
-        console.log(prodId);
         removeAtCart(prodId);
     })
 
 })
 
 //장바구니 상품 제거
-function removeAtCart(prodId){
+function removeAtCart(prodId) {
     const removeItem = {
         prodId: prodId
     };
-    console.log(removeItem);
     fetch('/cart/data/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify( removeItem)
+        body: JSON.stringify(removeItem)
     })
-        .then( response => response.json())
-        .then(data=>{
+        .then(response => response.json())
+        .then(data => {
             removeItemDOM(prodId);
             updateCartBadge();
             calcTotalPrice();
         })
 
 
-
 }
 
 //카트 아이템 dom 제거
-function removeItemDOM(prodId){
-    $(".itemId").each(function (){
-        if ($(this).val() == prodId){
+function removeItemDOM(prodId) {
+    $(".itemId").each(function () {
+        if ($(this).val() == prodId) {
             $(this).parents(".card-body").remove();
         }
     })
 }
 
-/** 장바구니 상품 추가 **/
-function addToCart(prodId, quantity){
-    const cartItem = {
-        prodId: prodId,
-        quantity: quantity
-    };
-
-    fetch('/cart/data/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(cartItem)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Cart updated successfully', data);
-            updateCartBadge();
-
-            // SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
-            Swal.fire({
-                title: '상품이 장바구니에 추가되었습니다!',
-                text: "장바구니로 이동하시겠습니까?",
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: '장바구니로 이동',
-                cancelButtonText: '쇼핑 계속하기',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // '장바구니로 이동'을 선택한 경우
-                    window.location.href = '/cart/list';
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    // '쇼핑 계속하기'를 선택한 경우
-                    //Swal.fire('계속 쇼핑해주세요!', '', 'info');
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('오류 발생', '상품을 장바구니에 추가하는 중 오류가 발생했습니다.', 'error');
-        });
-}
 
 //카트 아이템 리스트 카드헤더 : 선택개수 / 전체개수 업데이트
-function updateCheckedItem(){
-    $(".printCheckedNumber #checkedItem").text( $(".itemCheck:checked").length );
-    $(".printCheckedNumber #allItem").text( $(".itemCheck").length );
+function updateCheckedItem() {
+    $(".printCheckedNumber #checkedItem").text($(".itemCheck:checked").length);
+    $(".printCheckedNumber #allItem").text($(".itemCheck").length);
 }
 
 //배송지
-$('input.addr').on('change', function (){updateAddr();});
+$('input.addr').on('change', function () {
+    updateAddr();
+});
 
-function updateAddr(){
+function updateAddr() {
     $("div.addr").text($("input.addr").val());
 }
 
+// 전역 변수로 스크롤 위치를 저장할 변수를 선언
+var savedScrollPosition = 0;
+let currentScrollY = 0;
 
 function sample4_execDaumPostcode(e) {
+
     e.preventDefault();
+    // 팝업을 열기 전에 현재 스크롤 위치를 저장
+    savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+// 현재 스크롤 위치 저장
+    currentScrollY = window.scrollY;
     new daum.Postcode({
         oncomplete: function (data) {
             // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -293,11 +297,20 @@ function sample4_execDaumPostcode(e) {
                 guideTextBox.innerHTML = '';
                 guideTextBox.style.display = 'none';
             }
+
+            // 팝업이 닫힌 후 원래의 스크롤 위치로 이동
+            window.scrollTo(0, savedScrollPosition);
+
+        },
+        onclose: function() {
+            // 창이 닫힌 후 스크롤 위치 복원
+            window.scrollTo(0, currentScrollY);
         }
     }).open();
 }
 
 function sample4_execDaumPostcode() {
+    currentScrollY = window.scrollY;
     new daum.Postcode({
         oncomplete: function (data) {
             document.getElementById('sample4_postcode').value = data.zonecode;
@@ -306,23 +319,23 @@ function sample4_execDaumPostcode() {
             document.getElementById('sample4_jibunAddress').value = data.jibunAddress;
             document.querySelector("div.addr").innerText = data.roadAddress;
             document.querySelector("#sangseAddress").style.display = 'block';
+        },
+        onclose: function() {
+            // 창이 닫힌 후 스크롤 위치 복원
+            window.scrollTo(0, currentScrollY);
         }
     }).open();
 }
 
-/*document.getElementById('memberForm').addEventListener('submit', function (event) {
-    const roadAddress = document.getElementById('sample4_roadAddress').value;
-    const detailAddress = document.getElementById('sample4_detailAddress').value;
-    const fullAddress = `${roadAddress} ${detailAddress}`;
-
-    document.getElementById('fullAddress').value = fullAddress;
-});*/
-
-
-
-
-
-
+// cart -> order페이지로 submit시 : 체크되지 않은 아이템 리스트는 서버 전송 x
+document.querySelector('#orderForm').addEventListener('submit', function(event) {
+    document.querySelectorAll('.itemCheck:not(:checked)').forEach(function(checkbox) {
+        const parent = checkbox.closest('.card-body');
+        parent.querySelectorAll('input').forEach(function(input) {
+            input.disabled = true;
+        });
+    });
+});
 
 
 

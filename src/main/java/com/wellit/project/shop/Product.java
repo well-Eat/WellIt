@@ -2,6 +2,7 @@ package com.wellit.project.shop;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wellit.project.order.CartItem;
+import com.wellit.project.order.OrderItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @Table(name = "product")
@@ -29,9 +31,6 @@ public class Product {
     @ColumnDefault("0")
     private Double prodDiscount; //할인율
     private String prodCate; //카테고리
-
-    @Lob  // 대용량 텍스트를 저장하기 위해 사용
-    private String prodContent;
 
     private Integer prodFinalPrice; //판매 가격(할인율 반영)
 
@@ -71,4 +70,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<CartItem> cartItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

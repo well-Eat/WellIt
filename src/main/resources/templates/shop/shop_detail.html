@@ -34,9 +34,6 @@
 	<link rel="stylesheet" th:href="@{/css/shop.css}">
 	
 
-	<!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
-	
-	
 	<!-- 상품 정보 요약 & 주문 폼 -->
 	<section class="prodInfo row my-4 py-4 rounded-2 justify-content-start">
 		<div class="prodImg col-md-6">
@@ -111,12 +108,11 @@
 						</div>
 
 						<!--버튼 라인-->
-						<div class="mb-3 btns gx-1 d-flex align-items-stretch">
+						<div class="mb-3 btns gx-1 d-flex align-items-stretch justify-content-between">
 							
-							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-outline-success"><i class="fa-solid fa-cart-shopping"
-							                                               style="color: #6A994E;"></i></a>
-							<a href="#" class="btn btn-outline-success"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
-							<input class="btn btn-success" type="submit" value="구매하기">
+							<a href="#" class="btn btn-outline-success heart"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-success goToCart"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
+
 						</div>
 					</form>
 				</p>

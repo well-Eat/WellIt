@@ -1,9 +1,6 @@
 package com.wellit.project.shop;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,7 +22,6 @@ public class ProductForm {
     private Double prodDiscount; //할인율
     private String prodCate; //카테고리
 
-    private String prodContent;
 
     private Integer prodFinalPrice; //판매 가격(할인율 반영)
 
@@ -50,7 +46,6 @@ public class ProductForm {
         this.prodDiscount = product.getProdDiscount();
         this.prodStock = product.getProdStock();
         this.prodCate = product.getProdCate();
-        this.prodContent = product.getProdContent();
         this.prodFinalPrice = product.getProdFinalPrice();
         this.prodInfoList = product.getProdInfoList();
     }

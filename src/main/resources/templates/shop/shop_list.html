@@ -11,6 +11,10 @@
 
 </head>
 <div layout:fragment="content" class="container">
+	
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
 	<!--shop style link-->
 	<link rel="stylesheet" th:href="@{/css/util.css}">
 	<link rel="stylesheet" th:href="@{/css/shop.css}">
@@ -66,7 +70,7 @@
 				</div>
 				
 				<!-- 담기버튼 -->
-				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
+				<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary" th:onclick="addToCart([[${item.prodId}]], 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
 				
 				<!-- 상품설명 -->
 				<div class="card-body">
@@ -104,42 +108,8 @@
 	
 	</div>
 	
-	<script>
-      $(function(){
-
-          /* 카테고리 아이템 리스트 get */
-          $("a.prodCateLink").on("click", function(e) {
-              e.preventDefault();
-
-              //카테고리 선택상자의 id와 아이템카드의 data-prodcate의 값이
-              //같은 경우 display:block;
-              let clickedCate = $(this).parent().attr('id');
-              let allList = $(".prodItem");
-
-              if (clickedCate === 'all') {
-                  // 모든 항목을 표시
-                  allList.removeClass('d-none');
-              } else {
-                  // 선택된 카테고리만 표시하고, 나머지는 숨김
-                  allList.each(function() {
-                      let prod = $(this);
-                      let prodCate = prod.attr('data-prodcate');
-
-                      if (prodCate === clickedCate) {
-                          prod.removeClass('d-none');
-                      } else {
-                          prod.addClass('d-none');
-                      }
-                  });
-              }
-
-              // 모든 카테고리의 active 클래스 제거하고 클릭된 항목의 부모 li 요소에만 추가
-              $(".prodCate").removeClass('active');
-              $(this).parent().addClass('active');
-          });
-      });
-	
-	</script>
+	<!--shop js link-->
+	<script src="/js/shop.js"></script>
 
 
 </div> <!--//layout::content-->
