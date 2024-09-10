@@ -1,9 +1,11 @@
 package com.wellit.project.store;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/load/place/{stoId}/reviews")
@@ -28,8 +32,20 @@ public class StoreReviewController {
             @PathVariable("stoId") Long stoId,
             @RequestParam("revText") String revText,
             @RequestParam("revRating") int revRating,
-            @RequestParam(value = "revImg", required = false) MultipartFile revImg) {
+            @RequestParam(value = "revImg", required = false) MultipartFile revImg,
+            HttpSession session
+    		) {
+    	
+    	
         
+    	// 로그인 확인
+        String userId = (String) session.getAttribute("UserId");
+        if (userId == null) {
+            // 로그인하지 않은 경우 에러 메시지 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(null); // 또는 적절한 에러 객체 반환
+        }
+    	
         // 리뷰 유효성 검사
         if (revText == null || revText.trim().isEmpty()) {
             return ResponseEntity.badRequest().build(); // 잘못된 요청
@@ -39,14 +55,15 @@ public class StoreReviewController {
         StoreReview review = new StoreReview();
         review.setRevText(revText);
         review.setRevRating(revRating);
-        review.setStore(new Store(stoId));
-
+        review.setStore(new AllStore(stoId));
+        review.setWriter(userId);
         // 이미지 처리 (예: 파일 저장)
         if (revImg != null && !revImg.isEmpty()) {
             // 이미지 저장 로직 추가 (예: 파일 시스템에 저장하고 URL 반환)
             String imageUrl = saveImage(revImg); // saveImage 메서드는 구현 필요
             review.setRevImg(imageUrl);
         }
+        
 
         StoreReview savedReview = storeReviewService.saveReview(review);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedReview);
