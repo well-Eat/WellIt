@@ -3,8 +3,7 @@
 	<link rel="stylesheet" href="/css/member.css" />
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
-			<div th:if="${loginMessage}" class="alert">
-				<p th:text="${loginMessage}"></p>
+			<div th:if="${loginMessage}" th:text="${loginMessage}" id="loginMessage" style="display:none;">
 			</div>
 			<div class="row py-5 justify-content-center">
 				<div class="col-md-6 col-xs-8 py-5 border rounded formStyle">
@@ -45,8 +44,8 @@
 							</div>
 							<div class="row mt-3">
 								<div class="d-grid gap-2 col-8 mx-auto">
-								  <button class="btn btn-warning" type="button">카카오로 시작</button>
-								  <button class="btn btn-success" type="button">네이버로 로그인</button>
+									<button class="btn btn-warning" type="button">카카오로 시작</button>
+									<button class="btn btn-success" type="button">네이버로 로그인</button>
 								</div>
 							</div>
 						</div>
@@ -56,20 +55,27 @@
 		</div>
 	</section>
 	<script>
+		window.onload = function () {
+			var messageElement = document.getElementById("loginMessage");
+			// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+			if (messageElement && messageElement.innerText.trim() !== "") {
+				alert(messageElement.innerText);
+			}
+		}
 		function checkSave() {
-		    const checkbox = document.getElementById("exampleCheck1");
-		    if (checkbox.checked) {
-		        if (!confirm("아이디를 저장하시겠습니까?")) {
-		            checkbox.checked = false;
-		        } else {
-		            // username 로컬 스토리지에 저장
-		            const username = document.getElementById("memberId").value;
-		            localStorage.setItem("savedUsername", username);
-		        }
-		    } else {
-		        //저장된 username 로컬 스토리지에서 제거
-		        localStorage.removeItem("savedUsername");
-		    }
+			const checkbox = document.getElementById("exampleCheck1");
+			if (checkbox.checked) {
+				if (!confirm("아이디를 저장하시겠습니까?")) {
+					checkbox.checked = false;
+				} else {
+					// username 로컬 스토리지에 저장
+					const username = document.getElementById("memberId").value;
+					localStorage.setItem("savedUsername", username);
+				}
+			} else {
+				//저장된 username 로컬 스토리지에서 제거
+				localStorage.removeItem("savedUsername");
+			}
 		}
 
 		document.addEventListener("DOMContentLoaded", function () {
@@ -88,13 +94,14 @@
 				}
 			});
 		});
-		document.addEventListener("DOMContentLoaded", function() {
-		    const savedUsername = localStorage.getItem("savedUsername");
-		    if (savedUsername) {
-		        document.getElementById("memberId").value = savedUsername;
-		        document.getElementById("exampleCheck1").checked = true;
-		    }
+		document.addEventListener("DOMContentLoaded", function () {
+			const savedUsername = localStorage.getItem("savedUsername");
+			if (savedUsername) {
+				document.getElementById("memberId").value = savedUsername;
+				document.getElementById("exampleCheck1").checked = true;
+			}
 		});
 	</script>
 </div>
+
 </html>

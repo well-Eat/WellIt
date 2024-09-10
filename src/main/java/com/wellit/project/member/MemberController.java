@@ -416,7 +416,6 @@ public class MemberController {
                 return "/member/delete_password";
             }
         }
-        model.addAttribute("deletemassage", "회원 정보가 삭제되었습니다."); // 다시 member 정보도 전달
         return "/";
     }
     
