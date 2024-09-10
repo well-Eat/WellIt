@@ -30,7 +30,7 @@ public class Member {
 	 	@Column
 	 	private String memberAlias; //닉네임
 
-	 	@Column
+	 	@Column(unique = true)
 	    private String memberEmail;
 	    
 	 	@Column
@@ -70,4 +70,8 @@ public class Member {
 	    protected void onUpdate() {
 	        this.memberUpdateDate = LocalDateTime.now();
 	    }
+	    
+	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
+	    
+	    private Integer mileage;
 }

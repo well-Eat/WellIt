@@ -3,6 +3,9 @@
 	<link rel="stylesheet" href="/css/member.css" />
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
+			<div th:if="${loginMessage}" class="alert">
+				<p th:text="${loginMessage}"></p>
+			</div>
 			<div class="row py-5 justify-content-center">
 				<div class="col-md-6 col-xs-8 py-5 border rounded formStyle">
 					<h1 class="text-center mb-3">WellIt</h1>
@@ -32,9 +35,12 @@
 								<button type="submit" class="btn btn-block greenBtn">로그인</button>
 							</div>
 							<div class="row mt-3">
-								<div class="col d-flex justify-content-between">
+								<div class="col-6 d-flex justify-content-start">
 									<a th:href="@{/member/register}">회원가입</a>
-									<a th:href="@{/member/find}">아이디/비밀번호 찾기</a>
+								</div>
+								<div class="col-6 d-flex justify-content-around">
+									<a th:href="@{/member/findMemberId}">아이디 찾기</a>
+									<a th:href="@{/member/findPassword}">비밀번호 찾기</a>
 								</div>
 							</div>
 							<div class="row mt-3">

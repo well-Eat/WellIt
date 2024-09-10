@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.wellit.project.email.EmailService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
 
     @GetMapping("/login")
     public String getLogin() {
@@ -62,13 +65,13 @@ public class MemberController {
         }
 
         Boolean isIdVerified = (Boolean) session.getAttribute("idVerified");
-        if (Boolean.FALSE.equals(isIdVerified) || isIdVerified==null) {
+        if (!isIdVerified || isIdVerified==null) {
             model.addAttribute("errorMessage", "아이디 중복확인이 완료되지 않았습니다. 회원가입을 진행할 수 없습니다.");
             return "/member/register";
         }
 
         Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-        if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified==null) {
+        if (!isEmailVerified || isEmailVerified==null) {
             model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다. 회원가입을 진행할 수 없습니다.");
             return "/member/register";
         }
@@ -92,7 +95,6 @@ public class MemberController {
             session.removeAttribute("emailVerified");
             session.removeAttribute("verificationCode");
             session.removeAttribute("idVerified");
-            redirectAttributes.addFlashAttribute("successMessage", "회원가입이 완료되었습니다.");
             
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -107,21 +109,32 @@ public class MemberController {
             bindingResult.reject("registerFailed", e.getMessage());
             return "/member/register";
         }
-        return "redirect:/";
+        model.addAttribute("loginMessage", "회원가입이 완료되었습니다. 로그인해주세요");
+        return "/member/login";
     }
 	
+    
+    
 	@PostMapping("/check-id")
 	public ResponseEntity<IdCheckResponse> checkId(@RequestBody IdCheckRequest request, HttpSession session) {
 	    boolean exists = memberService.isIdExists(request.getMemberId());
 	    IdCheckResponse response = new IdCheckResponse();
 	    response.setExists(exists);
 	    session.setAttribute("idVerified", true); // 인증 완료 상태 저장
+	    session.removeAttribute("verificationCode");  // 인증 코드 삭제
 	    return ResponseEntity.ok().body(response);
 	}
 	
 	@PostMapping("/send-email")
 	public ResponseEntity<String> sendEmail(@RequestParam("email") String email, HttpSession session) {
+	   
+	 // 이메일 중복 확인
+	    if (memberService.isEmailExists(email)) {
+	        return ResponseEntity.badRequest().body("이미 등록된 이메일입니다.");
+	    }
+        
 	    String verificationCode = generateVerificationCode();
+        
 	    session.setAttribute("verificationCode", verificationCode);
 	    String subject = "Wellit 인증코드";
 	    String text = "인증코드는 " + verificationCode + "입니다.";
@@ -329,6 +342,7 @@ public class MemberController {
                                            imageFile, existingImagePath);
 
                 session.removeAttribute("emailVerified");
+                session.removeAttribute("verificationCode");
                 redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
 
             } catch (DataIntegrityViolationException e) {
@@ -402,12 +416,13 @@ public class MemberController {
                 return "/member/delete_password";
             }
         }
-        return "redirect:/";
+        model.addAttribute("deletemassage", "회원 정보가 삭제되었습니다."); // 다시 member 정보도 전달
+        return "/";
     }
     
-    @GetMapping("/find")
-    public String getFind() {
-    	return "/member/find";
+    @GetMapping("/findMemberId")
+    public String getFindMemberId() {
+    	return "/member/findMemberId";
     }
     
     @GetMapping("/findId")
@@ -417,27 +432,36 @@ public class MemberController {
     
     @PostMapping("/findId")
     public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail, Model model, HttpSession session) {
-        Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
+        
+    	Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);   
      // 이메일 인증 여부 확인
         Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-        if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified==null) {
+        System.out.println("isEmailVerified: " + isEmailVerified);
+        if (!isEmailVerified || isEmailVerified==null) {
             model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-            return "/member/find";
+            return "/member/findMemberId";
         } 
         
-        if (member.isPresent()) {
+        if (member.isPresent()) {        	
         	Member thisMember = member.get();
             model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
         } else {
-            model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
+            model.addAttribute("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
         }
-
-        return "member/findId";
+        session.setAttribute("emailVerified", false);
+        session.removeAttribute("verificationCode");
+       return "member/findId";
     }
     
     @PostMapping("/id-email")
-    public ResponseEntity<String> sendIdEmail(@RequestParam("memberEmail") String email, HttpSession session) {
+    public ResponseEntity<?> sendIdEmail(@RequestParam("memberEmail") String email, HttpSession session) {
 	    
+    	Optional<Member> member = memberService.findByMemberEmail(email);
+    	
+    	if (!member.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
+        }
+    	
     	String verificationCode = generateVerificationCode();
 	    session.setAttribute("verificationCode", verificationCode);
 	    String subject = "Wellit 아이디 찾기 인증코드";
@@ -447,9 +471,17 @@ public class MemberController {
 	    return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
 	}
     
+
     @PostMapping("/pw-email")
-    public ResponseEntity<String> sendPwEmail(@RequestParam("email") String email, HttpSession session) {
-	    String verificationCode = generateVerificationCode();
+    public ResponseEntity<String> sendPwEmail(@RequestParam("memberEmail") String email, HttpSession session) {
+	    
+    	Optional<Member> member = memberService.findByMemberEmail(email);
+    	
+    	if (!member.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
+        }
+    	
+    	String verificationCode = generateVerificationCode();
 	    session.setAttribute("verificationCode", verificationCode);
 	    String subject = "Wellit 비밀번호 찾기 인증코드";
 	    String text = "인증코드는 " + verificationCode + "입니다.";
@@ -457,6 +489,74 @@ public class MemberController {
 	    
 	    return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
 	}
+    
+    @GetMapping("/findPassword")
+    public String getFindPassword() {
+    	return "/member/findPassword";
+    }
+    
+    @PostMapping("/findPassword")
+    public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session, Model model) {
+    	
+    	Optional<Member> thisMember = memberService.findByMemberEmail(email);
+    	
+    	if (!thisMember.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
+        }
+    	
+    	// 이메일 인증 여부 확인
+        Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+        System.out.println("isEmailVerified: " + isEmailVerified);
+     // 이메일 인증이 완료되지 않았을 때
+        if (isEmailVerified == null || !isEmailVerified) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
+        }
+    	
+        return memberService.sendPasswordResetEmail(email);
+    }
+    
+    @GetMapping("/reset_password")
+    public String getResetPassword(@RequestParam("token") String token, Model model) {
+        model.addAttribute("token", token);
+        System.out.println("Token received: " + token); // 토큰 값을 로그에 출력
+    	return "/member/reset_password";
+    }
+    
+    @PostMapping("/reset_password")
+    @Transactional
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+                                                 @RequestParam("newPassword") String password,
+                                                 @RequestParam("newPassword2") String password2, Model model) {
+        
+        // 비밀번호 형식 검증
+        String passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+        if (!Pattern.matches(passwordPattern, password)) {
+            return ResponseEntity.badRequest().body("비밀번호는 최소 6자 이상이어야 하며, 문자와 숫자를 포함해야 합니다.");
+        }
+
+        // 비밀번호 확인 일치 검증
+        if (!password.equals(password2)) {
+            return ResponseEntity.badRequest().body("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+
+        // 토큰 검증
+        model.addAttribute("token", token); // 모델에 token 추가
+        System.out.println("Token received: " + token);
+        Optional<Member> thisMember = memberRepository.findByResetToken(token);
+        if (thisMember.isEmpty()) {
+            return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
+        }
+
+        Member member = thisMember.get();
+
+        // 비밀번호 업데이트
+        member.setMemberPassword(passwordEncoder.encode(password));
+        member.setResetToken(null); // 토큰 무효화
+        memberRepository.save(member);
+
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+    
     
     public String getMethodName(@RequestParam String param) {
         return new String();

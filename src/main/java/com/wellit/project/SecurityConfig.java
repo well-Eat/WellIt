@@ -35,8 +35,9 @@ public class SecurityConfig {
 	            // 로그아웃 설정
 	            .logout(logout -> logout
 	                .logoutUrl("/member/logout")       // 로그아웃 요청 경로
-	                .logoutSuccessUrl("/")             // 로그아웃 성공 시 리다이렉트 경로
-	                .invalidateHttpSession(true)       // 세션 무효화
+	                .logoutSuccessUrl("/") // 로그아웃 후 리디렉션 URL
+	                .invalidateHttpSession(true) // 세션 무효화
+	                .deleteCookies("JSESSIONID") // 쿠키 삭제
 	            );
 		return http.build();
 	}
