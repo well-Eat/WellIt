@@ -3,7 +3,7 @@
 	<link rel="stylesheet" href="/css/member.css" />
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
-			<div th:if="${loginMessage}" class="alert">
+			<div id="loginMessage" th:if="${loginMessage}" class="alert">
 				<p th:text="${loginMessage}"></p>
 			</div>
 			<div class="row py-5 justify-content-center">
@@ -56,6 +56,7 @@
 		</div>
 	</section>
 	<script>
+		
 		function checkSave() {
 		    const checkbox = document.getElementById("exampleCheck1");
 		    if (checkbox.checked) {

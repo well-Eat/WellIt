@@ -364,7 +364,8 @@ public class MemberController {
         } else {
             return "redirect:/login";
         }
-        return "redirect:/member/mypage";
+        model.addAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인 해주세요.");
+        return "redirect:/member/login";
     }
     
     @GetMapping("/delete_password")

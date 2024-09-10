@@ -307,7 +307,7 @@
 				</ul>
 			</div>
 		</section>
-		<div id="deletemessage" th:text="${deletemassage}" style="display:none;"></div>
+		<div id="deletemessage" th:if="${deletemassage}" th:text="${deletemassage}" style="display:none;"></div>
 		<script>
 			window.onload = function () {
 				// 'deletemessage' id를 가진 div 요소를 가져옵니다.
