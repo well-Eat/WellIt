@@ -39,5 +39,13 @@ public class StoreReviewService {
         return false; // 리뷰가 존재하지 않음
     }
     
+ // 추가된 메서드
+    public void deleteReviewsByStoreId(Long stoId) {
+        storeReviewRepository.deleteByStore_StoId(stoId); // 특정 가게의 모든 리뷰 삭제
+    }
+    
+    public List<AllStore> getStoresWithSortedReviews() {
+        return storeReviewRepository.findAllStoresWithSortedReviews();
+    }
 
 }

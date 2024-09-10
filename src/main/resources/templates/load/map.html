@@ -378,7 +378,6 @@
 			function fetchRestaurantsByLocation(lat, lng) {
 				const radius = 5000; // 5km 반경
 				const apiUrl = `https://dapi.kakao.com/v2/local/search/keyword.json?query=비건&category_group_code=FD6&x=${lng}&y=${lat}&radius=${radius}&size=15`;
-
 				$.ajax({
 					url: apiUrl,
 					type: 'GET',
@@ -391,7 +390,6 @@
 					        const addressParts = restaurant.address_name.split(' '); // 주소를 공백으로 분할
 					        const region = addressParts.slice(0, 1).join(' '); // 첫 번째 부분 (예: 경기도)
 					        const district = addressParts.slice(1, 2).join(' '); // 두 번째 부분 (예: 수원시)
-					        
 					        displayRestaurants(allRestaurants, region, district); // 각 식당 리스트 표시
 					    });
 					},
@@ -510,6 +508,11 @@
 		    '주차 구역 안내표지 있음', '주차장 있음', '주차가 혼잡할 수 있음', '주말에만 주차 가능', '가게 앞 주차 금지',
 		    '자전거 주차 가능', '전기차 충전 주차 가능', '1시간 무료 주차', '주차 공간 넉넉함', '저녁 시간 주차 금지'
 		];
+		
+		const stoVegetarianType = [
+			'비건', '프루테리언', '락토 베지테리언', '오보 베지테리언', '락토 오보 베지테리언', '페스코 베지테리언',
+			'폴로 베지테리언', '플렉시테리언' 
+		]
 
 		// 랜덤 선택 함수
 		function getRandomItem(arr) {
@@ -528,12 +531,8 @@
 		        const lng = restaurant.x; // 경도
 		        const uniqueId = restaurant.id; // 카카오맵 API에서 제공하는 고유 ID
 
-		        const exists = await checkIfExists(uniqueId); // 이미 존재하는지 확인하는 함수
 
-		        if (exists) {
-		            console.log(`Store with ID ${uniqueId} already exists. Skipping...`);
-		            continue; // 이미 존재하면 저장하지 않고 넘어감
-		        }
+
 
 		        // 랜덤한 값을 사용하여 데이터 채우기
 		        const storeData = {
@@ -554,12 +553,28 @@
 		            stoParkingInfo: getRandomItem(stoParkingInfos),
 		            stoLatitude: lat,
 		            stoLongitude: lng,
+					stoVegetarianType: getRandomItem(stoVegetarianType), 
 		            createdAt: new Date(),
 		            updatedAt: new Date(),
 		            isOpen: true,
-		            kakaoStoreId: uniqueId
+		            kakaoStoreId: uniqueId,
+					storeReviews: [
+						{
+							revId: 0,
+							revImg: "",
+							revText: "",
+							revRating: 0,
+							writer: ""
+						}
+					] // 빈 리스트로 초기화
 		        };
 
+				// 고유 ID 존재 여부 체크
+								        const exists = await checkIfExists(uniqueId);
+								        if (exists) {
+								            continue; // 중복된 경우 다음 레스토랑으로 넘어감
+								        }
+				
 		        // API를 통해 데이터 저장
 		        await saveStoreData(storeData);
 
@@ -600,20 +615,24 @@
 		function loadNearbyStores() {
 			const restaurantList = $('#restaurantList');
 			restaurantList.empty(); // 기존 리스트 제거
-
 			// 사용자의 현재 위치 가져오기
 			navigator.geolocation.getCurrentPosition(position => {
 				const {latitude, longitude} = position.coords;
 
 				fetch('/load/store')
-					.then(response => response.json())
+				.then(response => {
+				        if (!response.ok) {
+				            throw new Error('Network response was not ok');
+				        }
+				        return response.json();
+				    })
 					.then(stores => {
 						// 사용자의 위치 근처 가게 필터링 (예: 5km 이내)
 						const nearbyStores = stores.filter(store => {
+
 							const distance = calculateDistance(latitude, longitude, store.stoLatitude, store.stoLongitude);
 							return distance <= 5; // 5km 이내
 						});
-
 						displayAllRestaurants(nearbyStores, 1); // 첫 페이지 표시
 
 						// 첫 번째 식당에 대해 지도 초기화
@@ -630,7 +649,6 @@
 		function loadAllStores(city, district) {
 			const restaurantList = $('#restaurantList');
 			restaurantList.empty(); // 기존 리스트 제거
-
 			fetch('/load/store')
 				.then(response => response.json())
 				.then(stores => {
@@ -643,88 +661,81 @@
 		}
 
 		function displayAllRestaurants(filteredStores, currentPage) {
-			const restaurantList = $('#restaurantList');
-			const itemsPerPage = 5; // 페이지당 항목 수
-			const startIndex = (currentPage - 1) * itemsPerPage;
-			const endIndex = startIndex + itemsPerPage;
-			const paginatedRestaurants = filteredStores.slice(startIndex, endIndex);
+		    const restaurantList = $('#restaurantList');
+		    const itemsPerPage = 5; // 페이지당 항목 수
+		    const startIndex = (currentPage - 1) * itemsPerPage;
+		    const endIndex = startIndex + itemsPerPage;
+		    const paginatedRestaurants = filteredStores.slice(startIndex, endIndex);
 
-			restaurantList.empty(); // 기존 리스트 제거
-			if (paginatedRestaurants.length === 0) {
-				restaurantList.append('<div>식당이 없습니다.</div>');
-				return;
-			}
+		    restaurantList.empty(); // 기존 리스트 제거
+		    if (paginatedRestaurants.length === 0) {
+		        restaurantList.append('<div>식당이 없습니다.</div>');
+		        return;
+		    }
 
-			paginatedRestaurants.forEach((store, index) => {
-				const {
-					stoName,
-					stoTitle,
-					stoContent,
-					stoCategory,
-					viewCount,
-					recommendationCount,
-					stoContact,
-					stoAddress,
-					stoImage,
-					stoOperatingHours,
-					stoClosedDays,
-					stoRecommendedMenu,
-					stoParkingInfo,
-					stoLatitude,
-					stoLongitude,
-					isOpen,
-					stoRegionProvince,
-					stoRegionCity,
-					kakaoStoreId
-				} = store;
+		    paginatedRestaurants.forEach((store, index) => {
+		        const {
+		            stoName,
+		            stoTitle,
+		            stoContent,
+		            stoCategory,
+		            viewCount,
+		            recommendationCount,
+		            stoContact,
+		            stoAddress,
+		            stoImage,
+		            stoOperatingHours,
+		            stoClosedDays,
+		            stoRecommendedMenu,
+		            stoParkingInfo,
+		            stoLatitude,
+		            stoLongitude,
+		            stoVegetarianType,
+		            isOpen,
+		            stoRegionProvince,
+		            stoRegionCity,
+		            kakaoStoreId,
+					storeReviews
+		        } = store;
 
-				const storeItem = $(`
-				    <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
-				        <p class='solo'>${stoName} - ${stoTitle}</p>
-				        <img src="${stoImage}" alt="${stoName}" class='img-fluid'><br>
-				        내용: ${stoContent}<br>
-				        카테고리: ${stoCategory}<br>
-				        지역: ${stoRegionProvince}, ${stoRegionCity}<br>
-				        전화번호: ${stoContact}<br>
-				        주소: ${stoAddress}<br>
-				        운영시간: ${stoOperatingHours}<br>
-				        휴무일: ${stoClosedDays}<br>
-				        추천 메뉴: ${stoRecommendedMenu}<br>
-				        주차 정보: ${stoParkingInfo}<br>
-				        조회수: ${viewCount}<br>
-				        추천수: ${recommendationCount}<br>
-				        카카오 ID: ${kakaoStoreId}<br>
-				        상태: ${isOpen ? '영업중' : '휴업'}<br>
-				    </div>
-				`);
+		        const storeItem = $(`
+		            <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
+		                <p class='solo'>${stoName} - ${stoTitle}</p>
+		                <img src="${stoImage}" alt="${stoName}" class='img-fluid'><br>
+		                내용: ${stoContent}<br>
+		                카테고리: ${stoCategory}<br>
+		                지역: ${stoRegionProvince}, ${stoRegionCity}<br>
+		                전화번호: ${stoContact}<br>
+		                주소: ${stoAddress}<br>
+		                운영시간: ${stoOperatingHours}<br>
+		                휴무일: ${stoClosedDays}<br>
+		                추천 메뉴: ${stoRecommendedMenu}<br>
+		                주차 정보: ${stoParkingInfo}<br>
+		                채식 종류: ${stoVegetarianType}<br>
+		                조회수: ${viewCount}<br>
+		                추천수: ${recommendationCount}<br>
+		                카카오 ID: ${kakaoStoreId}<br>
+		                상태: ${isOpen ? '영업중' : '휴업'}<br>
+		            </div>
+		        `);
 
-				// 첫 번째 항목은 기본적으로 열리도록
-				$('.restaurant-item').first().addClass('expanded');
+		        restaurantList.append(storeItem);
+		        
+		        storeItem.on('click', function () {
+		            $('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
+		            $(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
+		            initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
+		        });
+		    });
 
-				$('.restaurant-item').on('click', function() {
+		    // 기본적으로 첫 번째 항목 확장
+		    if (paginatedRestaurants.length > 0) {
+		        const firstItem = $('.restaurant-item').first();
+		        firstItem.addClass('expanded');
+		        initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
+		    }
 
-				    // 모든 항목에 대해 클래스 제거 및 숨기기
-				    $('.restaurant-item').removeClass('expanded');
-
-				    $(this).addClass('expanded');
-				    
-				});
-				$(document).on('click', '.restaurant-item', function() {
-				    $('.restaurant-item').removeClass('expanded');
-				    $(this).addClass('expanded');
-				});
-				// 첫 번째 식당에 대해서만 지도를 초기화합니다.
-				if (index === 0) {
-					initMap(stoLatitude, stoLongitude, stoName);
-				}
-
-				storeItem.on('click', function () {
-					initMap(stoLatitude, stoLongitude, stoName);
-				});
-
-				restaurantList.append(storeItem);
-			});
-			setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
+		    setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
 		}
 		function setupPagination(totalItems, itemsPerPage, filteredStores) {
 		    const pagination = $('#pagination');

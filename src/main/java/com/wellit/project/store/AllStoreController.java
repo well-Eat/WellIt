@@ -4,31 +4,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Console;
 import java.util.List;
 
 @RestController
-@RequestMapping("/load/store")
+@RequestMapping("/load")
 public class AllStoreController {
 	
 
     @Autowired
     private AllStoreService allStoreService;
 
-    @GetMapping
+    @GetMapping("/store")
     public List<AllStore> getAllStores() {
         return allStoreService.getAllStores();
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<AllStore> getStoreById(@PathVariable Long id) {
-        return allStoreService.getStoreById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    
+    @PostMapping("/store/update")
+    public ResponseEntity<String> updateStore(@RequestBody AllStore store) {
+        boolean isUpdated = allStoreService.updateStore(store);
+        if (isUpdated) {
+            return ResponseEntity.ok("가게가 성공적으로 수정되었습니다.");
+        } else {
+            return ResponseEntity.status(400).body("가게 수정에 실패했습니다.");
+        }
+    }
+    
+    //삭제
+    @DeleteMapping("/store/delete/{stoId}")
+    public ResponseEntity<Void> deleteStore(@PathVariable("stoId") Long stoId) {
+        allStoreService.deleteStoreById(stoId);
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/save")
+    @PostMapping("/store/save")
     public ResponseEntity<AllStore> createStore(@RequestBody AllStore storeData) {
 
         // 데이터 저장 로직
@@ -48,12 +60,13 @@ public class AllStoreController {
             storeData.getStoParkingInfo(),
             storeData.getKakaoStoreId(),
             storeData.getStoLatitude(),
-            storeData.getStoLongitude()
+            storeData.getStoLongitude(),
+            storeData.getStoVegetarianType(),
+            storeData.getStoreReviews()
         );
-
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStore);
     }
-    @GetMapping("/save/")
+    @GetMapping("/store/save/{uniqueId}")
     public ResponseEntity<Boolean> checkIfExists(@PathVariable("uniqueId") String uniqueId) {
         try {
             boolean exists = allStoreService.existsByKakaoStoreId(uniqueId);
@@ -65,15 +78,4 @@ public class AllStoreController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AllStore> updateStore(@PathVariable Long id, @RequestBody AllStore storeDetails) {
-        AllStore updatedStore = allStoreService.updateStore(id, storeDetails);
-        return updatedStore != null ? ResponseEntity.ok(updatedStore) : ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStore(@PathVariable Long id) {
-        allStoreService.deleteStore(id);
-        return ResponseEntity.noContent().build();
-    }
 }
