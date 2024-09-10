@@ -2,9 +2,8 @@ package com.wellit.project.member;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wellit.project.email.EmailService;
 
@@ -56,11 +56,8 @@ public class MemberController {
 	}
     @PostMapping("/register")
     public String register(@Valid MemberRegisterForm memberRegisterForm, BindingResult bindingResult, 
-                           @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model) {
+                           @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                System.out.println(error.toString());
-            });
             return "/member/register";
         }
 
@@ -69,13 +66,15 @@ public class MemberController {
             model.addAttribute("errorMessage", "아이디 중복확인이 완료되지 않았습니다. 회원가입을 진행할 수 없습니다.");
             return "/member/register";
         }
+
         Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
         if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified==null) {
             model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다. 회원가입을 진행할 수 없습니다.");
             return "/member/register";
         }
+
         if (!memberRegisterForm.getMemberPassword().equals(memberRegisterForm.getMemberPassword2())) {
-            bindingResult.rejectValue("password2", "passwordInCorrect", "2개의 패스워드가 서로 일치하지 않습니다.");
+            bindingResult.rejectValue("memberPassword2", "passwordInCorrect", "2개의 패스워드가 서로 일치하지 않습니다.");
             return "/member/register";
         }
 
@@ -93,6 +92,8 @@ public class MemberController {
             session.removeAttribute("emailVerified");
             session.removeAttribute("verificationCode");
             session.removeAttribute("idVerified");
+            redirectAttributes.addFlashAttribute("successMessage", "회원가입이 완료되었습니다.");
+            
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             bindingResult.reject("registerFailed", "이미 등록된 사용자입니다.");
@@ -106,7 +107,6 @@ public class MemberController {
             bindingResult.reject("registerFailed", e.getMessage());
             return "/member/register";
         }
-
         return "redirect:/";
     }
 	
@@ -222,7 +222,6 @@ public class MemberController {
 	            return "/member/enter_password";
 	        }
 	    }
-
 	    return "redirect:/login"; // 인증 정보가 없으면 로그인 페이지로 리다이렉트
 	}
     
@@ -251,8 +250,8 @@ public class MemberController {
     }
     
     @PostMapping("/update_profile")
-    public String updateProfile(@Valid MemberRegisterForm memberRegisterForm, BindingResult bindingResult,
-                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model) {
+    public String updateProfile(@Valid MemberUpdateForm memberUpdateForm, BindingResult bindingResult,
+                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
     	if (bindingResult.hasErrors()) {
             // 에러 메시지를 추출하여 줄바꿈으로 구분된 문자열로 변환
             String errorMessages = bindingResult.getAllErrors().stream()
@@ -269,7 +268,7 @@ public class MemberController {
 
             // 에러 메시지를 모델에 추가
             model.addAttribute("errorMessage", errorMessages);
-            model.addAttribute("member", memberRegisterForm);  // 현재 폼 객체를 모델에 추가
+            model.addAttribute("member", memberUpdateForm);  // 현재 폼 객체를 모델에 추가
 
             // 프로필 수정 폼 페이지로 이동
             return "member/update_profile";
@@ -283,21 +282,34 @@ public class MemberController {
             String memberId = userDetails.getUsername();
 
             Member existingMember = memberService.getMember(memberId);
-            model.addAttribute("member", memberRegisterForm);  // 여기에 추가
+            model.addAttribute("member", memberUpdateForm);  // 여기에 추가
             // 비밀번호 일치 여부 확인
-            if (!memberRegisterForm.getMemberPassword().equals(memberRegisterForm.getMemberPassword2())) {
-                bindingResult.rejectValue("memberPassword2", "passwordInCorrect", "2개의 패스워드가 서로 일치하지 않습니다.");
-                model.addAttribute("errorMessage", "2개의 패스워드가 서로 일치하지 않습니다.");
-                model.addAttribute("member", memberRegisterForm);  // 여기에 추가
-                return "/member/update_profile";
-            }
+            
+         // 비밀번호 검사: 비밀번호가 입력된 경우에만 유효성 검사 진행
+            String newPassword = existingMember.getMemberPassword(); // 기존 비밀번호 유지
+            if (memberUpdateForm.getMemberPassword() != null && !memberUpdateForm.getMemberPassword().isEmpty()) {
+                // 비밀번호 유효성 검사 (6자 이상, 영문과 숫자 포함)
+                if (!memberUpdateForm.getMemberPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) {
+                    bindingResult.rejectValue("memberPassword", "error.memberPassword", "비밀번호는 최소 6자 이상이어야 하며, 영문과 숫자를 포함해야 합니다.");
+                    model.addAttribute("errorMessage", "비밀번호는 최소 6자 이상이어야 하며, 영문과 숫자를 포함해야 합니다.");
+                    return "member/update_profile";
+                }
 
+                // 비밀번호 확인 검사
+                if (!memberUpdateForm.getMemberPassword().equals(memberUpdateForm.getMemberPassword2())) {
+                    bindingResult.rejectValue("memberPassword2", "passwordInCorrect", "2개의 패스워드가 서로 일치하지 않습니다.");
+                    model.addAttribute("errorMessage", "2개의 패스워드가 서로 일치하지 않습니다.");
+                    return "member/update_profile";
+                }
+
+                newPassword = memberUpdateForm.getMemberPassword();  // 새 비밀번호로 갱신
+            }
             // 이메일 변경 확인 및 이메일 인증 처리
-            if (!existingMember.getMemberEmail().equals(memberRegisterForm.getMemberEmail())) {
+            if (!existingMember.getMemberEmail().equals(memberUpdateForm.getMemberEmail())) {
                 Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
                 if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified == null) {
                     model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-                    model.addAttribute("member", memberRegisterForm);  // 여기에 추가
+                    model.addAttribute("member", memberUpdateForm);  // 여기에 추가
                     return "/member/update_profile";
                 }
             }
@@ -306,39 +318,148 @@ public class MemberController {
                 // 기존 이미지 경로를 폼에서 가져와서 전달
                 String existingImagePath = existingMember.getImageFile();
 
-                memberService.updateMember(existingMember, memberRegisterForm.getMemberPassword(),
-                                           memberRegisterForm.getMemberName(), memberRegisterForm.getMemberAlias(),
-                                           memberRegisterForm.getMemberEmail(), memberRegisterForm.getMemberPhone(),
-                                           memberRegisterForm.getMemberAddress(), memberRegisterForm.getMemberBirth(),
-                                           memberRegisterForm.getMemberGender(), memberRegisterForm.getMemberVeganType(),
-                                           memberRegisterForm.getZipcode(), memberRegisterForm.getRoadAddress(),
-                                           memberRegisterForm.getAddressDetail(), memberRegisterForm.getBirth_year(),
-                                           memberRegisterForm.getBirth_month(), memberRegisterForm.getBirth_day(),
+                memberService.updateMember(existingMember, memberUpdateForm.getMemberPassword(),
+                		memberUpdateForm.getMemberName(), memberUpdateForm.getMemberAlias(),
+                		memberUpdateForm.getMemberEmail(), memberUpdateForm.getMemberPhone(),
+                		memberUpdateForm.getMemberAddress(), memberUpdateForm.getMemberBirth(),
+                		memberUpdateForm.getMemberGender(), memberUpdateForm.getMemberVeganType(),
+                		memberUpdateForm.getZipcode(), memberUpdateForm.getRoadAddress(),
+                		memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
+                		memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(),
                                            imageFile, existingImagePath);
 
                 session.removeAttribute("emailVerified");
+                redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
 
             } catch (DataIntegrityViolationException e) {
                 e.printStackTrace();
                 bindingResult.reject("updateFailed", "이미 등록된 사용자 정보입니다.");
-                model.addAttribute("member", memberRegisterForm);  // 여기에 추가
+                model.addAttribute("member", memberUpdateForm);  // 여기에 추가
                 return "/member/update_profile";
             } catch (IOException e) {
                 e.printStackTrace();
                 bindingResult.reject("fileError", "파일 처리 중 오류가 발생했습니다.");
-                model.addAttribute("member", memberRegisterForm);  // 여기에 추가
+                model.addAttribute("member", memberUpdateForm);  // 여기에 추가
                 return "/member/update_profile";
             } catch (Exception e) {
                 e.printStackTrace();
                 bindingResult.reject("updateFailed", e.getMessage());
-                model.addAttribute("member", memberRegisterForm);  // 여기에 추가
+                model.addAttribute("member", memberUpdateForm);  // 여기에 추가
                 return "/member/update_profile";
             }
         } else {
             return "redirect:/login";
         }
-
         return "redirect:/member/mypage";
     }
+    
+    @GetMapping("/delete_password")
+	public String getDeleteMember(Model model) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    // 인증 객체가 null이 아니고, 인증된 유저 정보가 존재하는지 확인
+	    if (authentication != null && authentication.isAuthenticated() 
+	            && authentication.getPrincipal() instanceof UserDetails) {
+	        
+	        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+	        String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+	        
+	        // 회원 정보 조회
+	        Member member = memberService.getMember(memberId);
 
+	        // 모델에 회원 정보를 추가하여 뷰에 전달
+	        model.addAttribute("member", member);
+	        
+	    } else {
+	        // 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+	        return "redirect:/login"; 
+	    }
+
+	    // 비밀번호 입력 페이지로 이동
+	    return "/member/delete_password";
+	}
+    
+    @PostMapping("/delete_password")
+    public String deleteMember(@RequestParam("deletepassword") String password, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
+        // 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String memberId = userDetails.getUsername();
+
+            // 비밀번호 확인
+            Member member = memberService.getMember(memberId);
+            if (passwordEncoder.matches(password, member.getMemberPassword())) {
+                // 비밀번호가 일치하면 삭제 처리
+            	redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 삭제되었습니다.");
+                memberService.deleteMember(memberId);
+                session.invalidate(); // 세션 무효화
+                return "redirect:/";
+            } else {
+            	// 비밀번호가 일치하지 않으면 에러 메시지를 모델에 추가
+	            model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
+	            model.addAttribute("member", member); // 다시 member 정보도 전달
+                return "/member/delete_password";
+            }
+        }
+        return "redirect:/";
+    }
+    
+    @GetMapping("/find")
+    public String getFind() {
+    	return "/member/find";
+    }
+    
+    @GetMapping("/findId")
+    public String getFindId() {
+    	return "/member/findId";
+    }
+    
+    @PostMapping("/findId")
+    public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail, Model model, HttpSession session) {
+        Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
+     // 이메일 인증 여부 확인
+        Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+        if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified==null) {
+            model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+            return "/member/find";
+        } 
+        
+        if (member.isPresent()) {
+        	Member thisMember = member.get();
+            model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
+        } else {
+            model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
+        }
+
+        return "member/findId";
+    }
+    
+    @PostMapping("/id-email")
+    public ResponseEntity<String> sendIdEmail(@RequestParam("memberEmail") String email, HttpSession session) {
+	    
+    	String verificationCode = generateVerificationCode();
+	    session.setAttribute("verificationCode", verificationCode);
+	    String subject = "Wellit 아이디 찾기 인증코드";
+	    String text = "인증코드는 " + verificationCode + "입니다.";
+	    emailService.sendSimpleMessage(email, subject, text);
+	    
+	    return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
+	}
+    
+    @PostMapping("/pw-email")
+    public ResponseEntity<String> sendPwEmail(@RequestParam("email") String email, HttpSession session) {
+	    String verificationCode = generateVerificationCode();
+	    session.setAttribute("verificationCode", verificationCode);
+	    String subject = "Wellit 비밀번호 찾기 인증코드";
+	    String text = "인증코드는 " + verificationCode + "입니다.";
+	    emailService.sendSimpleMessage(email, subject, text);
+	    
+	    return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
+	}
+    
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
 }

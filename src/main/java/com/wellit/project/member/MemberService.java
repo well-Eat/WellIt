@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.wellit.project.DataNotFoundException;
+import com.wellit.project.email.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailService emailService;
 
 	public List<Member> findAllMembers() {
 		return memberRepository.findAll();
@@ -53,6 +56,8 @@ public class MemberService {
 		member.setBirth_day(birth_day);
 
 		// 회원 프로필 이미지 등록한다면 해당 이미지 이름도 DB저장
+		String existingImagePath = member.getImageFile();
+		
 		if (!imageFile.isEmpty()) {
 			// 고유한 이미지 이름 생성
 			String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
@@ -64,7 +69,10 @@ public class MemberService {
 			Files.write(filePath, imageFile.getBytes());
 			// 사용자 엔티티에 이미지 경로 설정
 			member.setImageFile("/imgs/member/" + fileName);
-		}
+		} else {
+            // 이미지 파일이 없는 경우 기존 이미지 경로 유지
+            member.setImageFile(existingImagePath);
+        }
 
 		return memberRepository.save(member);
 	}
@@ -131,4 +139,46 @@ public class MemberService {
 	    // 변경된 회원 정보를 DB에 저장
 	    memberRepository.save(member);
 	}
+	
+	// 멤버 삭제
+	public void deleteMember(String memberId) {
+	    Member member = memberRepository.findByMemberId(memberId)
+	        .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
+	    
+	    // 프로필 이미지 삭제 로직 추가
+	    String imagePath = member.getImageFile();
+	    if (imagePath != null && !imagePath.isEmpty()) {
+	        try {
+	            // 업로드 디렉토리 경로 설정 (application.properties에서 가져옴)
+	            Path filePath = Paths.get(UPLOAD_DIR, imagePath.substring("/imgs/member/".length()));
+	            Files.deleteIfExists(filePath); // 프로필 이미지 파일 삭제
+	        } catch (IOException e) {
+	            e.printStackTrace(); // 파일 삭제 실패 시 로그 출력
+	        }
+	    }
+	    
+	    memberRepository.delete(member);  // 회원 정보 삭제
+	}
+	
+	 // 이름과 이메일로 회원을 찾고, 일치하는 경우 아이디 반환
+    public Optional<Member> findByNameAndEmail(String memberName, String memberEmail) {
+        return memberRepository.findByMemberNameAndMemberEmail(memberName, memberEmail);
+    }
+
+    // 비밀번호 찾기 (혹은 재설정) 메일 전송
+    public void sendPasswordResetEmail(String email) {
+        String resetToken = generateResetToken();
+        String resetLink = "http://your-domain.com/reset-password?token=" + resetToken;
+        
+        // 이메일 보내기
+        emailService.sendSimpleMessage(email, "비밀번호 재설정", "비밀번호 재설정 링크: " + resetLink);
+
+        // 필요하다면, 토큰을 데이터베이스에 저장 (생략 가능)
+        // savePasswordResetToken(resetToken, email);
+    }
+
+    // 토큰 생성 로직 (임시 예시)
+    private String generateResetToken() {
+        return UUID.randomUUID().toString();
+    }
 }

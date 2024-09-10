@@ -1,0 +1,170 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="/css/member.css" />
+	<section id="find" class="position-relative h-100">
+		<div class="row">
+			<div class="col-6 border border-secondary">
+				<div class="row text-center">
+					<h1>아이디 찾기</h1>
+				</div>
+				<div class="container">
+					<div class="row">
+						<form th:action="@{/member/findId}" method="post">
+							<div class="row mb-3 justify-content-start">
+								<div class="col-4">
+									<label for="memberName" class="form-label">이름</label>
+									<input type="text" class="form-control" id="memberName" name="memberName">
+								</div>
+							</div>
+							<div class="row mb-3 justify-content-start">
+								<label for="memberEmail" class="form-label">이메일</label>
+								<div class="col-8">
+									<input type="email" id="memberEmail" name="memberEmail" class="form-control">
+								</div>
+								<div class="col-4">
+									<button type="button" class="btn btn-secondary" onclick="checkIdEmail()">이메일
+										인증</button>
+								</div>
+								<div class="col-7 mt-1">
+									<input type="text" id="verificationCode" class="form-control"
+										placeholder="이메일로 받은 인증번호">
+								</div>
+								<div class="col-4 mt-1">
+									<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호
+										확인</button>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-primary">확인</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-6 border border-secondary">
+				<div class="row text-center">
+					<h1>비밀번호 찾기</h1>
+				</div>
+				<div class="container">
+					<div class="row align-item-start">
+						<form th:action="@{/member/findPassword}">
+							<div class="row mb-3 justify-content-start">
+								<div class="col-4">
+									<label for="memberId" class="form-label">아이디</label>
+									<input type="text" class="form-control" id="memberId" name="memberId">
+								</div>
+							</div>
+							<div class="row mb-3 justify-content-start">
+								<div class="col-4">
+									<label for="memberName" class="form-label">이름</label>
+									<input type="text" class="form-control" id="memberName" name="memberName">
+								</div>
+							</div>
+							<div class="row mb-3 justify-content-start">
+								<label for="memberEmail" class="form-label">이메일</label>
+								<div class="col-8">
+									<input type="email" id="memberEmail" name="memberEmail" class="form-control">
+								</div>
+								<div class="col-4">
+									<button type="button" class="btn btn-secondary" onclick="checkIdEmail()">이메일
+										인증</button>
+								</div>
+								<div class="col-7 mt-1">
+									<input type="text" id="verificationCode" class="form-control"
+										placeholder="이메일로 받은 인증번호">
+								</div>
+								<div class="col-4 mt-1">
+									<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호
+										확인</button>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-primary">확인</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script>
+		function checkIdEmail() {
+			const email = document.getElementById('memberEmail').value;
+			
+			if (!email) {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/id-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'memberEmail': email
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
+
+		function checkPwEmail() {
+			const email = document.getElementById('memberEmail').value;
+
+			if (!email) {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/pw-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'email': email
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
+
+		function verifyCode() {
+			const code = document.getElementById('verificationCode').value;
+
+			if (!code) {
+				alert("인증 코드를 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/verify-code', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'code': code
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
+	</script>
+</div>
+
+</html>

@@ -1,21 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	<link rel="stylesheet" href="/css/map.css" />
-	<style>
-		.formStyle {
-			background-color: #f2e8cf;
-		}
-
-		.greenBtn {
-			background-color: #6A994E;
-		}
-
-		.greenBtn:hover {
-			background-color: #A7C957;
-		}
-	</style>
-
-
+	<link rel="stylesheet" href="/css/member.css" />
 	<!-- 회원가입 시작 -->
 	<section class="position-relative h-100">
 		<div class="row py-5 justify-content-center">
@@ -32,7 +17,7 @@
 							<label for="member_id" class="form-label">아이디</label>
 							<div class="col-8">
 								<input type="text" id="memberId" class="form-control" th:field="*{memberId}"
-									placeholder="영문과 숫자로 4-12자, 특수문자 금지" required autofocus>
+									placeholder="영문과 숫자로 4-12자, 특수문자 금지"autofocus>
 							</div>
 							<div class="col-4">
 								<button type="button" id="checkId" class="btn btn-secondary">아이디 중복 체크</button>
@@ -45,7 +30,7 @@
 								<label for="password1" class="form-label">비밀번호</label>
 								<input type="password" id="memberPassword1" name="memberPassword" class="form-control"
 									placeholder="비밀번호는 최소 6자 이상, 영문과 숫자를 포함해야 합니다." th:field="*{memberPassword}"
-									required>
+									>
 							</div>
 						</div>
 						<div class="row mt-3">
@@ -53,7 +38,7 @@
 								<label for="password2" class="form-label">비밀번호 확인</label>
 								<input type="password" id="memberPassword2" class="form-control"
 									th:field="*{memberPassword2}" name="memberPassword2" placeholder="비밀번호와 동일해야 합니다."
-									required>
+									>
 							</div>
 						</div>
 						<!-- 이름 -->
@@ -61,14 +46,14 @@
 							<label for="member_name" class="form-label">이름</label>
 							<div class="col-5">
 								<input type="text" id="memberName" class="form-control" th:field="*{memberName}"
-									placeholder="숫자,특수문자 입력 불가" required>
+									placeholder="숫자,특수문자 입력 불가" >
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
 							<div class="col-5">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" required>
+									name="memberAlias" >
 							</div>
 						</div>
 						<!-- 이메일 -->
@@ -76,10 +61,10 @@
 							<label for="member_email" class="form-label">이메일</label>
 							<div class="col-9">
 								<input type="email" id="memberEmail" class="form-control" th:field="*{memberEmail}"
-									required>
+									>
 							</div>
 							<div class="col-3">
-								<button class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
+								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
@@ -87,7 +72,7 @@
 						        <input type="text" id="verificationCode" class="form-control" placeholder="이메일로 받은 인증번호">
 						    </div>
 						    <div class="col-4">
-						        <button class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
+						        <button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
 						    </div>
 						</div>
 						<!-- 전화번호 -->
@@ -169,14 +154,14 @@
 								<select class="form-select" aria-label="Default select example" id="member_veganType"
 									th:field="*{memberVeganType}">
 									<option value="" selected>비건 종류</option>
-									<option value="vegan">비건</option>
-									<option value="fruit">프루테리언</option>
-									<option value="lacto">락토 베지테리언</option>
-									<option value="ovo">오보 베지테리언</option>
-									<option value="lactoovo">락토오보 베지테리언</option>
-									<option value="pesco">페스코 베지테리언</option>
-									<option value="pollo">폴로 베지테리언</option>
-									<option value="flexi">플렉시테리언</option>
+									<option value="비건">비건</option>
+									<option value="프루테리언">프루테리언</option>
+									<option value="락토 베지테리언">락토 베지테리언</option>
+									<option value="오보 베지테리언">오보 베지테리언</option>
+									<option value="락토오보 베지테리언">락토오보 베지테리언</option>
+									<option value="페스코 베지테리언">페스코 베지테리언</option>
+									<option value="폴로 베지테리언">폴로 베지테리언</option>
+									<option value="플렉시테리언">플렉시테리언</option>
 								</select>
 							</div>
 						</div>

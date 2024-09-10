@@ -1,10 +1,8 @@
 package com.wellit.project.member;
 
-
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -13,18 +11,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberRegisterForm {
+public class MemberUpdateForm {
 	
 	@NotBlank(message = "아이디를 입력해주세요")
     @Length(min = 4, max = 12, message = "아이디는 4자에서 12자 이내여야 합니다.")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "아이디는 영문과 숫자만 가능합니다.")
 	private String memberId;
 	
-	@NotBlank(message = "비밀번호를 입력해주세요")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$", message = "비밀번호는 최소 6자 이상이어야 하며, 영문과 숫자를 포함해야 합니다.")
     private String memberPassword;
 	
-	@NotBlank(message = "비밀번호 확인을 입력해주세요")
 	private String memberPassword2;
 	
 	@NotBlank(message = "사용자의 성함을 입력해주세요")

@@ -1,30 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	<link rel="stylesheet" href="/css/map.css" />
-	<style>
-		.formStyle {
-			background-color: #f2e8cf;
-		}
-
-		.greenBtn {
-			background-color: #6A994E;
-		}
-
-		.greenBtn:hover {
-			background-color: #A7C957;
-		}
-
-		.error-message {
-			white-space: pre-line;
-			/* 줄바꿈을 인식 */
-			padding: 0 var(--bs-alert-padding-x);
-
-		}
-
-		.error-message p {
-			margin-bottom: 0;
-		}
-	</style>
+	<link rel="stylesheet" href="/css/member.css" />
 	</head>
 	<!-- 회원수정 시작 -->
 	<section class="position-relative h-100">
@@ -86,7 +62,7 @@
 									th:value="${member.getMemberEmail}" th:field="*{memberEmail}">
 							</div>
 							<div class="col-3">
-								<button class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
+								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
@@ -95,7 +71,7 @@
 									placeholder="이메일로 받은 인증번호">
 							</div>
 							<div class="col-4">
-								<button class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
+								<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
 							</div>
 						</div>
 						<!-- 전화번호 -->
@@ -136,19 +112,19 @@
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_year"
 									th:field="*{birth_year}">
-									<option value="" selected>년</option>
+									<option value="" th:text="${member.getBirth_year}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_month"
 									th:field="*{birth_month}">
-									<option value="" selected>월</option>
+									<option value="" th:text="${member.getBirth_month}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_day"
 									th:field="*{birth_day}">
-									<option value="" selected>일</option>
+									<option value="" th:text="${member.getBirth_day}" selected></option>
 								</select>
 							</div>
 							<input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
@@ -176,14 +152,15 @@
 								<select class="form-select" aria-label="Default select example" id="member_veganType"
 									th:field="*{memberVeganType}">
 									<option value="" selected>비건 종류</option>
-									<option value="vegan">비건</option>
-									<option value="fruit">프루테리언</option>
-									<option value="lacto">락토 베지테리언</option>
-									<option value="ovo">오보 베지테리언</option>
-									<option value="lactoovo">락토오보 베지테리언</option>
-									<option value="pesco">페스코 베지테리언</option>
-									<option value="pollo">폴로 베지테리언</option>
-									<option value="flexi">플렉시테리언</option>
+									<option value="비건">비건</option>
+									<option value="프루테리언">프루테리언</option>
+									<option value="락토 베지테리언">락토 베지테리언</option>
+									<option value="오보 베지테리언">오보 베지테리언</option>
+									<option value="락토오보 베지테리언">락토오보 베지테리언</option>
+									<option value="페스코 베지테리언">페스코 베지테리언</option>
+									<option value="폴로 베지테리언">폴로 베지테리언</option>
+									<option value="플렉시테리언">플렉시테리언</option>
+								</select>
 								</select>
 							</div>
 						</div>
@@ -200,7 +177,7 @@
 					</div>
 					<div class="row mt-5">
 						<button type="submit" class="btn btn-block greenBtn">수정</button>
-						<button type="button" class="btn btn-block btn-danger my-2">삭제</button>
+						<button type="button" class="btn btn-block btn-danger my-2" onclick="deleteMember()">삭제</button>
 					</div>
 				</form>
 			</div>
@@ -560,6 +537,12 @@
 					alert('Error occurred: ' + error.message);
 					console.error('Error:', error);
 				});
+		}
+
+		function deleteMember() {
+		    if (confirm("정말로 회원 정보를 삭제하시겠습니까?")) {
+		        window.location.href = '/member/delete_password'; // 비밀번호 입력 페이지로 이동
+		    }
 		}
 	</script>
 </div>

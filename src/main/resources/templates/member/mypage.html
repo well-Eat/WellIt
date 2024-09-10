@@ -1,27 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" >
-	<link rel="stylesheet" href="/css/map.css" />
-	<style>
-		#mypage {
-			margin-top: 100px;
-		}
-
-		.sidebar {
-			background-color: lightgray;
-		}
-
-		.sidebar li .submenu {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			padding-left: 1rem;
-			padding-right: 1rem;
-		}
-
-		.nav-link {
-			color: black
-		}
-	</style>
+	<link rel="stylesheet" href="/css/member.css" />
 	<section id="mypage" class="position-relative">
 		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
 		<div class="w-100">
@@ -64,8 +43,12 @@
 						<h1 class="mb-5">사용자 정보</h1>
 						<div class="row">
 							<div class="col-4">
-								<img src="https://i.namu.wiki/i/Bge3xnYd4kRe_IKbm2uqxlhQJij2SngwNssjpjaOyOqoRhQlNwLrR2ZiK-JWJ2b99RGcSxDaZ2UCI7fiv4IDDQ.webp"
-									alt="프로필 사진" class="rounded" width="150px" height="150px" />
+								<div th:if="${member.ImageFile}">
+								    <img th:src="@{${member.ImageFile}}" alt="프로필 사진" class="rounded-circle" width="150px" height="150px" />
+								</div>
+								<div th:unless="${member.ImageFile}">
+								    <img src="/imgs/member/default-profile.png" alt="기본 프로필 사진" class="rounded img-fluid" width="150px" height="150px" />
+								</div>
 							</div>
 							<div class="col-8">
 								<div class="row align-middle">

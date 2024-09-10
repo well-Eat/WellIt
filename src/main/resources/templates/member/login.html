@@ -1,31 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	<link rel="stylesheet" href="/css/map.css" />
-	<style>
-	.eye-icon {
-		position: absolute;
-		right: 0;
-		top: 0;
-		height: 100%;
-	}
-
-	.eye {
-		cursor: pointer;
-		color:black;
-	}
-
-	.formStyle {
-		background-color: #f2e8cf;
-	}
-
-	.greenBtn {
-		background-color: #6A994E;
-	}
-
-	.greenBtn:hover {
-		background-color: #A7C957;
-	}
-</style>
+	<link rel="stylesheet" href="/css/member.css" />
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
 			<div class="row py-5 justify-content-center">
@@ -58,8 +33,8 @@
 							</div>
 							<div class="row mt-3">
 								<div class="col d-flex justify-content-between">
-									<a th:href="@{/register}">회원가입</a>
-									<a href="">아이디/비밀번호 찾기</a>
+									<a th:href="@{/member/register}">회원가입</a>
+									<a th:href="@{/member/find}">아이디/비밀번호 찾기</a>
 								</div>
 							</div>
 							<div class="row mt-3">
@@ -76,12 +51,19 @@
 	</section>
 	<script>
 		function checkSave() {
-			const checkbox = document.getElementById("exampleCheck1");
-			if (checkbox.checked) {
-				if (!confirm("아이디를 저장하시겠습니까?")) {
-					checkbox.checked = false;
-				}
-			}
+		    const checkbox = document.getElementById("exampleCheck1");
+		    if (checkbox.checked) {
+		        if (!confirm("아이디를 저장하시겠습니까?")) {
+		            checkbox.checked = false;
+		        } else {
+		            // username 로컬 스토리지에 저장
+		            const username = document.getElementById("memberId").value;
+		            localStorage.setItem("savedUsername", username);
+		        }
+		    } else {
+		        //저장된 username 로컬 스토리지에서 제거
+		        localStorage.removeItem("savedUsername");
+		    }
 		}
 
 		document.addEventListener("DOMContentLoaded", function () {
@@ -99,6 +81,13 @@
 					eyeIcon.textContent = 'visibility_off';
 				}
 			});
+		});
+		document.addEventListener("DOMContentLoaded", function() {
+		    const savedUsername = localStorage.getItem("savedUsername");
+		    if (savedUsername) {
+		        document.getElementById("memberId").value = savedUsername;
+		        document.getElementById("exampleCheck1").checked = true;
+		    }
 		});
 	</script>
 </div>
