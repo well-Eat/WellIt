@@ -307,7 +307,16 @@
 				</ul>
 			</div>
 		</section>
+		<div id="deletemessage" th:text="${deletemassage}" style="display:none;"></div>
 		<script>
+			window.onload = function () {
+				// 'deletemessage' id를 가진 div 요소를 가져옵니다.
+				var messageElement = document.getElementById("deletemessage");
+				// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+				if (messageElement) {
+					alert("회원 정보가 삭제되었습니다.");
+				}
+			}
 			const sidoSelect = document.getElementById('sido');
 			const sigunguSelect = document.getElementById('sigungu');
 

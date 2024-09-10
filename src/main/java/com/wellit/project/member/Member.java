@@ -2,18 +2,13 @@ package com.wellit.project.member;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.Length;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,16 +30,22 @@ public class Member {
 	 	@Column
 	 	private String memberAlias; //닉네임
 
-	 	@Column
+	 	@Column(unique = true)
 	    private String memberEmail;
 	    
 	 	@Column
 	    private String memberPhone;
 	    
 	    @Column
+	    private String zipcode;
+		private String roadAddress;
+		private String addressDetail;
 	    private String memberAddress;
 	    
 	    @Column
+	    private String birth_year;
+	    private String birth_month;
+	    private String birth_day;
 	    private String memberBirth; //생일
 	    
 	    @Column
@@ -69,4 +70,8 @@ public class Member {
 	    protected void onUpdate() {
 	        this.memberUpdateDate = LocalDateTime.now();
 	    }
+	    
+	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
+	    
+	    private Integer mileage;
 }
