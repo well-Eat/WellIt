@@ -30,6 +30,7 @@ public class SecurityConfig {
 	            .formLogin(form -> form
 	            	.loginPage("/member/login")
 	            	.successHandler(new CustomAuthenticationSuccessHandler()) // 커스텀 성공 핸들러 설정
+	            	.failureHandler(new CustomAuthenticationFailureHandler())  // 로그인 실패 시 핸들러 설정
 	            )	    	            
 	            
 	            // 로그아웃 설정

@@ -8,6 +8,8 @@
 			</div>
 			<div th:if="${updateMesssage}" th:text="${updateMesssage}" id="updateMesssage" style="display:none;">
 			</div>
+			<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
+			</div>
 			<div class="row py-5 justify-content-center">
 				<div class="col-md-6 col-xs-8 py-5 border rounded formStyle">
 					<h1 class="text-center mb-3">WellIt</h1>
@@ -16,6 +18,7 @@
 							<div class="form-floating mb-3">
 								<input type="text" class="form-control" id="memberId" name="username">
 								<label for="memberId">아이디</label>
+								<div id="memberIdError" class="text-danger"></div>
 							</div>
 							<div class="form-floating">
 								<input type="password" class="form-control" id="memberPassword" name="password">
@@ -27,6 +30,7 @@
 										</span>
 									</div>
 								</div>
+								<div id="passwordError" class="text-danger"></div>
 							</div>
 							<div class="form-group form-check mt-2">
 								<input type="checkbox" class="form-check-input" id="exampleCheck1"
@@ -34,7 +38,8 @@
 								<label class="form-check-label" for="exampleCheck1">아이디 저장</label>
 							</div>
 							<div class="row mt-3">
-								<button type="submit" class="btn btn-block greenBtn">로그인</button>
+								<button type="submit" class="btn btn-block greenBtn"
+									onclick="return validateForm()">로그인</button>
 							</div>
 							<div class="row mt-3">
 								<div class="col-6 d-flex justify-content-start">
@@ -46,9 +51,10 @@
 								</div>
 							</div>
 							<div class="row mt-3">
-								<div class="d-grid gap-2 col-8 mx-auto">
-									<button class="btn btn-warning" type="button">카카오로 시작</button>
-									<button class="btn btn-success" type="button">네이버로 로그인</button>
+								<div class="d-grid gap-2 col-8 mx-auto justify-content-center">
+									<a href="https://kauth.kakao.com/oauth/authorize?&client_id=1edf78aa7a0cc88fd28e4ffbc306e0b1&redirect_uri=http://localhost:8080/callback&response_type=code">
+										<img src="/imgs/member/kakao_login_medium_wide.png">
+									</a>
 								</div>
 							</div>
 						</div>
@@ -59,6 +65,56 @@
 	</section>
 	<script>
 
+		var errorElement = document.getElementById("errorMessage");
+		// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+		if (errorElement && errorElement.innerText.trim() !== "") {
+			alert(errorElement.innerText);
+		}
+
+		function validateForm() {
+			var isValid = true;
+
+			// 아이디 필드
+			var username = document.getElementById("memberId").value;
+			var usernameError = document.getElementById("memberIdError");
+			var usernameInput = document.getElementById("memberId");
+
+			if (username === "") {
+				usernameError.textContent = "아이디를 입력해 주세요.";
+				usernameInput.classList.add("error-border");
+				isValid = false;
+			} else {
+				usernameError.textContent = "";
+				usernameInput.classList.remove("error-border");
+			}
+
+			// 비밀번호 필드
+			var password = document.getElementById("memberPassword").value;
+			var passwordError = document.getElementById("passwordError");
+			var passwordInput = document.getElementById("memberPassword");
+
+			if (password === "") {
+				passwordError.textContent = "비밀번호를 입력해 주세요.";
+				passwordInput.classList.add("error-border");
+				isValid = false;
+			} else {
+				passwordError.textContent = "";
+				passwordInput.classList.remove("error-border");
+			}
+
+			return isValid; // 입력이 모두 유효할 경우 폼 제출
+		}
+
+		document.getElementById("memberId").addEventListener("focus", function () {
+			document.getElementById("memberIdError").textContent = "";
+			this.classList.remove("error-border");
+		});
+
+		document.getElementById("memberPassword").addEventListener("focus", function () {
+			document.getElementById("passwordError").textContent = "";
+			this.classList.remove("error-border");
+		});
+
 		window.onload = function () {
 			var messageElement = document.getElementById("loginMessage");
 			// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
@@ -66,10 +122,10 @@
 				alert(messageElement.innerText);
 			}
 			var updateElement = document.getElementById("updateMesssage");
-						// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
-						if (updateElement && updateElement.innerText.trim() !== "") {
-							alert(updateElement.innerText);
-						}
+			// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+			if (updateElement && updateElement.innerText.trim() !== "") {
+				alert(updateElement.innerText);
+			}
 		}
 		function checkSave() {
 			const checkbox = document.getElementById("exampleCheck1");
