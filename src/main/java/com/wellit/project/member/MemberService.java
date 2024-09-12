@@ -79,20 +79,20 @@ public class MemberService {
 
 		return memberRepository.save(member);
 	}
-	
+
 	public boolean isEmailExist(String email) {
-        return memberRepository.findByMemberEmail(email) != null;
-    }
+		return memberRepository.findByMemberEmail(email) != null;
+	}
 
 	// 로그인한 사용자명을 알 수 있는 메소드
 	public Member getMember(String memberId) {
-		Optional<Member> member = this.memberRepository.findByMemberId(memberId);
-//			
-		if (member.isPresent()) {
-			return member.get();
-		} else {
-			throw new DataNotFoundException("해당 회원이 없습니다.");
-		}
+	    Member member = this.memberRepository.findByMemberId(memberId);
+	    
+	    if (member != null) {
+	        return member;
+	    } else {
+	        throw new DataNotFoundException("해당 회원이 없습니다.");
+	    }
 	}
 
 	// 아이디 중복 체크
@@ -149,8 +149,10 @@ public class MemberService {
 
 	// 멤버 삭제
 	public void deleteMember(String memberId) {
-		Member member = memberRepository.findByMemberId(memberId)
-				.orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
+		Member member = memberRepository.findByMemberId(memberId);
+		if (member == null) {
+		    throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
+		}
 
 		// 프로필 이미지 삭제 로직 추가
 		String imagePath = member.getImageFile();
@@ -181,35 +183,39 @@ public class MemberService {
 	public Optional<Member> findByIdAndNameAndEmail(String memberId, String memberName, String memberEmail) {
 		return memberRepository.findByMemberIdAndMemberNameAndMemberEmail(memberId, memberName, memberEmail);
 	}
-	
-	//이메일 중복?
+
+	// 이메일 중복?
 	public boolean isEmailExists(String email) {
-        return memberRepository.existsByMemberEmail(email);
-    }
-	
+		return memberRepository.existsByMemberEmail(email);
+	}
+
 	public ResponseEntity<String> sendPasswordResetEmail(String email) {
-        Optional<Member> thisMember = memberRepository.findByMemberEmail(email);
-        
-     // 회원이 존재하는지 확인
-        if (thisMember.isPresent()) {
-            Member member = thisMember.get(); // Optional에서 Member 추출
-            String token = generateResetToken(); // 토큰 생성 메소드
-            member.setResetToken(token); // 토큰을 사용자 객체에 저장
-            memberRepository.save(member); // 변경 사항 저장
+		Optional<Member> thisMember = memberRepository.findByMemberEmail(email);
 
-            String resetLink = "http://localhost:8080/member/reset_password?token=" + token;
-            String emailText = "비밀번호 재설정을 위해 다음 링크를 클릭하세요: " + resetLink;
-            
-            emailService.sendSimpleMessage(email, "비밀번호 재설정", emailText);
-            return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 주소가 등록되어 있지 않습니다.");
-        }
-    }
+		// 회원이 존재하는지 확인
+		if (thisMember.isPresent()) {
+			Member member = thisMember.get(); // Optional에서 Member 추출
+			String token = generateResetToken(); // 토큰 생성 메소드
+			member.setResetToken(token); // 토큰을 사용자 객체에 저장
+			memberRepository.save(member); // 변경 사항 저장
 
+			String resetLink = "http://localhost:8080/member/reset_password?token=" + token;
+			String emailText = "비밀번호 재설정을 위해 다음 링크를 클릭하세요: " + resetLink;
 
-    private String generateResetToken() {
-        // 랜덤 토큰 생성 로직
-        return UUID.randomUUID().toString();
-    }
+			emailService.sendSimpleMessage(email, "비밀번호 재설정", emailText);
+			return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 주소가 등록되어 있지 않습니다.");
+		}
+	}
+
+	private String generateResetToken() {
+		// 랜덤 토큰 생성 로직
+		return UUID.randomUUID().toString();
+	}
+
+	// memberId로 멤버 조회
+	public Member findByMemberId(String memberId) {
+		return memberRepository.findByMemberId(memberId); // memberId로 직접 조회
+	}
 }

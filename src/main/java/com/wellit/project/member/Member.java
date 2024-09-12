@@ -1,11 +1,16 @@
 package com.wellit.project.member;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wellit.project.store.FavoriteStore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -74,4 +79,8 @@ public class Member {
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
 	    
 	    private Integer mileage;
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @JsonManagedReference // 추가
+	    private List<FavoriteStore> favoriteStores;
 }

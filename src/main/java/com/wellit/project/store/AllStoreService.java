@@ -120,4 +120,10 @@ public class AllStoreService {
 	    }
 	    return false;
 	}
+	
+	// stoId로 스토어 조회
+    public AllStore findByStoId(Long stoId) {
+        Optional<AllStore> storeOpt = allStoreRepository.findById(stoId);
+        return storeOpt.orElse(null); // 스토어가 존재하지 않으면 null 반환
+    }
 }

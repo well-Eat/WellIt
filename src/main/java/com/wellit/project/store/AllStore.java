@@ -72,4 +72,8 @@ public class AllStore {
     @OrderBy("createdAt DESC") // 생성일 기준으로 내림차순 정렬
     @JsonManagedReference // 추가
     private List<StoreReview> storeReviews;
+    
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // 추가
+    private List<FavoriteStore> favoriteStores;
 }

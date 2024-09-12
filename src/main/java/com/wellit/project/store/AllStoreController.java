@@ -7,8 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.Console;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/load")
@@ -21,6 +25,14 @@ public class AllStoreController {
     @GetMapping("/store")
     public List<AllStore> getAllStores() {
         return allStoreService.getAllStores();
+    }
+    
+    @GetMapping("/getUserId")
+    public ResponseEntity<Map<String, String>> getUserId(HttpServletRequest request) {
+        String userId = (String) request.getSession().getAttribute("UserId");
+        Map<String, String> response = new HashMap<>();
+        response.put("userId", userId != null ? userId : "로그인되지 않았습니다.");
+        return ResponseEntity.ok(response);
     }
     
     @PostMapping("/store/update")
