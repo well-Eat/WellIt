@@ -307,6 +307,7 @@
 				</ul>
 			</div>
 		</section>
+
 		<div id="deletemessage" th:if="${successMessage}" th:text="${successMessage}" style="display:none;"></div>
 		<script>
 			window.onload = function () {
@@ -316,6 +317,11 @@
 				if (messageElement && messageElement.innerText.trim() !== "") {
 					alert(messageElement.innerText);
 				}
+			}
+			const urlParams = new URLSearchParams(window.location.search);
+			const message = urlParams.get('message');
+			if (message) {
+				alert(message);
 			}
 			const sidoSelect = document.getElementById('sido');
 			const sigunguSelect = document.getElementById('sigungu');

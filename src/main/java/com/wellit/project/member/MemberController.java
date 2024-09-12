@@ -15,16 +15,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.wellit.project.email.EmailService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -43,7 +47,10 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     @GetMapping("/login")
-    public String getLogin() {
+    public String getLogin(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
         return "/member/login";
     }
     
@@ -264,7 +271,7 @@ public class MemberController {
     
     @PostMapping("/update_profile")
     public String updateProfile(@Valid MemberUpdateForm memberUpdateForm, BindingResult bindingResult,
-                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+                                @RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
     	if (bindingResult.hasErrors()) {
             // 에러 메시지를 추출하여 줄바꿈으로 구분된 문자열로 변환
             String errorMessages = bindingResult.getAllErrors().stream()
@@ -340,7 +347,7 @@ public class MemberController {
                 		memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
                 		memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(),
                                            imageFile, existingImagePath);
-
+                
                 session.removeAttribute("emailVerified");
                 session.removeAttribute("verificationCode");
                 redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
@@ -362,9 +369,10 @@ public class MemberController {
                 return "/member/update_profile";
             }
         } else {
-            return "redirect:/login";
+            return "redirect:/member/login";
         }
-        return "redirect:/member/mypage";
+        model.addAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+        return "/member/login";
     }
     
     @GetMapping("/delete_password")
@@ -430,26 +438,26 @@ public class MemberController {
     }
     
     @PostMapping("/findId")
-    public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail, Model model, HttpSession session) {
-        
-    	Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);   
-     // 이메일 인증 여부 확인
+    public ModelAndView findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail, HttpSession session) {
+        Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
         Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-        System.out.println("isEmailVerified: " + isEmailVerified);
-        if (!isEmailVerified || isEmailVerified==null) {
-            model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-            return "/member/findMemberId";
-        } 
         
-        if (member.isPresent()) {        	
-        	Member thisMember = member.get();
-            model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
+        if (!isEmailVerified || isEmailVerified == null) {
+            ModelAndView modelAndView = new ModelAndView("/member/findMemberId");
+            modelAndView.addObject("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+            return modelAndView;
+        }
+        
+        ModelAndView modelAndView = new ModelAndView("member/findId");
+        if (member.isPresent()) {
+            Member thisMember = member.get();
+            modelAndView.addObject("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
         } else {
-            model.addAttribute("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
+            modelAndView.addObject("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
         }
         session.setAttribute("emailVerified", false);
         session.removeAttribute("verificationCode");
-       return "member/findId";
+        return modelAndView;
     }
     
     @PostMapping("/id-email")
