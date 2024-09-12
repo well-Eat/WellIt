@@ -253,17 +253,16 @@ function updateAddr() {
     $("div.addr").text($("input.addr").val());
 }
 
-// 전역 변수로 스크롤 위치를 저장할 변수를 선언
+/*// 전역 변수로 스크롤 위치를 저장할 변수를 선언
 var savedScrollPosition = 0;
-let currentScrollY = 0;
 
-function sample4_execDaumPostcode(e) {
+// 팝업을 열기 전에 현재 스크롤 위치를 저장
+savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-    e.preventDefault();
-    // 팝업을 열기 전에 현재 스크롤 위치를 저장
-    savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-// 현재 스크롤 위치 저장
-    currentScrollY = window.scrollY;
+// 팝업이 닫힌 후 원래의 스크롤 위치로 이동
+window.scrollTo(0, savedScrollPosition);*/
+
+function sample4_execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function (data) {
             // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -314,32 +313,20 @@ function sample4_execDaumPostcode(e) {
                 guideTextBox.innerHTML = '';
                 guideTextBox.style.display = 'none';
             }
-
-            // 팝업이 닫힌 후 원래의 스크롤 위치로 이동
-            window.scrollTo(0, savedScrollPosition);
-
-        },
-        onclose: function() {
-            // 창이 닫힌 후 스크롤 위치 복원
-            window.scrollTo(0, currentScrollY);
         }
     }).open();
 }
 
 function sample4_execDaumPostcode() {
-    currentScrollY = window.scrollY;
     new daum.Postcode({
         oncomplete: function (data) {
             document.getElementById('sample4_postcode').value = data.zonecode;
             document.getElementById('sample4_roadAddress').value = data.roadAddress;
-            document.getElementById('roadAddress').value = data.roadAddress;
             document.getElementById('sample4_jibunAddress').value = data.jibunAddress;
-            document.querySelector("div.addr").innerText = data.roadAddress;
-            document.querySelector("#sangseAddress").style.display = 'block';
-        },
-        onclose: function() {
-            // 창이 닫힌 후 스크롤 위치 복원
-            window.scrollTo(0, currentScrollY);
+            setTimeout(function() {
+                document.getElementById('sample4_detailAddress').value = '';
+            document.getElementById('sample4_detailAddress').focus();
+            }, 0);
         }
     }).open();
 }

@@ -16,7 +16,7 @@ public class PaymentController {
     private final OrderService orderService;
 
     @PostMapping("/save/{orderId}")
-    public ResponseEntity<String> savePayment(@RequestBody PaymentRequest paymentRequest, @PathVariable String orderId) {
+    public ResponseEntity<String> savePayment(@RequestBody PaymentRequest paymentRequest, @PathVariable("orderId") String orderId) {
         try {
             log.info("1");
             PurchaseOrder po = orderService.getOnePO(orderId);

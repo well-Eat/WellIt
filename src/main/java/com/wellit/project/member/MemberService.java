@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.wellit.project.order.Cart;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -76,6 +77,11 @@ public class MemberService {
 			// 이미지 파일이 없는 경우 기존 이미지 경로 유지
 			member.setImageFile(existingImagePath);
 		}
+
+		// Member 생성 시 Cart도 연동 생성
+		Cart cart = new Cart(member);
+		member.setCart(cart);
+
 
 		return memberRepository.save(member);
 	}
@@ -218,9 +224,6 @@ public class MemberService {
 	public Member findByMemberId(String memberId) {
 		return memberRepository.findByMemberId(memberId); // memberId로 직접 조회
 	}
-	//아이디 중복 체크
-	public boolean isIdExists(String memberId) {
-        return memberRepository.existsByMemberId(memberId);
-    }
+
 
 }

@@ -23,8 +23,6 @@ public class PurchaseOrder {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
 
-    private String tmpAddr; // 배송지 주소(임시)
-
 
     /* 금액 관련 필드 */
     private Integer orgPrice; //원래 상품 가격

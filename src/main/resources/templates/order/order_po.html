@@ -31,7 +31,7 @@
 	</div>
 	
 	
-	<form th:action="@{|/order/po/${poForm.orderId}|}" method="post" th:object="${poForm}" id="orderForm">
+	<form th:action="@{|/order/po/${poForm.orderId}|}" method="post" th:object="${poForm}" id="poForm">
 		<input type="text" th:field="*{orderId}"/>
 		
 		<section class="row orderItem position-relative mb-5">
@@ -149,32 +149,20 @@
 					<tr>
 						<th scope="row">배송지</th>
 						<td>
-							<a href="#" class="btn btn-sm card-link addrChangeBtn border float-end"
-							   onclick="sample4_execDaumPostcode()">&nbsp; 변경 &nbsp;</a>
-							<div class="text-left c666 addr"></div> <!--주소 출력-->
-							<input type="hidden" class="form-control-plaintext text-left c666 addr"
-							       th:value="${poForm.addr1}" th:field="*{addr1}" tabindex="-1" id="roadAddress"/>
-							<input type="text" id="sangseAddress" class="form-control form-control-sm mt-1" placeholder="상세주소" style="display:none;" th:field="*{addr2}"/>
 							
 							<!-- 주소 -->
-							<div class="row justify-content-start mt-3" style="display: none">
-								<label class="form-label">주소</label>
-								<div class="col-sm-4">
-									<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호">
-								</div>
-								<div class="col-sm-3">
-									<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
-									       value="우편번호 찾기"><br>
+							<div class="row justify-content-start">
+
+								<div class="col-12 d-flex column-gap-1">
+									<input type="text" id="sample4_roadAddress" class="form-control addr" placeholder="도로명주소" th:value="${poForm.addr1}" th:field="*{addr1}" readonly>
+									<input type="button" onclick="sample4_execDaumPostcode()" class="btn card-link addrChangeBtn border" value="&nbsp; 변경 &nbsp;"><br>
 								</div>
 								<div class="col-12 mt-1">
-									<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소">
+									<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소" th:field="*{addr2}" th:value="${poForm.addr2}" >
+									<input type="hidden" id="sample4_postcode" class="form-control" placeholder="우편번호">
 									<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
-								</div>
-								<div class="col-12 mt-1">
-									<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소">
 									<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
 								</div>
-								<!--								<input type="hidden" id="fullAddress" name="fullAddress" th:field="${orderForm.deliveryAddr}">-->
 								<span id="guide" style="color:#999;display:none" hidden></span>
 							</div>
 						

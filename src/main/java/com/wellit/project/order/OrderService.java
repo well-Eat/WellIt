@@ -70,11 +70,7 @@ public class OrderService {
         po.setMilePay(0);
         po.setTotalPay(po.getTotalPrice());
 
-  /*      if(orderForm.getAddr2() == null) po.setTmpAddr(orderForm.getAddr1());
-        else {
-            po.setTmpAddr(orderForm.getAddr1() + " " + orderForm.getAddr2());
-        }*/
-        po.setTmpAddr(po.getMember().getMemberAddress());
+
 
         return purchaseOrderRepository.save(po);
 
@@ -95,7 +91,8 @@ public class OrderService {
         Member member = po.getMember();
 
         poForm.setOrderId(orderId);
-        poForm.setAddr1(po.getTmpAddr());
+        poForm.setAddr1(member.getRoadAddress());
+        poForm.setAddr2(member.getAddressDetail());
         poForm.setDeliveryName(member.getMemberName());
         //poForm.setDeliveryPhone(member.getMemberPhone());
 
@@ -166,12 +163,8 @@ public class OrderService {
         log.info(poForm.getAddr1());
         log.info(poForm.getAddr2());
 
-        if(poForm.getAddr2().isEmpty() || poForm.getAddr2() == null){
-            po.setTmpAddr(poForm.getAddr1());
-        } else {
-            po.setTmpAddr(poForm.getAddr1() +" "+ poForm.getAddr2());
-        }
-        delivery.setDeliveryAddr(po.getTmpAddr());
+        delivery.setAddr1(poForm.getAddr1());
+        delivery.setAddr2(poForm.getAddr2());
         delivery.setDeliveryMsg(poForm.getDeliveryMsg());
         delivery.setDeliveryStatus(DeliveryStatus.PENDING); //집화 대기 상태로 업데이트
         delivery.setDeliveryName(poForm.getDeliveryName());

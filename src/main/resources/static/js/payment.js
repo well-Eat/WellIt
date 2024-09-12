@@ -73,6 +73,8 @@ async function kakaoPay(useremail, username) {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                            crossDomain : true,
                         },
                         body: JSON.stringify({
                             imp_uid: rsp.imp_uid, // 아임포트에서 제공한 거래 고유 번호
@@ -82,7 +84,10 @@ async function kakaoPay(useremail, username) {
                             buyer_name: username, // 구매자 이름
                             status: rsp.status, // 결제 상태
                             success: rsp.success, // 결제 성공 여부
+                            pay_method: rsp.pay_method,
+                            pg_provider: rsp.pg_provider,
                         }),
+                        credentials: 'same-origin'
                     });
                     console.log("여기 오긴 옴");
 
@@ -90,7 +95,7 @@ async function kakaoPay(useremail, username) {
 
                     if (response.ok) { // DB 저장 성공시
                         alert('결제가 완료되었습니다!');
-                        document.getElementById("orderForm").submit();
+                        document.getElementById("poForm").submit();
                     } else {
                         const errorData = await response.json();
                         alert(`결제는 성공했지만, 서버에 저장 중 오류가 발생했습니다: ${errorData.message}`);

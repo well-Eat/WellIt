@@ -42,7 +42,6 @@ public class OrderController {
 
         PurchaseOrder po = orderService.getOnePO(orderId);
         log.info(po.getOrderId());
-        log.info(po.getTmpAddr());
 
         PoForm poForm = orderService.getPoForm(orderId);
 
@@ -63,15 +62,15 @@ public class OrderController {
 
         log.info("성공임!");
 
-       // boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, principal);
+        boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, principal);
 
+        if(success) {
             return "redirect:/member/mypage";
-        /*if(success) {
             //todo : 주문 성공 시 프로세스
         } else {
             //todo : 주문 실패 시 예외 처리
             return "redirect:/";
-        }*/
+        }
     }
 
 }

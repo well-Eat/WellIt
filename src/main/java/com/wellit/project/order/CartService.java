@@ -88,7 +88,7 @@ public class CartService {
     }
 
     public String getMemberAddress(String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow();
+        Member member = memberRepository.findByMemberId(memberId);
         return member.getMemberAddress();
     }
 

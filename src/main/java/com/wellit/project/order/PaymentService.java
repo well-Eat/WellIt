@@ -13,9 +13,8 @@ public class PaymentService {
 
 
     //@Transactional(rollbackFor = Exception.class) : 예외 발생 클래스 추가 지정
-//    @Transactional
+    @Transactional
     public void savePayment(PaymentRequest paymentRequest, PurchaseOrder po) {
-    //public void savePayment(PaymentRequest paymentRequest, PurchaseOrder po) {
         Payment payment = new Payment();
         payment.setImpUid(paymentRequest.getImp_uid());
         payment.setMerchantUid(paymentRequest.getMerchant_uid());
