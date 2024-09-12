@@ -1,0 +1,30 @@
+
+
+<section th:fragment="imgReviewContainer">
+	<!-- 이미지 리뷰 라인 -->
+	<div class="imgRevLine border-bottom pb-3">
+		<div class="swiper-controller shopImgRev">
+			<div class="swiper-button-next swiper-button shopImgRev"></div>
+			<div class="swiper-button-prev swiper-button shopImgRev"></div>
+		</div>
+		<div class="swiper imgRevSwiper">
+			<div class="swiper-wrapper">
+				<th:block th:each="review, iterStat : ${imgReviewList}">
+					<div class="swiper-slide rounded-2">
+						<a class="revImgLink" href="javascript:void(0)"
+						   th:data-rev-text="${review.revText}"
+						   th:data-rev-img="${review.revImg}"
+						   th:data-rev-rating="${review.revRating}"
+						   th:data-rev-created="${review.createdAt}"
+						   th:data-rev-writer="${review.writer}">
+							<div class="revImgBox" th:style="|background-image: url(@{${review.revImg}});|"
+							     loading="lazy"></div>
+						</a>
+					</div>
+				</th:block>
+			</div>
+		</div>
+	</div>
+</section>
+
+

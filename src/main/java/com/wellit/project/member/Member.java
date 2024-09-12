@@ -3,6 +3,13 @@ package com.wellit.project.member;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.wellit.project.order.Cart;
+import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wellit.project.store.FavoriteStore;
 
@@ -14,6 +21,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -75,6 +83,9 @@ public class Member {
 	    protected void onUpdate() {
 	        this.memberUpdateDate = LocalDateTime.now();
 	    }
+
+		@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+		private Cart cart;
 	    
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
 	    

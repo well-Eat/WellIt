@@ -1,0 +1,283 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>상품 추가페이지</title>
+
+</head>
+<div layout:fragment="content" class="container">
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	
+	<!-- 제이쿼리 라이브러리 로드 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	
+	<!--shop js link-->
+	<script src="/js/shop.js"></script>
+	
+	
+	<form
+			th:action="${productForm.prodId != null} ? @{/shop/update/{prodId}(prodId=${productForm.prodId})} : @{/shop/save}"
+			th:object="${productForm}"
+			method="post" enctype="multipart/form-data">
+		
+		<input type="hidden" id="toBeDeleted" name="toBeDeleted" value="">
+		
+		
+		<!-- 상품 정보 요약 & 주문 폼 -->
+		<section class="prodInfo row my-4 py-4 rounded-2 justify-content-start">
+			
+			<div class="prodImg col-md-6">
+				<!-- 상품이미지 -->
+				<div class="card-img-wrapper mb-3">
+				
+				</div>
+			</div> <!--prodImg-->
+			<section class="main">
+				<div class="card mainProdCard">
+					<div class="card-header">
+						<p>상품 정보</p>
+					</div>
+					<div class="row card-body">
+						<div class="col-lg-3 col-md-5">
+							<div class="drop-area mt-2" id="mainDropArea" style="z-index: 999;">
+								<p>이미지를 여기에 드래그 앤 드롭하세요</p>
+								
+								<div class="mainImgFrame drop-area gallery">
+									<input type="file" class="form-control prodMainImg drop-area" id="prodMainImg1" accept="image/*"
+									       style="display: none" name="prodMainImg">
+									<button type="button" class="remove-btn" th:styleappend="${prodMainImg != null ? 'display:block':''}">
+										X
+									</button> <!-- 이미지 삭제 버튼 -->
+									<img th:src="@{|${prodMainImg}|}" th:if="${prodMainImg != null}" alt="">
+								
+								</div>
+							
+							</div> <!-- //drop-area -->
+						
+						</div> <!-- //메인 이미지 영역 -->
+						<div class="col-lg-9 col-md-7">
+							<div class="prodTags mb-3">
+							</div>
+							
+							<div class="infoGroup">
+								<label for="prodName" class="form-label">상품명</label>
+								<input type="text" class="form-control" id="prodName" th:field="*{prodName}">
+							</div>
+							
+							<div class="infoGroup">
+								<label for="prodDesc" class="form-label">상품설명</label>
+								<input type="text" class="form-control" id="prodDesc" th:field="*{prodDesc}">
+							</div>
+							<div class="row">
+								<div class="infoGroup col-md-6">
+									<label for="prodOrgPrice" class="form-label">기준판매가격</label>
+									<input type="number" class="form-control" id="prodOrgPrice" th:field="*{prodOrgPrice}"
+									       th:value="${prodOrgPrice == null? 10000 : prodOrgPrice}" step="1000">
+								</div>
+								
+								
+								<div class="infoGroup col-md-6">
+									<label for="prodDiscount" class="form-label">할인율</label>
+									<input type="number" step="0.05" class="form-control" id="prodDiscount" th:field="*{prodDiscount}"
+									       th:value="0">
+								</div>
+							</div>
+							<div class="row">
+								<div class="infoGroup col-md-6">
+									<label for="prodStock" class="form-label">재고수량</label>
+									<input type="number" class="form-control" id="prodStock" th:field="*{prodStock}"
+									       th:value="${prodStock == null? 1000 : prodStock}" step="10">
+								</div>
+								<div class="infoGroup col-md-6">
+									<label for="prodCate" class="form-label">카테고리</label>
+									<select class="form-select" aria-label="Default select example" id="prodCate" th:field="*{prodCate}">
+										<option value="mealkit" selected>밀키트</option>
+										<option value="sidedish">반찬배송</option>
+										<option value="organicfood">유기농식재료</option>
+										<option value="organicgoods">오가닉 제품</option>
+										<option value="babygoods">베이비</option>
+										<option value="petgoods">펫</option>
+										<option value="books">책</option>
+										<option value="wellitgoods">웨릿 굿즈</option>
+									</select>
+								</div>
+							</div>
+							
+							
+							<p class="card-text mb-5">
+							<p class="c999">* 상품 상세 정보</p>
+							<!-- <label class="form-label">재료 및 양</label> -->
+							<table class="table table-sm">
+								<thead>
+								<tr>
+									<th scope="col"></th>
+									<th scope="col">key</th>
+									<th scope="col">value</th>
+									<th scope="col"></th>
+								</tr>
+								</thead>
+								<tbody id="prodInfoList">
+								<tr th:if="${productForm.prodInfoList == null}">
+									<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
+									<td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[0].infoKey"
+									           placeholder="key"></td>
+									<td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[0].infoValue"
+									           placeholder="value"></td>
+									<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
+								</tr>
+								<tr th:each="info, iterStat : ${productForm.prodInfoList}">
+									<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
+									<td><input type="text" class="form-control form-control-sm infoKey"
+									           th:name="|prodInfoList[${iterStat.index}].infoKey|"
+									           th:value="${info.infoKey}"
+									           placeholder="key"></td>
+									<td><input type="text" class="form-control form-control-sm infoValue"
+									           th:name="|prodInfoList[${iterStat.index}].infoValue|"
+									           th:value="${info.infoValue}"
+									           placeholder="value"></td>
+									<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
+								</tr>
+								
+								</tbody>
+							</table>
+						</div>
+					</div> <!-- //row card-body -->
+				
+				</div> <!-- //main card -->
+			</section>
+		
+		</section>  <!--prodInfo-->
+		
+		
+		<!--상품 상세 정보 입력-->
+		<section class="prodImageSec">
+			<ol id="prodImageCardList">
+				
+				<li class="card prodImageCard my-3 border-3 border-success-subtle" th:if="${productForm.prodId == null}">
+					<div class="card-header">
+						<div class="row">
+							<div class="col-md-2">
+								<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
+								       value="이미지 제외 (-)"/>
+							</div>
+							<div class="col-md-8">
+								<!-- 이미지 순서 -->
+								<p class="text-center mb-0"><span class="textStep ">No</span><input type="text" readonly
+								                                                                    class="form-control-plaintext prodImageNum text-left"
+								                                                                    value="1" name="" tabindex="-1"></p>
+							
+							</div>
+							<div class="col-md-2">
+								<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100"
+								       value="이미지 추가 (+)"/>
+							</div>
+						</div>
+					</div> <!-- //card-header -->
+					<div class="card-body">
+						<div class="row">
+							
+							<div class="">
+								<div class="drop-area prodImageDropArea">
+									<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]"
+									       data-image-num="1"/>
+									<div class="preview border" style="position: relative;">
+										<p>이미지를 여기에 드래그 앤 드롭하세요</p>
+									</div>
+									<!--<button type="button" class="remove-btn">X</button> &lt;!&ndash; 삭제 버튼 &ndash;&gt;-->
+								</div>
+							
+							</div> <!-- // prodImageImgArea -->
+						
+						
+						</div>
+					
+					</div> <!-- //card-body -->
+				</li> <!-- //card -->
+				
+				
+				<th:block th:each="prodImageSrc, iterStat : ${imageFiles}">
+					<li class="card prodImageCard my-3 border-3 border-success-subtle">
+						<div class="card-header">
+							<div class="row">
+								<div class="col-md-2">
+									<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
+									       value="이미지 제외 (-)"/>
+								</div>
+								<div class="col-md-8">
+									<!-- 이미지 순서 -->
+									<p class="text-center mb-0"><span class="textStep ">No</span><input type="text" readonly
+									                                                                    class="form-control-plaintext prodImageNum text-left"
+									                                                                    th:value="${iterStat.index + 1}"
+									                                                                    name="" tabindex="-1"></p>
+								
+								</div>
+								<div class="col-md-2">
+									<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100"
+									       value="이미지 추가 (+)"/>
+								</div>
+							</div>
+						</div> <!-- //card-header -->
+						<div class="card-body">
+							<div class="row">
+								
+								<div class="">
+									<div class="drop-area prodImageDropArea">
+										<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]"
+										       th:data-image-num="${iterStat.index + 1}"/>
+										<div class="preview border" style="position: relative;">
+											<img th:src="@{|${prodImageSrc.imagePath}|}" alt="">
+											<button class="remove-btn" type="button" style="display: inline-block;">-</button>
+										
+										</div>
+									</div>
+								</div> <!-- // prodImageImgArea -->
+							</div>
+						</div> <!-- //card-body -->
+					</li> <!-- //card -->
+				
+				</th:block>
+			
+			
+			</ol>
+		</section> <!--이미지 카드 등록-->
+		<section class="mb-3 row">
+			<!--상품 등록 버튼 #2-->
+			<script th:inline="javascript">
+          // 전역 변수를 통해 prodName을 외부 js에서 접근할 수 있게 설정
+          var prodName = [[${productForm.prodName}]];  // Thymeleaf로 서버에서 전달된 상품명
+			</script>
+			<div class="col-md-2">
+				<input type="button" class="form-control btn btn-lg btn-secondary col-md-2 d-block" value="삭제"
+				       onclick="javascript:deleteProd();" th:if="${productForm.prodId != null}">
+			</div>
+			
+			<div class="col-md-10"><input type="submit" class="form-control btn btn-lg btn-success d-block"
+			                              th:value="|${productForm.prodId != null ? '상품 수정' : '상품 등록하기'} |"></div>
+		</section>
+	
+	</form>
+	
+	<form th:action="@{/shop/delete/{prodId}(prodId=${productForm.prodId})}" method="post" name="deleteForm"
+	      id="deleteForm">
+		<input type="hidden" name="_method" value="delete"/>
+	</form>
+
+
+</div> <!--//layout::content-->
+
+
+</html>
+
+
+
+
+

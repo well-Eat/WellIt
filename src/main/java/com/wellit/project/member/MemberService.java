@@ -218,4 +218,9 @@ public class MemberService {
 	public Member findByMemberId(String memberId) {
 		return memberRepository.findByMemberId(memberId); // memberId로 직접 조회
 	}
+	//아이디 중복 체크
+	public boolean isIdExists(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
+    }
+
 }
