@@ -48,16 +48,13 @@ public class MemberRegisterForm {
 	@NotBlank(message = "주소를 입력해주세요")
 	private String memberAddress;   
 	
-	private String zipcode;
-	
+	private String zipcode;	
+	private String roadAddress;	
 	private String addressDetail;
     
-    private String memberBirth;   
-    
+    private String memberBirth;      
     private String birth_year;
-    
-    private String birth_month;
-    
+    private String birth_month;   
     private String birth_day;
     
     private String memberGender;
@@ -65,6 +62,5 @@ public class MemberRegisterForm {
     private String memberVeganType;
     
     private MultipartFile imageFile;
-
     
 }

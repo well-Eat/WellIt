@@ -1,0 +1,64 @@
+header {
+	position: relative;
+	background-color: #386641;
+}
+
+.formStyle {
+	background-color: #f2e8cf;
+}
+
+.enter-password {
+	position: relative;
+	height: 100vh;
+}
+
+.greenBtn {
+	background-color: #6A994E;
+}
+
+.greenBtn:hover {
+	background-color: #A7C957;
+}
+
+.eye-icon {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+}
+
+.eye {
+	cursor: pointer;
+	color: black;
+}
+
+#mypage {
+	margin-top: 100px;
+}
+
+.sidebar {
+	background-color: lightgray;
+}
+
+.sidebar li .submenu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.nav-link {
+	color: black
+}
+
+.error-message {
+	white-space: pre-line;
+	/* 줄바꿈을 인식 */
+	padding: 0 var(--bs-alert-padding-x);
+
+}
+
+.error-message p {
+	margin-bottom: 0;
+}

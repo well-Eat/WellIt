@@ -81,7 +81,4 @@ public class Store {
         stoUpdatedAt = Timestamp.valueOf(LocalDateTime.now());
     }
     
-    @OneToMany(mappedBy = "store")
-    @OrderBy("createdAt DESC") // 생성일 기준으로 내림차순 정렬
-    private List<StoreReview> storeReviews;
 }

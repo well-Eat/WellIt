@@ -30,9 +30,7 @@ public class StoreService {
         this.storeRepository = storeRepository;
     }
 
-    public List<Store> getStoresWithSortedReviews() {
-        return storeRepository.findAllStoresWithSortedReviews();
-    }
+  
     
     public Store incrementViewCount(Long stoId) {
         Store store = getStoreById(stoId);

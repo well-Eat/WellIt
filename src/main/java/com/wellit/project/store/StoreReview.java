@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "store_review")
 @Getter
@@ -36,5 +38,6 @@ public class StoreReview {
 
     @ManyToOne
     @JoinColumn(name = "stoId")
-    private Store store;
+    @JsonBackReference // 추가
+    private AllStore store;
 }

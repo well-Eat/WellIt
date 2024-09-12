@@ -22,21 +22,24 @@ public class SecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests((requests) -> requests //requests:authorizeHttpRequests
+		        .requestMatchers("/getUserId").permitAll() // 이 엔드포인트에 대한 접근 허용
 				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll())	
 			    .headers((headers) -> headers
 			    		.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
 		// XFrameOptionsHeader 값으로 SAMEORIGIN을 설정하면 프레임에 포함된 웹 페이지가 동일한 사이트에 제공할 때만 사용이 허락된다.
 			 // 폼 로그인 설정
 	            .formLogin(form -> form
-	                .loginPage("/member/login")        // 로그인 페이지 경로
-	                .defaultSuccessUrl("/member/mypage")            // 로그인 성공 시 리다이렉트 경로
-	            )
+	            	.loginPage("/member/login")
+	            	.successHandler(new CustomAuthenticationSuccessHandler()) // 커스텀 성공 핸들러 설정
+	            	.failureHandler(new CustomAuthenticationFailureHandler())  // 로그인 실패 시 핸들러 설정
+	            )	    	            
 	            
 	            // 로그아웃 설정
 	            .logout(logout -> logout
 	                .logoutUrl("/member/logout")       // 로그아웃 요청 경로
-	                .logoutSuccessUrl("/")             // 로그아웃 성공 시 리다이렉트 경로
-	                .invalidateHttpSession(true)       // 세션 무효화
+	                .logoutSuccessUrl("/") // 로그아웃 후 리디렉션 URL
+	                .invalidateHttpSession(true) // 세션 무효화
+	                .deleteCookies("JSESSIONID") // 쿠키 삭제
 	            );
 		return http.build();
 	}

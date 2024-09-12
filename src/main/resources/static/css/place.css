@@ -20,7 +20,10 @@ header {
 	height: 100%;
 	object-fit: cover;
 }
-
+.selectPlace{
+	background-color: #F2E8CF;
+	font-size: large;
+}
 .videoBox {
 	width: 1000px;
 	max-width: 1300px;
@@ -161,6 +164,15 @@ label {
 }
 .carousel-item .row .col img{
 	height: 200px;
+}
+.favorite-btn{
+	position: absolute;
+	right: 15px;
+	top: 15px;
+	background-color: #6a994e;
+	padding: 5px;
+	border-radius: 50%;
+	cursor: pointer;
 }
 @media (min-width: 768px) {
     .col-md-2 {

@@ -37,8 +37,8 @@
 				<p class="placeDesc card-text" th:text="${store.stoContent}"></p>
 				<p class="card-text"><strong>제목:</strong> <span th:text="${store.stoTitle}"></span></p>
 				<p class="card-text"><strong>카테고리:</strong> <span th:text="${store.stoCategory}"></span></p>
-				<p class="card-text"><strong>조회수:</strong> <span th:text="${store.stoViewCount}"></span></p>
-				<p class="card-text"><strong>추천수:</strong> <span th:text="${store.stoRecommendationCount}"></span></p>
+				<p class="card-text"><strong>조회수:</strong> <span th:text="${store.viewCount}"></span></p>
+				<p class="card-text"><strong>추천수:</strong> <span th:text="${store.recommendationCount}"></span></p>
 				<p class="card-text"><strong>지역:</strong> <span
 						th:text="${store.stoRegionProvince} + ' ' + ${store.stoRegionCity}"></span></p>
 				<p class="card-text"><strong>연락처:</strong> <span th:text="${store.stoContact}"></span></p>
@@ -47,10 +47,12 @@
 				<p class="card-text"><strong>휴무일:</strong> <span th:text="${store.stoClosedDays}"></span></p>
 				<p class="card-text"><strong>추천 메뉴:</strong> <span th:text="${store.stoRecommendedMenu}"></span></p>
 				<p class="card-text"><strong>주차 정보:</strong> <span th:text="${store.stoParkingInfo}"></span></p>
-				<p class="card-text"><strong>위도:</strong> <span th:text="${store.stoLatitude}"></span></p>
-				<p class="card-text"><strong>경도:</strong> <span th:text="${store.stoLongitude}"></span></p>
-				<p class="card-text"><strong>영업 여부:</strong> <span
-						th:text="${store.stoIsOpen} == 'Y' ? '영업 중' : '휴업 중'"></span></p>
+				<p class="card-text"><strong>채식종류:</strong> <span th:text="${store.stoVegetarianType}"></span></p>
+				<p class="card-text"><strong>영업 여부:</strong> <span th:text="${store.isOpen} ? '영업 중' : '영업 종료'"></span>
+				</p>
+				<span class="favorite-btn btn btn-warning" th:data-userid="${session.UserId}"
+					th:data-storeid="${store.stoId}">찜👍</span>
+
 			</div> <!-- //card-body -->
 		</div> <!--col-6 card-->
 	</section> <!--placeInfo-->
@@ -68,11 +70,11 @@
 							<div class="carousel-item "
 								th:class="'carousel-item ' + (${iterStat.index < 8} ? 'active' : '')">
 								<a href="#" class="revImgLink d-block">
-									<div class="revImgBox"
-										th:style="'background-image: url(' + ${review.revImg} + ');'" 									th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
-																	th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
-																	th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
-																	onclick="openModal(this)"></div>
+									<div class="revImgBox" th:style="'background-image: url(' + ${review.revImg} + ');'"
+										th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
+										th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
+										th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
+										onclick="openModal(this)"></div>
 								</a>
 							</div>
 						</th:block>
@@ -88,11 +90,11 @@
 							<div class="carousel-item "
 								th:class="'carousel-item ' + (${iterStat.index < 8} ? 'active' : '')">
 								<span class="revImgLink d-block">
-									<div class="revImgBox"
-										th:style="'background-image: url(' + ${review.revImg} + ');'" 									th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
-																	th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
-																	th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
-																	onclick="openModal(this)"></div>
+									<div class="revImgBox" th:style="'background-image: url(' + ${review.revImg} + ');'"
+										th:data-img-url="${review.revImg}" th:data-sto-name="${store.stoName}"
+										th:data-rev-text="${review.revText}" th:data-rev-rating="${review.revRating}"
+										th:data-created-at="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}"
+										onclick="openModal(this)"></div>
 								</span>
 							</div>
 						</th:block>
@@ -120,7 +122,7 @@
 			<div class="row border-bottom border-success reviewBlock py-2 my-3"
 				th:each="review : ${store.storeReviews}">
 
-				<div class="col-md-2 writer">사용자 닉네임</div>
+				<div class="col-md-2 writer">[[${review.writer}]]</div>
 				<div class="col-md-10">
 					<div class="row revText justify-content-start mb-3 revStoName">
 						<div class="col">[[${store.stoName}]]</div>
@@ -202,9 +204,35 @@
 			</div>
 			<button type="submit" class="btn btn-info">리뷰 추가</button>
 		</form>
-	</section>
 
+
+	</section>
+	<button th:if="${session.UserId == 'admin'}" th:id="'delete-' + ${store.stoId}"
+		th:onclick="'deleteStore(' + ${store.stoId} + ')'">가게 삭제</button>
+	<a th:if="${session.UserId == 'admin'}" th:href="@{/load/store/update(id=${store.stoId})}" class="btn btn-info"
+		id="updateButton">가게 수정</a>
 	<script>
+		function deleteStore(stoId) {
+			// 삭제 확인 대화 상자
+			const isConfirmed = confirm("정말로 이 가게를 삭제하시겠습니까?")
+
+			if (isConfirmed) {
+				fetch(`/load/store/delete/${stoId}`, {
+					method: 'DELETE'
+				})
+					.then(response => {
+						if (response.ok) {
+							alert("가게가 삭제되었습니다.");
+							window.location.href = 'http://localhost:8080/load/place'; // 페이지 리다이렉트
+						} else {
+							alert("가게 삭제에 실패했습니다.");
+						}
+					});
+			} else {
+				alert("가게 삭제가 취소되었습니다.");
+			}
+		}
+
 		function openModal(element) {
 			const imgUrl = element.getAttribute('data-img-url');
 			const stoName = element.getAttribute('data-sto-name');
@@ -225,6 +253,7 @@
 		function closeModal() {
 			$('#imageModal').modal('hide'); // Bootstrap 모달 닫기
 		}
+
 		document.addEventListener('DOMContentLoaded', function () {
 			const stars = document.querySelectorAll('.star');
 			const revRatingInput = document.getElementById('revRating');
@@ -270,8 +299,15 @@
 					.then(response => {
 						if (response.ok) {
 							return response.json(); // JSON 응답을 반환
+						} else if (response.status === 401) {
+							alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+							window.location.href = 'http://localhost:8080/member/login'; // 로그인 페이지로 리다이렉트
+							return Promise.reject(); // 리다이렉트 후 함수 종료
+						} else if (response.status === 400) {
+							alert('리뷰 텍스트가 비어 있습니다.'); // 잘못된 요청 처리
+							return;
 						} else {
-							throw new Error('리뷰 추가에 실패했습니다.');
+							throw new Error('서버 오류가 발생했습니다. 상태 코드: ' + response.status);
 						}
 					})
 					.then(data => {
@@ -391,7 +427,42 @@
 					alert("이전 이미지가 없습니다.")
 				}
 			});
+
+			const favoriteButtons = document.querySelectorAll('.favorite-btn');
+
+			favoriteButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const userId = this.getAttribute('data-userid');
+					const storeId = this.getAttribute('data-storeid');
+					addFavorite(userId, storeId);
+				});
+			});
 		});
+
+		function addFavorite(memberId, stoId) {
+			console.log('memberId:', memberId); // 디버깅용 출력
+			console.log('stoId:', stoId); // 디버깅용 출력
+			fetch(`/store/favorite/add?memberId=${memberId}&stoId=${stoId}`, { // 서버의 API 엔드포인트
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({memberId: memberId, stoId: stoId})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('찜하기에 성공했습니다!');
+					} else {
+						return response.text().then(text => {
+							alert(text); // 서버에서 전송한 예외 메시지를 사용자에게 표시
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('서버 오류가 발생했습니다.');
+				});
+		}
 	</script>
 </div> <!--//layout::content-->
 
