@@ -1,6 +1,7 @@
 package com.wellit.project.store;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,5 @@ public interface AllStoreRepository extends JpaRepository<AllStore, Long> {
 	List<AllStore> findAllStoresWithSortedReviews();
 
     List<AllStore> findByStoVegetarianTypeAndStoRegionProvinceAndStoRegionCity(String stoVegetarianType, String stoRegionProvince, String stoRegionCity);
+    
 }
