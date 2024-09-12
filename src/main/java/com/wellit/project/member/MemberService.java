@@ -212,4 +212,8 @@ public class MemberService {
         // 랜덤 토큰 생성 로직
         return UUID.randomUUID().toString();
     }
+
+	public Optional<Member> findByMemberId(String memberId) {
+		return memberRepository.findByMemberId(memberId);
+	}
 }

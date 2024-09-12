@@ -37,10 +37,10 @@ public class Member {
 	    private String memberPhone;
 	    
 	    @Column
-	    private String zipcode;
-		private String roadAddress;
-		private String addressDetail;
-	    private String memberAddress;
+	    private String zipcode; //우편번호
+		private String roadAddress; //도로명 주소
+		private String addressDetail; //상세 주소
+	    private String memberAddress; //도로명 + 상세
 	    
 	    @Column
 	    private String birth_year;
@@ -74,4 +74,11 @@ public class Member {
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
 	    
 	    private Integer mileage;
+	    
+	    @Column
+	    private boolean additionalInfoCompleted = false;
+	    
+	    public boolean isAdditionalInfoNeeded() {
+	        return !additionalInfoCompleted;
+	    }
 }

@@ -53,4 +53,6 @@ public class SecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();  
 		//사용자 인증과 권한 부여 프로세스를 내부적으로 처리
 	}
+	
+	
 }

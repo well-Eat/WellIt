@@ -152,4 +152,28 @@ public class KakaoService {
         // 가져온 사용자 정보를 DB에 저장
         return saveKakaoUser(kakaoUserInfo);
     }
+    
+    public Member updateKakaoMember(KakaoSignupForm kakaoSignupForm) {
+        // 1. 카카오 로그인으로 저장된 회원을 찾아옴
+        Member member = memberRepository.findByMemberId(kakaoSignupForm.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        // 2. 추가 정보를 업데이트
+        member.setMemberName(kakaoSignupForm.getMemberName());
+        member.setMemberAlias(kakaoSignupForm.getMemberAlias());
+        member.setMemberPhone(kakaoSignupForm.getMemberPhone()); 
+        member.setMemberAddress(kakaoSignupForm.getMemberAddress());
+        member.setZipcode(kakaoSignupForm.getZipcode());
+        member.setRoadAddress(kakaoSignupForm.getRoadAddress());
+        member.setAddressDetail(kakaoSignupForm.getAddressDetail());
+        member.setMemberGender(kakaoSignupForm.getMemberGender());           
+        member.setMemberBirth(kakaoSignupForm.getMemberBirth());
+        member.setBirth_year(kakaoSignupForm.getBirth_year());
+        member.setBirth_month(kakaoSignupForm.getBirth_month());
+        member.setBirth_day(kakaoSignupForm.getBirth_day());
+        member.setMemberVeganType(kakaoSignupForm.getMemberVeganType());
+
+        // 3. 업데이트된 회원 정보를 저장
+        return memberRepository.save(member);
+    }
 }
