@@ -203,6 +203,7 @@ function removeAtCart(prodId) {
     })
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             removeItemDOM(prodId);
             updateCartBadge();
             calcTotalPrice();
@@ -211,6 +212,7 @@ function removeAtCart(prodId) {
 
 }
 
+
 //카트 아이템 dom 제거
 function removeItemDOM(prodId) {
     $(".itemId").each(function () {
@@ -218,7 +220,22 @@ function removeItemDOM(prodId) {
             $(this).parents(".card-body").remove();
         }
     })
+    console.log($(".cardItemTable").find(".card-body"))
+    if ($(".cardItemTable").find(".card-body").length == 0){
+        var vacantCartDOM = `
+            <div class="card-body border-bottom d-flex gap-3 justify-content-center " >
+                <div class="row">
+                    <div class="col-auto align-items-center justify-content-center d-flex flex-column">
+                        <div class="vacantCart "></div>
+                        <p class="mt-3 f24 fw700 c555">장바구니에 상품을 추가해주세요</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        $(".cartItemTable .card-header").after(vacantCartDOM);
+    }
 }
+
 
 
 //카트 아이템 리스트 카드헤더 : 선택개수 / 전체개수 업데이트
@@ -336,6 +353,83 @@ document.querySelector('#orderForm').addEventListener('submit', function(event) 
         });
     });
 });
+
+/*마일리지 버튼*/
+$(function (){
+
+    $("#milePay").on("change", function (){
+
+        let totalPrice = parseInt( $("#totalPrice").val());
+
+        //마일리지 입력금액이 구매할 금액보다 크면 마일리지 적용금액 재계산
+        if ( parseInt($("#milePay").val()) > totalPrice ){
+            $("milePay").val(totalPrice);
+        }
+
+
+        //적용 공통 계산
+        $("span.milePay").attr("data-nums", $("#milePay").val()*(-1));
+        console.log($("span.milePay").attr("data-nums"));
+
+
+
+
+        $("span.milePay").text(formatNumberWithComma( $("span.milePay").attr("data-nums") ));
+        console.log($("span.milePay").text());
+
+
+        var totalPayValue = parseInt( $("#totalPrice").val() ) + parseInt( $("span.milePay").attr("data-nums") )
+        console.log(totalPayValue);
+
+        $("#totalPay").val(totalPayValue);
+        $("#totalPay").attr("data-nums", totalPayValue);
+
+        $("span.totalPay").attr("data-nums", totalPayValue);
+        $("span.totalPay").text(formatNumberWithComma( $("span.totalPay").attr("data-nums") ));
+
+
+
+        $("span.totalPay").val(totalPayValue);
+
+
+        $("#totalPay").attr("data-nums", $("#milePay").val()*(-1));
+        console.log($("span.milePay").attr("data-nums"));
+        $("span.milePay").text(formatNumberWithComma( $("span.milePay").attr("data-nums") ));
+        console.log($("span.milePay").text());
+
+    })
+})
+
+function useAllMileage(){
+    let finalPrice = $('#finalPrice').attr('data-nums');
+    let mileage = $("#mileage").attr('data-nums');
+
+    console.log("-====================")
+    console.log("finalPrice : ")
+    console.log(parseInt( finalPrice));
+    console.log("-====================")
+    console.log("mileage : ")
+    console.log( parseInt(mileage));
+    console.log("-====================")
+
+
+    let milePay = $("#milePay");
+
+    console.log(milePay);
+    // 할인된 상품 가격 내에서 마일리지 사용가능
+    if (parseInt(mileage) > parseInt( finalPrice)) {
+        console.log("트루다")
+        milePay.val(parseInt( finalPrice));
+    } else {
+        milePay.val(parseInt( mileage));
+        console.log("트루아님")
+    }
+
+
+    $("#milePay").change();
+
+
+}
 
 
 

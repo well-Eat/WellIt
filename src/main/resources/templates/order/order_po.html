@@ -15,6 +15,9 @@
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
+	<!--포트원 cdn-->
+
+	
 	
 	<!--order style link-->
 	<link rel="stylesheet" th:href="@{/css/order.css}">
@@ -28,7 +31,8 @@
 	</div>
 	
 	
-	<form action="" method="post" th:object="${poForm}" id="orderForm">
+	<form th:action="@{|/order/po/${poForm.orderId}|}" method="post" th:object="${poForm}" id="orderForm">
+		<input type="text" th:field="*{orderId}"/>
 		
 		<section class="row orderItem position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
@@ -57,7 +61,7 @@
 							<!--상품명-->
 							
 							<p class="card-text d-inline-block mb-1 secondaryLine">
-								
+
 								<span class="card-text text-end d-inline-block c555 f14 commaNums"
 								      th:attr="data-nums=${orderItem.product.prodFinalPrice}"></span>
 								<span class="f14 won">원</span>
@@ -100,6 +104,8 @@
 		
 		</section> <!-- //orderItem -->
 		
+		
+		
 		<section class="row orderMember position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				주문자 정보
@@ -109,7 +115,7 @@
 				<table class="table table-borderless">
 					<tr>
 						<th scope="row">보내는 분</th>
-						<td><span th:text="${member.memberName}"></span></td>
+						<td><span th:text="${member.memberName}" id="memberName"></span></td>
 					</tr>
 					<tr>
 						<th scope="row">휴대폰</th>
@@ -119,7 +125,7 @@
 					</tr>
 					<tr>
 						<th scope="row">이메일</th>
-						<td><span th:text="${member.memberEmail}"></span></td>
+						<td><span th:text="${member.memberEmail}" id="memberEmail"></span></td>
 					</tr>
 				
 				</table>
@@ -127,10 +133,16 @@
 		
 		</section> <!-- //orderMember -->
 		
+		
+		
+		
+		
 		<section class="row deleveryInfo position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				배송 정보
 			</p>
+			
+			
 			
 			<div>
 				<table class="table table-borderless">
@@ -139,35 +151,33 @@
 						<td>
 							<a href="#" class="btn btn-sm card-link addrChangeBtn border float-end"
 							   onclick="sample4_execDaumPostcode()">&nbsp; 변경 &nbsp;</a>
-							  <div class="text-left c666 addr"></div> <!--주소 출력-->
-								<input type="hidden" class="form-control-plaintext text-left c666 addr"
-								       th:value="${poForm.addr1}" th:field="*{addr1}" tabindex="-1" id="roadAddress"/>
-								<input type="text" id="sangseAddress" class="form-control form-control-sm mt-1" placeholder="상세주소" style="display:none;" th:field="*{addr2}"/>
-								
-								<!-- 주소 -->
-								<div class="row justify-content-start mt-3" style="display: none">
-									<label class="form-label">주소</label>
-									<div class="col-sm-4">
-										<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호">
-									</div>
-									<div class="col-sm-3">
-										<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
-										       value="우편번호 찾기"><br>
-									</div>
-									<div class="col-12 mt-1">
-										<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소"
-										       th:field="${poForm.addr1}">
-										<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
-									</div>
-									<div class="col-12 mt-1">
-										<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소"
-										       th:field="${poForm.addr2}">
-										<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
-									</div>
-									<!--								<input type="hidden" id="fullAddress" name="fullAddress" th:field="${orderForm.deliveryAddr}">-->
-									<span id="guide" style="color:#999;display:none" hidden></span>
+							<div class="text-left c666 addr"></div> <!--주소 출력-->
+							<input type="hidden" class="form-control-plaintext text-left c666 addr"
+							       th:value="${poForm.addr1}" th:field="*{addr1}" tabindex="-1" id="roadAddress"/>
+							<input type="text" id="sangseAddress" class="form-control form-control-sm mt-1" placeholder="상세주소" style="display:none;" th:field="*{addr2}"/>
+							
+							<!-- 주소 -->
+							<div class="row justify-content-start mt-3" style="display: none">
+								<label class="form-label">주소</label>
+								<div class="col-sm-4">
+									<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호">
 								</div>
-
+								<div class="col-sm-3">
+									<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
+									       value="우편번호 찾기"><br>
+								</div>
+								<div class="col-12 mt-1">
+									<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소">
+									<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
+								</div>
+								<div class="col-12 mt-1">
+									<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소">
+									<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
+								</div>
+								<!--								<input type="hidden" id="fullAddress" name="fullAddress" th:field="${orderForm.deliveryAddr}">-->
+								<span id="guide" style="color:#999;display:none" hidden></span>
+							</div>
+						
 						</td>
 					</tr>
 					<tr>
@@ -196,6 +206,8 @@
 		</section> <!-- //deleveryInfo -->
 		
 		
+		
+		
 		<section class="row mileage position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				마일리지
@@ -206,17 +218,16 @@
 					<tr>
 						<th scope="row">사용가능 마일리지</th>
 						<td>
-							10,000원
+							<span class="commaNums"
+							      th:attr="data-nums=${member.mileage}" id="mileage"></span>
+							<span class="won">원</span>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">사용금액</th>
 						<td class="input-group">
-							<input type="text" class="form-control form-control-sm">
-							<a href="#" class="btn btn-sm card-link addrChangeBtn border float-start"
-							   onclick="sample4_execDaumPostcode()">&nbsp; 모두사용 &nbsp;</a>
-							<a href="#" class="btn btn-sm card-link addrChangeBtn border float-start"
-							   onclick="sample4_execDaumPostcode()">&nbsp; 적용 &nbsp;</a>
+							<input type="number" class="form-control form-control-sm milePay" th:value="0" th:field="*{milePay}" id="milePay" step="1000">
+							<a href="javascript:void(0);" class="btn btn-sm border float-start useAll" onclick="useAllMileage();">&nbsp; 모두사용 &nbsp;</a>
 						</td>
 					</tr>
 				
@@ -224,6 +235,10 @@
 				<p class="c999"><small>* 당 주문 건의 마일리지는 배송완료 3일 후 지급됩니다.</small> </p>
 			</div>
 		</section> <!-- //mileage -->
+		
+		
+		
+		
 		
 		<section class="row totalPriceSec position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
@@ -248,7 +263,7 @@
 									<th>주문금액</th>
 									<td>
 										<span class="commaNums"
-									          th:attr="data-nums=${poForm.finalPrice}"></span>
+										      th:attr="data-nums=${poForm.finalPrice}" id="finalPrice"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -279,15 +294,16 @@
 								<tr class="milege">
 									<th>마일리지할인</th>
 									<td>
-										<span class="commaNums"
+										<span class="commaNums milePay"
 										      th:attr="data-nums=${poForm.milePay}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
+								
 								<tr class="border-top totalFinal">
 									<th>최종결제금액</th>
 									<td>
-										<span class="commaNums"
+										<span class="commaNums totalPay"
 										      th:attr="data-nums=${poForm.totalPay}"></span>
 										<span class="won">원</span>
 									</td>
@@ -316,9 +332,40 @@
 			</div>
 		</section> <!-- //payment -->
 		
+		
+		<input type="number" th:field="*{totalPrice}" id="totalPrice" th:attr="data-nums=${poForm.totalPrice}"> <- totalPrice <br>
+		<input type="number" th:field="*{totalPay}" id="totalPay" th:attr="data-nums=${poForm.totalPay}"> <- totalPay <br>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<section class="submitBtn">
-			<input type="submit" value="결제하기" class="form-control-lg form-control text-bg-success"/>
+			<input type="button" value="카카오페이로 결제하기" class="form-control-lg form-control text-bg-success" id="payment"/>
 		</section> <!-- //submitBtn -->
+		
 	
 	
 	</form>
@@ -328,7 +375,11 @@
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<!--order js link-->
 	<script src="/js/order.js"></script>
-
+	<script src="/js/payment.js"></script>
+	
+	<!--포트원 cdn-->
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
 </div> <!--//layout::content-->
 

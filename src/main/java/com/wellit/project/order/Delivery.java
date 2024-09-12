@@ -45,6 +45,10 @@ public class Delivery {
         this.updatedAt = LocalDateTime.now();
     }
 
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private PurchaseOrder purchaseOrder;
+
 
 
 

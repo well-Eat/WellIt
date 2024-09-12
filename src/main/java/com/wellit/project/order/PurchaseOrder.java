@@ -58,12 +58,13 @@ public class PurchaseOrder {
         this.updatedAt = LocalDateTime.now();
     }
 
+    //결제정보
+    @OneToOne(mappedBy = "purchaseOrder", cascade=CascadeType.ALL)
+    private Payment payment;
 
     //배송정보
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="delivery_id")
+    @OneToOne(mappedBy = "purchaseOrder", cascade=CascadeType.ALL)
     private Delivery delivery;
-
 
 
     //주문 상품 리스트

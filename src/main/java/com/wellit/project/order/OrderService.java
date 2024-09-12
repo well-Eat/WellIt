@@ -6,7 +6,9 @@ import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class OrderService {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final MemberService memberService;
     private final ProductRepository productRepository;
+    private final PaymentService paymentService;
+    private final CartItemRepository cartItemRepository;
 
     /*주문 생성*/
     public PurchaseOrder addOrder(OrderForm orderForm, String memberId){
@@ -61,14 +65,16 @@ public class OrderService {
 
         po.setDeliveryFee(deliveryFee);
         po.setTotalPrice(orgPrice + discPrice + deliveryFee);
-        po.setMilePay(0);
 
         po.setStatus(OrderStatus.PAYMENT_WAIT); // 주문 상태 업데이트
+        po.setMilePay(0);
+        po.setTotalPay(po.getTotalPrice());
 
-        if(orderForm.getAddr2() == null) po.setTmpAddr(orderForm.getAddr1());
+  /*      if(orderForm.getAddr2() == null) po.setTmpAddr(orderForm.getAddr1());
         else {
             po.setTmpAddr(orderForm.getAddr1() + " " + orderForm.getAddr2());
-        }
+        }*/
+        po.setTmpAddr(po.getMember().getMemberAddress());
 
         return purchaseOrderRepository.save(po);
 
@@ -76,6 +82,7 @@ public class OrderService {
 
     /* 주문 검색 */
     public PurchaseOrder getOnePO(String orderId){
+        log.info(orderId);
         return purchaseOrderRepository.findById(orderId).orElseThrow();
     }
 
@@ -87,6 +94,7 @@ public class OrderService {
         PoForm poForm = new PoForm();
         Member member = po.getMember();
 
+        poForm.setOrderId(orderId);
         poForm.setAddr1(po.getTmpAddr());
         poForm.setDeliveryName(member.getMemberName());
         //poForm.setDeliveryPhone(member.getMemberPhone());
@@ -115,18 +123,80 @@ public class OrderService {
 
 
 
-
-
-
-
-
-
         return poForm;
     }
 
     /*OrderItem 리스트 리턴*/
     public List<OrderItem> getOrderItemList(String orderId){
         return this.getOnePO(orderId).getOrderItems();
+    }
+
+
+    /*결제성공 후 주문서 변경내용 업데이트, 배송정보 설정*/
+
+    @Transactional
+    public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm, Principal principal){
+        Payment payment = paymentService.getPayment(orderId);
+
+        try{
+            poForm.getAddr2();
+        } catch (Exception e){
+            poForm.setAddr2("");
+        }
+
+        if (payment == null) {
+            throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
+        }
+
+        if (!payment.isSuccess()) {
+            return false;
+        }
+
+
+        PurchaseOrder po = getOnePO(orderId);
+
+        //po상태 업데이트
+        po.setStatus(OrderStatus.PRODUCT_PREPARE);
+
+
+
+        // 배송 정보 설정
+        Delivery delivery = new Delivery();
+
+        log.info(poForm.getAddr1());
+        log.info(poForm.getAddr2());
+
+        if(poForm.getAddr2().isEmpty() || poForm.getAddr2() == null){
+            po.setTmpAddr(poForm.getAddr1());
+        } else {
+            po.setTmpAddr(poForm.getAddr1() +" "+ poForm.getAddr2());
+        }
+        delivery.setDeliveryAddr(po.getTmpAddr());
+        delivery.setDeliveryMsg(poForm.getDeliveryMsg());
+        delivery.setDeliveryStatus(DeliveryStatus.PENDING); //집화 대기 상태로 업데이트
+        delivery.setDeliveryName(poForm.getDeliveryName());
+        delivery.setDeliveryPhone(poForm.getPhone1()+poForm.getPhone2()+poForm.getPhone3());
+        delivery.setPurchaseOrder(po);
+        po.setDelivery(delivery);
+
+        log.info("딜리버리 저장완료");
+
+        // 금액 업데이트
+        po.setMilePay(poForm.getMilePay());
+        po.setTotalPay(poForm.getTotalPay());
+        log.info("금액 업뎃 저장완료");
+
+
+        //카트 비우는 로직
+        Cart cart = po.getMember().getCart();
+        cartItemRepository.deleteByCart(cart);
+        log.info("카트 비우기 완료");
+
+        purchaseOrderRepository.save(po);
+
+
+        return true;
+
     }
 
 

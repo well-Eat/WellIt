@@ -150,7 +150,15 @@ body > .container * {
 
 
 
+.vacantCart{
+    background-image: url('../imgs/shop/cart/vacantCart.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 150px;
 
+}
 
 .cartItemList h5.prodName{
     font-weight: 700;
@@ -188,12 +196,14 @@ body > .container * {
     font-weight: 600;
     font-size: 20px;
 }
-   
+
+.cartItemTable .card-footer{
+    border-top-width: 0 !important;
+}
 
 
 
-
-/*********** order_po : 주문서 스타일 ***************/
+    /*********** order_po : 주문서 스타일 ***************/
 /*********** order_po : 주문서 스타일 ***************/
 /*********** order_po : 주문서 스타일 ***************/
 .order_po{
