@@ -2,7 +2,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <html layout:decorate="~{layout}">
 <head>
-	<title>주문서보기</title>
+	<title>주문완료</title>
 </head>
 <body>
 <div layout:fragment="content" class="container  order_po mb-5">
@@ -16,23 +16,49 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
 	<!--포트원 cdn-->
-
 	
 	
 	<!--order style link-->
 	<link rel="stylesheet" th:href="@{/css/order.css}">
 	<link rel="stylesheet" th:href="@{/css/util.css}">
 	
-	<!--페이지 제목-->
-	<div class="row my-5">
-		<div class="pageTitle col text-center">
-			주문서
+	<th:block th:object="${poDetail}">
+		
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col-12 text-left" th:if="${orderSuccess}">
+				주문이 완료되었습니다.
+			</div>
+			
 		</div>
-	</div>
-	
-	
-	<form th:action="@{|/order/po/${poForm.orderId}|}" method="post" th:object="${poForm}" id="poForm">
-		<input type="hidden" th:field="*{orderId}"/>
+		
+		<section class="row orderItem position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				주문 정보
+			</p>
+			<div>
+				<table class="table table-borderless">
+					<tr>
+						<th scope="row">주문번호</th>
+						<td><span th:text="${poDetail.orderId}"></span></td>
+					</tr>
+					<tr>
+						<th scope="row">현재상태</th>
+						<td>
+							<span th:text="${poDetail.orderStatus}"></span>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">송장번호</th>
+						<td><span th:text="${poDetail.invoiceNum}"></span></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+			
+		</section>
 		
 		<section class="row orderItem position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
@@ -105,7 +131,6 @@
 		</section> <!-- //orderItem -->
 		
 		
-		
 		<section class="row orderMember position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				주문자 정보
@@ -134,14 +159,10 @@
 		</section> <!-- //orderMember -->
 		
 		
-		
-		
-		
 		<section class="row deleveryInfo position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				배송 정보
 			</p>
-			
 			
 			
 			<div>
@@ -152,39 +173,30 @@
 							
 							<!-- 주소 -->
 							<div class="row justify-content-start">
-
+								
 								<div class="col-12 d-flex column-gap-1">
-									<input type="text" id="sample4_roadAddress" class="form-control addr" placeholder="도로명주소" th:value="${poForm.addr1}" th:field="*{addr1}" readonly>
-									<input type="button" onclick="sample4_execDaumPostcode()" class="btn card-link addrChangeBtn border" value="&nbsp; 변경 &nbsp;"><br>
+									<p id="sample4_roadAddress" class="addr inputed" th:text="*{addr1}">
 								</div>
 								<div class="col-12 mt-1">
-									<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소" th:field="*{addr2}" th:value="${poForm.addr2}" >
-									<input type="hidden" id="sample4_postcode" class="form-control" placeholder="우편번호">
-									<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
-									<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
+									<p id="sample4_detailAddress" class="addr inputed" th:text="*{addr2}">
 								</div>
-								<span id="guide" style="color:#999;display:none" hidden></span>
 							</div>
 						
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">받는 분</th>
-						<td><input type="text" th:field="*{deliveryName}" class="form-control"></td>
+						<td><p th:text="*{deliveryName}" class="inputed"></td>
 					</tr>
 					<tr>
 						<th scope="row">받는 분 휴대폰</th>
 						<td class="container">
-							<div class="w-25 d-inline-block"><input type="text" th:field="*{phone1}" class="form-control"></div>
-							<span>-</span>
-							<div class="w-25 d-inline-block"><input type="text" th:field="*{phone2}" class="form-control"></div>
-							<span>-</span>
-							<div class="w-25 d-inline-block"><input type="text" th:field="*{phone3}" class="form-control"></div>
+							<span th:text="*{deliveryPhone}" class="inputed"></span>
 						</td>
 					</tr>
 					<tr class="align-middle">
 						<th scope="row">배송 요청사항</th>
-						<td><input type="text" class="form-control" th:field="*{deliveryMsg}"></td>
+						<td><span class="inputed" th:text="*{deliveryMsg}"></span> </td>
 					</tr>
 				
 				</table>
@@ -194,40 +206,6 @@
 		</section> <!-- //deleveryInfo -->
 		
 		
-		
-		
-		<section class="row mileage position-relative mb-5">
-			<p class="subtle f18 c666 fw-bold">
-				마일리지
-			</p>
-			
-			<div>
-				<table class="table table-borderless align-middle">
-					<tr>
-						<th scope="row">사용가능 마일리지</th>
-						<td>
-							<span class="commaNums"
-							      th:attr="data-nums=${member.mileage}" id="mileage"></span>
-							<span class="won">원</span>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">사용금액</th>
-						<td class="input-group">
-							<input type="number" class="form-control milePay" th:value="0" th:field="*{milePay}" id="milePay" step="1000">
-							<a href="javascript:void(0);" class="btn btn-sm border float-start useAll" onclick="useAllMileage();">&nbsp; 모두사용 &nbsp;</a>
-						</td>
-					</tr>
-				
-				</table>
-				<p class="c999"><small>* 당 주문 건의 마일리지는 배송완료 3일 후 지급됩니다.</small> </p>
-			</div>
-		</section> <!-- //mileage -->
-		
-		
-		
-		
-		
 		<section class="row totalPriceSec position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
 				결제금액
@@ -235,23 +213,31 @@
 			
 			<div class="cardWrapper">
 				
-				
 				<div class="card priceCard c999">
 					<div class="card-body">
 						<div class="tableWrapper">
 							<table class="table table-borderless priceTable">
 								
-								
-								
-								
-								
-								
-								
 								<tr>
+									<th>결제 시간</th>
+									<td>
+										<span th:text="${#temporals.format(poDetail.paidAt, 'yyyy.MM.dd. hh:mm:ss')}"></span>
+									</td>
+								</tr>
+								<tr  class="milege">
+									<th>결제 수단</th>
+									<td>
+										<span th:text="${poDetail.pgProvider}" ></span>
+									</td>
+								</tr>
+								
+								
+								
+								<tr  class="border-top totalPay">
 									<th>주문금액</th>
 									<td>
 										<span class="commaNums"
-										      th:attr="data-nums=${poForm.finalPrice}" id="finalPrice"></span>
+										      th:attr="data-nums=${poDetail.finalPrice}" id="finalPrice"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -259,7 +245,7 @@
 									<th class="sm">&nbsp; 상품금액</th>
 									<td class="sm">
 										<span class="commaNums"
-										      th:attr="data-nums=${poForm.orgPrice}"></span>
+										      th:attr="data-nums=${poDetail.orgPrice}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -267,7 +253,7 @@
 									<th class="sm">&nbsp; 상품할인금액</th>
 									<td class="sm">
 										<span class="commaNums"
-										      th:attr="data-nums=${poForm.discPrice}"></span>
+										      th:attr="data-nums=${poDetail.discPrice}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -275,7 +261,7 @@
 									<th>배송비</th>
 									<td>
 										<span class="commaNums"
-										      th:attr="data-nums=${poForm.deliveryFee}"></span>
+										      th:attr="data-nums=${poDetail.deliveryFee}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -283,7 +269,7 @@
 									<th>마일리지할인</th>
 									<td>
 										<span class="commaNums milePay"
-										      th:attr="data-nums=${poForm.milePay}"></span>
+										      th:attr="data-nums=${poDetail.milePay}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
@@ -292,10 +278,13 @@
 									<th>최종결제금액</th>
 									<td>
 										<span class="commaNums totalPay"
-										      th:attr="data-nums=${poForm.totalPay}"></span>
+										      th:attr="data-nums=${poDetail.totalPay}"></span>
 										<span class="won">원</span>
 									</td>
 								</tr>
+								
+								
+								
 							</table>
 						</div> <!-- //tableWrapper -->
 					</div> <!-- //card-body -->
@@ -307,51 +296,15 @@
 		
 		</section> <!-- //totalPriceSec -->
 		
-		<section class="row payment position-relative mb-5">
-			<p class="subtle f18 c666 fw-bold">
-				결제 수단
-			</p>
-			<div class="cardWrapper">
-				
-				<div class="card border">
-					결제 api 적용할 곳
-				</div>
-			
-			</div>
-		</section> <!-- //payment -->
-		
-		
-		<input type="hidden" th:field="*{totalPrice}" id="totalPrice" th:attr="data-nums=${poForm.totalPrice}" placeholder="총금액">
-		<input type="hidden" th:field="*{totalPay}" id="totalPay" th:attr="data-nums=${poForm.totalPay}" placeholder="마일리지 할인까지 하고 난 지불해야할 금액">
-		
-		
-		
-		<section class="submitBtn">
-			<a href="javascript:void(0);" id="payment" class="btn d-flex border btn-warning p-2 rounded-3 justify-content-center align-content-center"
-			   style="height: 40px;">
-				<picture>
-					<source srcset="/imgs/shop/payment/kakaopay_CI_small_textdark.png" media="(max-width: 600px)">
-					<img src="/imgs/shop/payment/kakaopay_CI_big_textdark.png" alt="결제하기 버튼"
-					     class="c333 fw700" style="max-height: 80%; max-width: 100%;">
-				</picture>
-<!--				<span class="align-bottom" style="margin-left: 10px; line-height: 24px;">결제하기</span>-->
-			</a>
-		</section> <!-- //submitBtn -->
-		
 	
 	
-	</form>
+	</th:block>
 	
 	
-	<!--daum 주소 입력 api-->
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<!--order js link-->
 	<script src="/js/order.js"></script>
 	<script src="/js/payment.js"></script>
 	
-	<!--포트원 cdn-->
-	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
 </div> <!--//layout::content-->
 

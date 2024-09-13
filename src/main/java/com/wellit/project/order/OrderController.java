@@ -2,8 +2,10 @@ package com.wellit.project.order;
 
 import com.wellit.project.member.MemberRepository;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,12 +67,36 @@ public class OrderController {
         boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, principal);
 
         if(success) {
-            return "redirect:/member/mypage";
+            return "redirect:/order/po/detail/"+orderId+"?success";
             //todo : 주문 성공 시 프로세스
         } else {
             //todo : 주문 실패 시 예외 처리
             return "redirect:/";
         }
     }
+
+    @GetMapping("/po/detail/{orderId}")
+    public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, Principal principal, @RequestParam(value = "success", required = false) String success){
+
+        if (success != null) {
+            model.addAttribute("orderSuccess", true);
+        } else {
+            model.addAttribute("orderSuccess", false);
+        }
+
+        PurchaseOrder po = orderService.getOnePO(orderId);
+        log.info(po.getOrderId());
+        PoDetailForm poDetail =orderService.getOnePoDetail(orderId);
+
+        List<OrderItem> orderItemList = orderService.getOrderItemList(orderId);
+
+
+        model.addAttribute("orderItemList", orderItemList);
+        model.addAttribute("poDetail", poDetail);
+        model.addAttribute("member", po.getMember());
+
+        return "/order/order_poDetail";
+    }
+
 
 }

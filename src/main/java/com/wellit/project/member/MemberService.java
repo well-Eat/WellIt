@@ -226,4 +226,27 @@ public class MemberService {
 	}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// 마일리지 업데이트 : by yoonseo
+	public void updateMileage(String memberId, int amount){
+		Member member = this.getMember(memberId);
+		member.setMileage(member.getMileage() + amount);
+		memberRepository.save(member);
+	}
+
 }

@@ -2,11 +2,15 @@ package com.wellit.project.member;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.wellit.project.order.OrderService;
+import com.wellit.project.order.PoHistoryForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -568,5 +572,91 @@ public class MemberController {
     public String getMethodName(@RequestParam String param) {
         return new String();
     }
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Autowired
+    private final OrderService orderService;
+
+
+
+    @GetMapping("/mypage2")
+    public String getMypageYs(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+            Member member = memberService.getMember(memberId);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedRegDate = member.getMemberRegDate().format(formatter);
+
+
+            List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
+
+
+
+
+
+
+
+
+            model.addAttribute("poHistoryList", poHistoryList);
+            model.addAttribute("member", member);
+            model.addAttribute("formattedRegDate", formattedRegDate);
+        }
+        return "member/mypage_ys";
+    }
 }

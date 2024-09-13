@@ -2,6 +2,7 @@ package com.wellit.project.order;
 
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
+import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -22,6 +24,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
     private final CartItemRepository cartItemRepository;
+    private final DeliveryService deliveryService;
 
     /*주문 생성*/
     public PurchaseOrder addOrder(OrderForm orderForm, String memberId){
@@ -130,16 +133,9 @@ public class OrderService {
 
 
     /*결제성공 후 주문서 변경내용 업데이트, 배송정보 설정*/
-
     @Transactional
     public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm, Principal principal){
         Payment payment = paymentService.getPayment(orderId);
-
-        try{
-            poForm.getAddr2();
-        } catch (Exception e){
-            poForm.setAddr2("");
-        }
 
         if (payment == null) {
             throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
@@ -171,12 +167,12 @@ public class OrderService {
         delivery.setDeliveryPhone(poForm.getPhone1()+poForm.getPhone2()+poForm.getPhone3());
         delivery.setPurchaseOrder(po);
         po.setDelivery(delivery);
-
         log.info("딜리버리 저장완료");
 
         // 금액 업데이트
         po.setMilePay(poForm.getMilePay());
         po.setTotalPay(poForm.getTotalPay());
+        memberService.updateMileage(principal.getName(), poForm.getMilePay());
         log.info("금액 업뎃 저장완료");
 
 
@@ -192,6 +188,165 @@ public class OrderService {
 
     }
 
+
+
+    // mypage : 주문내역 리스트
+    public List<PoHistoryForm> getPoHistoryList(String memberId){
+
+        List<PurchaseOrder> poList = purchaseOrderRepository.findAllByMember_MemberIdAndStatusNot(memberId, OrderStatus.PAYMENT_WAIT);
+
+        List<PoHistoryForm> poHistoryList = poList.stream().map(this::poHistoryConvertToDTO)
+                                                  .collect(Collectors.toList());
+
+        return poHistoryList;
+    }
+
+    // mypage : 주문 내역 DTO로 변환하는 메서드
+    private PoHistoryForm poHistoryConvertToDTO(PurchaseOrder po){
+        PoHistoryForm dto = new PoHistoryForm();
+
+        //PurchaseOrder 기본정보 추가
+        dto.setOrderId(po.getOrderId());
+        dto.setOrderStatus(po.getStatus());
+        dto.setTotalPrice(po.getTotalPrice());
+
+
+        //Payment 정보
+        Payment payment = paymentService.getPayment(po.getOrderId());
+        dto.setPaidAt(payment.getCreatedAt());
+        dto.setPaymentStatus(payment.getPaymentStatus());
+
+        //Delivery 정보
+        Delivery delivery = deliveryService.getDelivery(po.getOrderId());
+        dto.setDeliveryStatus(delivery.getDeliveryStatus());
+//        dto.setAddr1(delivery.getAddr1());
+//        dto.setAddr2(delivery.getAddr2());
+//        dto.setDeliveryName(delivery.getDeliveryName());
+//        dto.setDeliveryPhone(delivery.getDeliveryPhone());
+//        dto.setDeliveryMsg(delivery.getDeliveryMsg());
+//        if(delivery.getInvoiceNum() !=null){
+//            dto.setInvoiceNum(delivery.getInvoiceNum());
+//        } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
+
+
+
+
+        //ItemList 추가 (PO별 구매 아이템)
+
+        /*List<OrderItemDTO> orderItemDTOList = po.getOrderItems().stream()
+                                                .map(orderItem -> {
+                                                    OrderItemDTO itemDTO = new OrderItemDTO();
+                                                    Product product = orderItem.getProduct();
+
+                                                    itemDTO.setProdId(product.getProdId());
+                                                    itemDTO.setProdName(product.getProdName());
+                                                    itemDTO.setProdThumb(product.getProdMainImg());
+                                                    itemDTO.setProdOrgPrice(product.getProdOrgPrice());
+                                                    itemDTO.setProdFinalPrice(product.getProdFinalPrice());
+
+                                                    itemDTO.setQuantity(orderItem.getQuantity());
+                                                    itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
+
+                                                    return itemDTO;
+                                                }).collect(Collectors.toList());*/
+        dto.setOrderItems(this.getOrderItemDtoList(po));
+
+        // totalPrice = SumFinalPrice 합계 계산
+        /*Integer totalPrice = orderItemDTOList.stream()
+                                             .mapToInt(OrderItemDTO::getSumFinalPrice) // 각 항목의 sumFinalPrice를 int로 변환
+                                             .sum();
+
+        dto.setTotalPrice(totalPrice);*/
+
+        return dto;
+
+    }
+
+
+
+
+
+    // 주문 상품 detail 조회
+    public PoDetailForm getOnePoDetail(String orderId){
+        PurchaseOrder po = purchaseOrderRepository.findById(orderId).get();
+        return this.poDetailConvertToDTO(po);
+    }
+
+    // 주문 내역 1건 DTO로 변환
+    private PoDetailForm poDetailConvertToDTO(PurchaseOrder po){
+        PoDetailForm dto = new PoDetailForm();
+
+        //PurchaseOrder 기본정보 추가
+        dto.setOrderId(po.getOrderId());
+        dto.setOrderStatus(po.getStatus());
+
+        //PurchaseOrder 금액 필드
+        dto.setOrgPrice(po.getOrgPrice() );
+        dto.setDiscPrice(po.getDiscPrice() );
+        dto.setFinalPrice(po.getOrgPrice() + po.getDiscPrice());
+        dto.setDeliveryFee(po.getDeliveryFee() );
+        dto.setTotalPrice(po.getTotalPrice() );
+        dto.setMilePay(po.getMilePay() );
+        dto.setTotalPay(po.getTotalPay() );
+
+
+
+        //Payment 정보
+        Payment payment = paymentService.getPayment(po.getOrderId());
+        dto.setPaidAt(payment.getCreatedAt());
+        dto.setPaymentStatus(payment.getPaymentStatus());
+        dto.setPgProvider(payment.getPgProvider());
+
+        //Delivery 정보
+        Delivery delivery = deliveryService.getDelivery(po.getOrderId());
+        dto.setDeliveryStatus(delivery.getDeliveryStatus());
+        dto.setAddr1(delivery.getAddr1());
+        dto.setAddr2(delivery.getAddr2());
+        dto.setDeliveryName(delivery.getDeliveryName());
+        dto.setDeliveryPhone( this.formatPhoneNumber( delivery.getDeliveryPhone()));
+        dto.setDeliveryMsg(delivery.getDeliveryMsg());
+        if(delivery.getInvoiceNum() !=null){
+            dto.setInvoiceNum(delivery.getInvoiceNum());
+        } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
+
+
+
+
+        //ItemList 추가 (PO별 구매 아이템)
+        List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
+        dto.setOrderItems(orderItemDTOList);
+
+        // totalPrice = SumFinalPrice 합계 계산
+/*        Integer totalPrice = orderItemDTOList.stream()
+                                             .mapToInt(OrderItemDTO::getSumFinalPrice) // 각 항목의 sumFinalPrice를 int로 변환
+                                             .sum();
+
+        dto.setTotalPrice(totalPrice);*/
+
+        return dto;
+
+    }
+
+    // 구매 아이템 조회 (PO별 구매 아이템 리스트 반환)
+    private List<OrderItemDTO> getOrderItemDtoList(PurchaseOrder po){
+        List<OrderItemDTO> orderItemDTOList = po.getOrderItems().stream()
+                                                .map(orderItem -> {
+                                                    OrderItemDTO itemDTO = new OrderItemDTO();
+                                                    Product product = orderItem.getProduct();
+
+                                                    itemDTO.setProdId(product.getProdId());
+                                                    itemDTO.setProdName(product.getProdName());
+                                                    itemDTO.setProdThumb(product.getProdMainImg());
+                                                    itemDTO.setProdOrgPrice(product.getProdOrgPrice());
+                                                    itemDTO.setProdFinalPrice(product.getProdFinalPrice());
+
+                                                    itemDTO.setQuantity(orderItem.getQuantity());
+                                                    itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
+
+                                                    return itemDTO;
+                                                }).collect(Collectors.toList());
+        return orderItemDTOList;
+    }
 
 
 

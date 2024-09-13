@@ -1,0 +1,301 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" >
+	<link rel="stylesheet" href="/css/member.css" />
+	<!--order style link-->
+	<link rel="stylesheet" href="/css/order.css" />
+	<link rel="stylesheet" href="/css/util.css" />
+	
+	<section id="mypage" class="position-relative">
+		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
+		<div class="container-fluid">
+			<div class="row">
+				<!-- 사이드바? -->
+				<div class="col-xl-2 col-xs-12">
+					<nav class="sidebar card py-2 mb-4">
+						<ul class="nav nav-tabs flex-xs-row flex-xl-column tabnav" id="nav_accordion">
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#">프로필</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보
+											확인/수정</a></li>
+								</ul>
+							</li>
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cart">장바구니</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#"
+											data-target="#order-info">주문내역</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cancel">환불/반품/취소
+											목록</a></li>
+								</ul>
+							</li>
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및
+											처리방침</a></li>
+								</ul>
+							</li>
+						</ul>
+					</nav>
+				</div>
+				<div class="col-xl-10 col-xs-12  tabcontent">
+					<!-- 사용자 정보 -->
+					<div id="user-profile" class="container border">
+						<h1 class="mb-5">사용자 정보</h1>
+						<div class="row">
+							<div class="col-4">
+								<div th:if="${member.ImageFile}">
+								    <img th:src="@{${member.ImageFile}}" alt="프로필 사진" class="rounded-circle" width="150px" height="150px" />
+								</div>
+								<div th:unless="${member.ImageFile}">
+								    <img src="/imgs/member/default-profile.png" alt="기본 프로필 사진" class="rounded img-fluid" width="150px" height="150px" />
+								</div>
+							</div>
+							<div class="col-8">
+								<div class="row align-middle">
+									<div class="col">
+										<p>사용자 이름 : <span th:text="${member.memberId}"></span></p>
+										<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
+										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
+										<p>비건 종류 : 
+											<span th:if="${member.memberVeganType == null}">없음</span>
+											<span th:unless="${member.memberVeganType == null}" th:text="${member.memberVeganType}"></span>
+										</p>
+									</div>
+									<div class="col">
+										<p>마일리지 : mileage</p>
+
+									</div>
+								</div>
+								<div class="row mt-3 float-end">
+									<div class="col">
+										<a th:href="@{/member/enter_password}" class="btn btn-warning"
+											data-target="#check-password">회원정보 수정</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 장바구니 -->
+					<div id="cart" class="container border">
+						<h1>장바구니</h1>
+						<div class="table-responsive">
+							<table class="table align-middle">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">상품정보</th>
+										<th scope="col">금액</th>
+										<th scope="col">수량</th>
+										<th scope="col">가격</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>
+											<img src="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg"
+												alt="" class="img-fluid" width="100px" height="100px" />
+											ddddddd
+										</td>
+										<td>
+											ddddddd
+										</td>
+										<td>
+											dddddddd
+										</td>
+										<td>
+											ddddddddd
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<a href="order" class="btn btn-success float-end">주문</a>
+					</div>
+					<!-- 주문내역 -->
+					<div id="order-info" class="container" th:insert="~{/order/mypage_orderHistory::polist}">
+						<!--<h1>주문내역</h1>
+						<div class="table-responsive">
+							<table class="table align-middle">
+								<thead>
+									<tr>
+										<th scope="col">주문번호</th>
+										<th scope="col">주문상품</th>
+										<th scope="col">주문일</th>
+										<th scope="col">주문금액</th>
+										<th scope="col">주문상태</th>
+										<th scope="col">상세정보</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td>
+											<img src="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg"
+												alt="" class="img-fluid" width="100px" height="100px" />
+											ddddddd
+										</td>
+										<td>ddddddddddd</td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td><a href="/order_info" class="btn btn-info">상세정보</a></td>
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+										<td>ddddddddddd</td>
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>-->
+					</div>
+					<!-- 취소목록 -->
+					<div id="cancel" class="container border">
+						<h1>환불/반품/취소 목록</h1>
+						<div class="row">
+
+						</div>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">주문번호</th>
+										<th scope="col">주문일</th>
+										<th scope="col">주문상품</th>
+										<th scope="col">환불/반품/취소</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+
+									</tr>
+									<tr>
+										<th scope="row">2</th>
+
+									</tr>
+									<tr>
+										<th scope="row">3</th>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div id="qna" class="container">
+						<h1>Q&A</h1>
+						<div class="row">
+							<table class="table table-hover text-center">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col" colspan="3">제목</th>
+										<th scope="col">작성자</th>
+										<th scope="col">등록일</th>
+										<th scope="col">조회수</th>
+										<th scope="col">답변여부</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">1</th>
+										<td colspan="3">질문1dddddddddddddddddddddddddddddddddd</td>
+										<td>작성자1</td>
+										<td>2024-08-28</td>
+										<td>1</td>
+										<td>O</td>
+									</tr>
+									<tr>
+										<th scope="row">1</th>
+										<td colspan="3">질문1</td>
+										<td>작성자1</td>
+										<td>2024-08-28</td>
+										<td>1</td>
+										<td>O</td>
+									</tr>
+									<tr>
+										<th scope="row">1</th>
+										<td colspan="3">질문1</td>
+										<td>작성자1</td>
+										<td>2024-08-28</td>
+										<td>1</td>
+										<td>O</td>
+									</tr>
+									<tr>
+										<th scope="row">1</th>
+										<td colspan="3">질문1</td>
+										<td>작성자1</td>
+										<td>2024-08-28</td>
+										<td>1</td>
+										<td>O</td>
+									</tr>
+									<tr>
+										<th scope="row">1</th>
+										<td colspan="3">질문1</td>
+										<td>작성자1</td>
+										<td>2024-08-28</td>
+										<td>1</td>
+										<td>O</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="row mt-5 justify-content-end">
+							<div class="col-3">
+								<a href="/question_form" class="btn btn-success float-end">질문 등록</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const links = document.querySelectorAll('.nav-link[data-target]');
+			const sections = document.querySelectorAll('.tabcontent > div.container');
+
+			// Hide all sections initially
+			sections.forEach(section => section.style.display = 'none');
+
+			// Show the first section by default
+			if (sections.length > 0) {
+				sections[0].style.display = 'block';
+			}
+
+			// Add click event to each link
+			links.forEach(link => {
+				link.addEventListener('click', function (e) {
+					e.preventDefault();
+
+					// Hide all sections
+					sections.forEach(section => section.style.display = 'none');
+
+					// Show the selected section
+					const target = document.querySelector(this.getAttribute('data-target'));
+					if (target) {
+						target.style.display = 'block';
+					}
+				});
+			});
+		});
+	</script>
+</div>
+
+</html>

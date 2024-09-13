@@ -226,7 +226,7 @@ section.orderItem *{
 }
 
 /* 주문상품 섹션 */
-.orderItemTable .prodImageBoxWrpper{
+.orderItemTable .prodImageBoxWrapper{
     width: 25%;
     max-width: 100px;
 }
