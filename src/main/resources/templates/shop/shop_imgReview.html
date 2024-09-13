@@ -10,8 +10,8 @@
 		<div class="swiper imgRevSwiper">
 			<div class="swiper-wrapper">
 				<th:block th:each="review, iterStat : ${imgReviewList}">
-					<div class="swiper-slide rounded-2">
-						<a class="revImgLink" href="javascript:void(0)"
+					<div class="swiper-slide rounded-2 overflow-hidden">
+						<a class="revImgLink" href="javascript:void(0);"
 						   th:data-rev-text="${review.revText}"
 						   th:data-rev-img="${review.revImg}"
 						   th:data-rev-rating="${review.revRating}"

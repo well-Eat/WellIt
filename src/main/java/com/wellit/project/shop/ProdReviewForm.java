@@ -22,6 +22,8 @@ public class ProdReviewForm {
 
     private Long prodId;
 
+    private Integer rating;
+
 
     private List<MultipartFile> prodRevImgList;
 

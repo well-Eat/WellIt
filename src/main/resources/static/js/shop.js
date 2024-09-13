@@ -718,8 +718,6 @@ function addToCart(prodId, quantity) {
                     window.location.href = '/cart/list';
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     window.location.href = '/shop/list';
-                    // '쇼핑 계속하기'를 선택한 경우
-                    //Swal.fire('계속 쇼핑해주세요!', '', 'info');
                 }
             });
         })

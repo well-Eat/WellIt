@@ -23,7 +23,7 @@
 	
 	<!--order js link-->
 	<script src="/js/order.js"></script>
-
+	
 	
 	<section>
 		<p th:text="${product.prodId}"></p>
@@ -31,12 +31,12 @@
 			<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal">
 				폼열기
 			</a>
-<!--
-			<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal"
-			   th:data-prod-name="${product.prodName}">
-				폼열기
-			</a>
--->
+			<!--
+						<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal"
+							 th:data-prod-name="${product.prodName}">
+							폼열기
+						</a>
+			-->
 		</div>
 		
 		
@@ -49,7 +49,7 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body container-fluid">
-						<form th:action="@{/order/review/{prodId}(prodId=${product.prodId})}" th:object="${prodReviewForm}" method="post" enctype="multipart/form-data">
+						<form th:action="@{/shop/review/{prodId}(prodId=${product.prodId})}" th:object="${prodReviewForm}" method="post" enctype="multipart/form-data">
 							<div class="row">
 								
 								<style>
@@ -161,7 +161,7 @@
 									<p th:if="${#fields.hasErrors('revText')}" th:errors="*{revText}">리뷰 내용 에러</p>
 									<input type="hidden" th:field="*{prodId}" />
 									<input type="submit">
-									
+								
 								</div> <!--// modalColRight-->
 							</div> <!--//row-->
 						</form>
@@ -176,16 +176,16 @@
 	
 	</section>
 	<script>
-		$(function (){
-  
-            $(".revFormLink").on("click", function (){
-                // const prodName = $(this).data('prod-name');
-                // console.log(prodName);
-                // $("#prodName").val(prodName);
-            })
-		})
+      $(function (){
+
+          $(".revFormLink").on("click", function (){
+              // const prodName = $(this).data('prod-name');
+              // console.log(prodName);
+              // $("#prodName").val(prodName);
+          })
+      })
 	</script>
-	
+
 
 </div> <!--//layout::content-->
 

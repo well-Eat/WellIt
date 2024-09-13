@@ -69,6 +69,9 @@ public class ShopService {
         List<ProdReview> imgReviewList = product.getProdReview().stream()
                                                 .filter(review -> review.getRevImg() != null)
                                                 .collect(Collectors.toList());
+
+        log.info("############### ShopService(getImgReview)");
+        log.info(imgReviewList.size());
         return imgReviewList;
     }
 
