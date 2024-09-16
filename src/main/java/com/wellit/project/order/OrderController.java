@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,22 +60,22 @@ public class OrderController {
     }
 
 
+    // 결제 성공 후 프로세스
     @PostMapping("/po/{orderId}")
     public String afterPaymentSuccess(@PathVariable("orderId")  String orderId, @ModelAttribute PoForm poForm, Principal principal){
 
-        log.info("성공임!");
-
+        //po 내용 업데이트
         boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, principal);
 
-        if(success) {
+        if(success) {  //성공 시 주문 화면 출력
             return "redirect:/order/po/detail/"+orderId+"?success";
-            //todo : 주문 성공 시 프로세스
-        } else {
-            //todo : 주문 실패 시 예외 처리
+        } else {  // 실패 시
+            // todo : 결제 실패 화면
             return "redirect:/";
         }
     }
 
+    // mypage : 주문 내용 상세 (주문 결과 상세 확인)
     @GetMapping("/po/detail/{orderId}")
     public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, Principal principal, @RequestParam(value = "success", required = false) String success){
 
@@ -97,6 +98,25 @@ public class OrderController {
 
         return "/order/order_poDetail";
     }
+
+
+
+    /********** admin : 주문처리 로직 ****************/
+    /********** admin : 주문처리 로직 ****************/
+    /********** admin : 주문처리 로직 ****************/
+    // admin : 주문 리스트 확인 페이지
+    @GetMapping("/admin/po/list")
+    public String getRecievePoList(){
+        return "/order/admin_po_list";
+    }
+
+    // admin : 개별 주문 처리
+    @GetMapping("/admin/po/{orderId}")
+    public String viewPoDetail(@PathVariable(name = "orderId") String orderId){
+        return "/order/admin_poDetail";
+    }
+
+
 
 
 }

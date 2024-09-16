@@ -23,10 +23,7 @@
 	<link rel="stylesheet" href="/css/layout.css"/>
 	
 	
-	<!-- font font-awesome CDN -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
 	
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -51,6 +48,8 @@
 	
 	<div layout:fragment="content" class="container">
 		
+		
+		
 		<!--페이지 제목-->
 		<div class="row my-5">
 			<div class="pageTitle col text-center">
@@ -65,7 +64,7 @@
 			</p>
 			
 			<div class="col gap-3 g-3" th:each="poHistory, iterStat : ${poHistoryList}">
-				<div class="card " style="max-width: 800px;">
+				<div class="card " style="max-width: 800px; ">
 					<div class="card-header border-bottom-0 pb-0 d-flex flex-row align-items-center justify-content-between">
 						<span class="c333 fw700 f18" style="color: white;">[[${poHistory.orderStatus}]]</span>
 						<a th:href="@{|/order/po/detail/${poHistory.orderId}|}" class="f12 align-text-bottom c888">주문상세내역
@@ -75,7 +74,7 @@
 					<!-- 주문 상품 목록 th:block-->
 					<div class="orderItemTable card-body gap-2 bg-light vstack">
 						<th:block th:each="orderItem, iterStat : ${poHistory.orderItems}">
-							<div class="d-flex gap-3 border-bottom border-light bg-white rounded-2 px-3">
+							<div class="d-flex gap-3 border-bottom border-light bg-white rounded-2 px-3 itemBlock" th:attr="data-orderitem-id=${orderItem.orderItemId}, data-reviewed=${orderItem.reviewed}">
 								
 								<!-- 상품이미지 -->
 								<div class="vstack gap-2 prodImageBoxWrapper my-3">
@@ -93,7 +92,7 @@
 									
 									<p class="card-text d-inline-block mb-1">
 	
-										<span class="card-text text-end d-inline-block c333 fw700 commaNums f16"
+										<span class="card-text text-end d-inline-block c333 fw700 commaNums f16 sumFinalPrice"
 										      th:attr="data-nums=${orderItem.sumFinalPrice}">상품금액합계</span>
 										<span class="f14 won">원</span>
 									
@@ -101,13 +100,22 @@
 									</p>
 									
 									
-									<p class="card-text d-inline-flex gap-2  flex-grow-1 align-items-end">
+									<p class="card-text gap-2 flex-grow-1 align-items-end itemBtnLine" style="display: inline-flex;">
 										<span
 												class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block">주문취소</span>
 										
-										<span
-												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
-												th:attr="data-product-id=${orderItem.prodId}">리뷰쓰기</span>
+										<!-- 리뷰 작성되지 않은 경우 -->
+										<span class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+										      th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
+										      th:unless="${orderItem.reviewed}">리뷰쓰기</span>
+										
+										<!-- 리뷰가 작성된 경우, prodReview가 null이 아닐 때만 접근 -->
+										<span class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+										      th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId},
+                   data-review-rating=${orderItem.prodReview.revRating}, data-review-text=${orderItem.prodReview.revText}"
+										      th:if="${orderItem.prodReview != null}">내 리뷰 보기</span>
+										
+
 									</p>
 								
 								</div>
@@ -176,67 +184,164 @@
               color: #ffc107;
           }
 
-          .star-rating label:hover,
-          .star-rating label:hover ~ label {
-              color: #ffc107;
-          }
+          /*.star-rating label:hover,*/
+          /*.star-rating label:hover ~ label {*/
+          /*    color: #ffc107;*/
+          /*}*/
 			</style>
 			
 			<script th:inline="javascript">
 	
 	        $(document).on("click",  ".openReviewFormBtn" ,function () {
-	            let prodId = $(this).attr("data-product-id");
-                $(".reviewWrap").remove();
+              let prodId = $(this).attr("data-product-id");
+              let orderItemId = $(this).attr("data-orderitem-id");
+				let reviewed = $(this).attr("data-reviewed");
+
 	
 	            // 리뷰 폼을 동적으로 생성
-	            let reviewForm = `
+	            let prodReviewForm = `
 	        <div class="card-text reviewWrap">
-	            <form id="reviewForm" enctype="multipart/form-data">
+	            <form id="prodReviewForm" enctype="multipart/form-data" name="prodReviewForm">
 	                <div class="row">
 	                    <div class="col-6 modalColLeft border">
 	                        <div id="drop-area">
-	                            <h3>이미지를 여기에 드래그 앤 드롭하세요</h3>
-	                            <input type="file" class="form-control" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple>
-	                            <label class="button" for="prodRevImg">또는 파일 선택</label>
+	                            <p class="c666 fw700">리뷰 이미지 등록</p>
+	                            <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple>
+	                            <label class="button hidden" for="prodRevImg">또는 파일 선택</label>
 	                            <div id="gallery"></div>
 	                        </div>
 	                    </div>
 	
 	                    <div class="col-6 modalColRight">
-		                    <p>
-											    <label for="rating" class="form-label">평점</label>
-											    <div class="star-rating">
-											        <input type="radio" id="star5" name="rating" value="5" />
-											        <label for="star5" title="5 stars">&#9733;</label>
-											        <input type="radio" id="star4" name="rating" value="4" />
-											        <label for="star4" title="4 stars">&#9733;</label>
-											        <input type="radio" id="star3" name="rating" value="3" />
-											        <label for="star3" title="3 stars">&#9733;</label>
-											        <input type="radio" id="star2" name="rating" value="2" />
-											        <label for="star2" title="2 stars">&#9733;</label>
-											        <input type="radio" id="star1" name="rating" value="1" />
-											        <label for="star1" title="1 star">&#9733;</label>
-											    </div>
-												</p>
-<!--	                        <p>
-	                            <label for="prodName" class="form-label">상품명</label>
-	                            <input type="text" class="form-control" id="prodName" name="prodName" />
-	                        </p>-->
+							<p class="mb-0">
+								<div class="star-rating">
+									<input type="radio" id="star5" name="rating" value="5" checked/>
+									<label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star4" name="rating" value="4" />
+									<label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star3" name="rating" value="3" />
+									<label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star2" name="rating" value="2" />
+									<label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star1" name="rating" value="1" />
+									<label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+								</div>
+							</p>
 	                        <p>
-	                            <label for="revText" class="form-label">리뷰내용</label>
-	                            <input type="text" class="form-control" id="revText" name="revText" />
+	                            <textarea class="form-control overflow-y-scroll" id="revText" name="revText" style="resize: none;"></textarea>
 	                        </p>
 	
 	                        <input type="hidden" id="prodId" name="prodId" value="${prodId}" />
-	                        <button type="button" id="submitReviewForm" class="btn btn-primary">리뷰 제출</button>
+	                        <input type="hidden" id="paid" name="paid"/>
+	                        <input type="hidden" id="orderItemId" name="orderItemId" value="${orderItemId}"/>
+	                        
+	                        <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end">리뷰 제출하기</button>
 	                    </div>
 	                </div>
 	            </form>
 	        </div>
 	    `;
+
+				$(".reviewWrap").remove(); //기존에 열린 폼이 있으면 닫고,
+				$('.itemBtnLine').show(); // 다른 버튼라인들은 모두 나타나도록
+				$(this).parents('.itemBtnLine').hide(); // 현재 열린 버튼라인만 hide
+
+				// 동적으로 생성된 폼을 DOM에 추가
+				$(this).parent().after(prodReviewForm);
+
+
+
+              const sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
+
+
+              console.log(orderItemId);
+              $("#revText").val($(this).attr('data-review-text'));
+              console.log("$(this).attr('data-review-text') : ")
+              console.log($(this).attr('data-review-text'));
+              $('#paid').val(sumFinalPrice);
+
+
+
+				//기존 작성된 리뷰 있는지 확인
+				fetch(`/shop/review/exist/${orderItemId}`, {
+					method: 'GET'
+				}).then(response =>{
+					return response.json();
+				}).then(reviewed => {
+					if (reviewed){
+							// 작성 리뷰 있는 경우 폼에 불러오기
+              fetch(`/shop/review/get/${orderItemId}`, {
+                  method: 'GET'
+              }).then(resp =>{
+                  return resp.json();
+              }).then(prodReviewLoadForm => {
+// 불러온 리뷰 데이터를 폼에 적용
+                  document.querySelector("#revText").value = prodReviewLoadForm.revText; // 리뷰 텍스트 적용
+                  document.querySelector(`#star${prodReviewLoadForm.rating}`).checked = true; // 별점 적용
+
+                  // 이미지 목록 불러오기
+                  const gallery = document.querySelector("#gallery");
+                  prodReviewLoadForm.prodRevImgList.forEach(imagePath => {
+                      const imgElement = document.createElement("img");
+                      imgElement.src = imagePath; // 이미지 경로 설정
+                      imgElement.style.width = "100px"; // 이미지 크기 조절
+                      imgElement.style.marginRight = "10px"; // 간격 설정
+                      gallery.appendChild(imgElement);
+                  });
+              }).catch(err =>{
+                  console.log('안가져옴')
+              })
+							
+              
+					}
+				})
+			        
+
+
+
+
+				// 리뷰 제출 버튼 클릭 이벤트
+				$('#submitReviewForm').on('click', function () {
+					// FormData 생성
+					let formData = new FormData(document.getElementById('prodReviewForm'));
+					formData.set('paid', sumFinalPrice);
+					formData.set('reviewed', true);
+					formData.set('orderItemId', orderItemId);
+					console.log("orderItemId : " +orderItemId);
+
+					// fetch API로 폼 데이터 전송
+					fetch(`/shop/review/save/${prodId}`, {
+						method: 'POST',
+						body: formData,  // FormData는 자동으로 multipart/form-data로 처리됨
+					})
+							.then(response => {
+								if (response.ok) {
+									return response.text();  // 서버로부터의 응답을 텍스트로 처리
+								} else {
+									throw new Error('리뷰 저장 실패');
+								}
+							})
+							.then(data => {
+								// 성공 시 실행될 로직
+								alert('리뷰가 성공적으로 저장되었습니다.');
+								console.log(data);  // 서버 응답 확인
+							})
+							.catch(error => {
+								// 실패 시 실행될 로직
+								alert('리뷰 저장에 실패했습니다.');
+								console.error(error);  // 오류 로그 출력
+							});
+				});
+
+
+
+
+              
+              
+
 	
-	            // 동적으로 생성된 폼을 DOM에 추가
-	            $(this).parent().after(reviewForm);
+	
+
 	
 	
 	            const dropArea = document.getElementById("drop-area");
@@ -301,31 +406,23 @@
 	                gallery.appendChild(img);
 	            }
 	        }
-	
-	        
-	            // 리뷰 제출 버튼 클릭 이벤트
-	            $('#submitReviewForm').on('click', function () {
-	                // FormData 생성
-	                let formData = new FormData(document.getElementById('reviewForm'));
-	
-	                // AJAX로 FormData 전송
-	                $.ajax({
-	                    url: `/shop/review/${prodId}`,  // 리뷰 저장 엔드포인트
-	                    type: 'POST',
-	                    data: formData,
-	                    processData: false,  // FormData는 자동으로 처리되므로 false로 설정
-	                    contentType: false,  // FormData는 multipart/form-data로 전송되므로 false로 설정
-	                    success: function (response) {
-	                        Swal.fire('리뷰가 성공적으로 저장되었습니다!', '', 'success');
-	                        // 성공 시 페이지 새로고침이나 다른 동작을 수행할 수 있음
-	                    },
-	                    error: function (xhr, status, error) {
-	                        Swal.fire('리뷰 저장에 실패했습니다.', '', 'error');
-	                    }
-	                });
-	            });
+
+
+				// submit 버튼 클릭 시 값 전달
+				// $('#submitReviewForm').on('click', function () {
+				//     let formData = new FormData($('#reviewForm')[0]);
+				//     formData.append('paid', target);
+
+				//const target = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
+				//$('#paid').val(target);
+			        
+			        function closeForms(){
+           
+			        }
+
+
 	        });
-			
+
 			
 			</script>
 		

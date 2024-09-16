@@ -90,20 +90,6 @@ public class ShopService {
     }
 
 
-    /* create : 리뷰 작성 */
-    public ProdReview createProdReview(ProdReview prodReview) throws IOException {
-
-        ProdReview savedReview = prodReviewRepository.save(prodReview);
-        return savedReview;
-    }
-
-
-    /* 리뷰 작성 : 이미지 등록 */
-    public void addProdRevImg(ProdReviewImg prodReviewImg) {
-        prodReviewImgRepository.save(prodReviewImg);
-    }
-
-
     /* Create : 상품 생성 */
     @Transactional
     public Product saveProduct(ProductForm productForm, MultipartFile thumbFile, List<MultipartFile> imageFiles)

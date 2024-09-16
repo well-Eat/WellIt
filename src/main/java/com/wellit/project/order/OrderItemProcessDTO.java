@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderItemDTO {
+public class OrderItemProcessDTO {
 
     private Long prodId; //상품id
     private String prodName;
@@ -21,9 +21,7 @@ public class OrderItemDTO {
     private Integer sumDiscPrice; //해당 상품의 할인 금액(음수)
     private Integer sumFinalPrice; //구매가격 합계
 
-    private boolean reviewed; //리뷰 작성 완료 여부
     private Long orderItemId; //OrderItem 엔티티 id
-    private ProdReview prodReview;
 
 
 

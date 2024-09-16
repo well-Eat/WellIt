@@ -1,0 +1,60 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" >
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	
+	<link rel="stylesheet" href="/css/member.css" />
+	<!--order style link-->
+	<link rel="stylesheet" href="/css/order.css" />
+	<link rel="stylesheet" href="/css/util.css" />
+	
+	<section id="mypage" class="position-relative">
+		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
+		<div class="container-fluid">
+			<div class="row">
+				<!-- 사이드바? -->
+				<div class="col-xl-2 col-xs-12">
+					<nav class="sidebar card py-2 mb-4">
+						<ul class="nav nav-tabs flex-xs-row flex-xl-column tabnav" id="nav_accordion">
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#">프로필</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보
+										확인/수정</a></li>
+								</ul>
+							</li>
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="/order/admin/po/list">admin_주문확인</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#"
+									       data-target="#order-info">주문내역</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cancel">환불/반품/취소
+										목록</a></li>
+								</ul>
+							</li>
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">상품 관리</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#">admin_상품리스트</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="/shop/form">admin_신규상품등록</a></li>
+								</ul>
+							</li>
+						</ul>
+					</nav>
+				</div>
+				
+				<div class="col-xl-10 col-xs-12 tabcontent container" layout:fragment="tabcontent">
+				
+				</div>
+			</div>
+		</div>
+	</section>
+	<script>
+ 
+	</script>
+</div>
+
+</html>

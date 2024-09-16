@@ -21,7 +21,7 @@
 			</li>
 			<!-- 마이페이지 -->
 			<li sec:authorize="isAuthenticated()">
-				<a th:href="@{/member/mypage}"><span class="material-symbols-outlined">person</span></a>
+				<a th:href="@{/member/mypage2}"><span class="material-symbols-outlined">person</span></a>
 				<!--회원가입-->
 			<li sec:authorize="isAnonymous()">
 				<a th:href="@{/member/register}"><span class="material-symbols-outlined">person_add</span></a>
@@ -29,7 +29,6 @@
 			<li class="position-relative">
 			<!-- 장바구니 뱃지 -->
 			<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-success" style="display: none;">0</span>
-			<!--<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-success" sec:authorize="isAuthenticated()" th:text="${cartItemCount > 0 ? cartItemCount : ''}"><span class="visually-hidden">unread messages</span></span>-->
 				<a href="/cart/list"><span class="material-symbols-outlined">shopping_cart</span></a>
 			</li>
 			<li sec:authorize="isAuthenticated()">

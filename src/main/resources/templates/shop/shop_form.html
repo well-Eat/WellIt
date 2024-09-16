@@ -1,11 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<html layout:decorate="~{layout}">
-<head>
-	<title>상품 추가페이지</title>
+<html layout:decorate="~{manager/manager_layout}">
+<div layout:fragment="tabcontent" >
 
-</head>
-<div layout:fragment="content" class="container">
+<div class="container">
 	
 	<!-- font font-awesome CDN -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -23,6 +21,13 @@
 	<!--shop js link-->
 	<script src="/js/shop.js"></script>
 	
+	<!--페이지 제목-->
+	<div class="row mb-5">
+		<div class="pageTitle col text-center">
+			신규 상품 등록
+		</div>
+	</div>
+	
 	
 	<form
 			th:action="${productForm.prodId != null} ? @{/shop/update/{prodId}(prodId=${productForm.prodId})} : @{/shop/save}"
@@ -33,7 +38,7 @@
 		
 		
 		<!-- 상품 정보 요약 & 주문 폼 -->
-		<section class="prodInfo row my-4 py-4 rounded-2 justify-content-start">
+		<section class="prodInfo row mb-4 pb-4 rounded-2 justify-content-start">
 			
 			<div class="prodImg col-md-6">
 				<!-- 상품이미지 -->
@@ -274,7 +279,7 @@
 
 </div> <!--//layout::content-->
 
-
+</div>
 </html>
 
 

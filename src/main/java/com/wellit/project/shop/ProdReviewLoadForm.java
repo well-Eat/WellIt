@@ -1,6 +1,5 @@
 package com.wellit.project.shop;
 
-import com.wellit.project.order.OrderItem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ProdReviewForm {
+public class ProdReviewLoadForm {
 
 
 
@@ -26,7 +25,7 @@ public class ProdReviewForm {
     private String paid;
 
 
-    private List<MultipartFile> prodRevImgList;
+    private List<String> prodRevImgList;
 
     private String orderItemId;
 

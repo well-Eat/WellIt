@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 
 import com.wellit.project.order.OrderService;
 import com.wellit.project.order.PoHistoryForm;
+import com.wellit.project.order.PurchaseOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -633,7 +635,11 @@ public class MemberController {
 
 
     @GetMapping("/mypage2")
-    public String getMypageYs(Model model) {
+    public String getMypageYs(Model model,
+                              @RequestParam(value = "search", required = false) String search,
+                              @RequestParam(value = "status", required = false) String status,
+                              @RequestParam(value = "page", defaultValue = "0") int page
+                              ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -644,19 +650,38 @@ public class MemberController {
             String formattedRegDate = member.getMemberRegDate().format(formatter);
 
 
+            // mypage : 주문 내역 확인
             List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
-
-
-
-
-
-
-
 
             model.addAttribute("poHistoryList", poHistoryList);
             model.addAttribute("member", member);
             model.addAttribute("formattedRegDate", formattedRegDate);
+
+
+
+            // admin : 주문 처리 주문 내역 확인
+
+
+
+
+
+
+
+
+
+
         }
         return "member/mypage_ys";
     }
+
+    @GetMapping("/mypage2/")
+    public String getOrderList(
+            ) {
+
+
+
+        return "/order/admin_polist";
+    }
+
+
 }

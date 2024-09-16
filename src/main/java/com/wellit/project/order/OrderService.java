@@ -2,10 +2,14 @@ package com.wellit.project.order;
 
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
+import com.wellit.project.shop.ProdReview;
 import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -219,44 +223,9 @@ public class OrderService {
         //Delivery 정보
         Delivery delivery = deliveryService.getDelivery(po.getOrderId());
         dto.setDeliveryStatus(delivery.getDeliveryStatus());
-//        dto.setAddr1(delivery.getAddr1());
-//        dto.setAddr2(delivery.getAddr2());
-//        dto.setDeliveryName(delivery.getDeliveryName());
-//        dto.setDeliveryPhone(delivery.getDeliveryPhone());
-//        dto.setDeliveryMsg(delivery.getDeliveryMsg());
-//        if(delivery.getInvoiceNum() !=null){
-//            dto.setInvoiceNum(delivery.getInvoiceNum());
-//        } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
 
-
-
-
-        //ItemList 추가 (PO별 구매 아이템)
-
-        /*List<OrderItemDTO> orderItemDTOList = po.getOrderItems().stream()
-                                                .map(orderItem -> {
-                                                    OrderItemDTO itemDTO = new OrderItemDTO();
-                                                    Product product = orderItem.getProduct();
-
-                                                    itemDTO.setProdId(product.getProdId());
-                                                    itemDTO.setProdName(product.getProdName());
-                                                    itemDTO.setProdThumb(product.getProdMainImg());
-                                                    itemDTO.setProdOrgPrice(product.getProdOrgPrice());
-                                                    itemDTO.setProdFinalPrice(product.getProdFinalPrice());
-
-                                                    itemDTO.setQuantity(orderItem.getQuantity());
-                                                    itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
-
-                                                    return itemDTO;
-                                                }).collect(Collectors.toList());*/
+        //구매아이템 리스트
         dto.setOrderItems(this.getOrderItemDtoList(po));
-
-        // totalPrice = SumFinalPrice 합계 계산
-        /*Integer totalPrice = orderItemDTOList.stream()
-                                             .mapToInt(OrderItemDTO::getSumFinalPrice) // 각 항목의 sumFinalPrice를 int로 변환
-                                             .sum();
-
-        dto.setTotalPrice(totalPrice);*/
 
         return dto;
 
@@ -316,13 +285,6 @@ public class OrderService {
         List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
         dto.setOrderItems(orderItemDTOList);
 
-        // totalPrice = SumFinalPrice 합계 계산
-/*        Integer totalPrice = orderItemDTOList.stream()
-                                             .mapToInt(OrderItemDTO::getSumFinalPrice) // 각 항목의 sumFinalPrice를 int로 변환
-                                             .sum();
-
-        dto.setTotalPrice(totalPrice);*/
-
         return dto;
 
     }
@@ -343,13 +305,151 @@ public class OrderService {
                                                     itemDTO.setQuantity(orderItem.getQuantity());
                                                     itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
 
+                                                    itemDTO.setOrderItemId(orderItem.getId());
+                                                    itemDTO.setReviewed(orderItem.isReviewed());
+                                                    if(orderItem.isReviewed()){
+                                                        itemDTO.setProdReview(orderItem.getProdReview());
+                                                    } else {
+                                                        ProdReview dummy = new ProdReview();
+                                                        dummy.setRevRating(5);
+                                                        dummy.setRevText("리뷰 작성 전");
+                                                        itemDTO.setProdReview(new ProdReview());
+                                                    }
+
                                                     return itemDTO;
                                                 }).collect(Collectors.toList());
         return orderItemDTOList;
     }
 
 
+    /************** 주문 처리 로직 ************************/
+    /************** 주문 처리 로직 ************************/
+    /************** 주문 처리 로직 ************************/
+    public Page<PurchaseOrder> findOrders(String search, String status, int page) {
+        // 검색 및 필터링 로직 추가
+        Pageable pageable = PageRequest.of(page - 1, 10);
+        if (search != null && !search.isEmpty()) {
+            return purchaseOrderRepository.findByOrderIdContaining(search, pageable);
+        } else if (status != null && !status.isEmpty()) {
+            return purchaseOrderRepository.findByStatus(OrderStatus.valueOf(status), pageable);
+        } else {
+            return purchaseOrderRepository.findAll(pageable);
+        }
+    }
 
+    // 주문 상품 detail 조회
+    public PoProcessForm getOnePoProcess(String orderId){
+        PurchaseOrder po = purchaseOrderRepository.findById(orderId).get();
+        return this.poProcessConvertToDTO(po);
+    }
+
+    // 주문 내역 1건 DTO로 변환
+    private PoProcessForm poProcessConvertToDTO(PurchaseOrder po){
+        PoProcessForm dto = new PoProcessForm();
+
+        //PurchaseOrder 기본정보 추가
+        dto.setOrderId(po.getOrderId());
+        dto.setOrderStatus(po.getStatus());
+
+        //주문자 정보
+        dto.setMemberName(po.getMember().getMemberName());
+        dto.setMemberId(po.getMember().getMemberId());
+        dto.setMemberPhone(po.getMember().getMemberPhone());
+
+
+        //PurchaseOrder 금액 필드
+        dto.setOrgPrice(po.getOrgPrice() );
+        dto.setDiscPrice(po.getDiscPrice() );
+        dto.setFinalPrice(po.getOrgPrice() + po.getDiscPrice());
+        dto.setDeliveryFee(po.getDeliveryFee() );
+        dto.setTotalPrice(po.getTotalPrice() );
+        dto.setMilePay(po.getMilePay() );
+        dto.setTotalPay(po.getTotalPay() );
+
+
+
+        //Payment 정보
+        Payment payment = paymentService.getPayment(po.getOrderId());
+        dto.setPaidAt(payment.getCreatedAt());
+        dto.setPaymentStatus(payment.getPaymentStatus());
+        dto.setPgProvider(payment.getPgProvider());
+
+        //Delivery 정보
+        Delivery delivery = deliveryService.getDelivery(po.getOrderId());
+        dto.setDeliveryStatus(delivery.getDeliveryStatus());
+        dto.setAddr1(delivery.getAddr1());
+        dto.setAddr2(delivery.getAddr2());
+        dto.setDeliveryName(delivery.getDeliveryName());
+        dto.setDeliveryPhone( this.formatPhoneNumber( delivery.getDeliveryPhone()));
+        dto.setDeliveryMsg(delivery.getDeliveryMsg());
+        if(delivery.getInvoiceNum() !=null){
+            dto.setInvoiceNum(delivery.getInvoiceNum());
+        } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
+
+
+
+
+        //ItemList 추가 (PO별 구매 아이템)
+        List<OrderItemProcessDTO> orderItemProcessDTOList = this.getOrderItemProcessDtoList(po);
+        dto.setOrderItems(orderItemProcessDTOList);
+
+        return dto;
+
+    }
+
+    // 구매 아이템 조회 (PO별 구매 아이템 리스트 반환)
+    private List<OrderItemProcessDTO> getOrderItemProcessDtoList(PurchaseOrder po){
+        List<OrderItemProcessDTO> orderItemProcessDTOList = po.getOrderItems().stream()
+                                                .map(orderItem -> {
+                                                    OrderItemProcessDTO itemDTO = new OrderItemProcessDTO();
+                                                    Product product = orderItem.getProduct();
+
+                                                    itemDTO.setProdId(product.getProdId());
+                                                    itemDTO.setProdName(product.getProdName());
+                                                    itemDTO.setProdThumb(product.getProdMainImg());
+                                                    itemDTO.setProdOrgPrice(product.getProdOrgPrice());
+                                                    itemDTO.setProdFinalPrice(product.getProdFinalPrice());
+
+                                                    itemDTO.setQuantity(orderItem.getQuantity());
+                                                    itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
+
+                                                    itemDTO.setOrderItemId(orderItem.getId());
+
+
+                                                    return itemDTO;
+
+                                                }).collect(Collectors.toList());
+        return orderItemProcessDTOList;
+    }
+
+
+
+
+
+
+
+    /*public void cancelOrder(String orderId) {
+        PurchaseOrder order = findOrderById(orderId);
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new IllegalArgumentException("이미 취소된 주문입니다.");
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        purchaseOrderRepository.save(order);
+    }*/
+
+     //주문 출고 처리 메서드
+    public void shipOrder(String orderId, String invoiceNum) {
+        PurchaseOrder order = getOnePO(orderId);
+
+
+        // 배송 정보 업데이트 및 송장번호 저장
+        Delivery delivery = order.getDelivery();
+        delivery.setInvoiceNum(invoiceNum);
+        delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
+
+        order.setStatus(OrderStatus.DELEVERING);
+        purchaseOrderRepository.save(order);
+    }
 
 
 
