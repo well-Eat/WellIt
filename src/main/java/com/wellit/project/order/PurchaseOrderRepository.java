@@ -17,5 +17,9 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, St
 
     public Page<PurchaseOrder> findByStatus(OrderStatus status, Pageable pageable);
 
+    public PurchaseOrder findByPayment(Payment payment);
+
+    public Page<PurchaseOrder> findAll(Pageable pageable);
+
 
 }

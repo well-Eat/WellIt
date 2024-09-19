@@ -1,4 +1,4 @@
-package com.wellit.project;
+package com.wellit.project.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

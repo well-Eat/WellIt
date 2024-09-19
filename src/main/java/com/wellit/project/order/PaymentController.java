@@ -21,68 +21,77 @@ public class PaymentController {
     private final String impApikey = "7751726468745650";
     private final String impSecret = "hxURD07lY4IosdfUyWh00sz4KyxWwD2ox5gYrLUF9lqjzCaJCLt4u4JXRwZDQ23jpfaJ5LDtq4QHHq02";
 
+
     // 결제정보 저장
+    // 결제 정보 저장 요청
     @PostMapping("/save/{orderId}")
     public ResponseEntity<String> savePayment(@RequestBody PaymentRequest paymentRequest, @PathVariable("orderId") String orderId) {
         try {
-            String impUid = paymentRequest.getImp_uid();
-            String merchantUid = paymentRequest.getMerchant_uid();
-
-
-            //액세스 토큰 발급
-            String accessToken = getAccessToken();
-
-            // 결제 정보 조회
-            Map<String, Object> paymentData = getPaymentData(impUid, accessToken);
-
-            // 결제 검증 및 처리 로직 추가 가능
-            if (paymentData != null && "paid".equals(paymentData.get("status"))) {
-                PurchaseOrder po = orderService.getOnePO(orderId);
-                paymentService.savePayment(paymentRequest, po); // 결제 정보를 저장하는 서비스
-
-                return ResponseEntity.ok("결제 정보 저장 성공");
-            } else {
-                // 결제 실패 시 처리
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("결제 실패");
-            }
-
+            PurchaseOrder po = orderService.getOnePO(orderId);
+            // 결제 정보 저장을 서비스에 위임
+            paymentService.savePayment(paymentRequest, orderId, po);
+            //po도 한번 더 저장해야하나??????
+            orderService.savePurchaseOrder(po);
+            return ResponseEntity.ok("결제 정보 저장 성공");
         } catch (Exception e) {
+            log.error("결제 정보 저장 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 정보 저장 실패: " + e.getMessage());
-
         }
     }
+
     // 포트원 API로 액세스 토큰 발급받기
-    private String getAccessToken() throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-
-        Map<String, String> tokenRequest = new HashMap<>();
-        tokenRequest.put("imp_key", impApikey); // REST API 키
-        tokenRequest.put("imp_secret", impSecret); // REST API Secret
-
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(tokenRequest, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-                "https://api.iamport.kr/users/getToken", entity, Map.class);
-
-        Map<String, Object> body = (Map<String, Object>) response.getBody().get("response");
-        String accToken = (String) body.get("access_token");
-        log.info(accToken);
-        return accToken;
-    }
 
     // 받은 accessToken과 imp_uid로 결제 정보 조회
-    private Map<String, Object> getPaymentData(String impUid, String accessToken) throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(
-                "https://api.iamport.kr/payments/" + impUid, HttpMethod.GET, entity, Map.class);
 
-        return (Map<String, Object>) response.getBody().get("response");
+
+    @PostMapping("/cancel")
+    public ResponseEntity<Map<String, String>> cancelPayment(@RequestBody PaymentCancelRequest cancelRequest) {
+        try {
+            log.info("결제 취소 요청 - impUid: {}, reason: {}", cancelRequest.getImpUid(), cancelRequest.getReason());
+
+            // 결제 취소 처리 로직 호출
+            paymentService.cancelPayment(cancelRequest.getImpUid(), cancelRequest.getReason());
+
+            // 성공 시 JSON 형식으로 응답 반환
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "결제 취소 성공");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 실패 시 JSON 형식으로 응답 반환
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
+
+
+
+}
+
+
+// 결제 취소 요청을 위한 DTO 클래스
+class PaymentCancelRequest {
+    private String impUid;
+    private String reason;
+
+    public String getImpUid() {
+        return impUid;
+    }
+
+    public void setImpUid(String impUid) {
+        this.impUid = impUid;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 }

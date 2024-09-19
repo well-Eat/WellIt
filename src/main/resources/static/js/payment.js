@@ -84,50 +84,9 @@ async function kakaoPay(useremail, username) {
 }
 
 
-async function cancelPayment(impUid, merchantUid, reason) {
-    if (confirm("결제를 취소하시겠습니까?")) {
-        try {
-            const response = await fetch(`/api/payment/cancel`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    imp_uid: impUid, // 아임포트 거래 고유 번호
-                    merchant_uid: merchantUid, // 주문 번호
-                    reason: reason // 취소 사유
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('결제 취소 중 오류 발생');
-            }
-
-            const result = await response.json();
-            alert('결제가 성공적으로 취소되었습니다!');
-
-            // 필요시 추가 작업 수행 (예: 페이지 새로고침)
-            // location.reload();
-
-        } catch (error) {
-            alert('결제 취소 처리 중 문제가 발생했습니다. 관리자에게 문의하세요.');
-        }
-    } else {
-        return false; // 취소 거부
-    }
-}
 
 // 예시로 결제 취소 버튼에 이벤트 추가
 const cancelButton = document.getElementById('cancelPaymentButton');
-cancelButton.addEventListener('click', () => {
-    const impUid = 'imp_864279579878';  // 실제 imp_uid 값
-    const merchantUid = 'IMP215435871'; // 실제 merchant_uid 값
-    const reason = prompt("결제 취소 사유를 입력해 주세요.");
-    if (reason) {
-        cancelPayment(impUid, merchantUid, reason);
-    }
-});
-
 
 
 

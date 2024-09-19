@@ -111,7 +111,7 @@
 
               data.orders.forEach(order => {
                   const row = `<tr>
-                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                <td>${order.createdAt.toLocaleString()}</td>
                 <td>${order.orderId}</td>
                 <td>${order.memberName}</td>
                 <td>${order.status}</td>

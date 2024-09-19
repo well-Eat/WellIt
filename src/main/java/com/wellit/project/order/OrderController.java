@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,10 +30,10 @@ public class OrderController {
 
 
     @PostMapping("/create")
-    public String  createOrder( @ModelAttribute OrderForm orderForm, Principal principal, Model model){
+    public String  createOrder( @ModelAttribute OrderForm orderForm, @AuthenticationPrincipal UserDetails userDetails, Model model){
 
 
-            PurchaseOrder savedPo = orderService.addOrder(orderForm, principal.getName());
+            PurchaseOrder savedPo = orderService.addOrder(orderForm, userDetails.getUsername());
             String oi = savedPo.getOrderId();
 //            return "redirect:/";
 
@@ -38,7 +41,7 @@ public class OrderController {
     }
 
     @GetMapping("/po/{orderId}")
-    public String getPoForm(Model model, @PathVariable("orderId") String orderId, Principal principal){
+    public String getPoForm(Model model, @PathVariable("orderId") String orderId, @AuthenticationPrincipal UserDetails userDetails){
 
         //todo : po의 member와 로그인한 member정보가 일치해아만 접근 가능하도록
         //todo : orderstatus != payment_wait -> 주문 정보 페이지로 이동
@@ -62,10 +65,11 @@ public class OrderController {
 
     // 결제 성공 후 프로세스
     @PostMapping("/po/{orderId}")
-    public String afterPaymentSuccess(@PathVariable("orderId")  String orderId, @ModelAttribute PoForm poForm, Principal principal){
+    public String afterPaymentSuccess(@PathVariable("orderId")  String orderId, @ModelAttribute PoForm poForm,@AuthenticationPrincipal
+    UserDetails userDetails){
 
         //po 내용 업데이트
-        boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, principal);
+        boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, userDetails);
 
         if(success) {  //성공 시 주문 화면 출력
             return "redirect:/order/po/detail/"+orderId+"?success";
@@ -75,9 +79,38 @@ public class OrderController {
         }
     }
 
+    // 결제 취소 성공 후 DB 업데이트 및 화면 리다이렉트
+    @PostMapping("/admin/cancel/{orderId}")
+    public String afterCancelPaymentSuccess(@PathVariable("orderId") String orderId,
+                                            @RequestParam("impUid") String impUid,
+                                            @RequestParam("reason") String reason) {
+        try {
+            // DB에서 해당 주문 정보를 찾고, 취소 상태로 업데이트
+            boolean isUpdated = orderService.updateOrderStatusToCanceled(orderId, impUid, reason);
+
+            if (isUpdated) {
+                // 취소 성공 시 주문 상세 화면으로 리다이렉트 (또는 원하는 화면으로 변경 가능)
+                //return "redirect:/order/po/" + orderId + "?cancelSuccess";
+                return "redirect:/order/admin/po/" + orderId;
+            } else {
+                // DB 업데이트 실패 시 처리
+                //return "redirect:/order/po/" + orderId + "?cancelFailure";
+                return "redirect:/order/admin/po/" + orderId;
+            }
+
+        } catch (Exception e) {
+            // 예외 발생 시 처리
+            return "redirect:/order/admin/po/" + orderId + "?cancelError";
+        }
+    }
+
+
+
+
     // mypage : 주문 내용 상세 (주문 결과 상세 확인)
     @GetMapping("/po/detail/{orderId}")
-    public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, Principal principal, @RequestParam(value = "success", required = false) String success){
+    public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, @AuthenticationPrincipal
+    UserDetails userDetails, @RequestParam(value = "success", required = false) String success){
 
         if (success != null) {
             model.addAttribute("orderSuccess", true);
@@ -115,6 +148,8 @@ public class OrderController {
     public String viewPoDetail(@PathVariable(name = "orderId") String orderId){
         return "/order/admin_poDetail";
     }
+
+
 
 
 

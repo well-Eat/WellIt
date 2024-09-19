@@ -5,6 +5,8 @@ import com.wellit.project.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +29,9 @@ public class CartRestController {
 
     /* 카트에 상품 추가 */
     @PostMapping("/add")
-    public ResponseEntity<Map<String, String>> addToCart(@RequestBody CartItemRequest cartItemRequest, Principal principal){
+    public ResponseEntity<Map<String, String>> addToCart(@RequestBody CartItemRequest cartItemRequest, @AuthenticationPrincipal UserDetails userDetails){
 
-        cartService.addToCart(cartItemRequest, getMember(principal));
+        cartService.addToCart(cartItemRequest, memberService.getMember(userDetails.getUsername()));
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -40,9 +42,9 @@ public class CartRestController {
 
     @Transactional
     @PostMapping("/delete")
-    public ResponseEntity<Map<String , String >> removeAtCart(@RequestBody String strProdId, Principal principal){
+    public ResponseEntity<Map<String , String >> removeAtCart(@RequestBody String strProdId, @AuthenticationPrincipal UserDetails userDetails){
         Long prodId = Long.parseLong(strProdId.replace("{\"prodId\":","").replace("}",""));
-        cartService.removeCartItem(prodId, getMember(principal).getCart());
+        cartService.removeCartItem(prodId, memberService.getMember(userDetails.getUsername()).getCart());
 
         Map<String, String > response = new HashMap<>();
         response.put("status", "success");
@@ -55,10 +57,10 @@ public class CartRestController {
 
 
     @GetMapping("/item-count")
-    public ResponseEntity<Map<String, Object>> getCartItemCount(Principal principal) {
+    public ResponseEntity<Map<String, Object>> getCartItemCount(@AuthenticationPrincipal UserDetails userDetails) {
         Map<String, Object> response = new HashMap<>();
-        if (principal != null) {
-            String username = principal.getName();
+        if (userDetails != null) {
+            String username = userDetails.getUsername();
             int cartItemCount = cartService.getCartItemCountByUser(username);
             response.put("cartItemCount", cartItemCount);
         } else {
@@ -81,10 +83,7 @@ public class CartRestController {
 
 
 
-    /* Member 인스턴스 반환 */
-    private Member getMember(Principal principal){
-        return memberService.getMember(principal.getName());
-    }
+
 
 
 }

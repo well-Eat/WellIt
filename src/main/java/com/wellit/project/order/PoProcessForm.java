@@ -35,7 +35,9 @@ public class PoProcessForm {
     //Payment 정보
     private String  paymentStatus; //결제 상태
     private LocalDateTime paidAt; // 구매시간
-    private String pgProvider;
+    private String pgProvider; //결제 pg사
+    private String impUid; //아임포트 uid
+    private String merchantUid; //아임포트 결제 고유번호
 
 //
     //Delivery 정보

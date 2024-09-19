@@ -7,13 +7,17 @@ import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PaymentRepository paymentRepository;
     private final MemberService memberService;
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
@@ -135,10 +140,14 @@ public class OrderService {
         return this.getOnePO(orderId).getOrderItems();
     }
 
+    public void savePurchaseOrder(PurchaseOrder po){
+        purchaseOrderRepository.save(po);
+    }
+
 
     /*결제성공 후 주문서 변경내용 업데이트, 배송정보 설정*/
     @Transactional
-    public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm, Principal principal){
+    public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm, @AuthenticationPrincipal UserDetails userDetails){
         Payment payment = paymentService.getPayment(orderId);
 
         if (payment == null) {
@@ -176,7 +185,7 @@ public class OrderService {
         // 금액 업데이트
         po.setMilePay(poForm.getMilePay());
         po.setTotalPay(poForm.getTotalPay());
-        memberService.updateMileage(principal.getName(), poForm.getMilePay());
+        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay());
         log.info("금액 업뎃 저장완료");
 
 
@@ -191,6 +200,39 @@ public class OrderService {
         return true;
 
     }
+
+
+    //주문 취소 후 db내용 변경 프로세스
+    @Transactional
+    public boolean updateOrderStatusToCanceled(String orderId, String  impUid, String reason){
+
+        try{
+            //연동된 주문서 찾기
+            PurchaseOrder po = getOnePO(orderId);
+
+            //payment 정보 변경
+            Payment payment = po.getPayment();
+
+            if (payment == null) {
+                throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
+            }
+
+            payment.setPaymentStatus("cancelled");
+            payment.setCancelReason(reason);
+
+            po.setStatus(OrderStatus.CANCELLED);
+            po.setPayment(payment);
+            purchaseOrderRepository.save(po);
+
+            return true;
+        } catch (Error error){
+            throw new RuntimeException("orderService() : updateOrderStatusToCanceled() : db저장중 오류 발생");
+        }
+
+    }
+
+
+
 
 
 
@@ -327,7 +369,8 @@ public class OrderService {
     /************** 주문 처리 로직 ************************/
     public Page<PurchaseOrder> findOrders(String search, String status, int page) {
         // 검색 및 필터링 로직 추가
-        Pageable pageable = PageRequest.of(page - 1, 10);
+        Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);
         if (search != null && !search.isEmpty()) {
             return purchaseOrderRepository.findByOrderIdContaining(search, pageable);
         } else if (status != null && !status.isEmpty()) {
@@ -373,6 +416,8 @@ public class OrderService {
         dto.setPaidAt(payment.getCreatedAt());
         dto.setPaymentStatus(payment.getPaymentStatus());
         dto.setPgProvider(payment.getPgProvider());
+        dto.setImpUid(payment.getImpUid());
+        dto.setMerchantUid(payment.getMerchantUid());
 
         //Delivery 정보
         Delivery delivery = deliveryService.getDelivery(po.getOrderId());
@@ -449,6 +494,37 @@ public class OrderService {
 
         order.setStatus(OrderStatus.DELEVERING);
         purchaseOrderRepository.save(order);
+    }
+
+    //주문 취소 상태 업데이트
+    public PurchaseOrder updateCancelState(String impUid, String cancelReason){
+        log.info("========orderService : updateCancelState()");
+        log.info(impUid); // impUid가 null로 나옴
+        Payment payment = paymentRepository.findByImpUid(impUid); // <-여기서 payment 못불러옴
+        log.info(payment);
+        PurchaseOrder po = purchaseOrderRepository.findByPayment(payment);
+        log.info(po);
+
+        //상태 업데이트
+        po.setStatus(OrderStatus.CANCELLED);
+
+        // 마일리지 복구
+ /*       log.info("마일리지 사용 금액 :"+ po.getMilePay());
+        log.info("마일리지 복구 전 :"+ po.getMember().getMileage() );
+        po.getMember().setMileage( po.getMember().getMileage() - po.getMilePay());
+        log.info("마일리지 복구 후 :"+ po.getMember().getMileage() );*/
+
+        List<OrderItem> orderItems = po.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            Product product = orderItem.getProduct();
+            log.info("복구 전 재고: {}:{}", product.getProdName(), product.getProdStock());
+            product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+            productRepository.save(product); // Product 재고 업데이트
+        }
+
+        log.info("주문 상태 업데이트: {}", po);
+        return purchaseOrderRepository.save(po); // 최종적으로 주문 상태 업데이트 저장
+
     }
 
 

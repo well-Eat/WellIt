@@ -49,8 +49,11 @@
 		<div class="row mb-3">
 			<div class="col">
 				<a href="/order/admin/po/list" class="btn btn-success d-block"  style="width: fit-content;">목록으로 돌아가기</a>
+				<input type="button" class="btn btn-outline-danger d-block"  style="width: fit-content;"  id="cancelBtn" value="주문취소">
+				<script src="/js/payment.js"></script>
 			</div>
 		</div>
+		
 		
 		
 		
@@ -71,8 +74,12 @@
 			
 			</div> <!-- //col -->
 			
-			
+			<!--포트원 cdn-->
+			<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+			<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 			<script th:inline="javascript">
+					
+					let poDetail = {};
 
 					/*주문 정보 로딩*/
           document.addEventListener("DOMContentLoaded", function () {
@@ -98,7 +105,7 @@
                   }
 
                   // 응답을 JSON 형식으로 변환
-                  const poDetail = await response.json();
+                  poDetail = await response.json();
 
                   // 변환된 데이터를 콘솔에 출력
                   console.log(poDetail);
@@ -315,6 +322,11 @@
 
               document.getElementById('deleveryInfo').innerHTML = renderFormHtml;
           }
+          
+          //주문 취소 버튼 클릭 시
+          document.querySelector("#cancelBtn").addEventListener("click", function (e){
+              cancelTest(poDetail);
+          })
 
           //Payment 정보
           function paymentRender(poDetail){
@@ -349,6 +361,83 @@
 
               document.getElementById('paymentInfo').innerHTML = renderFormHtml;
           }
+
+          function cancelTest(poDetail){
+		          console.log("===========cancelTest============")
+		          console.log(poDetail);
+              const impUid = poDetail.impUid;  // 실제 imp_uid 값
+		          console.log(impUid);
+		          const orderId = poDetail.orderId;
+		          console.log(orderId);
+              const merchantUid = poDetail.merchantUid; // 실제 merchant_uid 값
+		          console.log(merchantUid);
+              const reason = prompt("결제 취소 사유를 입력해 주세요.");
+              if (reason) {
+                  cancelPayment(impUid, reason, orderId);
+              }
+          }
+
+          // 비동기로 결제 취소
+          async function cancelPayment(impUid, reason, orderId) {
+              console.log("=============== async function cancelPayment ===============");
+              console.log("impUid:", impUid);
+              console.log("reason:", reason);
+
+              if (confirm("결제를 취소하시겠습니까?")) {
+                  try {
+                      // 결제 취소 요청 (DB 업데이트 포함)
+                      const response = await fetch(`/api/payment/cancel`, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                              impUid: impUid,
+                              reason: reason
+                          })
+                      });
+
+                      // 응답이 정상인지 확인
+                      if (!response.ok) {
+                          throw new Error('결제 취소 중 오류 발생');
+                      }
+
+                      // 서버 응답 처리
+                      const result = await response.json();
+                      console.log("Cancel response result:", result);
+
+                      // 결제 취소 성공 후 DB 업데이트 요청 (orderId 포함)
+                      const dbUpdateResponse = await fetch(`/order/admin/cancel/${orderId}`, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/x-www-form-urlencoded',
+                          },
+                          body: new URLSearchParams({
+                              impUid: impUid,
+                              reason: reason
+                          })
+                      });
+
+                      if (!dbUpdateResponse.ok) {
+                          throw new Error('DB 업데이트 중 오류 발생');
+                      }
+
+                      // 결제가 성공적으로 취소되었다는 메시지 표시
+                      alert('결제가 성공적으로 취소되었습니다!');
+                      // 화면을 새로고침하거나 리다이렉트
+                      location.reload();
+
+                  } catch (error) {
+                      alert('결제 또는 DB 저장 처리 중 문제가 발생했습니다: ' + error.message);
+                      console.error('Error:', error);
+                  }
+              } else {
+                  return false; // 취소 거부
+              }
+          }
+			
+			
+			
 			
 			</script>
 		
@@ -357,9 +446,10 @@
 	
 	</div><!-- // #wrapper -->
 	<!--daum 주소 입력 api-->
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<!--<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>-->
 	<!--order js link-->
-	<script src="/js/order.js"></script>
+	<!--<script src="/js/order.js"></script>-->
+	
 
 </div>
 </html>

@@ -29,6 +29,8 @@ public class Payment {
     private String payMethod;
     private String pgProvider;
 
+    private String cancelReason;
+
 
     // 결제 일시
     private LocalDateTime createdAt; //결제 일자
