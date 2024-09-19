@@ -57,6 +57,8 @@ public class MemberService {
 		member.setBirth_year(birth_year);
 		member.setBirth_month(birth_month);
 		member.setBirth_day(birth_day);
+		member.setMileage(0); // 기본 마일리지 설정
+		member.setMemberType("default");
 
 		// 회원 프로필 이미지 등록한다면 해당 이미지 이름도 DB저장
 		String existingImagePath = member.getImageFile();
@@ -91,7 +93,7 @@ public class MemberService {
 		if (member.isPresent()) {
 			return member.get();
 		} else {
-			throw new DataNotFoundException("해당 회원이 없습니다.");
+			throw new DataNotFoundException("해당 회원이 없습니다.");			
 		}
 	}
 

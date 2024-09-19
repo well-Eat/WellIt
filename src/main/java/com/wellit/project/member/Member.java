@@ -1,7 +1,11 @@
 package com.wellit.project.member;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -74,11 +78,13 @@ public class Member {
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
 	    
 	    private Integer mileage;
-	    
-	    @Column
-	    private boolean additionalInfoCompleted = false;
-	    
-	    public boolean isAdditionalInfoNeeded() {
-	        return !additionalInfoCompleted;
+	   
+	    public Collection<? extends GrantedAuthority> getAuthorities() {
+	        // 사용자 권한 설정 (예: ROLE_USER)
+	        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
 	    }
+	    
+	    private String memberType;
+	    
 }
+

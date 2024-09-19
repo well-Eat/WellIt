@@ -1,5 +1,6 @@
 package com.wellit.project;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,10 +14,21 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.wellit.project.member.MemberRepository;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+	
+	 private final MemberRepository memberRepository;
+
+	    // MemberRepository 주입
+	    public SecurityConfig(MemberRepository memberRepository) {
+	        this.memberRepository = memberRepository;
+	    }
+	    
+	    
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
@@ -31,9 +43,9 @@ public class SecurityConfig {
 	            	.loginPage("/member/login")
 	            	.successHandler(new CustomAuthenticationSuccessHandler()) // 커스텀 성공 핸들러 설정
 	            	.failureHandler(new CustomAuthenticationFailureHandler())  // 로그인 실패 시 핸들러 설정
-	            )	    	            
+	            )	    
 	            
-	            // 로그아웃 설정
+	            	            // 로그아웃 설정
 	            .logout(logout -> logout
 	                .logoutUrl("/member/logout")       // 로그아웃 요청 경로
 	                .logoutSuccessUrl("/") // 로그아웃 후 리디렉션 URL

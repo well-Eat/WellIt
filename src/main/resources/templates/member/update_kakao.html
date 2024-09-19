@@ -1,34 +1,34 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<link rel="stylesheet" href="/css/member.css" />
+
+	<!-- 회원수정 시작 -->
 	<section class="position-relative h-100">
 		<div class="row py-5 justify-content-center">
 			<div class="col-xl-5 col-lg-6 col-xs-12 py-5 border rounded formStyle">
-				<h1 class="text-center mb-3">WellIt 회원가입</h1>
+				<h1 class="text-center mb-3">회원정보 수정</h1>
 				<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
 				</div>
-				<div th:if="${message}" th:text="${message}" id="message" style="display:none;">
-				</div>
-				<form th:action="@{/member/kakao_signup}" method="post" enctype="multipart/form-data"
-					th:object="${member}" id="kakaoForm">
-					<div class="row justify-content-center">
-						<div class="col-3">
-							<img th:src="@{${member.imageFile}}" alt="프로필 이미지" class="rounded-circle mx-auto"
-								width="200px" height="200px">
-						</div>
-						<h1 th:text="${member.memberAlias}" class="text-center"></h1>
-						<input type="hidden" name="memberId" th:value="${member.memberId}" th:field="*{memberId}">
-					</div>
+				<form th:action="@{/member/update_kakao}" th:object="${member}" method="post" id="memberForm"
+					enctype="multipart/form-data">
 					<div class="container">
+						<!-- 아이디 -->
+						<div class="row justify-content-center">
+							<div class="col-3">
+								<img th:src="@{${member.imageFile}}" alt="프로필 이미지" class="rounded-circle mx-auto"
+									width="200px" height="200px">
+							</div>
+							<h1 th:text="${member.memberAlias}" class="text-center"></h1>
+							<input type="hidden" name="memberId" th:value="${member.memberId}" th:field="*{memberId}">
+						</div>
 						<!-- 이름 -->
 						<div class="row mt-3 justify-content-start">
-							<label for="member_name" class="form-label">이름</label>
+							<label for="name" class="form-label">이름</label>
 							<div class="col-5">
-								<input type="text" id="memberName" class="form-control" th:field="*{memberName}"
-									placeholder="숫자,특수문자 입력 불가">
+								<input type="text" id="memberName" class="form-control" name="name"
+									th:value="${member.getMemberName}" th:field="*{memberName}">
 							</div>
 						</div>
-						<!-- 닉네임 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
 							<div class="col-5">
@@ -38,10 +38,10 @@
 						</div>
 						<!-- 전화번호 -->
 						<div class="row mt-3 justify-content-start">
-							<label for="memberPhone" class="form-label">전화번호</label>
+							<label for="phone" class="form-label">전화번호</label>
 							<div class="col-8">
 								<input type="text" class="form-control" id="memberPhone" placeholder="-제외하고 입력"
-									name="memberPhone" th:field="*{memberPhone}">
+									name="phone" th:value="${member.getMemberPhone}" th:field="*{memberPhone}">
 							</div>
 						</div>
 						<!-- 주소 -->
@@ -49,7 +49,7 @@
 							<label for="address" class="form-label">주소</label>
 							<div class="col-sm-4">
 								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호"
-									th:field="*{zipcode}">
+									th:field="*{zipcode}" th:value="${getZipcode}">
 							</div>
 							<div class="col-sm-3">
 								<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
@@ -57,12 +57,12 @@
 							</div>
 							<div class="col-12 mt-1">
 								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소"
-									th:field="*{roadAddress}">
+									th:field="*{roadAddress}" th:value="${getRoadAddress}">
 								<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
 							</div>
 							<div class="col-12 mt-1">
 								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소"
-									th:field="*{addressDetail}">
+									th:field="*{addressDetail}" th:value="${member.getAddressDetail}">
 								<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
 							</div>
 							<input type="hidden" id="fullAddress" name="fullAddress" th:field="*{memberAddress}">
@@ -72,21 +72,21 @@
 						<div class="row mt-3">
 							<label for="birth" class="form-label">생년월일(선택)</label>
 							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth-year"
+								<select class="form-select" aria-label="Default select example" id="birth_year"
 									th:field="*{birth_year}">
-									<option value="" selected>년</option>
+									<option value="" th:text="${member.getBirth_year}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth-month"
+								<select class="form-select" aria-label="Default select example" id="birth_month"
 									th:field="*{birth_month}">
-									<option value="" selected>월</option>
+									<option value="" th:text="${member.getBirth_month}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth-day"
+								<select class="form-select" aria-label="Default select example" id="birth_day"
 									th:field="*{birth_day}">
-									<option value="" selected>일</option>
+									<option value="" th:text="${member.getBirth_day}" selected></option>
 								</select>
 							</div>
 							<input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
@@ -96,18 +96,14 @@
 							<label for="gender" class="form-label">성별(선택)</label>
 							<div class="col">
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" value="남" id="male"
-										th:field="*{memberGender}">
-									<label class="form-check-label" for="male">
-										남성
-									</label>
+									<input class="form-check-input" type="radio" id="male" name="gender" value="남"
+										th:field="*{memberGender}" th:checked="${member.getMemberGender == '남'}">
+									<label class="form-check-label" for="male">남성</label>
 								</div>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" value="여" id="female"
-										th:field="*{memberGender}">
-									<label class="form-check-label" for="female">
-										여성
-									</label>
+									<input class="form-check-input" type="radio" id="female" name="gender" value="여"
+										th:field="*{memberGender}" th:checked="${member.getMemberGender == '여'}">
+									<label class="form-check-label" for="female">여성</label>
 								</div>
 							</div>
 						</div>
@@ -127,24 +123,36 @@
 									<option value="폴로 베지테리언">폴로 베지테리언</option>
 									<option value="플렉시테리언">플렉시테리언</option>
 								</select>
+								</select>
 							</div>
 						</div>
-
+						<!-- 이미지 -->
+						<div class="row mt-3">
+							<label for="image" class="form-label">프로필 이미지</label>
+							<div class="col">
+								<div class="input-group">
+									<input type="file" class="form-control" id="imageFile" name="imageFile">
+									<label class="input-group-text" for="imageFile">업로드</label>
+								</div>
+							</div>
+						</div>
 					</div>
-					<!-- 제출 버튼 -->
 					<div class="row mt-5">
-						<button type="submit" class="btn greenBtn">회원가입</button>
+						<button type="submit" class="btn btn-block greenBtn">수정</button>
+						<button type="button" class="btn btn-block btn-danger my-2" onclick="deleteMember()">삭제</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</section>
+	<!-- 회원수정 끝 -->
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>
 		//'출생 연도' 셀렉트 박스 option 목록 동적 생성
-		const birthYearEl = document.querySelector('#birth-year')
+		const birthYearEl = document.querySelector('#birth_year')
 		// option 목록 생성 여부 확인
 		isYearOptionExisted = false;
+
 		birthYearEl.addEventListener('focus', function () {
 			// year 목록 생성되지 않았을 때 (최초 클릭 시)
 			if (!isYearOptionExisted) {
@@ -153,14 +161,14 @@
 					// option element 생성
 					const YearOption = document.createElement('option')
 					YearOption.setAttribute('value', i)
-					YearOption.innerText = i
+					YearOption.innerText = i + "년"
 					// birthYearEl의 자식 요소로 추가
 					this.appendChild(YearOption);
 				}
 			}
 		});
 		// Month
-		const birthMonthEl = document.querySelector('#birth-month')
+		const birthMonthEl = document.querySelector('#birth_month')
 		// option 목록 생성 여부 확인
 		isMonthOptionExisted = false;
 		birthMonthEl.addEventListener('focus', function () {
@@ -183,7 +191,7 @@
 			}
 		});
 		//Day도 동일한 방식으로 구현
-		const birthDayEl = document.querySelector('#birth-day')
+		const birthDayEl = document.querySelector('#birth_day')
 		// option 목록 생성 여부 확인
 		isDayOptionExisted = false;
 		birthDayEl.addEventListener('focus', function () {
@@ -272,7 +280,7 @@
 			}).open();
 		}
 
-		document.getElementById('kakaoForm').addEventListener('submit', function (event) {
+		document.getElementById('memberForm').addEventListener('submit', function (event) {
 			const roadAddress = document.getElementById('sample4_roadAddress').value;
 			const detailAddress = document.getElementById('sample4_detailAddress').value;
 			const fullAddress = `${roadAddress} ${detailAddress}`;
@@ -281,9 +289,9 @@
 		});
 
 		// 연, 월, 일 select 요소 가져오기
-		const yearElement = document.getElementById('birth-year');
-		const monthElement = document.getElementById('birth-month');
-		const dayElement = document.getElementById('birth-day');
+		const yearElement = document.getElementById('birth_year');
+		const monthElement = document.getElementById('birth_month');
+		const dayElement = document.getElementById('birth_day');
 		const hiddenInputElement = document.getElementById('memberBirth');
 
 		// 생년월일 값이 변경될 때마다 hidden input에 값 설정
@@ -303,14 +311,33 @@
 		yearElement.addEventListener('change', updateBirthDate);
 		monthElement.addEventListener('change', updateBirthDate);
 		dayElement.addEventListener('change', updateBirthDate);
-
-		document.getElementById('kakaoForm').addEventListener('submit', function (event) {
+		document.getElementById('memberForm').addEventListener('submit', function (event) {
 			event.preventDefault(); // 기본 폼 제출 동작 방지
 			let isValid = true; // 유효성 검사가 통과했는지 여부를 확인하는 변수
 
+
+			// 아이디 유효성 검사
+			const idInput = document.getElementById('memberId');
+			const memberId = idInput.value;
+			if (!memberId) {
+				alert("아이디를 입력해주세요.")
+				idInput.focus();
+				isValid = false;
+			}
+			if (memberId.length < 4 || memberId.length > 12) {
+				alert("아이디는 4자에서 12자 이내여야 합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+			if (!/^[a-zA-Z0-9]*$/.test(memberId)) {
+				alert("아이디는 영문과 숫자만 가능합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+
 			// 이름 유효성 검사
 			const nameInput = document.getElementById('memberName');
-			const memberName = document.getElementById('memberName').value;
+			const memberName = nameInput.value;
 			if (!memberName) {
 				alert("이름을 입력해주세요.");
 				nameInput.focus();
@@ -327,9 +354,42 @@
 				isValid = false;
 			}
 
+			// 닉네임 유효성 검사
+			const aliasInput = document.getElementById('memberAlias');
+			const memberAlias = aliasInput.value;
+			if (!memberAlias) {
+				alert("닉네임을 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			if (memberAlias.length > 10) {
+				alert("닉네임은 최대 10자 이내여야 합니다.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
+				alert("닉네임은 특수기호 없이 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+
+			// 전화번호 유효성 검사
+			const phoneInput = document.getElementById('memberPhone');
+			const memberPhone = phoneInput.value;
+			if (!memberPhone) {
+				alert("전화번호를 입력해주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+			if (!/^[0-9]{10,11}$/.test(memberPhone)) {
+				alert("전화번호는 숫자만 가능합니다.");
+				phoneInput.focus();
+				isValid = false;
+			}
+
 			// 주소 유효성 검사
 			const addressInput = document.getElementById('sample4_postcode');
-			const postAddress = document.getElementById('sample4_postcode').value;
+			const postAddress = addressInput.value;
 			const roadAddress = document.getElementById('sample4_roadAddress').value;
 			const detailAddress = document.getElementById('sample4_detailAddress').value;
 			if (!roadAddress || !detailAddress || !postAddress) {
@@ -344,14 +404,21 @@
 			}
 		});
 
+		function deleteMember() {
+			if (confirm("정말로 회원 정보를 삭제하시겠습니까?")) {
+				const form = document.createElement('form');
+				form.method = 'POST';
+				form.action = '/member/delete_kakao'; // POST 요청 보낼 경로
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+		}
+
 		var errorElement = document.getElementById("errorMessage");
-		var message = document.getElementById("message");
 		// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
 		if (errorElement && errorElement.innerText.trim() !== "") {
 			alert(errorElement.innerText);
-		}
-		if(message && message.innerText.trim() !== ""){
-			alert(message.innerText);
 		}
 	</script>
 </div>
