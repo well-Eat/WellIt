@@ -1,11 +1,6 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<html layout:decorate="~{layout}">
-<head>
-	<title>주문완료</title>
-</head>
-<body>
-<div layout:fragment="content" class="container  order_po mb-5">
+<html layout:decorate="~{member/mypage_layout}">
+
+<div layout:fragment="tabcontent">
 	
 	<!-- font font-awesome CDN -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -15,18 +10,20 @@
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
-	<!--포트원 cdn-->
-	
-	
+
 	<!--order style link-->
 	<link rel="stylesheet" th:href="@{/css/order.css}">
 	<link rel="stylesheet" th:href="@{/css/util.css}">
 	
+	<div class="d-flex flex-column min-vh-100 px-1" id="wrapper">
 	<th:block th:object="${poDetail}">
-		
-		
+
 		<!--페이지 제목-->
 		<div class="row my-5">
+			<div class="pageTitle col-12 text-left"  th:unless="${orderSuccess}">
+				주문 상세 정보
+			</div>
+			
 			<div class="pageTitle col-12 text-left" th:if="${orderSuccess}">
 				주문이 완료되었습니다.
 			</div>
@@ -168,16 +165,16 @@
 			<div>
 				<table class="table table-borderless">
 					<tr>
-						<th scope="row">배송지</th>
+						<th scope="row" class="col-md-2 col-3">배송지</th>
 						<td>
 							
 							<!-- 주소 -->
 							<div class="row justify-content-start">
 								
-								<div class="col-12 d-flex column-gap-1">
+								<div class="col-md-9 d-flex column-gap-1">
 									<p id="sample4_roadAddress" class="addr inputed" th:text="*{addr1}">
 								</div>
-								<div class="col-12 mt-1">
+								<div class="col-md-9 mt-1">
 									<p id="sample4_detailAddress" class="addr inputed" th:text="*{addr2}">
 								</div>
 							</div>
@@ -297,8 +294,9 @@
 		</section> <!-- //totalPriceSec -->
 		
 		<!--결제 성공 페이지에서는 주문 취소 버튼 제외-->
-		<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-start"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:unless="${orderSuccess}">주문취소</span>
+		<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-start"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:if="${cancelBtn}">주문취소</span>
 	</th:block>
+	</div>
 	
 	<!--포트원 cdn-->
 	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -312,5 +310,4 @@
 
 <script layout:fragment="script" th:inline="javascript"></script>
 
-</body>
 </html>

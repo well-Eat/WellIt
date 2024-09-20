@@ -188,7 +188,7 @@ public class OrderService {
         // 금액 업데이트
         po.setMilePay(poForm.getMilePay());
         po.setTotalPay(poForm.getTotalPay());
-        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay());
+        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay()*(-1));
         log.info("금액 업뎃 저장완료");
 
 
@@ -204,35 +204,6 @@ public class OrderService {
 
     }
 
-
-    //주문 취소 후 db내용 변경 프로세스
-    @Transactional
-    public boolean updateOrderStatusToCanceled(String orderId, String  impUid, String reason){
-
-        try{
-            //연동된 주문서 찾기
-            PurchaseOrder po = getOnePO(orderId);
-
-            //payment 정보 변경
-            Payment payment = po.getPayment();
-
-            if (payment == null) {
-                throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
-            }
-
-            payment.setPaymentStatus("cancelled");
-            payment.setCancelReason(reason);
-
-            po.setStatus(OrderStatus.CANCELLED);
-            po.setPayment(payment);
-            purchaseOrderRepository.save(po);
-
-            return true;
-        } catch (Error error){
-            throw new RuntimeException("orderService() : updateOrderStatusToCanceled() : db저장중 오류 발생");
-        }
-
-    }
 
 
 
@@ -395,7 +366,7 @@ public class OrderService {
 
         //PurchaseOrder 기본정보 추가
         dto.setOrderId(po.getOrderId());
-        dto.setOrderStatus(po.getStatus());
+        dto.setOrderStatus(po.getStatus().renderStatus());
 
         //주문자 정보
         dto.setMemberName(po.getMember().getMemberName());
@@ -471,20 +442,6 @@ public class OrderService {
     }
 
 
-
-
-
-
-
-    /*public void cancelOrder(String orderId) {
-        PurchaseOrder order = findOrderById(orderId);
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new IllegalArgumentException("이미 취소된 주문입니다.");
-        }
-        order.setStatus(OrderStatus.CANCELLED);
-        purchaseOrderRepository.save(order);
-    }*/
-
      //주문 출고 처리 메서드
     public void shipOrder(String orderId, String invoiceNum) {
         PurchaseOrder order = getOnePO(orderId);
@@ -498,6 +455,72 @@ public class OrderService {
         order.setStatus(OrderStatus.DELIVERING);
         purchaseOrderRepository.save(order);
     }
+
+     //배송완료 처리 메서드
+    public void deliveryComplete(String orderId, String invoiceNum) {
+        PurchaseOrder order = getOnePO(orderId);
+
+
+        // 배송 정보 업데이트 및 송장번호 저장
+        Delivery delivery = order.getDelivery();
+        //delivery.setInvoiceNum(invoiceNum);
+        delivery.setDeliveryStatus(DeliveryStatus.DELIVERED);
+
+
+        order.setStatus(OrderStatus.COMPLETED);
+        purchaseOrderRepository.save(order);
+    }
+
+
+
+
+
+    //주문 취소 후 db내용 변경 프로세스
+    @Transactional
+    public boolean updateOrderStatusToCanceled(String orderId, String  impUid, String reason){
+
+        try{
+            //연동된 주문서 찾기
+            PurchaseOrder po = getOnePO(orderId);
+
+            //payment 정보 변경
+            Payment payment = po.getPayment();
+
+            if (payment == null) {
+                throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
+            }
+
+            payment.setPaymentStatus("cancelled");
+            payment.setCancelReason(reason);
+
+            // 마일리지 복구
+        log.info("마일리지 사용 금액 :"+ po.getMilePay());
+        log.info("마일리지 복구 전 :"+ po.getMember().getMileage() );
+        po.getMember().setMileage( po.getMember().getMileage() + po.getMilePay());
+        log.info("마일리지 복구 후 :"+ po.getMember().getMileage() );
+
+        //재고 복구
+            List<OrderItem> orderItems = po.getOrderItems();
+            for (OrderItem orderItem : orderItems) {
+                Product product = orderItem.getProduct();
+                log.info("복구 전 재고: {}:{}", product.getProdName(), product.getProdStock());
+                product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+                productRepository.save(product); // Product 재고 업데이트
+            }
+
+
+            //주문서 상태 변경
+            po.setStatus(OrderStatus.CANCELLED);
+            po.setPayment(payment);
+            purchaseOrderRepository.save(po);
+
+            return true;
+        } catch (Error error){
+            throw new RuntimeException("orderService() : updateOrderStatusToCanceled() : db저장중 오류 발생");
+        }
+
+    }
+
 
     //주문 취소 상태 업데이트
     public PurchaseOrder updateCancelState(String impUid, String cancelReason){
@@ -578,6 +601,18 @@ public class OrderService {
 
         }
         return cancelRequestFormList;
+    }
+
+
+    //주문 상세페이지 주문 취소 버튼 여부
+    public boolean isCancelBtn(String success, OrderStatus status){
+        if(success == null){
+            return false;
+        }
+        if(status.equals(OrderStatus.CANCELLED) || status.equals(OrderStatus.WAITING_CANCEL) || status.equals(OrderStatus.PAYMENT_WAIT)){
+            return false;
+        }
+        return true;
     }
 
 

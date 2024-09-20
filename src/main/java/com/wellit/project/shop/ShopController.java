@@ -4,6 +4,9 @@ import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +46,19 @@ public class ShopController {
 
     /*상품 상세페이지 이동*/
     @GetMapping("/detail/{prodId}")
-    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId) {
+    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId, @AuthenticationPrincipal UserDetails userDetails) {
+        String memberId = null;
+        //멤버아이디 확인
+        if(userDetails!=null){
+            memberId = userDetails.getUsername();
+            boolean favorite = shopService.isFavoriteProduct(prodId, memberId);
+            model.addAttribute("memberId", memberId);
+            model.addAttribute("favorite", favorite);
+        } else {
+            model.addAttribute("memberId", null);
+            model.addAttribute("favorite", false);
+        }
+
 
         Product product = shopService.getOneProd(prodId);
         List<ProdReview> imgReviewList = shopService.getImgReviews(product);
@@ -144,6 +159,39 @@ public class ShopController {
         shopService.updateProduct(prodId, productForm, thumbFile, imageFiles);
         return "redirect:/shop/list"; // 상품 리스트로 리다이렉트
     }
+
+    // 상품 상세페이지 : 찜하기 버튼
+    @PostMapping("/favorite/change")
+    @ResponseBody
+    public ResponseEntity<String> isFavoriteProduct(@RequestParam(required = true) Long prodId, @RequestParam(required = true) String memberId){
+
+        log.info(prodId);
+        log.info(memberId);
+        try{
+            if(memberId == null){
+                throw new RuntimeException("로그인해주세요");
+            }
+
+            //현재 찜 리스트에 있는 지 확인
+            boolean isFavorite = shopService.isFavoriteProduct(prodId, memberId);
+
+            //없는 경우 새로 추가
+            if(isFavorite == false){
+                shopService.addFavoriteProduct(prodId, memberId);
+                return ResponseEntity.ok("찜 목록을 추가하였습니다.");
+            } else {
+                shopService.removeFavoriteProduct(prodId, memberId);
+                return ResponseEntity.ok("찜 목록을 해제하였습니다.");
+            }
+
+
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
+
 
 }
 

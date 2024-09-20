@@ -42,6 +42,7 @@ public class ProdReviewService {
 
     // 리뷰 내용을 저장/업데이트
     public ProdReview saveReview(Long prodId, UserDetails userDetails, ProdReviewForm prodReviewForm, List<MultipartFile> images){
+        log.info(prodId);
         Member author = memberService.getMember(userDetails.getUsername());
         log.info(prodReviewForm.getOrderItemId());
 
@@ -77,6 +78,8 @@ public class ProdReviewService {
         review.setOrderItem(orderItem);
         orderItem.setProdReview(review);
         orderItem.setReviewed(true);
+
+        review.setProduct(orderItem.getProduct());
 
 
         List<MultipartFile> prodMultiList = prodReviewForm.getProdRevImgList();

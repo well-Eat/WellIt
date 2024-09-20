@@ -135,6 +135,7 @@ public class OrderController {
         model.addAttribute("orderItemList", orderItemList);
         model.addAttribute("poDetail", poDetail);
         model.addAttribute("member", po.getMember());
+        model.addAttribute("cancelBtn", orderService.isCancelBtn(success, po.getStatus()));
 
         return "/order/order_poDetail";
     }
@@ -152,7 +153,11 @@ public class OrderController {
 
     // admin : 개별 주문 처리
     @GetMapping("/admin/po/{orderId}")
-    public String viewPoDetail(@PathVariable(name = "orderId") String orderId){
+    public String viewPoDetail(@PathVariable(name = "orderId") String orderId, @RequestParam(required = false, name = "reason") String reason, Model model){
+
+        if(reason != null){
+            model.addAttribute("cancelReason", reason);
+        }
         return "/order/admin_poDetail";
     }
 

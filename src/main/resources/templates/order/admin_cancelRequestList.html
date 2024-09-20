@@ -41,7 +41,7 @@
 						<td th:text="${iterStat.index+1}"></td>
 						<td th:text="${#temporals.format(cancelRequest.cancelRequestAt, 'yyyy.MM.dd. hh:mm:ss')}"></td>
 						
-						<td><a th:href="@{|/order/admin/po/${cancelRequest.orderId}|}"><span
+						<td><a th:href="@{|/order/admin/po/${cancelRequest.orderId}?reason=${cancelRequest.cancelReason}|}"><span
 								th:text="${cancelRequest.orderId}"></span></a></td>
 						<td th:text="${cancelRequest.totalPay}"></td>
 						<td th:text="${cancelRequest.orderStatus.renderStatus()}"></td>

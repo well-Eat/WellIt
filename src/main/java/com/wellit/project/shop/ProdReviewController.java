@@ -1,30 +1,21 @@
 package com.wellit.project.shop;
 
 
-import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.order.*;
-import com.wellit.project.shop.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -92,7 +83,7 @@ public class ProdReviewController {
 
     /*Post : 상품 리뷰 저장*/
     @PostMapping("/save/{prodId}")
-    public String saveReview(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<String> saveReview(@AuthenticationPrincipal UserDetails userDetails,
                                              @PathVariable("prodId") Long prodId,
                                              @Valid @ModelAttribute ProdReviewForm prodReviewForm,
                                              BindingResult bindingResult,
@@ -102,7 +93,7 @@ public class ProdReviewController {
 
         //로그인 상태가 아닐경우, 로그인 창으로 리다이렉트
         if (userDetails == null) {
-            return "redirect:/member/login";
+            throw new RuntimeException("로그인해주세요");
         }
 
         // 리뷰 내용을 전달
@@ -113,8 +104,9 @@ public class ProdReviewController {
         //ProdReview savedReview = shopService.createProdReview(review);
 
 
+        return ResponseEntity.ok("리뷰 저장 완료");
 
-        return "redirect:/shop/detail/" + prodId + "#prodReview"; //상세페이지 : 리뷰 위치로 리다이렉트
+        //return "redirect:/shop/detail/" + prodId + "#prodReview"; //상세페이지 : 리뷰 위치로 리다이렉트
     }
 
 

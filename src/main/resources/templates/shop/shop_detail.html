@@ -16,16 +16,14 @@
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
-	<!--swiper cdn-->
-	<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-	/>
-	
-	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-	
+
 	<!--sweet alert2 cdn-->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	<!--swiper CDN-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+	
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 	
 	
 	
@@ -110,8 +108,8 @@
 						<!--버튼 라인-->
 						<div class="mb-3 btns gx-1 d-flex align-items-stretch justify-content-between">
 							
-							<a href="#" class="btn btn-outline-success heart"><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
-							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-success goToCart"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
+							<a href="javascript:void(0);" class="btn btn-outline-success heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-success goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
 
 						</div>
 					</form>
@@ -126,23 +124,22 @@
 	
 	<!--상품 상세 정보 출력-->
 	<section class="prodDetail container border border-success mb-3 text-center">
-		<!--<div class="prodDetailImgBox text-center"></div> : old버전 : 이미지 1개 긴 버전-->
-		<!--<div class="prodContent" th:utext="${product.prodContent}"></div>-->
+		
 		<th:block th:each="prodImage : ${product.prodImages}">
 			<img th:src="${prodImage.getImagePath()}" class="img-fluid" style="object-fit: contain; max-width: 100%">
 		</th:block>
 	</section>
 	
 	
+	
 	<!--상품 리뷰 -->
 	<section class="prodReview container" id="prodReview">
 		<h5>상품후기 &nbsp; <span class="revCnt">(<small th:text="${#lists.size(product.prodReview)}"></small>건)</span></h5>
-		
 		<!--이미지 리뷰 라인-->
-		<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
-			shop_imgReview.html 파일 내용으로 대체
-		</section>
-		
+				<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
+					shop_imgReview.html 파일 내용으로 대체
+				</section>
+
 		
 		
 		<!-- 리뷰 리스트 출력 -->
@@ -168,19 +165,59 @@
 	
 	
 	
-	
-	
 	<!--shop js link-->
 	<script src="/js/shop.js"></script>
+	<script th:inline="javascript">
+			let isFavorite = [[${favorite}]];
+      $(function (){
+          isFavoriteProduct(isFavorite);
+      })
+      //찜하기 선택 여부 확인 -> 버튼 색상 변경
+      function isFavoriteProduct(isFavorite){
+          const heartBtn = $(".heart");
+          if (isFavorite){
+              heartBtn.css("backgroundColor", "#198754");
+              heartBtn.find(".fa-heart").css("color", "#ffffff");
+          } else {
+              heartBtn.css("backgroundColor", "#ffffff");
+              heartBtn.find(".fa-heart").css("color", "#198754");
+          }
+      }
+      $(".heart").on("click", function (){
+					myFavoriteProduct([[${product.prodId}]], [[${memberId}]], isFavorite);
+      })
+
+      async function myFavoriteProduct(prodId, memberId, favorite) {
+          const response = await fetch(`/shop/favorite/change?prodId=${prodId}&memberId=${memberId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ prodId: prodId, memberId: memberId })
+          });
+
+          if (response.ok) {
+              const message = await response.text();  // response body의 텍스트를 가져옴
+              alert(message);  // 응답 메시지를 사용자에게 보여줌
+              isFavorite = !isFavorite;  // 찜 상태를 반전
+              isFavoriteProduct(isFavorite);  // 버튼 색상 변경
+          } else {
+              const errorMessage = await response.text();  // 오류 메시지 표시
+              if (errorMessage === "로그인해주세요") {
+                  alert(errorMessage);
+                  window.location.href = '/member/login';  // 로그인 페이지로 리다이렉트
+              } else {
+                  alert(errorMessage);  // 기타 오류 메시지 표시
+              }
+          }
+      }
+	
+	</script>
 
 
 
 </div> <!--//layout::content-->
 
-<script layout:fragment="script" th:inline="javascript">
-
-
-</script>
 
 
 </html>

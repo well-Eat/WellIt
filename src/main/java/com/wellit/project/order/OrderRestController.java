@@ -36,7 +36,8 @@ public class OrderRestController {
             Map<String, Object> orderData = new HashMap<>();
             orderData.put("orderId", order.getOrderId());
             orderData.put("memberName", order.getMember().getMemberName());
-            orderData.put("status", order.getStatus());
+            orderData.put("memberId", order.getMember().getMemberId());
+            orderData.put("status", order.getStatus().renderStatus());
             orderData.put("createdAt", order.getCreatedAt());
             orderData.put("totalPay", order.getTotalPay());
             ordersList.add(orderData);
@@ -68,6 +69,17 @@ public class OrderRestController {
 
         return ResponseEntity.ok("출고 처리 완료");
     }
+
+    // 배송완료 처리 API
+    @PostMapping("/{orderId}/deliveryComplete")
+    public ResponseEntity<String> processDeliveryComplete(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        String invoiceNum = body.get("invoiceNum");
+        orderService.deliveryComplete(orderId, invoiceNum);
+
+        return ResponseEntity.ok("배송 완료 처리");
+    }
+
+
 
     // 주문 취소 신청
     @PostMapping("/cancelRequest")

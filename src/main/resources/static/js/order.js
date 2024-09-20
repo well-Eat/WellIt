@@ -457,6 +457,10 @@ $(document).on("click", ".openReviewFormBtn", function () {
     let orderItemId = $(this).attr("data-orderitem-id");
     let reviewed = $(this).attr("data-reviewed");
 
+    console.log(prodId);
+    console.log(orderItemId);
+    console.log(reviewed);
+
 
     // 리뷰 폼을 동적으로 생성
     let prodReviewForm = `
@@ -555,6 +559,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
         formData.set('reviewed', true);
         formData.set('orderItemId', orderItemId);
         formData.set('prodId', prodId);
+        console.log("prodId",prodId);
 
         // fetch API로 폼 데이터 전송
         fetch(`/shop/review/save/${prodId}`, {
@@ -670,15 +675,11 @@ async function fetchOrders() {
     data.orders.forEach(order => {
         const row = `
             <tr>
-                <td>${order.createdAt.toLocaleString()}</td>
-                <td>${order.orderId}</td>
-                <td>${order.memberName}</td>
+                <td>${formatDateTime(order.createdAt)}</td>
+                <td><a href="/order/admin/po/${order.orderId}" class="tableLink">${order.orderId}</a></td>
+                <td>${order.memberId}</td>
                 <td>${order.status}</td>
-                <td>${order.totalPay}</td>
-                <td>
-                    <a href="/order/admin/po/${order.orderId}" class="btn btn-info btn-sm">View</a>
-                    ${order.status !== 'CANCELLED' ? `<a href="/order/cancel/${order.orderId}" class="btn btn-danger btn-sm">Cancel</a>` : ''}
-                </td>
+                <td class="text-right">${formatCurrency(order.totalPay)}</td>
             </tr>
         `;
         orderTableBody.insertAdjacentHTML('beforeend', row);
@@ -687,3 +688,65 @@ async function fetchOrders() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 날짜 포맷팅 함수
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}. ${month}. ${day}.`;
+}
+
+// 날짜 시간 포맷팅 함수
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}. ${month}. ${day}. ${hour}:${minute}:${seconds}`;
+}
+
+//통화 포맷팅 함수
+function formatCurrency(amount){
+    return `${amount.toLocaleString('ko-KR')}원`;
+}
+
+//연락처 포맷팅 함수
+function formatPhone(phoneNumber){
+    var formated = "";
+    if (phoneNumber.length >= 11){
+        formated = phoneNumber.slice(0,3)+"-"+phoneNumber.slice(3,7)+"-"+phoneNumber.slice(7);
+    } else {
+        formated = phoneNumber.slice(0,3)+"-"+phoneNumber.slice(3,6)+"-"+phoneNumber.slice(6);
+    }
+    return formated;
+}

@@ -1,5 +1,8 @@
 package com.wellit.project.shop;
 
+import com.wellit.project.member.Member;
+import com.wellit.project.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class ShopService {
 
 
@@ -26,12 +30,14 @@ public class ShopService {
     private final ProdImageRepository prodImageRepository;
     private final ProdInfoRepository prodInfoRepository;
     private final ProdReviewImgRepository prodReviewImgRepository;
+    private final FavoriteProductRepository favoriteProductRepository;
+    private final MemberService memberService;
 
     // 파일 업로드 위치 (서버 대신 업로드 할 임시 위치)
     private static final String UPLOAD_DIR = "C:/uploads/";
 
 
-    public ShopService(ProductRepository productRepository, ProdReviewRepository prodReviewRepository,
+/*    public ShopService(ProductRepository productRepository, ProdReviewRepository prodReviewRepository,
                        ProdInfoRepository prodInfoRepository, ProdReviewImgRepository prodReviewImgRepository,
                        ProdImageRepository prodImageRepository) {
         this.prodReviewRepository = prodReviewRepository;
@@ -39,9 +45,7 @@ public class ShopService {
         this.prodInfoRepository = prodInfoRepository;
         this.prodReviewImgRepository = prodReviewImgRepository;
         this.prodImageRepository = prodImageRepository;
-
-
-    }
+    }*/
 
     /*상품 리스트 리턴*/
     public List<Product> getProdCateList() {
@@ -262,5 +266,48 @@ public class ShopService {
         // 데이터베이스에서 상품 삭제
         productRepository.deleteById(prodId);
     }
+
+
+    //찜목록 검색 - /shop/detail/{prodId} 상품 상세페이지 찜버튼 확인
+    public boolean isFavoriteProduct(Long prodId, String memberId){
+
+
+        return favoriteProductRepository.existsByProduct_ProdIdAndMember_MemberId(prodId, memberId);
+    }
+
+    //찜목록 추가
+    @Transactional
+    public boolean addFavoriteProduct(Long prodId, String memberId){
+        Product product = productRepository.findById(prodId).get();
+        Member member = memberService.getMember(memberId);
+
+        FavoriteProduct favoriteProduct = new FavoriteProduct();
+        favoriteProduct.setProduct(product);
+        favoriteProduct.setMember(member);
+
+        member.getFavoriteProductList().add(favoriteProduct);
+        product.getFavoriteProductList().add(favoriteProduct);
+
+        FavoriteProduct saved = favoriteProductRepository.save(favoriteProduct);
+
+        if (saved != null ) return true;
+        else  return false;
+    }
+
+    //찜목록 삭제
+    @Transactional
+    public boolean removeFavoriteProduct(Long prodId, String memberId){
+        favoriteProductRepository.deleteFavoriteProductByProduct_ProdIdAndMember_MemberId(prodId, memberId);
+
+        //리스트 삭제 여부 확인
+        return isFavoriteProduct(prodId, memberId);
+    }
+
+
+
+
+
+
+
 
 }

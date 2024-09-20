@@ -81,29 +81,30 @@ $(function () {
 /** shop_detail > shop_imgReview : section.imgReviewList : 이미지 리뷰 라인 : START **/
 /** shop_detail > shop_imgReview : section.imgReviewList : 이미지 리뷰 라인 : START **/
 $(function () {
-    // Swiper 초기화
-    var swiper = new Swiper(".imgRevSwiper", {
-        lazy: true,
-        centeredSlides: false,
-        slidesPerView: 7,
-        slidesPerGroup: 7,
-        spaceBetween: 10,
-        breakpoints: {
-            768: {
-                slidesPerView: 6,
-                slidesPerGroup: 6,
+        // Swiper 초기화
+        var swiper = new Swiper(".imgRevSwiper", {
+            lazy: true,
+            centeredSlides: false,
+            slidesPerView: 7,
+            slidesPerGroup: 7,
+            spaceBetween: 10,
+            breakpoints: {
+                768: {
+                    slidesPerView: 6,
+                    slidesPerGroup: 6,
+                },
+                1200: {
+                    slidesPerView: 8,
+                    slidesPerGroup: 8,
+                    spaceBetween: 8,
+                },
             },
-            1200: {
-                slidesPerView: 8,
-                slidesPerGroup: 8,
-                spaceBetween: 8,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
             },
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-    });
+        });
+
 
     // 초기 이미지 리뷰 버튼 위치 설정
     updateImgRevPos();
@@ -391,6 +392,17 @@ function renderReviews(reviews) {
 
 /** shop_detail : section.prodReview : 리뷰리스트 출력 : END **/
 /** shop_detail : section.prodReview : 리뷰리스트 출력 : END **/
+
+
+/** shop_detail : likeBtn : 찜하기 버튼 : START **/
+/** shop_detail : likeBtn : 찜하기 버튼 : START **/
+
+
+
+
+
+/** shop_detail : likeBtn : 찜하기 버튼 : END **/
+/** shop_detail : likeBtn : 찜하기 버튼 : END **/
 
 
 /** shop_create : 상품 상세정보 입력 **/
@@ -775,6 +787,16 @@ function convertStarRating(numRating) {
     star += '<i class="far fa-star"></i>'.repeat(vacant);
 
     return star;
+}
+
+function formatPhone(phoneNumber){
+    var formated = "";
+    if (phoneNumber.length >= 11){
+        formated = phoneNumber.slice(0,2)+"-"+phoneNumber.slice(3,6)+"-"+phoneNumber.slice(7);
+    } else {
+        formated = phoneNumber.slice(0,2)+"-"+phoneNumber.slice(3,5)+"-"+phoneNumber.slice(6);
+    }
+    return formated;
 }
 
 /******* Common Util : END *********/

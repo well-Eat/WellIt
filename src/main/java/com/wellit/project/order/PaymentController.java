@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +22,11 @@ public class PaymentController {
 
 
     // 결제정보 저장
-    // 결제 정보 저장 요청
     @PostMapping("/save/{orderId}")
     public ResponseEntity<String> savePayment(@RequestBody PaymentRequest paymentRequest, @PathVariable("orderId") String orderId) {
         try {
             PurchaseOrder po = orderService.getOnePO(orderId);
-            // 결제 정보 저장을 서비스에 위임
             paymentService.savePayment(paymentRequest, orderId, po);
-            //po도 한번 더 저장해야하나??????
             orderService.savePurchaseOrder(po);
             return ResponseEntity.ok("결제 정보 저장 성공");
         } catch (Exception e) {
@@ -38,13 +34,6 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 정보 저장 실패: " + e.getMessage());
         }
     }
-
-    // 포트원 API로 액세스 토큰 발급받기
-
-
-    // 받은 accessToken과 imp_uid로 결제 정보 조회
-
-
 
     @PostMapping("/cancel")
     public ResponseEntity<Map<String, String>> cancelPayment(@RequestBody PaymentCancelRequest cancelRequest) {
@@ -67,8 +56,6 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-
 
 
 }

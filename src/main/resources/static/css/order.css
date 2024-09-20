@@ -339,3 +339,11 @@ section.row > p.subtle::after {
 .star-rating input[type="radio"]:checked ~ label {
     color: #ffc107;
 }
+
+
+/* 테이블 형식의 제목 링크*/
+.tableLink:hover{
+    text-decoration-line: underline;
+    text-decoration: #343a40;
+    font-weight: 600;
+}
