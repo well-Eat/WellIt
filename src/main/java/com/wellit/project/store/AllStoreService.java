@@ -11,8 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AllStoreService {
@@ -189,4 +191,11 @@ public class AllStoreService {
 // return saved store
 		return store; // 저장된 가게 객체 반환
 	}
+	
+	
+	//랜덤으로 가게 가져오기
+	public List<AllStore> getRandomStores(List<AllStore> allStores) {
+        Collections.shuffle(allStores); // 리스트를 랜덤하게 섞음
+        return allStores.stream().limit(20).collect(Collectors.toList()); // 상위 20개 선택
+    }
 }

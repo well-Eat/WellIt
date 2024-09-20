@@ -16,4 +16,5 @@ public interface FavoriteStoreRepository extends JpaRepository<FavoriteStore, Lo
 	List<FavoriteStore> findAllByMember(Member member);
 
     List<FavoriteStore> findByMember_MemberId(String memberId); // Member 클래스의 필드 이름에 맞춤
+
 }

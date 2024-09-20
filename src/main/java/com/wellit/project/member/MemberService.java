@@ -225,8 +225,5 @@ public class MemberService {
         return memberRepository.existsByMemberId(memberId);
     }
 
-	public Optional<Member> findByMemberId(String memberId) {
-		return memberRepository.findByMemberId(memberId);
-	}
 
 }

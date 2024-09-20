@@ -101,7 +101,7 @@ public class MemberController {
 					memberRegisterForm.getMemberGender(), memberRegisterForm.getMemberVeganType(),
 					memberRegisterForm.getZipcode(), memberRegisterForm.getRoadAddress(),
 					memberRegisterForm.getAddressDetail(), memberRegisterForm.getBirth_year(),
-					memberRegisterForm.getBirth_month(), memberRegisterForm.getBirth_day(), imageFile);
+					memberRegisterForm.getBirth_month(), memberRegisterForm.getBirth_day(), imageFile, memberRegisterForm.getIsBusiness(), memberRegisterForm.getBusinessName());
 
 			session.removeAttribute("emailVerified");
 			session.removeAttribute("verificationCode");

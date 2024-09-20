@@ -2,10 +2,12 @@ header {
 	position: fixed;
 	background-color: #386641;
 }
-.content{
+
+.content {
 	position: relative;
 	top: 60px;
 }
+
 .full-screen {
 	width: 100% !important;
 	height: 100vh !important;
@@ -20,9 +22,89 @@ header {
 	height: 100%;
 	object-fit: cover;
 }
-.selectPlace{
+
+.selectPlace {
 	background-color: #F2E8CF;
 	font-size: large;
+}
+
+.restaurantDescription {
+	color: #808080;
+}
+
+.restaurantCategory {
+	font-size: 10px;
+}
+
+.recommendedRestaurant img {
+	height: 200px;
+	width: 250px;
+}
+
+.recommendedRestaurant .card-body {
+	height: 200px;
+	width: 250px;
+}
+
+/* 카드 스타일 */
+.card {
+	border-radius: 10px;
+	/* 둥근 모서리 */
+	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+	/* 부드러운 그림자 */
+	transition: transform 0.2s;
+	/* 호버 효과 */
+}
+
+.card:hover {
+	transform: scale(1.05);
+	/* 호버 시 확대 효과 */
+}
+
+.card-title {
+	font-weight: bold;
+	white-space: nowrap;
+	/* 텍스트를 한 줄로 유지 */
+	overflow: hidden;
+	/* 넘치는 부분 숨김 */
+	text-overflow: ellipsis;
+	/* 넘치는 부분을 ...으로 표시 */
+}
+
+.cardIcons {
+	color: #808080;
+	text-align: end;
+	margin-right: -10px;
+}
+
+.cardIcons svg {
+	margin-left: 10px;
+	position: relative;
+}
+.cardIcons .redIcon{
+	fill: red;
+	color:red;
+	
+	position: relative;
+	margin-left: -20px;
+}
+.heart{
+	position: relative;
+}
+.vegetarian svg {
+	width: 16px;
+	height: 16px;
+	fill: gray
+}
+.carousel-item .col{
+	width: 20%;
+}
+.form-select {
+	border-radius: 0.25rem;
+	/* 모서리 둥글게 */
+}
+.containerTitle{
+	font-weight: bold;
 }
 .videoBox {
 	width: 1000px;
@@ -35,6 +117,8 @@ header {
 	background-color: #F2E8CF;
 	border-radius: 45px;
 	display: block;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	/* 부드러운 그림자 */
 }
 
 .videoBox select {
@@ -98,16 +182,17 @@ header {
 	font-weight: bold;
 	white-space: nowrap;
 }
+
 .videoBoxText {
 	font-size: 30px;
 	margin: 20px;
-	color: #6a994e;
 	font-weight: bold;
 }
 
 label {
 	color: gray;
 }
+
 .videoBox {
 	position: relative;
 }
@@ -124,48 +209,65 @@ label {
 .recommendationCard img {
 	height: 200px;
 }
-.carousel-item img{
+
+.carousel-item img {
 	height: 500px;
 }
-.carousel-caption{
+
+.carousel-caption {
 	position: relative;
 	background-color: antiquewhite;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	height: 200px;
+	height: 150px;
+	color: black;
 }
-.carousel-control-next-icon, .carousel-control-prev-icon{
-	width: 4rem;
-	height: 4rem;
+.restaurant-item .card-body{
+	height: 150px;
 }
 .carousel-controls {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    top: -50px; /* Adjust this value to position the buttons vertically */
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	top: -50px;
+	/* Adjust this value to position the buttons vertically */
 }
-.carousel-inner{
-	width: 83.33333333%;
+
+.carousel-inner {
+	width: 93%;
 }
-.carousel-control-prev,
-.carousel-control-next {
-    background-color: pink; /* Optional: Add background for better visibility */
-    border-radius: 50%; /* Optional: Make buttons circular */
+
+.carousel-control-next svg,
+.carousel-control-prev svg {
+	fill: black;
+	font-weight: bold;
+	width: 4em;
+	height: 4em;
+	background-color: white;
+	border-radius: 50%;
+	padding: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	/* 부드러운 그림자 */
 }
-.carousel-control-next, .carousel-control-prev{
+
+.carousel-control-next,
+.carousel-control-prev {
 	width: 8.33333333%;
 	height: 50%;
 	top: 25%;
 }
-#carouselExampleCaptions{
+
+#carouselExampleCaptions {
 	height: 500px;
 }
-.carousel-item .row .col img{
+
+.carousel-item .row .col img {
 	height: 200px;
 }
-.favorite-btn{
+
+.favorite-btn {
 	position: absolute;
 	right: 15px;
 	top: 15px;
@@ -174,11 +276,13 @@ label {
 	border-radius: 50%;
 	cursor: pointer;
 }
+
 @media (min-width: 768px) {
-    .col-md-2 {
-        width: 22%;
-    }
+	.col-md-2 {
+		width: 22%;
+	}
 }
+
 @media (max-width: 600px) {
 	.select-wrapper select {
 		width: 20vw;
@@ -196,6 +300,7 @@ label {
 		line-height: 80px;
 	}
 }
+
 @media (max-width: 768px) {
 	.videoBox {
 		width: 95%;
@@ -220,6 +325,7 @@ label {
 		padding: 20px;
 	}
 }
+
 @media (max-width: 1024px) {
 
 	.videoBox {

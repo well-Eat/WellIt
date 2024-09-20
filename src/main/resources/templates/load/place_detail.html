@@ -3,110 +3,165 @@
 
 <head>
 	<title>상품 상세페이지</title>
-	
+
 </head>
 <div layout:fragment="content" class="container">
 	<!--shop style link-->
 	<link rel="stylesheet" th:href="@{/css/place_detail.css}">
-	
+
 	<!-- Bootstrap CSS -->
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
-		<!-- Bootstrap JS (필요한 경우 Popper.js 포함) -->
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-		<link rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-		<!-- 한글 언어 파일 추가 -->
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
+	<!-- Bootstrap JS (필요한 경우 Popper.js 포함) -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+	<!-- 한글 언어 파일 추가 -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
 
-		<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
-		<link rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+	<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
-	<!--페이지 제목-->
-	<div class="row my-5">
-		<div class="pageTitle col text-center">
-			가게 상세페이지
-		</div>
-	</div>
 
-	<!--todo: 제품 공유 버튼 만들면 좋을듯.....-->
+
 
 	<!-- 가게 정보 요약 & 주문 폼 -->
-	<section class="placeInfo row my-4 py-4 rounded-2">
-		<div class="placeImg col-6">
-			<!-- 상품이미지 -->
-			<div class="card-img-wrapper rounded-2 mb-3">
-				<div class="card-img-box" th:style="|background-image: url(@{  ${store.stoImage}  });|"></div>
-			</div>
-		</div> <!--placeImg-->
-		<div class="col-6 card">
-			<!-- 상품정보 -->
-			<div class="card-body">
-				<h5 class="placeName card-title" th:text="${store.stoName}"></h5>
-				<p class="placeDesc card-text" th:text="${store.stoContent}"></p>
-				<p class="card-text"><strong>제목:</strong> <span th:text="${store.stoTitle}"></span></p>
-				<p class="card-text"><strong>카테고리:</strong> <span th:text="${store.stoCategory}"></span></p>
-				<p class="card-text"><strong>조회수:</strong> <span th:text="${store.viewCount}"></span></p>
-				<p class="card-text"><strong>추천수:</strong> <span th:text="${store.recommendationCount}"></span></p>
-				<p class="card-text"><strong>지역:</strong> <span
-						th:text="${store.stoRegionProvince} + ' ' + ${store.stoRegionCity}"></span></p>
-				<p class="card-text"><strong>연락처:</strong> <span th:text="${store.stoContact}"></span></p>
-				<p class="card-text"><strong>주소:</strong> <span th:text="${store.stoAddress}"></span></p>
-				<p class="card-text"><strong>운영 시간:</strong> <span th:text="${store.stoOperatingHours}"></span></p>
-				<p class="card-text"><strong>휴무일:</strong> <span th:text="${store.stoClosedDays}"></span></p>
-				<p class="card-text"><strong>추천 메뉴:</strong> <span th:text="${store.stoRecommendedMenu}"></span></p>
-				<p class="card-text"><strong>주차 정보:</strong> <span th:text="${store.stoParkingInfo}"></span></p>
-				<p class="card-text"><strong>채식종류:</strong> <span th:text="${store.stoVegetarianType}"></span></p>
-				<p class="card-text"><strong>영업 여부:</strong> <span th:text="${store.isOpen} ? '영업 중' : '영업 종료'"></span>
-				</p>
-				<span class="favorite-btn btn btn-warning" th:data-userid="${session.UserId}"
-					th:data-storeid="${store.stoId}">찜👍</span>
-				<span class='btn btn-success reservation-btn' th:data-userid="${session.UserId}"
-					th:data-storeid="${store.stoId}" th:data-openhours="${store.stoOperatingHours}">예약🗓️</span>
-				<div th:id="'reservationForm_' + ${store.stoId}" style="display: none;">
-					<h5>예약 시간 선택</h5>
-					<div class="form-group">
-						<label th:for="'reservationDate_' + ${store.stoId}">예약 날짜 선택:</label>
-						<div class="input-group">
-							<input type="text" class="form-control" th:id="'reservationDate_' + ${store.stoId}"
-								placeholder="YYYY-MM-DD" required>
-							<div class="input-group-append">
-								<span class="input-group-text">
-									<i class="fa fa-calendar" aria-hidden="true"></i>
-								</span>
+	<div class="container p-5 pt-0 my-5">
+		<section class="placeInfo row p-5 rounded-2">
+			<div class="placeImg col-5">
+				<!-- 상품이미지 -->
+				<div class="card-img-wrapper rounded-2 mb-3">
+					<div class="card-img-box" th:style="|background-image: url(@{  ${store.stoImage}  });|"></div>
+				</div>
+			</div> <!--placeImg-->
+			<div class="col-7 card">
+				<!-- 상품정보 -->
+				<div class="card-body">
+					<p class="card-text placeTitle d-flex justify-content-between align-items-center">
+						<span th:text="${store.stoTitle}"></span>
+						<span class="icons d-flex align-items-center">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080"
+								class="bi bi-eye" viewBox="0 0 16 16">
+								<path
+									d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+								<path
+									d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+							</svg>
+							<span th:text="${store.viewCount}"></span>
+
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="bi bi-chat" viewBox="0 0 16 16">
+								<path
+									d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
+							</svg>
+							<span th:text="${store.storeReviews.size}"></span>
+
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+								class="bi bi-heart" viewBox="0 0 16 16">
+								<path
+									d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+							</svg>
+							<span th:text="${store.favoriteStores.size}"></span>
+						</span>
+					</p>
+					<h3 class="placeName card-title" th:text="${store.stoName}"></h3>
+					<p class="placeDesc card-text" th:text="${store.stoContent}"></p>
+					<table class="table">
+						<tbody>
+
+							<tr>
+								<td><strong>카테고리</strong></td>
+								<td><span th:text="${store.stoCategory}"></span></td>
+							</tr>
+
+							<tr>
+								<td><strong>연락처</strong></td>
+								<td><span th:text="${store.stoContact}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>주소</strong></td>
+								<td><span th:text="${store.stoAddress}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>운영 시간</strong></td>
+								<td><span th:text="${store.stoOperatingHours}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>휴무일</strong></td>
+								<td><span th:text="${store.stoClosedDays}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>평점</strong></td>
+								<td><span th:text="${store.recommendationCount}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>추천 메뉴</strong></td>
+								<td><span th:text="${store.stoRecommendedMenu}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>주차 정보</strong></td>
+								<td><span th:text="${store.stoParkingInfo}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>채식종류</strong></td>
+								<td><span th:text="${store.stoVegetarianType}"></span></td>
+							</tr>
+							<tr>
+								<td><strong>영업 여부</strong></td>
+								<td><span th:text="${store.isOpen} ? '영업 중' : '영업 종료'"></span></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<span class="favorite-btn btn btn-warning w-25" th:data-userid="${session.UserId}"
+						th:data-storeid="${store.stoId}">찜👍</span>
+					<span class='btn btn-success reservation-btn w-25' th:data-userid="${session.UserId}"
+						th:data-storeid="${store.stoId}" th:data-openhours="${store.stoOperatingHours}">예약🗓️</span>
+					<div th:id="'reservationForm_' + ${store.stoId}" class="reservationBox p-3" style="display: none;">
+						<h5>예약 시간 선택</h5>
+						<div class="form-group">
+							<label th:for="'reservationDate_' + ${store.stoId}">예약 날짜 선택:</label>
+							<div class="input-group">
+								<input type="text" class="form-control" th:id="'reservationDate_' + ${store.stoId}"
+									placeholder="YYYY-MM-DD" required>
+								<div class="input-group-append">
+									<span class="input-group-text">
+										<i class="fa fa-calendar" aria-hidden="true"></i>
+									</span>
+								</div>
 							</div>
 						</div>
+
+						<div class="form-group my-2">
+							<label th:for="'reservationTime_' + ${store.stoId}">예약 시간 선택:</label>
+							<select th:id="'reservationTime_' + ${store.stoId}" class="form-control">
+								<!-- 여기서 JavaScript로 동적으로 옵션 추가 -->
+							</select>
+						</div>
+
+						<button class="btn btn-primary" onclick="makeReservation()">확인</button>
+						<button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
 					</div>
+				</div> <!-- //card-body -->
+			</div> <!--col-6 card-->
+		</section> <!--placeInfo-->
 
-					<div class="form-group my-2">
-						<label th:for="'reservationTime_' + ${store.stoId}">예약 시간 선택:</label>
-						<select th:id="'reservationTime_' + ${store.stoId}" class="form-control">
-							<!-- 여기서 JavaScript로 동적으로 옵션 추가 -->
-						</select>
-					</div>
-
-					<button class="btn btn-primary" onclick="makeReservation()">확인</button>
-					<button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
-				</div>
-			</div> <!-- //card-body -->
-		</div> <!--col-6 card-->
-	</section> <!--placeInfo-->
-
+	</div>
 	<!-- 상점별 리뷰 -->
 	<section class="storeReview my-5 p-3">
-		<h3 class="text-center my-3">상점 후기</h3>
+		<h3 class="my-3 fw-bold">상점 후기</h3>
 
 		<!-- 이미지 보기 -->
 		<div th:if="${filteredReviewsCount <= 8}">
-			<div class="revImgWrapper">
+			<div class="revImgWrapper" th:if="${filteredReviewsCount != 0}">
 				<div class="revImgContainer ">
 					<div class="carousel-inner justify-content-start">
 						<th:block th:each="review, iterStat : ${filteredReviews}">
@@ -156,13 +211,21 @@
 
 		<!-- 리뷰 보기 블록 -->
 		<div id="reviews my-3">
-			<div class="row border-bottom">
+			<div class="row border-bottom my-2">
 				<span class="my-2">총
 					<span th:text="${store.storeReviews.size()}"></span>
 					개
 				</span>
+
 			</div>
-			<div class="row border-bottom border-success reviewBlock py-2 my-3"
+			<div th:if="${store.storeReviews.size() == 0}" class="no-reviews-box text-center p-4 border rounded">
+				<h5 class="mb-3">아직 후기가 없습니다!</h5>
+				    <p>첫 번째 후기를 남겨주세요.</p>
+				    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#808080" class="bi bi-chat" viewBox="0 0 16 16">
+				        <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
+				    </svg>
+			</div>
+			<div class="row border-bottom reviewBlock py-2 my-3"
 				th:each="review : ${store.storeReviews}">
 
 				<div class="col-md-2 writer">[[${review.writer}]]</div>
@@ -195,11 +258,14 @@
 							<small th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd.hh.mm.ss')}"></small>
 						</div>
 					</div>
-					<button class="delete-review btn btn-danger" th:data-rev-id="${review.revId}">삭제</button>
-
+					<button th:if="${review.writer == session.UserId}" class="delete-review btn btn-danger" th:data-rev-id="${review.revId}">삭제</button>
 				</div>
 			</div>
 			<button id="loadMoreButton" class="btn btn-primary my-3" style="display: none;">리뷰 더보기</button>
+		</div>
+		
+		<div class="btn btn-primary reviewFormBtn my-2 w-25">
+			후기 작성하기
 		</div>
 		<!-- 모달 구조 -->
 		<div id="imageModal" class="modal" tabindex="-1" role="dialog">
@@ -228,7 +294,7 @@
 			</div>
 		</div>
 		<!-- 리뷰 추가 폼 -->
-		<form id="reviewForm" enctype="multipart/form-data" class="p-4">
+		<form id="reviewForm" enctype="multipart/form-data" class="p-4 my-2 no-reviews-box" >
 			<h3 class="my-3">후기 작성</h3>
 			<h5>장소 만족도</h5>
 			<div id="starRating">
@@ -250,8 +316,8 @@
 
 
 	</section>
-	<button th:if="${session.UserId == 'admin'}" th:id="'delete-' + ${store.stoId}"
-		th:onclick="'deleteStore(' + ${store.stoId} + ')'">가게 삭제</button>
+	<button class="btn btn-danger" th:if="${session.UserId == 'admin'}" th:id="'delete-' + ${store.stoId}"
+		th:onclick="'deleteStore(' + ${store.stoId} + ')'" >가게 삭제</button>
 	<a th:if="${session.UserId == 'admin'}" th:href="@{/load/store/update(id=${store.stoId})}" class="btn btn-info"
 		id="updateButton">가게 수정</a>
 	<script>
@@ -436,6 +502,11 @@
 				.catch(error => console.error('Error fetching reviews:', error));
 		};
 		$(document).ready(function () {
+			const reviewFormBtn = $(".reviewFormBtn")
+			
+			reviewFormBtn.click(function(){
+				$("#reviewForm").slideToggle(); // 슬라이드 효과 추가
+			})
 			const carouselItems = $('#reviewCarousel .carousel-item');
 			const totalItems = carouselItems.length;
 			let nextcurrentIndex = 7;
@@ -584,7 +655,7 @@
 				language: "kr",
 				startDate: new Date() // 오늘 날짜부터 선택 가능
 			}).datepicker('setDate', new Date()); // 오늘 날짜로 초기화
-			
+
 
 		}
 
@@ -593,7 +664,7 @@
 			const reservationDate = $(`#reservationDate_${window.currentStoId}`).val();
 			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
 			const userId = window.currentUserId;
-			
+
 			if (userId == '로그인되지 않았습니다.') {
 				alert(userId)
 				return; // 로그인되지 않은 경우 예약을 중단

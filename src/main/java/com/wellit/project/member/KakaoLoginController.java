@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -82,8 +83,10 @@ public class KakaoLoginController {
 		} catch (CustomUserAlreadyExistsException e) {
 			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
 			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
-			Member existingMember = memberRepository.findByMemberId(kakaoUserId).orElseThrow();
-
+			Member existingMember = memberRepository.findByMemberId(kakaoUserId);
+			if (existingMember == null) {
+			    throw new NoSuchElementException("Member not found");
+			}
 			// 사용자 인증 처리
 			authenticateUser(existingMember, request);
 
@@ -119,16 +122,16 @@ public class KakaoLoginController {
 	public String geKakaoSignup(HttpSession session, Model model) {
 		String userId = (String) session.getAttribute("UserId");
 		if (userId != null) {
-			log.info("Session UserId: {}", userId);
-			// UserId로 Member 정보를 조회하고 모델에 추가
-			Optional<Member> memberOptional = memberRepository.findByMemberId(userId);
-			if (memberOptional.isPresent()) {
-				model.addAttribute("member", memberOptional.get());
-			} else {
-				log.warn("No member found for UserId: {}", userId);
-				// 사용자가 없으면 새 폼을 제공
-				model.addAttribute("member", new KakaoSignupForm());
-			}
+		    log.info("Session UserId: {}", userId);
+		    // UserId로 Member 정보를 조회
+		    Member member = memberRepository.findByMemberId(userId);
+		    if (member != null) {
+		        model.addAttribute("member", member);
+		    } else {
+		        log.warn("No member found for UserId: {}", userId);
+		        // 사용자가 없으면 새 폼을 제공
+		        model.addAttribute("member", new KakaoSignupForm());
+		    }
 		} else {
 			log.warn("No UserId found in session");
 			// 세션에 UserId가 없으면 새 폼을 제공

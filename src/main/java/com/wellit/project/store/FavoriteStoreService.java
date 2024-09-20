@@ -60,4 +60,9 @@ public class FavoriteStoreService {
 
         return allStores;
     }
+
+	public List<FavoriteStore> getFavoriteStoresByMember(String memberId) {
+		
+        return favoriteStoreRepository.findByMember_MemberId(memberId); // ID로 즐겨찾기 목록 조회
+	}
 }
