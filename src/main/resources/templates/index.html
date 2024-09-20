@@ -54,43 +54,26 @@
 				</div>
 			</div>
 			<div class="container">
-				<div class="recommendedPlace active">
-					<img src="https://img1.kakaocdn.net/cthumb/local/R736x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fee0a5fcf195d70cd05d6ebc70814fa6c0be1db96%3Foriginal"
-						class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjW5FJ3AVWCVZkC5uUQedQgpB_Dg_vQEUUog&s"
-						class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://image.ajunews.com/content/image/2021/08/12/20210812142052223738.jpg" class=""
-						alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
-					</div>
-				</div>
-				<div class="recommendedPlace">
-					<img src="https://cdn.newspenguin.com/news/photo/202106/4851_15936_4212.jpg" class="" alt="...">
-					<div class="recommendedPlaceText">
-						<h1>오늘의 추천 가게</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus modi quam corporis
-							laboriosam totam eius
-							est minus recusandae possimus in.</p>
+				<div class="recommendedPlaces">
+					<div th:each="store, iterStat : ${stores}" class="recommendedPlace"
+						th:class="${iterStat.index == 0} ? 'recommendedPlace active' : 'recommendedPlace'">
+						<img th:src="${store.stoImage}" alt="${store.stoName}">
+						<div class="recommendedPlaceText">
+							<h2 th:text="${store.stoName}">가게 이름</h2>
+							<p th:text="${store.stoContent}">가게 설명</p>
+							<p><strong>카테고리:</strong> <span th:text="${store.stoCategory}">카테고리</span></p>
+							<p><strong>조회 수:</strong> <span th:text="${store.viewCount}">0</span></p>
+							<p><strong>추천 수:</strong> <span th:text="${store.recommendationCount}">0</span></p>
+							<p><strong>주소:</strong> <span th:text="${store.stoAddress}">주소</span></p>
+							<p><strong>연락처:</strong> <span th:text="${store.stoContact}">연락처</span></p>
+							<p><strong>운영 시간:</strong> <span th:text="${store.stoOperatingHours}">운영 시간</span></p>
+							<p><strong>휴무일:</strong> <span th:text="${store.stoClosedDays}">휴무일</span></p>
+							<p><strong>추천 메뉴:</strong> <span th:text="${store.stoRecommendedMenu}">추천 메뉴</span></p>
+							<p><strong>주차 정보:</strong> <span th:text="${store.stoParkingInfo}">주차 정보</span></p>
+							<p><strong>채식 옵션:</strong> <span th:text="${store.stoVegetarianType}">채식 옵션</span></p>
+							<p><strong>현재 운영 상태:</strong> <span th:text="${store.isOpen} ? '영업 중' : '영업 종료'">영업
+									중/종료</span></p>
+						</div>
 					</div>
 				</div>
 			</div>

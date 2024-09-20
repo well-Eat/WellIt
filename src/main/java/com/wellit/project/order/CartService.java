@@ -72,8 +72,12 @@ public class CartService {
 
 
     /*카트 아이템 수 반환*/
-    public int getCartItemCountByUser(String username){
-        Cart cart = cartRepository.findByMember_MemberId(username).orElseThrow();
+    public int getCartItemCountByUser(String username) {
+        // 사용자에 대한 장바구니를 조회하고, 없을 경우 새로운 Cart 객체 반환
+        Cart cart = cartRepository.findByMember_MemberId(username)
+            .orElseGet(() -> new Cart()); // orElseGet을 사용하여 기본 Cart 객체 생성
+
+        // 카트 아이템 수를 반환
         return cartItemRepository.countCartItemsByCart(cart);
     }
 
@@ -88,7 +92,10 @@ public class CartService {
     }
 
     public String getMemberAddress(String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow();
+        Member member = memberRepository.findByMemberId(memberId);
+        if (member == null) {
+            throw new IllegalArgumentException("Member not found: " + memberId);
+        }
         return member.getMemberAddress();
     }
 

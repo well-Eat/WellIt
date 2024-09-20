@@ -31,9 +31,8 @@ public class ProdReview {
     @Max(value = 5)
     private Integer revRating;
 
-
-    private LocalDateTime createdAt; //가입 일자
-    private LocalDateTime updatedAt; //수정 일자
+    private LocalDateTime createdAt; // 가입 일자
+    private LocalDateTime updatedAt; // 수정 일자
 
     @PrePersist
     protected void onCreate() {
@@ -46,17 +45,16 @@ public class ProdReview {
         this.updatedAt = LocalDateTime.now();
     }
 
-
     @ManyToOne
     @JoinColumn(name = "member_id")
     @JsonBackReference
     private Member author;
 
-    private String writer;  //추후 삭제하고 Member로 대체
+    private String writer;  // 추후 삭제하고 Member로 대체
 
     @ManyToOne
     @JoinColumn(name = "prod_id")
-    @JsonBackReference
+    @JsonBackReference("product-reviews") // 이름 설정
     private Product product;
 
     @OneToMany(mappedBy = "prodReview", cascade = CascadeType.ALL, orphanRemoval = true)

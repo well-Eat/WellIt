@@ -1,6 +1,20 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<link rel="stylesheet" href="/css/map.css" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+	<!-- 한글 언어 파일 추가 -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
+
+	<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
 	<div class="selectRegion my-2">
 		<h2 class="my-3">지역을 선택해주세요</h2>
@@ -35,7 +49,7 @@
 					src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span>
 		</form>
 	</div>
-	<div class="container mapWrapper">
+	<div class="container mapWrapper asd">
 		<div id="restaurantList"></div>
 		<div id="pagination"></div>
 		<div id="map"></div>
@@ -328,6 +342,8 @@
 		};
 
 		$(document).ready(function () {
+
+
 			loadAllStores();
 			let city, district;
 
@@ -557,19 +573,11 @@
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					isOpen: true,
-					kakaoStoreId: uniqueId,
-					storeReviews: [
-						{
-							revId: 0,
-							revImg: "",
-							revText: "",
-							revRating: 0,
-							writer: ""
-						}
-					] // 빈 리스트로 초기화
+					kakaoStoreId: uniqueId
 				};
 
 				// 고유 ID 존재 여부 체크
+				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
 				const exists = await checkIfExists(uniqueId);
 				if (exists) {
 					continue; // 중복된 경우 다음 레스토랑으로 넘어감
@@ -744,7 +752,31 @@
                         카카오 ID: ${kakaoStoreId}<br>
                         상태: ${isOpen ? '영업중' : '영업종료'}<br>
                         <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btn-info">자세히보기</a>
-						<span class='mx-3 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
+						<span class='mx-2 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
+						<span class='btn btn-success' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}')">예약🗓️</span>
+						<div id="reservationForm_${stoId}" style="display: none;">
+						    <h5>예약 시간 선택</h5>
+							<div class="form-group">
+							    <label for="reservationDate_${stoId}">예약 날짜 선택:</label>
+							    <div class="input-group">
+							        <input type="text" class="form-control" id="reservationDate_${stoId}" placeholder="YYYY-MM-DD" required>
+							        <div class="input-group-append">
+							            <span class="input-group-text">
+							                <i class="fa fa-calendar" aria-hidden="true"></i>
+							            </span>
+							        </div>
+							    </div>
+							
+							</div>
+							<div class="form-group my-2">
+							    <label for="reservationTime_${stoId}">예약 시간 선택:</label>
+							    <select id="reservationTime_${stoId}" class="form-control">
+							        
+							    </select>
+							</div>
+						    <button class="btn btn-primary" onclick="makeReservation()">확인</button>
+						    <button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
+						</div>
                     </div>
                 `);
 
@@ -754,6 +786,7 @@
 							$('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
 							$(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
 							initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
+							$(`#${store.stoId}`).datetimepicker(); // 고유 ID로 초기화
 						});
 					});
 
@@ -830,6 +863,7 @@
 			infowindow.open(map, marker); // 마커 위에 InfoWindow 표시
 		}
 
+		//찜하기 함수
 		function addFavorite(memberId, stoId) {
 			console.log('memberId:', memberId); // 디버깅용 출력
 			console.log('stoId:', stoId); // 디버깅용 출력
@@ -860,6 +894,153 @@
 					alert('서버 오류가 발생했습니다.');
 				});
 		}
+
+
+		//예약 시간 함수
+		function populateReservationTimes(operatingHours) {
+			const timeSelect = document.getElementById(`reservationTime_${window.currentStoId}`);
+			timeSelect.innerHTML = ''; // 기존 옵션 삭제
+
+			const [start, end] = operatingHours.split(' - '); // 시작 시간과 종료 시간 분리
+			const [startHour, startMinute] = start.split(':').map(Number);
+			const [endHour, endMinute] = end.split(':').map(Number);
+			const interval = 30; // 간격 (분 단위)
+
+			const now = new Date(); // 현재 시간
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+
+			// 종료 시간에서 30분 전 계산
+			let adjustedEndHour = endHour;
+			let adjustedEndMinute = endMinute - 30;
+
+			if (adjustedEndMinute < 0) {
+				adjustedEndHour -= 1;
+				adjustedEndMinute += 60; // 60분으로 보정
+			}
+
+			// 종료 시간이 0시가 되지 않도록 처리
+			if (adjustedEndHour < startHour) {
+				adjustedEndHour = startHour;
+				adjustedEndMinute = 0;
+			}
+
+			let hasAvailableTime = false; // 예약 가능한 시간이 있는지 여부
+
+			for (let hour = startHour; hour <= adjustedEndHour; hour++) {
+				for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += interval) {
+					if (hour === adjustedEndHour && minute > adjustedEndMinute) break; // 조정된 종료 시간 초과 시 중단
+
+					// 현재 시간보다 이전의 옵션 제거
+					if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+						continue; // 이전 시간은 건너뜀
+					}
+
+					hasAvailableTime = true; // 예약 가능한 시간이 있음을 표시
+
+					const formattedHour = hour.toString().padStart(2, '0');
+					const formattedMinute = minute.toString().padStart(2, '0');
+					const optionValue = `${formattedHour}:${formattedMinute}`;
+					const option = document.createElement('option');
+					option.value = optionValue;
+					option.textContent = optionValue;
+					timeSelect.appendChild(option);
+				}
+			}
+
+			// 예약 가능한 시간이 없을 경우 placeholder처럼 보이도록 설정
+			if (!hasAvailableTime) {
+				const placeholderOption = document.createElement('option');
+				placeholderOption.value = '';
+				placeholderOption.textContent = '예약 가능한 시간이 없습니다';
+				placeholderOption.disabled = true; // 선택할 수 없도록 비활성화
+				placeholderOption.selected = true; // 기본 선택 상태
+				timeSelect.appendChild(placeholderOption);
+			}
+		}
+
+		// 예약 폼이 열릴 때 시간 옵션을 채우도록 변경
+		function showReservationForm(userId, stoId, operatingHours) {
+			document.getElementById(`reservationForm_${stoId}`).style.display = 'block';
+			window.currentUserId = userId;
+			window.currentStoId = stoId;
+			populateReservationTimes(operatingHours); // 시간 옵션 채우기
+
+
+
+			// Bootstrap Datepicker 초기화 (한글 설정)
+			$(`#reservationDate_${stoId}`).datepicker({ // 수정
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayHighlight: true,
+				language: "kr",
+				startDate: new Date() // 오늘 날짜부터 선택 가능
+			}).datepicker('setDate', new Date()); // 오늘 날짜로 초기화
+		}
+
+
+		function makeReservation() {
+			const reservationDate = $(`#reservationDate_${window.currentStoId}`).val();
+			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
+			const userId = window.currentUserId;
+			if (userId == '로그인되지 않았습니다.') {
+				alert(userId)
+			}
+
+			const stoId = window.currentStoId;
+
+			const reservationData = {
+				userId: userId,
+				stoId: stoId,
+				reservationTime: `${reservationDate} ${reservationTime}`,
+			};
+
+			fetch('/store/reservations', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(reservationData),
+			})
+				.then(response => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || '예약 요청 중 오류가 발생했습니다.');
+						});
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('예약이 완료되었습니다!');
+					hideReservationForm();  // 예약 완료 후 폼 숨기기
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+		function hideReservationForm() {
+			document.getElementById(`reservationForm_${window.currentStoId}`).style.display = 'none'; // 수정
+		}
+
+		// 날짜 및 시간 선택기 토글 함수
+		function toggleDateTimePicker() {
+			const picker = $(`#datetimepicker_${window.currentStoId}`);
+
+			// DateTimePicker가 초기화되었는지 확인
+			const dateTimePicker = picker.data("DateTimePicker");
+			if (dateTimePicker) {
+				if (dateTimePicker.date()) {
+					dateTimePicker.date(null); // 닫기
+				} else {
+					dateTimePicker.show(); // 열기
+				}
+			} else {
+				console.error("DateTimePicker가 초기화되지 않았습니다.");
+				alert("날짜 및 시간 선택기가 초기화되지 않았습니다.");
+			}
+		}
+
 	</script>
 </div>
 

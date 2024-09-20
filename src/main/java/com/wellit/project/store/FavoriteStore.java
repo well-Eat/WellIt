@@ -1,9 +1,5 @@
 package com.wellit.project.store;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wellit.project.member.Member;
 
@@ -23,11 +19,11 @@ public class FavoriteStore {
 	
 	@ManyToOne
     @JoinColumn(name = "memberId")
-    @JsonBackReference // 추가
+    @JsonBackReference("member-favorites") // 이름 설정
 	private Member member;
 	
 	@ManyToOne
     @JoinColumn(name = "store")
-    @JsonBackReference // 추가
+	@JsonBackReference("favorites")
 	private AllStore store;
 }

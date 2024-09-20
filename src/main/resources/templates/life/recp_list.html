@@ -1,0 +1,34 @@
+<html layout:decorate="~{layout}">
+<head>
+</head>
+<div layout:fragment="content" >
+	<link rel="stylesheet" href="/css/wellit.css">
+	<div class="row rowTitle">
+					<div class="pageTitle col text-center">
+						웨릿 레시피
+					</div>
+				</div>
+	<div class="container my-5">
+		
+	        <div class="row">
+	            <th:block th:each="recipe : ${recipes}">
+	                <div class="col-md-3 mb-4">
+	                    <div class="card">
+	                        <img th:src="@{${recipe.recpmainImgList[0].imgSrc}}" class="card-img-top" alt="레시피 이미지" th:if="${recipe.recpmainImgList.size() > 0}" />
+	                        <div class="card-body">
+	                            <h5 class="card-title" th:text="${recipe.recpName}"></h5>
+	                            <p class="card-text" th:text="${recipe.recpIntroduce}"></p>
+	                            <p class="card-text"><small class="text-muted">작성자: <span th:text="${recipe.writer}"></span></small></p>
+	                            <p class="card-text"><strong>인분:</strong> <span th:text="${recipe.servings}"></span></p>
+	                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recipe.cookTime} + ' 분'"></span></p>
+	                            <p class="card-text"><strong>난이도:</strong> <span th:text="${recipe.difficulty}"></span></p>
+	                            <a th:href="@{/life/recipe/detail(id=${recipe.id})}" class="btn btn-primary">상세 보기</a>
+	                        </div>
+	                    </div>
+	                </div>
+	            </th:block>
+	        </div>
+	        <a th:href="@{/life/recipe/create}" class="btn btn-success my-4">레시피 작성</a>
+	    </div>
+</div>
+</html>

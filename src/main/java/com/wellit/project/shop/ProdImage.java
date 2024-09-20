@@ -1,5 +1,7 @@
 package com.wellit.project.shop;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +21,6 @@ public class ProdImage {
 
     @ManyToOne
     @JoinColumn(name = "prod_id")
+    @JsonBackReference("product-images") // 이름 설정
     private Product product;   // 어떤 상품의 이미지인지 매핑
 }

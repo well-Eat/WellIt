@@ -21,11 +21,8 @@ public class CookOrderCard {
 
 
 
-
-
-
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference("recipe-cook-order") // 동일한 이름 지정
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 

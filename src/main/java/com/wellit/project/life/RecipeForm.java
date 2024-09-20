@@ -30,5 +30,11 @@ public class RecipeForm {
 
     private List<CookOrderCardForm> cookOrderCardList; //레시피 순서 카드
 
+    private List<String> existingMainImgUrls; // 기존 메인 이미지 URL 리스트
 
+    private List<String> existingImgIds;
+    
+    private List<String> existingCookOrderImgUrls; // 기존 요리 이미지 URL 리스트 추가
+
+    
 }

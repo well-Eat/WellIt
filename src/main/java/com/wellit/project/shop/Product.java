@@ -39,19 +39,19 @@ public class Product {
 
     // 여러 개의 상품 이미지
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("product-images") // 이름 설정
     private List<ProdImage> prodImages; // 이미지 리스트
 
 
     //상품 세부 정보
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("product-info") // 이름 설정
     private List<ProdInfo> prodInfoList;
 
 
     //상품별 리뷰 리스트
     @OneToMany(mappedBy = "product", cascade=CascadeType.REMOVE)
-    @JsonManagedReference
+    @JsonManagedReference("product-reviews") // 이름 설정
     private List<ProdReview> prodReview;
 
     private LocalDateTime createdAt; //등록 일자

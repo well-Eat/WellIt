@@ -24,7 +24,7 @@ header {
 	float: right;
 	padding: 40px 20px;
 }
-#restaurantList div{
+#restaurantList>div{
 	margin-bottom: 20px;
 	border: 1px solid #6a994e;
 	padding: 0 25px 25px;
@@ -50,9 +50,11 @@ header {
     max-height: 50px; /* 기본 높이 */
     transition: max-height 0.5s ease; /* 부드러운 애니메이션 */
 }
-
+.asd{
+	height: 5000px;
+}
 .restaurant-item.expanded {
-	max-height: 700px;
+	max-height: 2000px;
 }
 #pagination button {
     margin: 0 10px;

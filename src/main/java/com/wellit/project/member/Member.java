@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wellit.project.store.FavoriteStore;
+import com.wellit.project.store.StoreReservation;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -92,6 +93,18 @@ public class Member {
 	    private Integer mileage;
 	    
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	    @JsonManagedReference // 추가
+		@JsonManagedReference("member-favorites") // 이름 설정
 	    private List<FavoriteStore> favoriteStores;
+	    
+	    @Column
+	    private boolean isBusiness; // 사업자용 여부
+	    
+	    @Column
+	    private String businessName; // 가게 이름 추가
+	    
+	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	    @JsonManagedReference("member-reservations")
+	    private List<StoreReservation> reservations; // 회원이 가진 예약 목록
+	    
+	    
 }
