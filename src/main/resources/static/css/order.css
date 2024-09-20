@@ -298,3 +298,44 @@ section.row > p.subtle::after {
     font-weight: 500;
     font-size: 14px;
 }
+
+
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+
+#drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#drop-area.highlight {
+    border-color: purple;
+}
+
+#gallery img {
+    width: 100px;
+    margin: 10px;
+}
+
+.star-rating {
+    direction: rtl;
+    display: inline-flex;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}

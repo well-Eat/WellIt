@@ -15,10 +15,7 @@
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
-	<!--포트원 cdn-->
 
-	
-	
 	<!--order style link-->
 	<link rel="stylesheet" th:href="@{/css/order.css}">
 	<link rel="stylesheet" th:href="@{/css/util.css}">
@@ -29,7 +26,6 @@
 			주문서
 		</div>
 	</div>
-	
 	
 	<form th:action="@{|/order/po/${poForm.orderId}|}" method="post" th:object="${poForm}" id="poForm">
 		<input type="hidden" th:field="*{orderId}"/>
@@ -98,7 +94,6 @@
 					</div> <!-- //card-body -->
 				
 				</th:block> <!--//orderItemList-->
-			
 			
 			</div> <!-- //orderItemTable 왼쪽열 -->
 		
@@ -241,12 +236,6 @@
 						<div class="tableWrapper">
 							<table class="table table-borderless priceTable">
 								
-								
-								
-								
-								
-								
-								
 								<tr>
 									<th>주문금액</th>
 									<td>
@@ -342,6 +331,9 @@
 	
 	</form>
 	
+	<!--포트원 cdn-->
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 	
 	<!--daum 주소 입력 api-->
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -349,9 +341,7 @@
 	<script src="/js/order.js"></script>
 	<script src="/js/payment.js"></script>
 	
-	<!--포트원 cdn-->
-	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
 
 </div> <!--//layout::content-->
 

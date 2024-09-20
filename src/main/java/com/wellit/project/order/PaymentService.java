@@ -1,19 +1,21 @@
 package com.wellit.project.order;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PreDestroy;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -132,40 +134,30 @@ public class PaymentService {
         return paymentRepository.findPaymentByPurchaseOrder_OrderId(orderId);
     }
 
-    // 공통 토큰 발급 메서드 (결제와 취소에 모두 사용)
-    // 토큰 발급 및 캐싱
     public String getAccessToken() throws Exception {
-        // Redis에서 토큰 TTL 확인
-        String cachedToken = redisTemplate.opsForValue().get(TOKEN_KEY);
+        HttpRequest request = HttpRequest.newBuilder()
+                                         .uri(URI.create("https://api.iamport.kr/users/getToken"))
+                                         .header("Content-Type", "application/json")
+                                         .method("POST", HttpRequest.BodyPublishers.ofString("{\"imp_key\":\"7751726468745650\",\"imp_secret\":\"hxURD07lY4IosdfUyWh00sz4KyxWwD2ox5gYrLUF9lqjzCaJCLt4u4JXRwZDQ23jpfaJ5LDtq4QHHq02\"}"))
+                                         .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
 
-        if (cachedToken == null) {
-            // 토큰이 없거나 만료된 경우 새로운 토큰 발급
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        // 응답 내용 출력
+        String responseBody = response.body();
+        log.info(responseBody);
 
-            Map<String, String> tokenRequest = new HashMap<>();
-            tokenRequest.put("imp_key", impApikey); // REST API 키
-            tokenRequest.put("imp_secret", impSecret); // REST API Secret
+        // "access_token" 추출
+        String accessToken = responseBody.split("\"access_token\":\"")[1].split("\"")[0];
 
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(tokenRequest, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                    "https://api.iamport.kr/users/getToken", entity, Map.class);
+        // 토큰 출력
+        System.out.println("Access Token: " + accessToken);
 
-            Map<String, Object> body = (Map<String, Object>) response.getBody().get("response");
-            String newAccessToken = (String) body.get("access_token");
-            long expiresIn = ((Number) body.get("expired_at")).longValue(); // 만료 시간 (Unix timestamp)
+        // 추출한 토큰 반환
+        return accessToken;
 
-            // Redis에 토큰 저장 및 TTL 설정 (만료 시간까지 남은 시간 계산)
-            long ttl = (expiresIn * 1000) - System.currentTimeMillis(); // TTL을 밀리초로 계산
-            redisTemplate.opsForValue().set(TOKEN_KEY, newAccessToken, ttl, TimeUnit.MILLISECONDS);
-
-            return newAccessToken;
-        }
-
-        // Redis에 캐시된 토큰 반환
-        return cachedToken;
     }
+
 
 
     // 결제 취소 요청

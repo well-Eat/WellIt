@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,7 @@ public class OrderService {
     private final PaymentService paymentService;
     private final CartItemRepository cartItemRepository;
     private final DeliveryService deliveryService;
+    private final CancelOrderRequestRepository cancelOrderRequestRepository;
 
     /*주문 생성*/
     public PurchaseOrder addOrder(OrderForm orderForm, String memberId){
@@ -140,6 +142,7 @@ public class OrderService {
         return this.getOnePO(orderId).getOrderItems();
     }
 
+    //PurchaseOrder 정보 업데이트 내용 저장
     public void savePurchaseOrder(PurchaseOrder po){
         purchaseOrderRepository.save(po);
     }
@@ -492,7 +495,7 @@ public class OrderService {
         delivery.setInvoiceNum(invoiceNum);
         delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
 
-        order.setStatus(OrderStatus.DELEVERING);
+        order.setStatus(OrderStatus.DELIVERING);
         purchaseOrderRepository.save(order);
     }
 
@@ -507,6 +510,16 @@ public class OrderService {
 
         //상태 업데이트
         po.setStatus(OrderStatus.CANCELLED);
+
+        //고객 요청에 의한 취소 확인
+        Optional<CancelOrderRequest> customerCancelRequest = cancelOrderRequestRepository.findByOrderId(po.getOrderId());
+        log.info(customerCancelRequest.isPresent());
+
+        if(customerCancelRequest.isPresent()){
+        log.info(customerCancelRequest);
+            cancelOrderRequestRepository.delete(customerCancelRequest.get());
+        }
+        log.info( cancelOrderRequestRepository.findByOrderId(po.getOrderId()).isPresent());
 
         // 마일리지 복구
  /*       log.info("마일리지 사용 금액 :"+ po.getMilePay());
@@ -525,6 +538,46 @@ public class OrderService {
         log.info("주문 상태 업데이트: {}", po);
         return purchaseOrderRepository.save(po); // 최종적으로 주문 상태 업데이트 저장
 
+    }
+
+    // 고객이 주문 취소 신청한 경우 => 주문 취소 승인 대기 리스트
+    public void waitingCancelRequest(String orderId , String cancelReason){
+
+        CancelOrderRequest cancelOrderRequest = new CancelOrderRequest();
+
+        cancelOrderRequest.setOrderId(orderId);
+        cancelOrderRequest.setCancelReason(cancelReason);
+        cancelOrderRequestRepository.save(cancelOrderRequest);
+
+        //주문 취소 승인 대기 상태로 변경
+        PurchaseOrder po = getOnePO(orderId);
+        po.setStatus(OrderStatus.WAITING_CANCEL);
+        savePurchaseOrder(po);
+
+    }
+
+    //승인 취소 대기리스트 테이블 구성
+    public List<CancelRequestForm> getCancelRequestList(){
+
+        List<CancelOrderRequest> cancelOrderRequestList = cancelOrderRequestRepository.findAll();
+
+        List<CancelRequestForm> cancelRequestFormList = new ArrayList<>();
+
+        for (CancelOrderRequest request: cancelOrderRequestList) {
+             PurchaseOrder po = purchaseOrderRepository.findById(request.getOrderId()).get();
+
+             CancelRequestForm form = new CancelRequestForm();
+             form.setOrderId(request.getOrderId());
+             form.setCancelReason(request.getCancelReason());
+             form.setCancelRequestAt(request.getCreatedAt());
+             form.setOrderRequestAt(po.getCreatedAt());
+             form.setOrderStatus(po.getStatus());
+             form.setTotalPay(po.getTotalPay());
+
+             cancelRequestFormList.add(form);
+
+        }
+        return cancelRequestFormList;
     }
 
 

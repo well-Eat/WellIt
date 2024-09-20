@@ -63,8 +63,8 @@ $(function () {
 /** order_cart : totalPriceCard : 총 구매 금액 calculate **/
 /** order_cart : totalPriceCard : 총 구매 금액 calculate **/
 
-function updateItemPriceInput(){
-    $(".calcItem").each(function (){
+function updateItemPriceInput() {
+    $(".calcItem").each(function () {
         let $input = $(this).find('.quantity')
         let $orgPrice = $(this).find('.orgPrice').val();
         let $finalPrice = $(this).find('.finalPrice').val();
@@ -150,7 +150,7 @@ function calcTotalPrice() {
     totalDiscPrice = totalFinalPrice - totalOrgPrice; // 할인금액
 
     //50000원 이상 배송비 무료
-    if (totalFinalPrice < 50000 && totalFinalPrice>0) deliveryFee = 3000;
+    if (totalFinalPrice < 50000 && totalFinalPrice > 0) deliveryFee = 3000;
     else deliveryFee = 0;
 
     totalFinalCalcedPrice = totalFinalPrice + deliveryFee;
@@ -158,7 +158,7 @@ function calcTotalPrice() {
     //출력
     $(".totalFinalPrice").text(Number(totalFinalPrice).toLocaleString()); //카드푸터
     $(".totalOrgPrice").text(Number(totalOrgPrice).toLocaleString()); //
-    if (totalDiscPrice == 0){
+    if (totalDiscPrice == 0) {
         $(".totalDiscPrice").text("-");
         $(".totalDiscPrice").next('.won').text('');
     } else {
@@ -166,10 +166,10 @@ function calcTotalPrice() {
         $(".totalDiscPrice").next('.won').text('원');
     }
 
-    if (deliveryFee == 0){
+    if (deliveryFee == 0) {
         $(".deliveryFee").text("-");
         $(".deliveryFee").next('.won').text('');
-    } else{
+    } else {
         $(".deliveryFee").text(Number(deliveryFee).toLocaleString()); //
         $(".deliveryFee").next('.won').text('원');
     }
@@ -221,7 +221,7 @@ function removeItemDOM(prodId) {
         }
     })
     console.log($(".cardItemTable").find(".card-body"))
-    if ($(".cardItemTable").find(".card-body").length == 0){
+    if ($(".cardItemTable").find(".card-body").length == 0) {
         var vacantCartDOM = `
             <div class="card-body border-bottom d-flex gap-3 justify-content-center " >
                 <div class="row">
@@ -235,7 +235,6 @@ function removeItemDOM(prodId) {
         $(".cartItemTable .card-header").after(vacantCartDOM);
     }
 }
-
 
 
 //카트 아이템 리스트 카드헤더 : 선택개수 / 전체개수 업데이트
@@ -323,80 +322,82 @@ function sample4_execDaumPostcode() {
             document.getElementById('sample4_postcode').value = data.zonecode;
             document.getElementById('sample4_roadAddress').value = data.roadAddress;
             document.getElementById('sample4_jibunAddress').value = data.jibunAddress;
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById('sample4_detailAddress').value = '';
-            document.getElementById('sample4_detailAddress').focus();
+                document.getElementById('sample4_detailAddress').focus();
             }, 0);
         }
     }).open();
 }
 
 // cart -> order페이지로 submit시 : 체크되지 않은 아이템 리스트는 서버 전송 x
-document.querySelector('#orderForm').addEventListener('submit', function(event) {
-    document.querySelectorAll('.itemCheck:not(:checked)').forEach(function(checkbox) {
-        const parent = checkbox.closest('.card-body');
-        parent.querySelectorAll('input').forEach(function(input) {
-            input.disabled = true;
+const orderForm = document.querySelector('#orderForm');
+
+if (orderForm) {
+    orderForm.addEventListener('submit', function (event) {
+        document.querySelectorAll('.itemCheck:not(:checked)').forEach(function (checkbox) {
+            const parent = checkbox.closest('.card-body');
+            parent.querySelectorAll('input').forEach(function (input) {
+                input.disabled = true;
+            });
         });
     });
-});
+}
+
 
 /*마일리지 버튼*/
-$(function (){
+$(function () {
 
-    $("#milePay").on("change", function (){
+    $("#milePay").on("change", function () {
 
-        let totalPrice = parseInt( $("#totalPrice").val());
+        let totalPrice = parseInt($("#totalPrice").val());
 
         //마일리지 입력금액이 구매할 금액보다 크면 마일리지 적용금액 재계산
-        if ( parseInt($("#milePay").val()) > totalPrice ){
+        if (parseInt($("#milePay").val()) > totalPrice) {
             $("milePay").val(totalPrice);
         }
 
 
         //적용 공통 계산
-        $("span.milePay").attr("data-nums", $("#milePay").val()*(-1));
+        $("span.milePay").attr("data-nums", $("#milePay").val() * (-1));
         console.log($("span.milePay").attr("data-nums"));
 
 
-
-
-        $("span.milePay").text(formatNumberWithComma( $("span.milePay").attr("data-nums") ));
+        $("span.milePay").text(formatNumberWithComma($("span.milePay").attr("data-nums")));
         console.log($("span.milePay").text());
 
 
-        var totalPayValue = parseInt( $("#totalPrice").val() ) + parseInt( $("span.milePay").attr("data-nums") )
+        var totalPayValue = parseInt($("#totalPrice").val()) + parseInt($("span.milePay").attr("data-nums"))
         console.log(totalPayValue);
 
         $("#totalPay").val(totalPayValue);
         $("#totalPay").attr("data-nums", totalPayValue);
 
         $("span.totalPay").attr("data-nums", totalPayValue);
-        $("span.totalPay").text(formatNumberWithComma( $("span.totalPay").attr("data-nums") ));
-
+        $("span.totalPay").text(formatNumberWithComma($("span.totalPay").attr("data-nums")));
 
 
         $("span.totalPay").val(totalPayValue);
 
 
-        $("#totalPay").attr("data-nums", $("#milePay").val()*(-1));
+        $("#totalPay").attr("data-nums", $("#milePay").val() * (-1));
         console.log($("span.milePay").attr("data-nums"));
-        $("span.milePay").text(formatNumberWithComma( $("span.milePay").attr("data-nums") ));
+        $("span.milePay").text(formatNumberWithComma($("span.milePay").attr("data-nums")));
         console.log($("span.milePay").text());
 
     })
 })
 
-function useAllMileage(){
+function useAllMileage() {
     let finalPrice = $('#finalPrice').attr('data-nums');
     let mileage = $("#mileage").attr('data-nums');
 
     console.log("-====================")
     console.log("finalPrice : ")
-    console.log(parseInt( finalPrice));
+    console.log(parseInt(finalPrice));
     console.log("-====================")
     console.log("mileage : ")
-    console.log( parseInt(mileage));
+    console.log(parseInt(mileage));
     console.log("-====================")
 
 
@@ -404,32 +405,285 @@ function useAllMileage(){
 
     console.log(milePay);
     // 할인된 상품 가격 내에서 마일리지 사용가능
-    if (parseInt(mileage) > parseInt( finalPrice)) {
+    if (parseInt(mileage) > parseInt(finalPrice)) {
         console.log("트루다")
-        milePay.val(parseInt( finalPrice));
+        milePay.val(parseInt(finalPrice));
     } else {
-        milePay.val(parseInt( mileage));
+        milePay.val(parseInt(mileage));
         console.log("트루아님")
     }
 
 
     $("#milePay").change();
-
-
 }
 
 
+/*orderHistory : 주문 취소 */
+function cancelRequest(cancelBtn) {
+    const orderId = $(cancelBtn).attr("data-orderId")
+    console.log("Order ID:", orderId);
+
+    const cancelReason = prompt("주문 취소 사유를 입력해주세요.");
+
+    if (!cancelReason) return false;
+
+
+    const cancelRequest = {
+        orderId: orderId,
+        cancelReason: cancelReason,
+    };
+    fetch('/api/orders/cancelRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cancelRequest)
+    }).then(response => {
+        if (response.ok) {
+            alert("취소 신청 승인 후 결제 취소가 진행됩니다.")
+            location.reload();
+            //return "redirect:/order/po/detail/"+orderId;
+        }
+        //
+    })
+}
+
+/****** mypage : order_history *****/
+/****** mypage : order_history *****/
+/****** mypage : order_history *****/
+//리뷰 쓰기 버튼 클릭 시,
+$(document).on("click", ".openReviewFormBtn", function () {
+    let prodId = $(this).attr("data-product-id");
+    let orderItemId = $(this).attr("data-orderitem-id");
+    let reviewed = $(this).attr("data-reviewed");
+
+
+    // 리뷰 폼을 동적으로 생성
+    let prodReviewForm = `
+	        <div class="card-text reviewWrap">
+	            <form id="prodReviewForm" enctype="multipart/form-data" name="prodReviewForm">
+	                <div class="row">
+	                    <div class="col-6 modalColLeft border">
+	                        <div id="drop-area">
+	                            <p class="c666 fw700">리뷰 이미지 등록</p>
+	                            <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple>
+	                            <label class="button hidden" for="prodRevImg">또는 파일 선택</label>
+	                            <div id="gallery"></div>
+	                        </div>
+	                    </div>
+	
+	                    <div class="col-6 modalColRight">
+							<p class="mb-0">
+								<div class="star-rating">
+									<input type="radio" id="star5" name="rating" value="5" checked/>
+									<label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star4" name="rating" value="4" />
+									<label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star3" name="rating" value="3" />
+									<label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star2" name="rating" value="2" />
+									<label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+									<input type="radio" id="star1" name="rating" value="1" />
+									<label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+								</div>
+							</p>
+	                        <p>
+	                            <textarea class="form-control overflow-y-scroll" id="revText" name="revText" style="resize: none;"></textarea>
+	                        </p>
+	
+	                        <input type="hidden" id="prodId" name="prodId" value="${prodId}" />
+	                        <input type="hidden" id="paid" name="paid"/>
+	                        <input type="hidden" id="orderItemId" name="orderItemId" value="${orderItemId}"/>
+	                        
+	                        <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end">리뷰 제출하기</button>
+	                    </div>
+	                </div>
+	            </form>
+	        </div>
+	    `;
+
+    $(".reviewWrap").remove(); //기존에 열린 폼이 있으면 닫고,
+    $('.itemBtnLine').show(); // 다른 버튼라인들은 모두 나타나도록
+    $(this).parents('.itemBtnLine').hide(); // 현재 열린 버튼라인만 hide
+
+    // 동적으로 생성된 폼을 DOM에 추가
+    $(this).parent().after(prodReviewForm);
+
+    const sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
+
+    $("#revText").val($(this).attr('data-review-text'));
+    $('#paid').val(sumFinalPrice);
+
+
+    //기존 작성된 리뷰 있는지 확인
+    fetch(`/shop/review/exist/${orderItemId}`, {
+        method: 'GET'
+    }).then(response => {
+        return response.json();
+    }).then(reviewed => {
+        if (reviewed) {
+            // 작성 리뷰 있는 경우 폼에 불러오기
+            fetch(`/shop/review/get/${orderItemId}`, {
+                method: 'GET'
+            }).then(resp => {
+                return resp.json();
+            }).then(prodReviewLoadForm => { // 불러온 리뷰 데이터를 폼에 적용
+                document.querySelector("#revText").value = prodReviewLoadForm.revText; // 리뷰 텍스트 적용
+                document.querySelector(`#star${prodReviewLoadForm.rating}`).checked = true; // 별점 적용
+
+                // 이미지 목록 불러오기
+                const gallery = document.querySelector("#gallery");
+                prodReviewLoadForm.prodRevImgList.forEach(imagePath => {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = imagePath; // 이미지 경로 설정
+                    imgElement.style.width = "100px"; // 이미지 크기 조절
+                    imgElement.style.marginRight = "10px"; // 간격 설정
+                    gallery.appendChild(imgElement);
+                });
+            }).catch(err => {
+                console.log('안가져옴')
+            })
+
+        }
+    })
+
+    // 리뷰 제출 버튼 클릭 이벤트
+    $('#submitReviewForm').on('click', function () {
+        // FormData 생성
+        let formData = new FormData(document.getElementById('prodReviewForm'));
+        formData.set('paid', sumFinalPrice);
+        formData.set('reviewed', true);
+        formData.set('orderItemId', orderItemId);
+        formData.set('prodId', prodId);
+
+        // fetch API로 폼 데이터 전송
+        fetch(`/shop/review/save/${prodId}`, {
+            method: 'POST',
+            body: formData,  // FormData는 자동으로 multipart/form-data로 처리됨
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                    //return response.text();  // 서버로부터의 응답을 텍스트로 처리
+                } else {
+                    throw new Error('리뷰 저장 실패');
+                }
+            })
+            .then(data => {
+                // 성공 시 실행될 로직
+                alert('리뷰가 성공적으로 저장되었습니다.');
+            })
+            .catch(error => {
+                // 실패 시 실행될 로직
+                alert('리뷰 저장에 실패했습니다.');
+            });
+    });
+
+
+    // 이미지 드래그 앤 드롭 영역
+    const dropArea = document.getElementById("drop-area");
+    const gallery = document.getElementById("gallery");
+    const fileInput = document.getElementById("prodRevImg");
+
+    let filesArray = []; // 업로드할 파일들을 저장할 배열
+
+    // 기본 동작 방지
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // 드래그 오버시 하이라이트 주기
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+    });
+
+    // 파일 드롭 시 이벤트
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFiles, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({target: {files: files}});
+    }
+
+    function handleFiles(e) {
+        const newFiles = Array.from(e.target.files);
+
+        document.getElementById('prodRevImg').files = e.target.files;
+
+        if (filesArray.length + newFiles.length > 3) {
+            alert('최대 3개의 이미지만 업로드할 수 있습니다.');
+            return;
+        }
+
+        filesArray = filesArray.concat(newFiles).slice(0, 3); // 3개까지만 허용
+        gallery.innerHTML = ''; // 기존 미리보기 초기화
+        filesArray.forEach(previewFile);
+    }
+
+    function previewFile(file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = function () {
+            const img = document.createElement('img');
+            img.src = reader.result;
+            img.style.width = '100px';
+            img.style.margin = '10px';
+            gallery.appendChild(img);
+        }
+    }
+});
 
 
 
+/***************** admin : po_list ******************/
+/***************** admin : po_list ******************/
+/***************** admin : po_list ******************/
+document.addEventListener("DOMContentLoaded", function () {
+    fetchOrders(); // 페이지 로드 시 주문 목록 불러오기
+});
 
+async function fetchOrders() {
+    // 검색어와 상태 필터 값 가져오기
+    const search = document.getElementById("searchInput").value;
+    const status = document.getElementById("statusSelect").value;
 
+    // Fetch API를 사용하여 서버에서 데이터 가져오기
+    const response = await fetch(`/api/orders?search=${search}&status=${status}`);
+    const data = await response.json();
 
+    // 테이블에 주문 목록 렌더링
+    const orderTableBody = document.getElementById("orderTableBody");
+    orderTableBody.innerHTML = ""; // 기존 내용 제거
 
-
-
-
-
+    data.orders.forEach(order => {
+        const row = `
+            <tr>
+                <td>${order.createdAt.toLocaleString()}</td>
+                <td>${order.orderId}</td>
+                <td>${order.memberName}</td>
+                <td>${order.status}</td>
+                <td>${order.totalPay}</td>
+                <td>
+                    <a href="/order/admin/po/${order.orderId}" class="btn btn-info btn-sm">View</a>
+                    ${order.status !== 'CANCELLED' ? `<a href="/order/cancel/${order.orderId}" class="btn btn-danger btn-sm">Cancel</a>` : ''}
+                </td>
+            </tr>
+        `;
+        orderTableBody.insertAdjacentHTML('beforeend', row);
+    });
+}
 
 
 

@@ -69,6 +69,17 @@ public class OrderRestController {
         return ResponseEntity.ok("출고 처리 완료");
     }
 
+    // 주문 취소 신청
+    @PostMapping("/cancelRequest")
+    public ResponseEntity<String> waitingCancelRequest(@RequestBody Map<String, String> body){
+        String orderId = body.get("orderId");
+        String cancelReason = body.get("cancelReason");
+
+        orderService.waitingCancelRequest(orderId, cancelReason);
+
+        return ResponseEntity.ok("승인대기");
+    }
+
 
 
 

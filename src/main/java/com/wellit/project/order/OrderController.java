@@ -1,22 +1,16 @@
 package com.wellit.project.order;
 
 import com.wellit.project.member.MemberRepository;
-import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.naming.Binding;
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -28,26 +22,39 @@ public class OrderController {
     private final OrderService orderService;
     private final MemberRepository memberRepository;
 
-
+    //카트 -> 주문서 생성
     @PostMapping("/create")
     public String  createOrder( @ModelAttribute OrderForm orderForm, @AuthenticationPrincipal UserDetails userDetails, Model model){
 
 
             PurchaseOrder savedPo = orderService.addOrder(orderForm, userDetails.getUsername());
             String oi = savedPo.getOrderId();
-//            return "redirect:/";
 
         return "redirect:/order/po/"+oi;
     }
+        //todo : orderstatus != payment_wait -> 주문 정보 페이지로 이동
 
+
+
+    //카트 -> 주문서 생성 -> 생성된 주문서 뷰페이지
     @GetMapping("/po/{orderId}")
     public String getPoForm(Model model, @PathVariable("orderId") String orderId, @AuthenticationPrincipal UserDetails userDetails){
 
-        //todo : po의 member와 로그인한 member정보가 일치해아만 접근 가능하도록
-        //todo : orderstatus != payment_wait -> 주문 정보 페이지로 이동
+        // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+        if (userDetails == null) {
+            return "redirect:/error/login-alert";
+        }
 
+        //해당 주문서 가져오기
         PurchaseOrder po = orderService.getOnePO(orderId);
         log.info(po.getOrderId());
+
+        // 로그인한 사용자의 정보와 주문서의 회원 정보가 일치하는지 확인
+        if (!po.getMember().getMemberId().equals(userDetails.getUsername())) {
+            // 사용자가 일치하지 않으면 403 Forbidden 오류를 던짐
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+        }
+
 
         PoForm poForm = orderService.getPoForm(orderId);
 
@@ -147,6 +154,17 @@ public class OrderController {
     @GetMapping("/admin/po/{orderId}")
     public String viewPoDetail(@PathVariable(name = "orderId") String orderId){
         return "/order/admin_poDetail";
+    }
+
+    // admin : 결제 취소 요청 대기리스트 접속
+    @GetMapping("/admin/cancel/request/list")
+    public String viewCancelRequestList(Model model){
+
+        List<CancelRequestForm> cancelRequestList = orderService.getCancelRequestList();
+
+        model.addAttribute("cancelRequestList", cancelRequestList);
+
+        return "/order/admin_cancelRequestList";
     }
 
 

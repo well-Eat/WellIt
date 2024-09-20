@@ -1,0 +1,65 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				주문 취소 승인 처리
+			</div>
+		</div>
+		
+		<section class="row vstack orderItem position-relative mb-5">
+			
+			<p class="subtle f18 c666 fw-bold">
+				취소 신청 내역
+			</p>
+			
+			<div class="col gap-3 g-3">
+				
+				<!-- 주문 목록 테이블 -->
+				<table class="table table-hover" id="cancelTable">
+					<thead>
+					<tr>
+						<th scope="col">No</th> <!--행번호-->
+						<th scope="col">요청시간</th>
+						
+						<th scope="col">주문번호</th>
+						<th scope="col">주문금액</th>
+						<th scope="col">현재상태</th>
+						
+						<th scope="col">취소 사유</th>
+					
+					</tr>
+					</thead>
+					<tbody id="orderTableBody">
+					<tr th:each="cancelRequest, iterStat : ${cancelRequestList}">
+						<td th:text="${iterStat.index+1}"></td>
+						<td th:text="${#temporals.format(cancelRequest.cancelRequestAt, 'yyyy.MM.dd. hh:mm:ss')}"></td>
+						
+						<td><a th:href="@{|/order/admin/po/${cancelRequest.orderId}|}"><span
+								th:text="${cancelRequest.orderId}"></span></a></td>
+						<td th:text="${cancelRequest.totalPay}"></td>
+						<td th:text="${cancelRequest.orderStatus.renderStatus()}"></td>
+						
+						<td th:text="${cancelRequest.cancelReason}"></td>
+					</tr>
+					</tbody>
+				</table>
+			
+			
+			</div> <!-- //col -->
+		
+		</section>
+	
+	</div><!-- // #wrapper -->
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+
+</div>
+</html>

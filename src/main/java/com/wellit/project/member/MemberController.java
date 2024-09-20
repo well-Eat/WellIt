@@ -657,21 +657,8 @@ public class MemberController {
             model.addAttribute("member", member);
             model.addAttribute("formattedRegDate", formattedRegDate);
 
-
-
-            // admin : 주문 처리 주문 내역 확인
-
-
-
-
-
-
-
-
-
-
         }
-        return "member/mypage_ys";
+        return "/order/mypage_orderHistory";
     }
 
     @GetMapping("/mypage2/")

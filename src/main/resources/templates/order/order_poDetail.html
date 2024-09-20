@@ -46,10 +46,10 @@
 					<tr>
 						<th scope="row">현재상태</th>
 						<td>
-							<span th:text="${poDetail.orderStatus}"></span>
+							<span th:text="${poDetail.orderStatus.renderStatus()}"></span>
 						</td>
 					</tr>
-					<tr>
+					<tr th:unless="${poDetail.invoiceNum == '99999'}">
 						<th scope="row">송장번호</th>
 						<td><span th:text="${poDetail.invoiceNum}"></span></td>
 					</tr>
@@ -296,11 +296,13 @@
 		
 		</section> <!-- //totalPriceSec -->
 		
-	
-	
+		<!--결제 성공 페이지에서는 주문 취소 버튼 제외-->
+		<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-start"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:unless="${orderSuccess}">주문취소</span>
 	</th:block>
 	
-	
+	<!--포트원 cdn-->
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 	<!--order js link-->
 	<script src="/js/order.js"></script>
 	<script src="/js/payment.js"></script>
