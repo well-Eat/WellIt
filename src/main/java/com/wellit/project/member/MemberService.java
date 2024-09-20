@@ -57,8 +57,11 @@ public class MemberService {
 		member.setBirth_year(birth_year);
 		member.setBirth_month(birth_month);
 		member.setBirth_day(birth_day);
+		member.setMileage(0); // 기본 마일리지 설정
+		member.setMemberType("default");
 		member.setBusiness(isBusiness);
 		member.setBusinessName(businessName);
+
 		// 회원 프로필 이미지 등록한다면 해당 이미지 이름도 DB저장
 		String existingImagePath = member.getImageFile();
 
@@ -87,6 +90,7 @@ public class MemberService {
 
 	// 로그인한 사용자명을 알 수 있는 메소드
 	public Member getMember(String memberId) {
+
 	    Member member = this.memberRepository.findByMemberId(memberId);
 	    
 	    if (member != null) {
@@ -220,5 +224,9 @@ public class MemberService {
 	public boolean isIdExists(String memberId) {
         return memberRepository.existsByMemberId(memberId);
     }
+
+	public Optional<Member> findByMemberId(String memberId) {
+		return memberRepository.findByMemberId(memberId);
+	}
 
 }

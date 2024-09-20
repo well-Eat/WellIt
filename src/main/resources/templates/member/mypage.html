@@ -50,6 +50,14 @@
 									</li>
 								</ul>
 							</li>
+							<li class="nav-item has-submenu mt-3">
+								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
+								<ul class="submenu">
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
+									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및
+											처리방침</a></li>
+								</ul>
+							</li>
 						</ul>
 					</nav>
 				</div>
@@ -60,7 +68,9 @@
 						<div class="row">
 							<div class="col-4">
 								<div th:if="${member.ImageFile}">
+
 									<img th:src="@{${member.ImageFile}}" alt="프로필 사진" class="rounded-circle"
+
 										width="150px" height="150px" />
 								</div>
 								<div th:unless="${member.ImageFile}">
@@ -70,25 +80,38 @@
 							</div>
 							<div class="col-8">
 								<div class="row align-middle">
-									<div class="col">
-										<p>사용자 이름 : <span th:text="${member.memberId}"></span></p>
+									<div th:if="${member.memberType != 'KAKAO'}" class="col">
+										<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>
 										<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
 										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
 										<p>비건 종류 :
-											<span th:if="${member.memberVeganType == null}">없음</span>
+
+											<span th:if="${member.memberVeganType == null}">미정</span>
+											<span th:unless="${member.memberVeganType == null}"
+												th:text="${member.memberVeganType}"></span>
+										</p>
+									</div>
+									<div th:if="${member.memberType == 'KAKAO'}" class="col">
+										<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>								
+										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
+										<p>비건 종류 :
+											<span th:if="${member.memberVeganType == null}">미정</span>
+
 											<span th:unless="${member.memberVeganType == null}"
 												th:text="${member.memberVeganType}"></span>
 										</p>
 									</div>
 									<div class="col">
-										<p>마일리지 : mileage</p>
+										<p>마일리지 : <span th:text="${member.mileage}"></span></p>
 
 									</div>
 								</div>
 								<div class="row mt-3 float-end">
 									<div class="col">
-										<a th:href="@{/member/enter_password}" class="btn btn-warning"
-											data-target="#check-password">회원정보 수정</a>
+										<a th:if="${member.memberType == 'KAKAO'}" th:href="@{/member/update_kakao}"
+											class="btn btn-warning">회원정보 수정</a>
+										<a th:if="${member.memberType != 'KAKAO'}" th:href="@{/member/enter_password}"
+											class="btn btn-warning">회원정보 수정</a>
 									</div>
 								</div>
 							</div>
