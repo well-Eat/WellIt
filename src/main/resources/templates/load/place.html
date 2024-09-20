@@ -44,6 +44,7 @@
 		<div class="row" id="restaurant-cards">
 			<div th:if="${findStores != null && !#lists.isEmpty(findStores)}" th:each="findStore : ${findStores}"
 				class="col-md-2 mb-4 card recommendationCard">
+				<span class="favorite-btn" th:data-userid="${session.UserId}" th:data-storeid="${findStore.stoId}">👍</span>
 				<img th:src="@{${findStore.stoImage}}" class="card-img-top mt-2" alt="식당 이름"
 					th:alt="${findStore.stoName}">
 				<div class="card-body">
@@ -67,6 +68,7 @@
 			<div class="row g-0">
 				<div class="col-md-6">
 					<img th:src="@{${stores[7].stoImage}}" class="img-fluid rounded-start" alt="식당 이미지">
+					<span class="favorite-btn" th:data-userid="${session.UserId}" th:data-storeid="${stores[7].stoId}">👍</span>
 				</div>
 				<div class="col-md-6">
 					<div class="card-body p-5">
@@ -75,12 +77,14 @@
 						<a th:href="@{/load/place/{id}(id=${stores[7].stoId})}" class="btn btn-primary w-100">자세히 보기</a>
 					</div>
 				</div>
+				
 			</div>
 		</div>
 		<div class="card mb-5">
 			<div class="row g-0">
 				<div class="col-md-6">
 					<img th:src="@{${stores[8].stoImage}}" class="img-fluid rounded-start" alt="식당 이미지">
+					<span class="favorite-btn" th:data-userid="${session.UserId}" th:data-storeid="${stores[8].stoId}">👍</span>
 				</div>
 				<div class="col-md-6">
 					<div class="card-body p-5">
@@ -114,6 +118,7 @@
 										<h5 th:text="${stores[i * 4 + j].stoName}">식당 이름</h5>
 										<p th:text="${stores[i * 4 + j].stoContent}">식당 설명</p>
 									</div>
+									
 								</a>
 							</div>
 							<div th:if="${(i * 4 + j) >= stores.size()}" class="empty-col"></div>
@@ -221,6 +226,15 @@
 		}
 
 		$(document).ready(function () {
+			const favoriteButtons = document.querySelectorAll('.favorite-btn');
+			    
+			    favoriteButtons.forEach(button => {
+			        button.addEventListener('click', function() {
+			            const userId = this.getAttribute('data-userid');
+			            const storeId = this.getAttribute('data-storeid');
+			            addFavorite(userId, storeId);
+			        });
+			    });
 			// 처음 8개 카드만 보이도록 설정
 			$('.recommendationCard').slice(0, 8).show();
 
@@ -259,7 +273,32 @@
 				});
 			});
 		});
-
+		
+		
+		function addFavorite(memberId, stoId) {
+					console.log('memberId:', memberId); // 디버깅용 출력
+					console.log('stoId:', stoId); // 디버깅용 출력
+					fetch(`/store/favorite/add?memberId=${memberId}&stoId=${stoId}`, { // 서버의 API 엔드포인트
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({memberId: memberId, stoId: stoId})
+					})
+						.then(response => {
+							if (response.ok) {
+								alert('찜하기에 성공했습니다!');
+							} else {
+								return response.text().then(text => {
+									alert(text); // 서버에서 전송한 예외 메시지를 사용자에게 표시
+								});
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+							alert('서버 오류가 발생했습니다.');
+						});
+				}
 	</script>
 </div>
 

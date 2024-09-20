@@ -3,16 +3,33 @@
 
 <head>
 	<title>상품 상세페이지</title>
-	<!-- Bootstrap CSS -->
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-
-	<!-- Bootstrap JS (필요한 경우 Popper.js 포함) -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+	
 </head>
 <div layout:fragment="content" class="container">
 	<!--shop style link-->
 	<link rel="stylesheet" th:href="@{/css/place_detail.css}">
+	
+	<!-- Bootstrap CSS -->
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Bootstrap JS (필요한 경우 Popper.js 포함) -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+		<!-- 한글 언어 파일 추가 -->
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
+
+		<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
+		<link rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
 	<!--페이지 제목-->
 	<div class="row my-5">
 		<div class="pageTitle col text-center">
@@ -50,6 +67,35 @@
 				<p class="card-text"><strong>채식종류:</strong> <span th:text="${store.stoVegetarianType}"></span></p>
 				<p class="card-text"><strong>영업 여부:</strong> <span th:text="${store.isOpen} ? '영업 중' : '영업 종료'"></span>
 				</p>
+				<span class="favorite-btn btn btn-warning" th:data-userid="${session.UserId}"
+					th:data-storeid="${store.stoId}">찜👍</span>
+				<span class='btn btn-success reservation-btn' th:data-userid="${session.UserId}"
+					th:data-storeid="${store.stoId}" th:data-openhours="${store.stoOperatingHours}">예약🗓️</span>
+				<div th:id="'reservationForm_' + ${store.stoId}" style="display: none;">
+					<h5>예약 시간 선택</h5>
+					<div class="form-group">
+						<label th:for="'reservationDate_' + ${store.stoId}">예약 날짜 선택:</label>
+						<div class="input-group">
+							<input type="text" class="form-control" th:id="'reservationDate_' + ${store.stoId}"
+								placeholder="YYYY-MM-DD" required>
+							<div class="input-group-append">
+								<span class="input-group-text">
+									<i class="fa fa-calendar" aria-hidden="true"></i>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group my-2">
+						<label th:for="'reservationTime_' + ${store.stoId}">예약 시간 선택:</label>
+						<select th:id="'reservationTime_' + ${store.stoId}" class="form-control">
+							<!-- 여기서 JavaScript로 동적으로 옵션 추가 -->
+						</select>
+					</div>
+
+					<button class="btn btn-primary" onclick="makeReservation()">확인</button>
+					<button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
+				</div>
 			</div> <!-- //card-body -->
 		</div> <!--col-6 card-->
 	</section> <!--placeInfo-->
@@ -204,8 +250,10 @@
 
 
 	</section>
-	<button th:if="${session.UserId == 'admin'}" th:id="'delete-' + ${store.stoId}" th:onclick="'deleteStore(' + ${store.stoId} + ')'">가게 삭제</button>
-	<a th:if="${session.UserId == 'admin'}" th:href="@{/load/store/update(id=${store.stoId})}" class="btn btn-info" id="updateButton">가게 수정</a>
+	<button th:if="${session.UserId == 'admin'}" th:id="'delete-' + ${store.stoId}"
+		th:onclick="'deleteStore(' + ${store.stoId} + ')'">가게 삭제</button>
+	<a th:if="${session.UserId == 'admin'}" th:href="@{/load/store/update(id=${store.stoId})}" class="btn btn-info"
+		id="updateButton">가게 수정</a>
 	<script>
 		function deleteStore(stoId) {
 			// 삭제 확인 대화 상자
@@ -422,7 +470,172 @@
 					alert("이전 이미지가 없습니다.")
 				}
 			});
+
+			const favoriteButtons = document.querySelectorAll('.favorite-btn');
+
+			favoriteButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const userId = this.getAttribute('data-userid');
+					const storeId = this.getAttribute('data-storeid');
+					addFavorite(userId, storeId);
+				});
+			});
+
+			const reservationButtons = document.querySelectorAll('.reservation-btn');
+
+			reservationButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const userId = this.getAttribute('data-userid');
+					const storeId = this.getAttribute('data-storeid');
+					const openhours = this.getAttribute('data-openhours');
+					showReservationForm(userId, storeId, openhours)
+				})
+			})
 		});
+
+		function addFavorite(memberId, stoId) {
+			console.log('memberId:', memberId); // 디버깅용 출력
+			console.log('stoId:', stoId); // 디버깅용 출력
+			fetch(`/store/favorite/add?memberId=${memberId}&stoId=${stoId}`, { // 서버의 API 엔드포인트
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({memberId: memberId, stoId: stoId})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('찜하기에 성공했습니다!');
+					} else {
+						return response.text().then(text => {
+							alert(text); // 서버에서 전송한 예외 메시지를 사용자에게 표시
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('서버 오류가 발생했습니다.');
+				});
+		}
+
+		//예약 시간 함수
+		function populateReservationTimes(operatingHours) {
+			const timeSelect = document.getElementById(`reservationTime_${window.currentStoId}`);
+			timeSelect.innerHTML = ''; // 기존 옵션 삭제
+
+			const [start, end] = operatingHours.split(' - '); // 시작 시간과 종료 시간 분리
+			const [startHour, startMinute] = start.split(':').map(Number);
+			const [endHour, endMinute] = end.split(':').map(Number);
+			const interval = 30; // 간격 (분 단위)
+
+			const now = new Date(); // 현재 시간
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+
+			// 종료 시간에서 30분 전 계산
+			let adjustedEndHour = endHour;
+			let adjustedEndMinute = endMinute - 30;
+
+			if (adjustedEndMinute < 0) {
+				adjustedEndHour -= 1;
+				adjustedEndMinute += 60; // 60분으로 보정
+			}
+
+			// 종료 시간이 0시가 되지 않도록 처리
+			if (adjustedEndHour < startHour) {
+				adjustedEndHour = startHour;
+				adjustedEndMinute = 0;
+			}
+
+			for (let hour = startHour; hour <= adjustedEndHour; hour++) {
+				for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += interval) {
+					if (hour === adjustedEndHour && minute > adjustedEndMinute) break; // 조정된 종료 시간 초과 시 중단
+
+					// 현재 시간보다 이전의 옵션 제거
+					if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+						continue; // 이전 시간은 건너뜀
+					}
+
+					const formattedHour = hour.toString().padStart(2, '0');
+					const formattedMinute = minute.toString().padStart(2, '0');
+					const optionValue = `${formattedHour}:${formattedMinute}`;
+					const option = document.createElement('option');
+					option.value = optionValue;
+					option.textContent = optionValue;
+					timeSelect.appendChild(option);
+				}
+			}
+		}
+
+
+		// 예약 폼이 열릴 때 시간 옵션을 채우도록 변경
+		function showReservationForm(userId, stoId, operatingHours) {
+			document.getElementById(`reservationForm_${stoId}`).style.display = 'block';
+			window.currentUserId = userId;
+			window.currentStoId = stoId;
+			populateReservationTimes(operatingHours); // 시간 옵션 채우기
+
+
+			// Bootstrap Datepicker 초기화 (한글 설정)
+			$(`#reservationDate_${stoId}`).datepicker({ // 수정
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayHighlight: true,
+				language: "kr",
+				startDate: new Date() // 오늘 날짜부터 선택 가능
+			}).datepicker('setDate', new Date()); // 오늘 날짜로 초기화
+			
+
+		}
+
+
+		function makeReservation() {
+			const reservationDate = $(`#reservationDate_${window.currentStoId}`).val();
+			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
+			const userId = window.currentUserId;
+			
+			if (userId == '로그인되지 않았습니다.') {
+				alert(userId)
+				return; // 로그인되지 않은 경우 예약을 중단
+			}
+
+			const stoId = window.currentStoId; // 이 값이 Long으로 변환될 수 있도록 설정
+
+			const reservationData = {
+				userId: userId,
+				stoId: stoId,
+				reservationTime: `${reservationDate} ${reservationTime}`,
+			};
+
+			fetch('/store/reservations', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(reservationData),
+			})
+				.then(response => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || '예약 요청 중 오류가 발생했습니다.');
+						});
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('예약이 완료되었습니다!');
+					hideReservationForm();  // 예약 완료 후 폼 숨기기
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+		function hideReservationForm() {
+			document.getElementById(`reservationForm_${window.currentStoId}`).style.display = 'none'; // 수정
+		}
+
+
 	</script>
 </div> <!--//layout::content-->
 

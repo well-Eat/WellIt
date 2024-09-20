@@ -34,6 +34,11 @@ public class StoreController {
 		return "load/map";
 	}
     
+    @GetMapping("/favoriteStore")
+    public String getFavoriteStore() {
+    	return "load/favoriteStore";
+    }
+    
     @GetMapping("/store/create")
     public String createStore() {
     	return "manager/storeForm";

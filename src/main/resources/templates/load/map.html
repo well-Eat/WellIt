@@ -1,6 +1,20 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<link rel="stylesheet" href="/css/map.css" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+	<!-- 한글 언어 파일 추가 -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
+
+	<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
 	<div class="selectRegion my-2">
 		<h2 class="my-3">지역을 선택해주세요</h2>
@@ -35,7 +49,7 @@
 					src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span>
 		</form>
 	</div>
-	<div class="container mapWrapper">
+	<div class="container mapWrapper asd">
 		<div id="restaurantList"></div>
 		<div id="pagination"></div>
 		<div id="map"></div>
@@ -328,6 +342,8 @@
 		};
 
 		$(document).ready(function () {
+
+
 			loadAllStores();
 			let city, district;
 
@@ -385,13 +401,13 @@
 						Authorization: 'KakaoAK 79b293f9f7248b594b68090c70db6c6f' // 카카오 REST API 키 입력
 					},
 					success: function (data) {
-					    allRestaurants = data.documents; // 식당 정보를 저장
-					    allRestaurants.forEach(restaurant => {
-					        const addressParts = restaurant.address_name.split(' '); // 주소를 공백으로 분할
-					        const region = addressParts.slice(0, 1).join(' '); // 첫 번째 부분 (예: 경기도)
-					        const district = addressParts.slice(1, 2).join(' '); // 두 번째 부분 (예: 수원시)
-					        displayRestaurants(allRestaurants, region, district); // 각 식당 리스트 표시
-					    });
+						allRestaurants = data.documents; // 식당 정보를 저장
+						allRestaurants.forEach(restaurant => {
+							const addressParts = restaurant.address_name.split(' '); // 주소를 공백으로 분할
+							const region = addressParts.slice(0, 1).join(' '); // 첫 번째 부분 (예: 경기도)
+							const district = addressParts.slice(1, 2).join(' '); // 두 번째 부분 (예: 수원시)
+							displayRestaurants(allRestaurants, region, district); // 각 식당 리스트 표시
+						});
 					},
 					error: function (error) {
 						console.error("Error fetching data: ", error);
@@ -455,132 +471,124 @@
 
 		// 랜덤 배열 생성 (각각 20개 항목)
 		const stoTitles = [
-		    '친환경 건강 카페', '비건 레스토랑', '자연주의 요리', '채식 전문점', '유기농 채식당',
-		    '비건 버거샵', '채식 뷔페', '비건 디저트 카페', '로컬 재료 비건 식당', '비건 피자 하우스',
-		    '비건 스시 바', '비건 샌드위치 스토어', '비건 비빔밥 전문점', '무첨가 건강식당', '채식 버섯집',
-		    '비건 타코 하우스', '채소와 콩 식당', '비건 스무디 카페', '지속가능 식단 전문점', '비건 도시락 가게'
+			'친환경 건강 카페', '비건 레스토랑', '자연주의 요리', '채식 전문점', '유기농 채식당',
+			'비건 버거샵', '채식 뷔페', '비건 디저트 카페', '로컬 재료 비건 식당', '비건 피자 하우스',
+			'비건 스시 바', '비건 샌드위치 스토어', '비건 비빔밥 전문점', '무첨가 건강식당', '채식 버섯집',
+			'비건 타코 하우스', '채소와 콩 식당', '비건 스무디 카페', '지속가능 식단 전문점', '비건 도시락 가게'
 		];
 
 		const stoContents = [
-		    '건강한 식단을 제공합니다.', '다양한 채식 요리를 맛보세요.', '비건 디저트가 유명한 곳입니다.', 
-		    '유기농 재료만 사용합니다.', '환경 친화적인 가게입니다.', '비건 버거를 즐길 수 있는 곳입니다.', 
-		    '매일 신선한 채소를 사용합니다.', '글루텐 프리 옵션도 있습니다.', '로컬 재료를 사용한 메뉴를 선보입니다.', 
-		    '가족과 함께 즐길 수 있는 비건 식당입니다.', '채식의 매력을 느낄 수 있는 곳입니다.', '비건 와플을 제공합니다.', 
-		    '색다른 비건 요리를 만날 수 있습니다.', '비건 피크닉 세트가 있습니다.', '채식만으로도 든든한 한 끼를 제공합니다.',
-		    '아이들을 위한 비건 메뉴도 준비되어 있습니다.', '해외 비건 요리를 선보이는 곳입니다.', '주말 브런치가 인기입니다.', 
-		    '비건 소스와 드레싱을 만날 수 있습니다.', '비건 전문 요리사들이 준비한 식당입니다.'
+			'건강한 식단을 제공합니다.', '다양한 채식 요리를 맛보세요.', '비건 디저트가 유명한 곳입니다.',
+			'유기농 재료만 사용합니다.', '환경 친화적인 가게입니다.', '비건 버거를 즐길 수 있는 곳입니다.',
+			'매일 신선한 채소를 사용합니다.', '글루텐 프리 옵션도 있습니다.', '로컬 재료를 사용한 메뉴를 선보입니다.',
+			'가족과 함께 즐길 수 있는 비건 식당입니다.', '채식의 매력을 느낄 수 있는 곳입니다.', '비건 와플을 제공합니다.',
+			'색다른 비건 요리를 만날 수 있습니다.', '비건 피크닉 세트가 있습니다.', '채식만으로도 든든한 한 끼를 제공합니다.',
+			'아이들을 위한 비건 메뉴도 준비되어 있습니다.', '해외 비건 요리를 선보이는 곳입니다.', '주말 브런치가 인기입니다.',
+			'비건 소스와 드레싱을 만날 수 있습니다.', '비건 전문 요리사들이 준비한 식당입니다.'
 		];
 
 		const stoImages = [
-		    '/imgs/map/image1.jpg', '/imgs/map/image2.jpg', '/imgs/map/image3.jpg', 
-		    '/imgs/map/image4.jpg', '/imgs/map/image5.jpg', '/imgs/map/image6.jpg', 
-		    '/imgs/map/image7.jpg', '/imgs/map/image8.jpg', '/imgs/map/image9.jpg', 
-		    '/imgs/map/image10.jpg', '/imgs/map/image11.jpg', '/imgs/map/image12.jpg', 
-		    '/imgs/map/image13.jpg', '/imgs/map/image14.jpg', '/imgs/map/image15.jpg', 
-		    '/imgs/map/image16.jpg', '/imgs/map/image17.jpg', '/imgs/map/image18.jpg', 
-		    '/imgs/map/image19.jpg', '/imgs/map/image20.jpg'
+			'/imgs/map/image1.jpg', '/imgs/map/image2.jpg', '/imgs/map/image3.jpg',
+			'/imgs/map/image4.jpg', '/imgs/map/image5.jpg', '/imgs/map/image6.jpg',
+			'/imgs/map/image7.jpg', '/imgs/map/image8.jpg', '/imgs/map/image9.jpg',
+			'/imgs/map/image10.jpg', '/imgs/map/image11.jpg', '/imgs/map/image12.jpg',
+			'/imgs/map/image13.jpg', '/imgs/map/image14.jpg', '/imgs/map/image15.jpg',
+			'/imgs/map/image16.jpg', '/imgs/map/image17.jpg', '/imgs/map/image18.jpg',
+			'/imgs/map/image19.jpg', '/imgs/map/image20.jpg'
 		];
 
 		const stoOperatingHours = [
-		    '10:00 - 22:00', '11:00 - 21:00', '09:00 - 20:00', '12:00 - 23:00', '08:00 - 18:00', 
-		    '10:00 - 21:00', '11:30 - 22:30', '07:00 - 19:00', '10:00 - 20:00', '09:00 - 22:00', 
-		    '08:30 - 19:30', '09:00 - 21:00', '12:00 - 21:00', '11:00 - 20:00', '09:30 - 22:00',
-		    '10:00 - 20:30', '07:00 - 18:00', '10:00 - 23:00', '08:00 - 20:00', '09:00 - 19:00'
+			'10:00 - 22:00', '11:00 - 21:00', '09:00 - 20:00', '12:00 - 23:00', '08:00 - 18:00',
+			'10:00 - 21:00', '11:30 - 22:30', '07:00 - 19:00', '10:00 - 20:00', '09:00 - 22:00',
+			'08:30 - 19:30', '09:00 - 21:00', '12:00 - 21:00', '11:00 - 20:00', '09:30 - 22:00',
+			'10:00 - 20:30', '07:00 - 18:00', '10:00 - 23:00', '08:00 - 20:00', '09:00 - 19:00'
 		];
 
 		const stoClosedDays = [
-		    '매주 월요일 휴무', '첫째 주 화요일 휴무', '매주 수요일 휴무', '공휴일 휴무', '매주 금요일 휴무', 
-		    '둘째, 넷째 주 일요일 휴무', '매월 마지막 주 토요일 휴무', '연중무휴', '매주 토요일 휴무', '둘째 주 목요일 휴무', 
-		    '매주 목요일 휴무', '매월 둘째 주 수요일 휴무', '셋째 주 일요일 휴무', '공휴일 전날 휴무', '매달 첫째 주 월요일 휴무',
-		    '공휴일 개장', '주말과 공휴일 연장 영업', '첫째, 셋째 주 월요일 휴무', '비오는 날 휴무', '여름 휴가철 휴무'
+			'매주 월요일 휴무', '첫째 주 화요일 휴무', '매주 수요일 휴무', '공휴일 휴무', '매주 금요일 휴무',
+			'둘째, 넷째 주 일요일 휴무', '매월 마지막 주 토요일 휴무', '연중무휴', '매주 토요일 휴무', '둘째 주 목요일 휴무',
+			'매주 목요일 휴무', '매월 둘째 주 수요일 휴무', '셋째 주 일요일 휴무', '공휴일 전날 휴무', '매달 첫째 주 월요일 휴무',
+			'공휴일 개장', '주말과 공휴일 연장 영업', '첫째, 셋째 주 월요일 휴무', '비오는 날 휴무', '여름 휴가철 휴무'
 		];
 
 		const stoRecommendedMenus = [
-		    '비건 버거', '토마토 파스타', '아보카도 샐러드', '구운 채소 플래터', '비건 피자', 
-		    '렌틸콩 스프', '그린 스무디', '비건 초콜릿 케이크', '유기농 현미밥', '비건 라자냐', 
-		    '비건 타코', '양상추 랩', '비건 초밥', '채소 덮밥', '비건 라면', 
-		    '코코넛 카레', '두부 샐러드', '과일 플래터', '비건 치즈 케이크', '비건 파니니'
+			'비건 버거', '토마토 파스타', '아보카도 샐러드', '구운 채소 플래터', '비건 피자',
+			'렌틸콩 스프', '그린 스무디', '비건 초콜릿 케이크', '유기농 현미밥', '비건 라자냐',
+			'비건 타코', '양상추 랩', '비건 초밥', '채소 덮밥', '비건 라면',
+			'코코넛 카레', '두부 샐러드', '과일 플래터', '비건 치즈 케이크', '비건 파니니'
 		];
 
 		const stoParkingInfos = [
-		    '주차 가능', '주차 불가', '인근 공용 주차장 이용', '가게 앞 무료 주차', '발렛 파킹 서비스 제공', 
-		    '가게 뒤쪽 주차장', '지하 주차장', '인근 유료 주차장 이용', '주차 공간 협소', '주차 지원 없음', 
-		    '주차 구역 안내표지 있음', '주차장 있음', '주차가 혼잡할 수 있음', '주말에만 주차 가능', '가게 앞 주차 금지',
-		    '자전거 주차 가능', '전기차 충전 주차 가능', '1시간 무료 주차', '주차 공간 넉넉함', '저녁 시간 주차 금지'
+			'주차 가능', '주차 불가', '인근 공용 주차장 이용', '가게 앞 무료 주차', '발렛 파킹 서비스 제공',
+			'가게 뒤쪽 주차장', '지하 주차장', '인근 유료 주차장 이용', '주차 공간 협소', '주차 지원 없음',
+			'주차 구역 안내표지 있음', '주차장 있음', '주차가 혼잡할 수 있음', '주말에만 주차 가능', '가게 앞 주차 금지',
+			'자전거 주차 가능', '전기차 충전 주차 가능', '1시간 무료 주차', '주차 공간 넉넉함', '저녁 시간 주차 금지'
 		];
-		
+
 		const stoVegetarianType = [
 			'비건', '프루테리언', '락토 베지테리언', '오보 베지테리언', '락토 오보 베지테리언', '페스코 베지테리언',
-			'폴로 베지테리언', '플렉시테리언' 
+			'폴로 베지테리언', '플렉시테리언'
 		]
 
 		// 랜덤 선택 함수
 		function getRandomItem(arr) {
-		    return arr[Math.floor(Math.random() * arr.length)];
+			return arr[Math.floor(Math.random() * arr.length)];
 		}
 
 		async function displayRestaurants(restaurants, city, district) {
-		    const restaurantList = $('#restaurantList');
+			const restaurantList = $('#restaurantList');
 
-		    for (const restaurant of restaurants) {
-		        const placeName = restaurant.place_name;
-		        const address = restaurant.road_address_name || restaurant.address_name;
-		        const phoneNumber = restaurant.phone || '전화번호 없음';
-		        const category = restaurant.category_name || '카테고리 없음';
-		        const lat = restaurant.y; // 위도
-		        const lng = restaurant.x; // 경도
-		        const uniqueId = restaurant.id; // 카카오맵 API에서 제공하는 고유 ID
-
-
+			for (const restaurant of restaurants) {
+				const placeName = restaurant.place_name;
+				const address = restaurant.road_address_name || restaurant.address_name;
+				const phoneNumber = restaurant.phone || '전화번호 없음';
+				const category = restaurant.category_name || '카테고리 없음';
+				const lat = restaurant.y; // 위도
+				const lng = restaurant.x; // 경도
+				const uniqueId = restaurant.id; // 카카오맵 API에서 제공하는 고유 ID
 
 
-		        // 랜덤한 값을 사용하여 데이터 채우기
-		        const storeData = {
-		            stoName: placeName,
-		            stoTitle: getRandomItem(stoTitles),
-		            stoContent: getRandomItem(stoContents),
-		            stoCategory: category,
-		            stoRegionProvince: city,
-		            stoRegionCity: district,
-		            viewCount: 0,
-		            recommendationCount: 0,
-		            stoContact: phoneNumber,
-		            stoAddress: address,
-		            stoImage: getRandomItem(stoImages),
-		            stoOperatingHours: getRandomItem(stoOperatingHours),
-		            stoClosedDays: getRandomItem(stoClosedDays),
-		            stoRecommendedMenu: getRandomItem(stoRecommendedMenus),
-		            stoParkingInfo: getRandomItem(stoParkingInfos),
-		            stoLatitude: lat,
-		            stoLongitude: lng,
-					stoVegetarianType: getRandomItem(stoVegetarianType), 
-		            createdAt: new Date(),
-		            updatedAt: new Date(),
-		            isOpen: true,
-		            kakaoStoreId: uniqueId,
-					storeReviews: [
-						{
-							revId: 0,
-							revImg: "",
-							revText: "",
-							revRating: 0,
-							writer: ""
-						}
-					] // 빈 리스트로 초기화
-		        };
+
+
+				// 랜덤한 값을 사용하여 데이터 채우기
+				const storeData = {
+					stoName: placeName,
+					stoTitle: getRandomItem(stoTitles),
+					stoContent: getRandomItem(stoContents),
+					stoCategory: category,
+					stoRegionProvince: city,
+					stoRegionCity: district,
+					viewCount: 0,
+					recommendationCount: 0,
+					stoContact: phoneNumber,
+					stoAddress: address,
+					stoImage: getRandomItem(stoImages),
+					stoOperatingHours: getRandomItem(stoOperatingHours),
+					stoClosedDays: getRandomItem(stoClosedDays),
+					stoRecommendedMenu: getRandomItem(stoRecommendedMenus),
+					stoParkingInfo: getRandomItem(stoParkingInfos),
+					stoLatitude: lat,
+					stoLongitude: lng,
+					stoVegetarianType: getRandomItem(stoVegetarianType),
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					isOpen: true,
+					kakaoStoreId: uniqueId
+				};
 
 				// 고유 ID 존재 여부 체크
-								        const exists = await checkIfExists(uniqueId);
-								        if (exists) {
-								            continue; // 중복된 경우 다음 레스토랑으로 넘어감
-								        }
-				
-		        // API를 통해 데이터 저장
-		        await saveStoreData(storeData);
+				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
+				const exists = await checkIfExists(uniqueId);
+				if (exists) {
+					continue; // 중복된 경우 다음 레스토랑으로 넘어감
+				}
 
-		        // 일정 시간 대기 (API 호출 간 간격 유지)
-		        await new Promise(resolve => setTimeout(resolve, 100));
-		    }
+				// API를 통해 데이터 저장
+				await saveStoreData(storeData);
+
+				// 일정 시간 대기 (API 호출 간 간격 유지)
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
 		}
 
 		//데이터 저장하는 함수
@@ -620,12 +628,12 @@
 				const {latitude, longitude} = position.coords;
 
 				fetch('/load/store')
-				.then(response => {
-				        if (!response.ok) {
-				            throw new Error('Network response was not ok');
-				        }
-				        return response.json();
-				    })
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
 					.then(stores => {
 						// 사용자의 위치 근처 가게 필터링 (예: 5km 이내)
 						const nearbyStores = stores.filter(store => {
@@ -661,99 +669,158 @@
 		}
 
 		function displayAllRestaurants(filteredStores, currentPage) {
-		    const restaurantList = $('#restaurantList');
-		    const itemsPerPage = 5; // 페이지당 항목 수
-		    const startIndex = (currentPage - 1) * itemsPerPage;
-		    const endIndex = startIndex + itemsPerPage;
-		    const paginatedRestaurants = filteredStores.slice(startIndex, endIndex);
+			fetch('/load/getUserId') // 서버의 엔드포인트로 요청
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('네트워크 문제가 발생했습니다.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					const userId = data.userId; // 서버에서 받은 UserId
+					const restaurantList = $('#restaurantList');
+					const itemsPerPage = 5; // 페이지당 항목 수
+					const startIndex = (currentPage - 1) * itemsPerPage;
+					const endIndex = startIndex + itemsPerPage;
+					const paginatedRestaurants = filteredStores.slice(startIndex, endIndex);
+					restaurantList.empty(); // 기존 리스트 제거
+					if (paginatedRestaurants.length === 0) {
+						restaurantList.append('<div>식당이 없습니다.</div>');
+						return;
+					}
 
-		    restaurantList.empty(); // 기존 리스트 제거
-		    if (paginatedRestaurants.length === 0) {
-		        restaurantList.append('<div>식당이 없습니다.</div>');
-		        return;
-		    }
+					paginatedRestaurants.forEach((store, index) => {
+						const {
+							stoId,
+							stoName,
+							stoTitle,
+							stoContent,
+							stoCategory,
+							viewCount,
+							recommendationCount,
+							stoContact,
+							stoAddress,
+							stoImage,
+							stoOperatingHours,
+							stoClosedDays,
+							stoRecommendedMenu,
+							stoParkingInfo,
+							stoLatitude,
+							stoLongitude,
+							stoVegetarianType,
+							stoRegionProvince,
+							stoRegionCity,
+							kakaoStoreId,
+							storeReviews
+						} = store;
 
-		    paginatedRestaurants.forEach((store, index) => {
-		        const {
-		            stoName,
-		            stoTitle,
-		            stoContent,
-		            stoCategory,
-		            viewCount,
-		            recommendationCount,
-		            stoContact,
-		            stoAddress,
-		            stoImage,
-		            stoOperatingHours,
-		            stoClosedDays,
-		            stoRecommendedMenu,
-		            stoParkingInfo,
-		            stoLatitude,
-		            stoLongitude,
-		            stoVegetarianType,
-		            isOpen,
-		            stoRegionProvince,
-		            stoRegionCity,
-		            kakaoStoreId,
-					storeReviews
-		        } = store;
+						const isOpen = checkIfOpen(stoOperatingHours); // 여기서 isOpen 값을 설정
 
-		        const storeItem = $(`
-		            <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
-		                <p class='solo'>${stoName} - ${stoTitle}</p>
-		                <img src="${stoImage}" alt="${stoName}" class='img-fluid'><br>
-		                내용: ${stoContent}<br>
-		                카테고리: ${stoCategory}<br>
-		                지역: ${stoRegionProvince}, ${stoRegionCity}<br>
-		                전화번호: ${stoContact}<br>
-		                주소: ${stoAddress}<br>
-		                운영시간: ${stoOperatingHours}<br>
-		                휴무일: ${stoClosedDays}<br>
-		                추천 메뉴: ${stoRecommendedMenu}<br>
-		                주차 정보: ${stoParkingInfo}<br>
-		                채식 종류: ${stoVegetarianType}<br>
-		                조회수: ${viewCount}<br>
-		                추천수: ${recommendationCount}<br>
-		                카카오 ID: ${kakaoStoreId}<br>
-		                상태: ${isOpen ? '영업중' : '휴업'}<br>
-		            </div>
-		        `);
+						function checkIfOpen(operatingHours) {
+							const [openTime, closeTime] = operatingHours.split(' - ');
+							const currentTime = new Date();
+							const currentHours = currentTime.getHours();
+							const currentMinutes = currentTime.getMinutes();
 
-		        restaurantList.append(storeItem);
-		        
-		        storeItem.on('click', function () {
-		            $('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
-		            $(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
-		            initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
-		        });
-		    });
+							const [openHours, openMinutes] = openTime.split(':').map(Number);
+							const [closeHours, closeMinutes] = closeTime.split(':').map(Number);
 
-		    // 기본적으로 첫 번째 항목 확장
-		    if (paginatedRestaurants.length > 0) {
-		        const firstItem = $('.restaurant-item').first();
-		        firstItem.addClass('expanded');
-		        initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
-		    }
+							const currentTotalMinutes = currentHours * 60 + currentMinutes;
+							const openTotalMinutes = openHours * 60 + openMinutes;
+							const closeTotalMinutes = closeHours * 60 + closeMinutes;
 
-		    setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
+							return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes < closeTotalMinutes;
+						}
+
+						const storeItem = $(`
+                    <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
+                        <p class='solo'>${stoName} - ${stoTitle} </p>
+                        <img src="${stoImage}" alt="${stoName}" class='img-fluid'><br>
+                        내용: ${stoContent}<br>
+                        카테고리: ${stoCategory}<br>
+                        지역: ${stoRegionProvince}, ${stoRegionCity}<br>
+                        전화번호: ${stoContact}<br>
+                        주소: ${stoAddress}<br>
+                        운영시간: ${stoOperatingHours}<br>
+                        휴무일: ${stoClosedDays}<br>
+                        추천 메뉴: ${stoRecommendedMenu}<br>
+                        주차 정보: ${stoParkingInfo}<br>
+                        채식 종류: ${stoVegetarianType}<br>
+                        조회수: ${viewCount}<br>
+                        리뷰수 : ${storeReviews.length}<br>
+                        추천 평점: ${recommendationCount}<br>
+                        카카오 ID: ${kakaoStoreId}<br>
+                        상태: ${isOpen ? '영업중' : '영업종료'}<br>
+                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btn-info">자세히보기</a>
+						<span class='mx-2 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
+						<span class='btn btn-success' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}')">예약🗓️</span>
+						<div id="reservationForm_${stoId}" style="display: none;">
+						    <h5>예약 시간 선택</h5>
+							<div class="form-group">
+							    <label for="reservationDate_${stoId}">예약 날짜 선택:</label>
+							    <div class="input-group">
+							        <input type="text" class="form-control" id="reservationDate_${stoId}" placeholder="YYYY-MM-DD" required>
+							        <div class="input-group-append">
+							            <span class="input-group-text">
+							                <i class="fa fa-calendar" aria-hidden="true"></i>
+							            </span>
+							        </div>
+							    </div>
+							
+							</div>
+							<div class="form-group my-2">
+							    <label for="reservationTime_${stoId}">예약 시간 선택:</label>
+							    <select id="reservationTime_${stoId}" class="form-control">
+							        
+							    </select>
+							</div>
+						    <button class="btn btn-primary" onclick="makeReservation()">확인</button>
+						    <button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
+						</div>
+                    </div>
+                `);
+
+						restaurantList.append(storeItem);
+
+						storeItem.on('click', function () {
+							$('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
+							$(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
+							initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
+							$(`#${store.stoId}`).datetimepicker(); // 고유 ID로 초기화
+						});
+					});
+
+					// 기본적으로 첫 번째 항목 확장
+					if (paginatedRestaurants.length > 0) {
+						const firstItem = $('.restaurant-item').first();
+						firstItem.addClass('expanded');
+						initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
+					}
+
+					setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
+				})
+				.catch(error => console.error('Error:', error));
 		}
+
+
+		//페이지네이션 설정 함수
 		function setupPagination(totalItems, itemsPerPage, filteredStores) {
-		    const pagination = $('#pagination');
-		    pagination.empty(); // 기존 페이지네이션 제거
-		    const totalPages = Math.ceil(totalItems / itemsPerPage); // 총 페이지 수
+			const pagination = $('#pagination');
+			pagination.empty(); // 기존 페이지네이션 제거
+			const totalPages = Math.ceil(totalItems / itemsPerPage); // 총 페이지 수
 
-		    for (let i = 1; i <= totalPages; i++) {
-		        const pageButton = $('<button>').text(i).on('click', function () {
-		            itemsPerPage = i; // 클릭한 페이지로 이동
-		            displayAllRestaurants(filteredStores, itemsPerPage); // 해당 페이지의 식당 리스트 표시
-		        });
+			for (let i = 1; i <= totalPages; i++) {
+				const pageButton = $('<button>').text(i).on('click', function () {
+					itemsPerPage = i; // 클릭한 페이지로 이동
+					displayAllRestaurants(filteredStores, itemsPerPage); // 해당 페이지의 식당 리스트 표시
+				});
 
-		        if (i === itemsPerPage) {
-		            pageButton.addClass('active');
-		        }
+				if (i === itemsPerPage) {
+					pageButton.addClass('active');
+				}
 
-		        pagination.append(pageButton);
-		    }
+				pagination.append(pageButton);
+			}
 		}
 		// 거리 계산 함수
 		function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -796,6 +863,183 @@
 			infowindow.open(map, marker); // 마커 위에 InfoWindow 표시
 		}
 
+		//찜하기 함수
+		function addFavorite(memberId, stoId) {
+			console.log('memberId:', memberId); // 디버깅용 출력
+			console.log('stoId:', stoId); // 디버깅용 출력
+			fetch(`/store/favorite/add?memberId=${memberId}&stoId=${stoId}`, { // 서버의 API 엔드포인트
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({memberId: memberId, stoId: stoId})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('찜하기에 성공했습니다!');
+					} else {
+						return response.text().then(text => {
+							if (text === "로그인해주세요") {
+								alert(text);
+								// 로그인 페이지로 리다이렉트
+								window.location.href = 'http://localhost:8080/member/login'; // 로그인 페이지 URL로 수정
+							} else {
+								alert(text); // 다른 에러 메시지 표시
+							}
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('서버 오류가 발생했습니다.');
+				});
+		}
+
+
+		//예약 시간 함수
+		function populateReservationTimes(operatingHours) {
+			const timeSelect = document.getElementById(`reservationTime_${window.currentStoId}`);
+			timeSelect.innerHTML = ''; // 기존 옵션 삭제
+
+			const [start, end] = operatingHours.split(' - '); // 시작 시간과 종료 시간 분리
+			const [startHour, startMinute] = start.split(':').map(Number);
+			const [endHour, endMinute] = end.split(':').map(Number);
+			const interval = 30; // 간격 (분 단위)
+
+			const now = new Date(); // 현재 시간
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+
+			// 종료 시간에서 30분 전 계산
+			let adjustedEndHour = endHour;
+			let adjustedEndMinute = endMinute - 30;
+
+			if (adjustedEndMinute < 0) {
+				adjustedEndHour -= 1;
+				adjustedEndMinute += 60; // 60분으로 보정
+			}
+
+			// 종료 시간이 0시가 되지 않도록 처리
+			if (adjustedEndHour < startHour) {
+				adjustedEndHour = startHour;
+				adjustedEndMinute = 0;
+			}
+
+			let hasAvailableTime = false; // 예약 가능한 시간이 있는지 여부
+
+			for (let hour = startHour; hour <= adjustedEndHour; hour++) {
+				for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += interval) {
+					if (hour === adjustedEndHour && minute > adjustedEndMinute) break; // 조정된 종료 시간 초과 시 중단
+
+					// 현재 시간보다 이전의 옵션 제거
+					if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+						continue; // 이전 시간은 건너뜀
+					}
+
+					hasAvailableTime = true; // 예약 가능한 시간이 있음을 표시
+
+					const formattedHour = hour.toString().padStart(2, '0');
+					const formattedMinute = minute.toString().padStart(2, '0');
+					const optionValue = `${formattedHour}:${formattedMinute}`;
+					const option = document.createElement('option');
+					option.value = optionValue;
+					option.textContent = optionValue;
+					timeSelect.appendChild(option);
+				}
+			}
+
+			// 예약 가능한 시간이 없을 경우 placeholder처럼 보이도록 설정
+			if (!hasAvailableTime) {
+				const placeholderOption = document.createElement('option');
+				placeholderOption.value = '';
+				placeholderOption.textContent = '예약 가능한 시간이 없습니다';
+				placeholderOption.disabled = true; // 선택할 수 없도록 비활성화
+				placeholderOption.selected = true; // 기본 선택 상태
+				timeSelect.appendChild(placeholderOption);
+			}
+		}
+
+		// 예약 폼이 열릴 때 시간 옵션을 채우도록 변경
+		function showReservationForm(userId, stoId, operatingHours) {
+			document.getElementById(`reservationForm_${stoId}`).style.display = 'block';
+			window.currentUserId = userId;
+			window.currentStoId = stoId;
+			populateReservationTimes(operatingHours); // 시간 옵션 채우기
+
+
+
+			// Bootstrap Datepicker 초기화 (한글 설정)
+			$(`#reservationDate_${stoId}`).datepicker({ // 수정
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayHighlight: true,
+				language: "kr",
+				startDate: new Date() // 오늘 날짜부터 선택 가능
+			}).datepicker('setDate', new Date()); // 오늘 날짜로 초기화
+		}
+
+
+		function makeReservation() {
+			const reservationDate = $(`#reservationDate_${window.currentStoId}`).val();
+			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
+			const userId = window.currentUserId;
+			if (userId == '로그인되지 않았습니다.') {
+				alert(userId)
+			}
+
+			const stoId = window.currentStoId;
+
+			const reservationData = {
+				userId: userId,
+				stoId: stoId,
+				reservationTime: `${reservationDate} ${reservationTime}`,
+			};
+
+			fetch('/store/reservations', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(reservationData),
+			})
+				.then(response => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || '예약 요청 중 오류가 발생했습니다.');
+						});
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('예약이 완료되었습니다!');
+					hideReservationForm();  // 예약 완료 후 폼 숨기기
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+		function hideReservationForm() {
+			document.getElementById(`reservationForm_${window.currentStoId}`).style.display = 'none'; // 수정
+		}
+
+		// 날짜 및 시간 선택기 토글 함수
+		function toggleDateTimePicker() {
+			const picker = $(`#datetimepicker_${window.currentStoId}`);
+
+			// DateTimePicker가 초기화되었는지 확인
+			const dateTimePicker = picker.data("DateTimePicker");
+			if (dateTimePicker) {
+				if (dateTimePicker.date()) {
+					dateTimePicker.date(null); // 닫기
+				} else {
+					dateTimePicker.show(); // 열기
+				}
+			} else {
+				console.error("DateTimePicker가 초기화되지 않았습니다.");
+				alert("날짜 및 시간 선택기가 초기화되지 않았습니다.");
+			}
+		}
 
 	</script>
 </div>

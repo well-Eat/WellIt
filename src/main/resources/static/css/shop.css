@@ -1,14 +1,9 @@
-/* 폰트 임포트 테스트 */
-/*@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');*/
-
 /* 웹페이지 전체 공통 (추후 제외할 내용) */
 * {margin: 0;padding: 0;}
 body{
     background-color : #fff;
-    /*font-family: 'Noto Sans KR', sans-serif;*/
     color: #333;
 }
-
 
 /* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
 li a{
@@ -23,13 +18,16 @@ ul {
 
 
 
+
 /********************** common *********************/
 /********************** common *********************/
 /********************** common *********************/
 section {
     height: auto;
 }
-
+:root{
+    --swiper-navigation-size: 32px;
+}
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
@@ -120,6 +118,8 @@ ul.sortBox li:not(:last-of-type)::after{
 .prodItem .card-img-box:hover{
     transform: scale(1.05);
 }
+
+
 /*담기 버튼*/
 .prodItem a.addCartBtn:active,
 .prodItem a.addCartBtn:focus,
@@ -154,7 +154,6 @@ ul.sortBox li:not(:last-of-type)::after{
 .prodItem h5.prodName{
     font-weight: 700;
 }
-.prodInfo p.prodDesc,
 .prodItem p.prodDesc{
     color : #999;
     font-size: 16px;
@@ -171,9 +170,13 @@ ul.sortBox li:not(:last-of-type)::after{
     font-weight: bold;
     display: inline-block;
 }
-.prodInfo p.prodFinalPrice,
 .prodItem p.prodFinalPrice{
     font-size: 20px;
+    font-weight: 700;
+        display: inline-block;
+}
+.prodInfo .prodFinalPrice{
+    font-size: 24px;
     font-weight: 700;
         display: inline-block;
 }
@@ -191,16 +194,27 @@ ul.sortBox li:not(:last-of-type)::after{
 /*상품 이미지*/
 .prodInfo .card-img-wrapper{
     width: 100%;
-    height: 300px;
+    /*height: 300px;*/
+    height: 100%;
     overflow: hidden;
+
+}
+@media (max-width: 767.9999px) {
+    .prodInfo .card-img-wrapper{
+        aspect-ratio: 1;
+    }
 }
 .prodInfo .card-img-box{
     width: 100%;
     height: 100%;
-    background-position: center;
+    background-position-x: center;
+    background-position-y: top;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
+    background-clip: border-box;
     transition: transform 300ms ease;
+    /*border-radius: 50px;*/
+
 }
 
 /*카드 기본 스타일 리셋*/
@@ -266,40 +280,115 @@ ul.sortBox li:not(:last-of-type)::after{
     opacity: 1;
 }
 
-/*폼 버튼 라인*/
+.prodTotalPrice{
+    font-weight: 900;
+    font-size: 32px;
+}
+
+/*폼 버튼 라인 : 장바구니, 좋아요, 구매하기*/
 .prodInfo .btns{
     display: flex;
     flex-flow: row nowrap;
     align-items: stretch;
     justify-content: start;
+    height: 45px;
 }
-.prodInfo .btns a.btn{
+.prodInfo .btns a.heart{
     width: 50px;
-    height: 100%;
-    display: inline-block;
-    align-items: stretch;
+    /*height: 100%;*/
+    display: inline-flex;
     align-self: stretch;
     justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.prodInfo .btns a.goToCart{
+    width: calc(100% - 60px);
+}
+
+/***** 상세페이지 리뷰 섹션 ******/
+
+/*리뷰 섹션 상단 : 리뷰 이미지 라인*/
+.prodReview > h3{
+
+}
+.prodReview span.revCnt{
+    font-size: 16px;
+    color: #999999;
+    font-weight: bold;
+}
+
+/*이미지 리뷰 라인 래퍼*/
+.imgRevLine{
+    position: relative;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+}
+
+/*리뷰 이미지를 직접 출력할 박스*/
+.revImgBox {
+    width: 100%;
+    aspect-ratio: 1;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*이미지리뷰 스와이퍼 버튼*/
+.shopImgRev.swiper-controller{
+    width: 100%;
+    position: relative;
+}
+
+.shopImgRev.swiper-button{
+    width: var(--swiper-navigation-size);
+    color: #666666;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    box-shadow: 1px 1px 5px rgba(153, 153, 153, 0.76);
+}
+
+.shopImgRev.swiper-button::after{
+    font-size: 16px;
+}
+.shopImgRev.swiper-button:active{
+    box-shadow: inset 1px 1px 2px rgba(153, 153, 153, 0.73);
+}
+
+.shopImgRev.swiper-button-next{
+    right: var(--swiper-navigation-sides-offset, calc(var(--swiper-navigation-size) * (-1.1)));
+}
+.shopImgRev.swiper-button-prev{
+    left: var(--swiper-navigation-sides-offset, calc(var(--swiper-navigation-size) * (-1.1)));
+
 }
 
 
 
+/* 리뷰리스트 : 각 리뷰 블록 내부*/
+.reviewBlock .createdAt{
+    color: #bbbbbb;
+}
 
 
+.reviewBlock .revImgBox{
+    width: 100%;
+    max-height: 300px;
+}
 
+.modal-footer .revImgBox.highlight{
+    /*border: 5px solid red;*/
+    /*box-sizing: border-box;*/
+    background-clip: border-box;
+    box-shadow: 0px 0px 8px #f6ff69,  0px 0px 3px #007bff;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+.modalColRight .revText{
+    word-wrap: break-word;
+    word-break: break-all;
+}
 
 
 
@@ -319,7 +408,208 @@ ul.sortBox li:not(:last-of-type)::after{
 
 
 
+ol {
+    padding-left: 0;
+}
 
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+.gallery img {
+    width: 100px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.preview {
+    height: 150px;
+    margin-top: 3px;
+}
+
+.preview img {
+    object-fit: contain;
+    max-width: 100%;
+    height: 100%;
+}
+
+.prodInfo .infoGroup {
+    margin-bottom: 8px;
+}
+
+.prodInfo label.form-label {
+    margin-bottom: 2px;
+}
+.mainProdCard .card-header{
+    background-color: var(--bs-success);
+
+}
+.mainProdCard .card-header p{
+    font-size: 22px;
+    /*color: var(--bs-success);*/
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+
+
+/* 드래그 앤 드롭 시 활성화된 느낌을 주기 위한 스타일 */
+/*.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    position: relative;
+}*/
+
+.drop-area.active {
+    border-color: #3498db;
+    background-color: #ecf0f1;
+}
+
+/* 이미지 프레임 스타일 */
+.mainImgFrame {
+    position: relative;
+    border: 2px solid #ddd;
+    min-height: 150px;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    width: 100%; /* 추가: width 100% */
+    box-sizing: border-box;
+}
+
+/* 이미지가 영역에 맞도록 contain 크기로 조정 */
+.mainImgFrame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* 추가: 이미지가 영역을 벗어나지 않고 contain 방식으로 맞춤 */
+    display: block;
+    margin: 0 auto;
+}
+
+/* 파일 선택 안내 텍스트 스타일 */
+.drop-area p {
+    font-size: 16px;
+    color: #777;
+}
+
+/* 삭제 버튼 스타일 */
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    line-height: 25px;
+    text-align: center;
+    display: none; /* 기본적으로는 숨김 */
+}
+
+/* .prodImageDropArea에 파일이 있을 때만 삭제 버튼이 보이도록 */
+.prodImageDropArea:hover img + .remove-btn {
+    display: block;
+}
+
+
+.mainImgFrame:hover img + .remove-btn {
+    display: block;
+}
+
+
+/* 추가: sortable 기능을 적용하기 위한 스타일 */
+#mainDropArea {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mainImgFrame {
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+.howToMake {
+    height: 100%;
+}
+
+ol#prodImageCardList{
+    padding-left: 0;
+}
+/*레시피카드 헤더*/
+.prodImageCard .card-header{
+    padding: 0;
+}
+.prodImageCard .removeCard,
+.prodImageCard .addCard{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    font-size: 16px;
+}
+.prodImageCard span.textStep{
+    text-align: right;
+}
+
+.prodImageCard span.textStep,
+.prodImageCard input.prodImageNum{
+    font-size: 22px;
+    color: var(--bs-success);
+    font-weight: 600;
+    display: inline-block;
+    padding: 0;
+    width: 100px;
+}
+
+
+.addCard:hover, .removeCard:hover {
+    background-color: var(--bs-success);
+    opacity: 20%;
+}
+
+.addCard:active, .removeCard:active {
+    background-color: var(--bs-success) !important;
+    opacity: 50%;
+}
+
+.preview{
+    overflow: hidden;
+}
+.preview p{
+    font-size: 12px;
+    color: #999999;
+}
 
 
 

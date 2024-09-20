@@ -67,6 +67,7 @@ public class MemberController {
 		return "/member/register";
 	}
 
+
 	@PostMapping("/register")
 	public String register(@Valid MemberRegisterForm memberRegisterForm, BindingResult bindingResult,
 			@RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model,
@@ -122,6 +123,7 @@ public class MemberController {
 		model.addAttribute("loginMessage", "회원가입이 완료되었습니다. 로그인해주세요");
 		return "/member/login";
 	}
+
 
 	@PostMapping("/check-id")
 	public ResponseEntity<IdCheckResponse> checkId(@RequestBody IdCheckRequest request, HttpSession session) {

@@ -1,0 +1,135 @@
+<html layout:decorate="~{layout}">
+
+<head>
+	<link rel="stylesheet" href="/css/wellit.css">
+
+	<style>
+		.recipe-image {
+			width: 100%;
+			height: 300px;
+			object-fit: cover;
+			border-radius: 10px 10px 0 0;
+		}
+
+		.ingredient-list {
+			background-color: #f8f9fa;
+			border-radius: 5px;
+			padding: 15px;
+			margin-bottom: 20px;
+		}
+
+		.step {
+			margin-bottom: 20px;
+		}
+
+		.step-image {
+			max-width: 100%;
+			height: auto;
+			border-radius: 5px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+	</style>
+</head>
+
+<body>
+	<div layout:fragment="content" class="content">
+		<div class="container my-4">
+			<!-- 페이지 제목 -->
+			<div class="row my-5">
+				<div class="col text-center">
+					<h1 th:text="${recipe.recpName}"></h1>
+				</div>
+			</div>
+
+			<!-- 요리 정보 요약 -->
+			<section class="recipe-info my-4 py-4 rounded-2">
+				<div class="card">
+					<div class="row no-gutters">
+						<div class="col-md-4">
+							<div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel"
+								th:if="${recipe.recpmainImgList.size() > 0}">
+								<div class="carousel-inner">
+									<th:block th:each="img, iterStat : ${recipe.recpmainImgList}">
+										<div class="carousel-item"
+											th:class="${iterStat.index == 0} ? 'active carousel-item' : 'carousel-item'">
+											<img th:src="${img.imgSrc}" alt="메인 이미지" class="recipe-image" />
+										</div>
+									</th:block>
+								</div>
+								<button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel"
+									data-bs-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									<span class="visually-hidden">이전</span>
+								</button>
+								<button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel"
+									data-bs-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									<span class="visually-hidden">다음</span>
+								</button>
+							</div>
+							<p th:if="${recipe.recpmainImgList.size() == 0}">메인 이미지가 없습니다.</p>
+						</div>
+
+						<div class="col-md-8">
+							<div class="card-body">
+								<h5>요리 간단 소개</h5>
+								<p th:text="${recipe.recpIntroduce}" class="lead"></p>
+								<p><strong>작성자:</strong> <span th:text="${recipe.writer}"></span></p>
+								<p><strong>인분:</strong> <span th:text="${recipe.servings}"></span></p>
+								<p><strong>소요 시간:</strong> <span th:text="${recipe.cookTime} + ' 분'"></span></p>
+								<p><strong>난이도:</strong> <span th:text="${recipe.difficulty}"></span></p>
+								<p><strong>태그:</strong> <span th:text="${recipe.recpTags}"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- 재료 목록 -->
+			<h2 class="mt-4">재료</h2>
+			<div class="ingredient-list">
+				<ul class="list-group">
+					<th:block th:each="ingredient : ${recipe.recpIngredientList}">
+						<li class="list-group-item"
+							th:text="${ingredient.ingredientName} + ' - ' + ${ingredient.amount}"></li>
+					</th:block>
+				</ul>
+			</div>
+
+			<!-- 조리 순서 -->
+			<h2 class="mt-4">조리 순서</h2>
+			<ol class="mb-4">
+				<th:block th:each="orderCard : ${recipe.cookOrderCardList}">
+					<li class="step">
+						<div class="card mb-3">
+							<div class="row no-gutters">
+								<div class="col-4">
+									<img th:src="${orderCard.cookOrderImg}" alt="조리 이미지" class="step-image"
+										th:if="${orderCard.cookOrderImg != null}"
+										style="height: 100%; width: 100%; object-fit: cover;" />
+								</div>
+								<div class="col-8">
+									<div class="card-body">
+										<h5 class="mt-0">순서 <span th:text="${orderCard.cookOrderNum}"></span>:</h5>
+										<span th:text="${orderCard.cookOrderText}"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</th:block>
+			</ol>
+			<!-- 수정 및 삭제 버튼 -->
+			<div class="btn-group" th:if="${session.UserId == recipe.writer} or ${session.UserId == 'admin'}">
+				<a th:href="@{/life/recipe/edit/{id}(id=${recipe.id})}" class="btn btn-primary">수정</a>
+				<form th:action="@{/life/recipe/delete/{id}(id=${recipe.id})}" method="post" style="display:inline;">
+					<button type="submit" class="btn btn-danger">삭제</button>
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+
+</html>

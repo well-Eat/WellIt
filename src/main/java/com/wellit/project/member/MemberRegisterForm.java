@@ -63,4 +63,9 @@ public class MemberRegisterForm {
     
     private MultipartFile imageFile;
     
+    private Boolean isBusiness; // 사업자용 여부
+    
+    private String businessName; // 가게 이름 추가
+
+    
 }
