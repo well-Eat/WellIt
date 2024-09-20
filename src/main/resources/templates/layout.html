@@ -19,7 +19,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28da3dbc8c389b574e0c32075b4e02ba"></script>
 	<link rel="stylesheet" href="/css/layout.css" />
-
+	
 </head>
 
 <body>
@@ -68,21 +68,17 @@
 				isMouseOverPlace = true;
 				submenu.stop().slideDown();
 				navbar.addClass("green-navbar");
-				menu_main.css({color: "black"})
-				icons.addClass("black-icons")
+				navbar.css({backgroundColor : "#386641"})
 				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 			menu.mouseout(function () {
 				isMouseOverPlace = false;
 				submenu.stop().slideUp();
-				navbar.removeClass("green-navbar");
-				menu_main.css({color: "white"})
-				icons.removeClass("black-icons")
+				navbar.removeClass("green-navbar");				
+				navbar.css({backgroundColor : "transparent"})
 				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")
-					menu_main.css({color: "black"})
-					icons.addClass("black-icons")
 				}
 			});
 
@@ -90,8 +86,7 @@
 				isMouseOverPlace = true;
 				submenu.stop().slideDown();
 				navbar.addClass("green-navbar");
-				menu_main.css({color: "black"})
-				icons.addClass("black-icons")
+				navbar.css({backgroundColor : "#386641"})
 				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 
@@ -99,15 +94,13 @@
 				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");
-				menu_main.css({color: "white"})
-				icons.removeClass("black-icons")
+				navbar.css({backgroundColor : "transparent"})
 				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")
-					menu_main.css({color: "black"})
-					icons.addClass("black-icons")
 				}
 			});
+			
 			//작은 화면 메뉴 슬라이드
 			small_menu_btn.click(function () {
 				small_header.stop().slideDown();
@@ -137,18 +130,15 @@
 
 				if ($(window).scrollTop() > height && !hasClass) {
 					navbar.addClass("green-navbar")
-					icons.addClass("black-icons")
-					menu_main.css({color: "black"})
 					hasClass = true;
 				}
 				if ($(window).scrollTop() < height && hasClass) {
 					navbar.removeClass("green-navbar")
-					icons.removeClass("black-icons")
-					menu_main.css({color: "white"})
 					hasClass = false;
 				}
 			})
-		})
+			});
+			
 	</script>
 </body>
 

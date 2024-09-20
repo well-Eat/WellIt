@@ -15,23 +15,33 @@
 		</div>
 		<!-- 오른쪽 메뉴 -->
 		<div class="custom-right">
-			<!--로그인-->
-			<li sec:authorize="isAnonymous()">
-				<a th:href="@{/member/login}"><span class="material-symbols-outlined">person</span></a>
-			</li>
-			<!-- 마이페이지 -->
-			<li sec:authorize="isAuthenticated()">
-				<a th:href="@{/member/mypage}"><span class="material-symbols-outlined">person</span></a>
-				<!--회원가입-->
-			<li sec:authorize="isAnonymous()">
-				<a th:href="@{/member/register}"><span class="material-symbols-outlined">person_add</span></a>
-				<!--장바구니-->
-			<li>
-				<a href="member/"><span class="material-symbols-outlined">shopping_cart</span></a>
-			</li>
-			<li sec:authorize="isAuthenticated()">
-				<a th:href="@{/member/kakao-logout}"><span class="material-symbols-outlined">logout</span></a>
-			</li>
+			<div class="top">
+				<!--로그인-->
+				<li sec:authorize="isAnonymous()">
+					<a class="right" th:href="@{/member/login}"><span> 로그인</span></a>
+				</li>
+				<li sec:authorize="isAnonymous()">
+					<a class="right" th:href="@{/member/register}"><span> 회원가입</span></a>
+				</li>
+			</div>
+			<div class="middle">
+				<!-- 마이페이지 -->
+				<li sec:authorize="isAuthenticated()">
+					<a th:href="@{/member/mypage}"><span class="material-symbols-outlined">person</span></a>
+					<!--회원가입-->
+				</li>
+				<!-- 찜 -->
+				<li>
+					<a href="#"><span class="material-symbols-outlined">favorite</span></a>
+				</li>
+				<!-- 장바구니 -->
+				<li>
+					<a href="member/"><span class="material-symbols-outlined">shopping_cart</span></a>
+				</li>
+				<li sec:authorize="isAuthenticated()">
+					<a th:href="@{/member/kakao-logout}"><span class="material-symbols-outlined">logout</span></a>
+				</li>
+			</div>
 			<!-- 햄버거 버튼 -->
 			<a href="#" class="menu-btn"><span class="material-symbols-outlined">menu</span></a>
 		</div>
