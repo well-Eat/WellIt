@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wellit.project.member.Member;
+
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/load")
 public class StoreController {
@@ -28,6 +32,9 @@ public class StoreController {
     
     @Autowired
     private AllStoreService allStoreService;
+    
+    @Autowired
+    private FavoriteStoreService favoriteStoreService;
 
     @GetMapping("/map")
 	public String getMap() {
@@ -74,10 +81,19 @@ public class StoreController {
     }
     
     @GetMapping("/place")
-    public String getPlaces(Model model) {
-    	
+    public String getPlaces(Model model, HttpSession session) {
+    	String memberId = (String) session.getAttribute("UserId"); // 세션에서 사용자 ID 가져오기
+
         List<AllStore> stores = allStoreService.getAllStores(); // 데이터 가져오기
         model.addAttribute("stores", stores); // 모델에 데이터 추가
+        List<AllStore> randomStores = allStoreService.getRandomStores(stores); // 서비스 메서드 호출
+        model.addAttribute("randomStores", randomStores); // 모델에 추가
+        
+        if (memberId != null) {
+            List<FavoriteStore> favoriteStores = favoriteStoreService.getFavoriteStoresByMember(memberId); // 즐겨찾기 목록 가져오기
+            model.addAttribute("favoriteStores", favoriteStores); // 모델에 추가
+        }
+        
         return "load/place"; // place.html로 이동 (슬래시 제거)
     }
 

@@ -1,35 +1,47 @@
 package com.wellit.project.member;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wellit.project.CustomUserAlreadyExistsException;
 
-import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class KakaoService {
 
-    private String clientId;
+    private String clientId = "1edf78aa7a0cc88fd28e4ffbc306e0b1";
     private final String KAUTH_TOKEN_URL_HOST;
     private final String KAUTH_USER_URL_HOST;
-    private String redirectUri = "http://localhost:8080/callback";
-
+    private String redirectUri = "http://localhost:8080/callback"; 
+    
     @Autowired
-    public KakaoService(@Value("${kakao.client_id}") String clientId, MemberRepository memberRepository) {
+    public KakaoService(@Value("${kakao.client_id}") String clientId, MemberRepository memberRepository, WebClient.Builder webClientBuilder) {
         this.clientId = clientId;
         KAUTH_TOKEN_URL_HOST ="https://kauth.kakao.com";
         KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
@@ -67,14 +79,14 @@ public class KakaoService {
             throw new RuntimeException("Failed to parse response", e);
         }
     }
-
-    
+       
     
     private final MemberRepository memberRepository;
 
 
     
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
+    	System.out.println("getUserInfo 액세스 토큰 : "+accessToken);
     	
         String response = WebClient.create("https://kapi.kakao.com")
         		
@@ -138,6 +150,9 @@ public class KakaoService {
         // 나머지 정보들 설정
         member.setMemberRegDate(LocalDateTime.now());
         member.setMileage(0); // 기본 마일리지 설정
+        
+        // 카카오 회원임을 명시
+        member.setMemberType("KAKAO");
 
         // 엔티티 저장 (Repository를 통해 저장)
         return memberRepository.save(member);
@@ -146,10 +161,75 @@ public class KakaoService {
 
     // 액세스 토큰을 받아 회원 정보를 저장하는 전체 로직
     public Member registerKakaoUser(String accessToken) {
-    	System.out.println("21321321321");
+        System.out.println("액세스 토큰 : " + accessToken);
+
         // 카카오 사용자 정보 가져오기
         KakaoUserInfoResponseDto kakaoUserInfo = getUserInfo(accessToken);
-        // 가져온 사용자 정보를 DB에 저장
-        return saveKakaoUser(kakaoUserInfo);
+        String kakaoUserId = String.valueOf(kakaoUserInfo.getId());
+
+        // 기존 회원 여부 확인
+        Member existingMember = memberRepository.findByMemberId(kakaoUserId);
+
+        if (existingMember != null) {
+            // 이미 가입된 회원이 존재할 경우 예외를 발생시킴
+            throw new CustomUserAlreadyExistsException(kakaoUserId);
+        } else {
+            // 신규 회원인 경우, 사용자 정보를 DB에 저장
+            return saveKakaoUser(kakaoUserInfo);
+        }
+    }
+    
+    
+    public Member updateKakaoMember(KakaoSignupForm kakaoSignupForm) {
+    	
+    	log.info("Updating Kakao member with ID: {}", kakaoSignupForm.getMemberId());
+    	    	 
+        // 1. 카카오 로그인으로 저장된 회원을 찾아옴
+    	Member member = memberRepository.findByMemberId(kakaoSignupForm.getMemberId());
+    	if (member == null) {
+    	    throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+    	}
+        log.info("Found member: {}", member);
+
+        // 2. 추가 정보를 업데이트
+        member.setMemberName(kakaoSignupForm.getMemberName());
+        member.setMemberAlias(kakaoSignupForm.getMemberAlias());
+        member.setMemberPhone(kakaoSignupForm.getMemberPhone()); 
+        member.setMemberAddress(kakaoSignupForm.getMemberAddress());
+        member.setZipcode(kakaoSignupForm.getZipcode());
+        member.setRoadAddress(kakaoSignupForm.getRoadAddress());
+        member.setAddressDetail(kakaoSignupForm.getAddressDetail());
+        member.setMemberGender(kakaoSignupForm.getMemberGender());           
+        member.setMemberBirth(kakaoSignupForm.getMemberBirth());
+        member.setBirth_year(kakaoSignupForm.getBirth_year());
+        member.setBirth_month(kakaoSignupForm.getBirth_month());
+        member.setBirth_day(kakaoSignupForm.getBirth_day());
+        member.setMemberVeganType(kakaoSignupForm.getMemberVeganType());
+
+        // 3. 업데이트된 회원 정보를 저장
+        return memberRepository.save(member);
+    }
+    
+    public void logoutKakaoUser(String accessToken) {
+        String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
+        } catch (Exception e) {
+            // 로그아웃 실패 처리
+            e.printStackTrace();
+        }
+    }
+    
+    public String redirectToKakaoAccountLogout() {
+        String clientId = "1edf78aa7a0cc88fd28e4ffbc306e0b1";
+        String logoutRedirectUri = "http://localhost:8080";
+        return "https://kauth.kakao.com/oauth/logout?client_id=" + clientId + "&logout_redirect_uri=" + logoutRedirectUri;
     }
 }

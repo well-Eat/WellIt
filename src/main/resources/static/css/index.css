@@ -123,10 +123,11 @@ section {
 
 .recommendedPlaceText {
 	float: left;
-	padding: 50px;
+	padding: 30px;
 	background-color: #6a994e;
 	height: 500px;
 	width: calc(100% - 350px);
+	line-height: 10px;
 }
 .inforCarousel {
 	display: flex;
@@ -168,7 +169,8 @@ section {
 
 header {
 	height: 100px;
-
+	background: rgb(0,0,0);
+	background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%);
 }
 
 

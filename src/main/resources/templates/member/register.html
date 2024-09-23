@@ -7,17 +7,26 @@
 			<div class="col-xl-5 col-lg-6 col-xs-12 py-5 border rounded formStyle">
 				<h1 class="text-center mb-3">WellIt 회원가입</h1>
 				<div th:if="${errorMessage}" class="alert alert-danger">
-				    <p th:text="${errorMessage}"></p>
+					<p th:text="${errorMessage}"></p>
 				</div>
 				<form th:action="@{/member/register}" method="post" enctype="multipart/form-data"
 					th:object="${memberRegisterForm}" id="memberForm">
 					<div class="container">
+						<!-- 사업자용/개인용 선택 -->
+						<div class="my-2">
+							<input type="radio" id="individual" name="isBusiness" value="false" checked
+								onclick="toggleBusinessFields()">
+							<label for="individual">개인용</label>
+							<input type="radio" id="business" name="isBusiness" value="true"
+								onclick="toggleBusinessFields()">
+							<label for="business">사업자용</label>
+						</div>
 						<!-- 아이디 -->
 						<div class="row g-2">
 							<label for="member_id" class="form-label">아이디</label>
 							<div class="col-8">
 								<input type="text" id="memberId" class="form-control" th:field="*{memberId}"
-									placeholder="영문과 숫자로 4-12자, 특수문자 금지"autofocus>
+									placeholder="영문과 숫자로 4-12자, 특수문자 금지" autofocus>
 							</div>
 							<div class="col-4">
 								<button type="button" id="checkId" class="btn btn-secondary">아이디 중복 체크</button>
@@ -29,16 +38,14 @@
 							<div class="col">
 								<label for="password1" class="form-label">비밀번호</label>
 								<input type="password" id="memberPassword1" name="memberPassword" class="form-control"
-									placeholder="비밀번호는 최소 6자 이상, 영문과 숫자를 포함해야 합니다." th:field="*{memberPassword}"
-									>
+									placeholder="비밀번호는 최소 6자 이상, 영문과 숫자를 포함해야 합니다." th:field="*{memberPassword}">
 							</div>
 						</div>
 						<div class="row mt-3">
 							<div class="col">
 								<label for="password2" class="form-label">비밀번호 확인</label>
 								<input type="password" id="memberPassword2" class="form-control"
-									th:field="*{memberPassword2}" name="memberPassword2" placeholder="비밀번호와 동일해야 합니다."
-									>
+									th:field="*{memberPassword2}" name="memberPassword2" placeholder="비밀번호와 동일해야 합니다.">
 							</div>
 						</div>
 						<!-- 이름 -->
@@ -46,34 +53,34 @@
 							<label for="member_name" class="form-label">이름</label>
 							<div class="col-5">
 								<input type="text" id="memberName" class="form-control" th:field="*{memberName}"
-									placeholder="숫자,특수문자 입력 불가" >
+									placeholder="숫자,특수문자 입력 불가">
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
 							<div class="col-5">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" >
+									name="memberAlias">
 							</div>
 						</div>
 						<!-- 이메일 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="member_email" class="form-label">이메일</label>
 							<div class="col-9">
-								<input type="email" id="memberEmail" class="form-control" th:field="*{memberEmail}"
-									>
+								<input type="email" id="memberEmail" class="form-control" th:field="*{memberEmail}">
 							</div>
 							<div class="col-3">
 								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
-						    <div class="col-7">
-						        <input type="text" id="verificationCode" class="form-control" placeholder="이메일로 받은 인증번호">
-						    </div>
-						    <div class="col-4">
-						        <button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
-						    </div>
+							<div class="col-7">
+								<input type="text" id="verificationCode" class="form-control"
+									placeholder="이메일로 받은 인증번호">
+							</div>
+							<div class="col-4">
+								<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
+							</div>
 						</div>
 						<!-- 전화번호 -->
 						<div class="row mt-3 justify-content-start">
@@ -87,18 +94,21 @@
 						<div class="row justify-content-start mt-3">
 							<label for="address" class="form-label">주소</label>
 							<div class="col-sm-4">
-								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호" th:field="*{zipcode}">
+								<input type="text" id="sample4_postcode" class="form-control" placeholder="우편번호"
+									th:field="*{zipcode}">
 							</div>
 							<div class="col-sm-3">
 								<input type="button" onclick="sample4_execDaumPostcode()" class="btn btn-secondary"
 									value="우편번호 찾기"><br>
 							</div>
 							<div class="col-12 mt-1">
-								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소" th:field="*{roadAddress}">
+								<input type="text" id="sample4_roadAddress" class="form-control" placeholder="도로명주소"
+									th:field="*{roadAddress}">
 								<input type="hidden" id="sample4_jibunAddress" class="form-control" placeholder="지번주소">
 							</div>
 							<div class="col-12 mt-1">
-								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소" th:field="*{addressDetail}">
+								<input type="text" id="sample4_detailAddress" class="form-control" placeholder="상세주소"
+									th:field="*{addressDetail}">
 								<input type="hidden" id="sample4_extraAddress" class="form-control" placeholder="참고항목">
 							</div>
 							<input type="hidden" id="fullAddress" name="fullAddress" th:field="*{memberAddress}">
@@ -173,6 +183,14 @@
 									<input type="file" class="form-control" name="imageFile" id="imageFile"
 										th:field="*{imageFile}">
 								</div>
+							</div>
+						</div>
+						<!-- 가게 이름 입력 필드 (숨기기) -->
+						<div id="businessNameField" class="row mt-3" style="display: none;">
+							<label for="businessName" class="form-label">가게 이름(필수)</label>
+							<div class="col-12">
+								<input type="text" id="businessName" class="form-control" th:field="*{businessName}"
+									placeholder="가게 이름을 입력하세요">
 							</div>
 						</div>
 					</div>
@@ -353,7 +371,7 @@
 		document.getElementById('memberForm').addEventListener('submit', function (event) {
 			event.preventDefault(); // 기본 폼 제출 동작 방지
 			let isValid = true; // 유효성 검사가 통과했는지 여부를 확인하는 변수
-			
+
 
 			// 아이디 유효성 검사
 			const idInput = document.getElementById('memberId');
@@ -478,100 +496,110 @@
 				addressInput.focus();
 				isValid = false;
 			}
-			
+
 			// 유효성 검사에 통과한 경우 폼 제출
-			    if (isValid) {
-			        this.submit(); // 폼 제출
-			    }
+			if (isValid) {
+				this.submit(); // 폼 제출
+			}
 		});
-		
-		document.getElementById('checkId').addEventListener('click', function() {
-		    const memberId = document.getElementById('memberId').value;
 
-		    // 아이디가 비어있으면 경고 메시지 출력
-		    if (!memberId) {
-		        alert("아이디를 입력해주세요.");
-		        return;
-		    }
+		document.getElementById('checkId').addEventListener('click', function () {
+			const memberId = document.getElementById('memberId').value;
 
-		    // AJAX 요청 보내기
-		    fetch('/member/check-id', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/json',
-		            'X-Requested-With': 'XMLHttpRequest'
-		        },
-		        body: JSON.stringify({ memberId: memberId })
-		    })
-		    .then(response => response.json())
-		    .then(data => {
-		        if (data.exists) {
-		            document.getElementById('idCheckResult').innerText = "아이디가 이미 존재합니다.";
-		            document.getElementById('idCheckResult').style.color = 'red';
-		        } else {
-		            document.getElementById('idCheckResult').innerText = "사용 가능한 아이디입니다.";
-		            document.getElementById('idCheckResult').style.color = 'green';
-		        }
-		    })
-		    .catch(error => {
-		        console.error('Error:', error);
-		    });
+			// 아이디가 비어있으면 경고 메시지 출력
+			if (!memberId) {
+				alert("아이디를 입력해주세요.");
+				return;
+			}
+
+			// AJAX 요청 보내기
+			fetch('/member/check-id', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest'
+				},
+				body: JSON.stringify({memberId: memberId})
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.exists) {
+						document.getElementById('idCheckResult').innerText = "아이디가 이미 존재합니다.";
+						document.getElementById('idCheckResult').style.color = 'red';
+					} else {
+						document.getElementById('idCheckResult').innerText = "사용 가능한 아이디입니다.";
+						document.getElementById('idCheckResult').style.color = 'green';
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
 		});
-		
+
 		function checkEmail() {
-		    const email = document.getElementById('memberEmail').value;
+			const email = document.getElementById('memberEmail').value;
 
-		    if (!email) {
-		        alert("이메일을 입력해주세요.");
-		        return;
-		    }
+			if (!email) {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
 
-		    fetch('/member/send-email', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/x-www-form-urlencoded'
-		        },
-		        body: new URLSearchParams({
-		            'email': email
-		        })
-		    })
-		    .then(response => response.text())
-		    .then(data => {
-		        alert(data);
-		    })
-		    .catch(error => {
-		        alert('Error occurred: ' + error.message);
-		        console.error('Error:', error);
-		    });
+			fetch('/member/send-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'email': email
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
 		}
 
 		function verifyCode() {
-		    const code = document.getElementById('verificationCode').value;
+			const code = document.getElementById('verificationCode').value;
 
-		    if (!code) {
-		        alert("인증 코드를 입력해주세요.");
-		        return;
-		    }
+			if (!code) {
+				alert("인증 코드를 입력해주세요.");
+				return;
+			}
 
-		    fetch('/member/verify-code', {
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/x-www-form-urlencoded'
-		        },
-		        body: new URLSearchParams({
-		            'code': code
-		        })
-		    })
-		    .then(response => response.text())
-		    .then(data => {
-		        alert(data);
-		    })
-		    .catch(error => {
-		        alert('Error occurred: ' + error.message);
-		        console.error('Error:', error);
-		    });
+			fetch('/member/verify-code', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'code': code
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
 		}
 
+
+		function toggleBusinessFields() {
+			const isBusinessChecked = document.getElementById("business").checked;
+			const businessNameField = document.getElementById("businessNameField");
+			if (isBusinessChecked) {
+				businessNameField.style.display = "block"; // 가게 이름 필드 보이기
+			} else {
+				businessNameField.style.display = "none"; // 가게 이름 필드 숨기기
+			}
+		}
 	</script>
 </div>
 

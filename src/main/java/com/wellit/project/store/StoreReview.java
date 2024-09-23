@@ -38,6 +38,6 @@ public class StoreReview {
 
     @ManyToOne
     @JoinColumn(name = "stoId")
-    @JsonBackReference // 추가
+    @JsonBackReference("reviews")
     private AllStore store;
 }

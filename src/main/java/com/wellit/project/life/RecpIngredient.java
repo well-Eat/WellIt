@@ -18,7 +18,7 @@ public class RecpIngredient {
     private String amount; //재료 양
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference("recipe-ingredient") // 동일한 이름 지정
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 

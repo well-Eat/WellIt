@@ -7,9 +7,8 @@
 		<div class="row py-5 justify-content-center">
 			<div class="col-xl-5 col-lg-6 col-xs-12 py-5 border rounded formStyle">
 				<h1 class="text-center mb-3">회원정보 수정</h1>
-				<div th:if="${errorMessage}" class="alert alert-danger error-message">
-					<p th:text="${errorMessage}">에러메시지</p>
-				</div>
+				<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
+							</div>
 				<form th:action="@{/member/update_profile}" th:object="${member}" method="post" id="memberForm"
 					enctype="multipart/form-data">
 					<div class="container">
@@ -112,19 +111,19 @@
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_year"
 									th:field="*{birth_year}">
-									<option value="" th:text="${member.getBirth_year}" selected></option>
+									<option th:value="${birth_year}" th:text="${member.getBirth_year}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_month"
 									th:field="*{birth_month}">
-									<option value="" th:text="${member.getBirth_month}" selected></option>
+									<option th:value="${birth_month}" th:text="${member.getBirth_month}" selected></option>
 								</select>
 							</div>
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_day"
 									th:field="*{birth_day}">
-									<option value="" th:text="${member.getBirth_day}" selected></option>
+									<option th:value="${birth_day}" th:text="${member.getBirth_day}" selected></option>
 								</select>
 							</div>
 							<input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
@@ -218,10 +217,10 @@
 					const MonthOption = document.createElement('option')
 					if (i < 10) {
 						MonthOption.setAttribute('value', "0" + i)
-						MonthOption.innerText = "0" + i
+						MonthOption.innerText = "0" + i + "월"
 					} else {
 						MonthOption.setAttribute('value', i)
-						MonthOption.innerText = i
+						MonthOption.innerText = i + "월"
 					}
 					// birthYearEl의 자식 요소로 추가
 					this.appendChild(MonthOption);
@@ -242,10 +241,10 @@
 
 					if (i < 10) {
 						DayOption.setAttribute('value', "0" + i)
-						DayOption.innerText = "0" + i
+						DayOption.innerText = "0" + i + "일"
 					} else {
 						DayOption.setAttribute('value', i)
-						DayOption.innerText = i
+						DayOption.innerText = i + "일"
 					}
 					// birthYearEl의 자식 요소로 추가
 					this.appendChild(DayOption);
@@ -544,6 +543,12 @@
 		        window.location.href = '/member/delete_password'; // 비밀번호 입력 페이지로 이동
 		    }
 		}
+		
+		var errorElement = document.getElementById("errorMessage");
+				// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+				if (errorElement && errorElement.innerText.trim() !== "") {
+					alert(errorElement.innerText);
+				}
 	</script>
 </div>
 

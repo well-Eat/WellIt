@@ -21,7 +21,7 @@ public class RecpMainImg {
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
-    @JsonBackReference
+    @JsonBackReference("recipe-main-img") // 동일한 이름 지정
     private Recipe recipe;
 
 }

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
@@ -17,6 +20,7 @@ public class CookOrderCardForm {
 
     private String cookOrderText; //요리 방법
 
+    private String existingCookOrderImg; // 기존 요리 이미지 URL 추가
 
 
 

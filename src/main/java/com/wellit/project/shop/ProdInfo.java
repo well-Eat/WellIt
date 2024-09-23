@@ -1,5 +1,7 @@
 package com.wellit.project.shop;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +19,6 @@ public class ProdInfo {
 
     @ManyToOne
     @JoinColumn(name = "prod_id")
+    @JsonBackReference("product-info") // 이름 설정
     private Product product;
 }

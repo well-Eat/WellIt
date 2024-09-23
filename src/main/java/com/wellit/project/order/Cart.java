@@ -1,5 +1,6 @@
 package com.wellit.project.order;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wellit.project.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;

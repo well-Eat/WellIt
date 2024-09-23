@@ -39,7 +39,7 @@ public class MemberService {
 	public Member create(String memberId, String memberPassword, String memberName, String memberAlias,
 			String memberEmail, String memberPhone, String memberAddress, String memberBirth, String memberGender,
 			String memberVeganType, String zipcode, String roadAddress, String addressDetail, String birth_year,
-			String birth_month, String birth_day, MultipartFile imageFile) throws IOException {
+			String birth_month, String birth_day, MultipartFile imageFile, Boolean isBusiness, String businessName) throws IOException {
 
 		Member member = new Member();
 		member.setMemberId(memberId);
@@ -58,6 +58,10 @@ public class MemberService {
 		member.setBirth_year(birth_year);
 		member.setBirth_month(birth_month);
 		member.setBirth_day(birth_day);
+		member.setMileage(0); // 기본 마일리지 설정
+		member.setMemberType("default");
+		member.setBusiness(isBusiness);
+		member.setBusinessName(businessName);
 
 		// 회원 프로필 이미지 등록한다면 해당 이미지 이름도 DB저장
 		String existingImagePath = member.getImageFile();
@@ -92,6 +96,7 @@ public class MemberService {
 
 	// 로그인한 사용자명을 알 수 있는 메소드
 	public Member getMember(String memberId) {
+
 	    Member member = this.memberRepository.findByMemberId(memberId);
 	    
 	    if (member != null) {
@@ -101,10 +106,7 @@ public class MemberService {
 	    }
 	}
 
-	// 아이디 중복 체크
-	public boolean isIdExists(String memberId) {
-		return memberRepository.existsByMemberId(memberId);
-	}
+
 
 	// 회원 정보 수정 로직
 	public void updateMember(Member member, String newPassword, String newName, String newAlias, String newEmail,
@@ -248,5 +250,6 @@ public class MemberService {
 		member.setMileage(member.getMileage() + amount);
 		memberRepository.save(member);
 	}
+
 
 }
