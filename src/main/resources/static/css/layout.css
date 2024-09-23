@@ -34,11 +34,12 @@ footer {
 }
 
 a {
+	/*text-decoration: none;
+	color: black;*/
+	
+	color: inherit; /* 글자색을 상속받도록 설정 */
 	text-decoration: none;
-	color: black;
 }
-
-
 
 .row {
 	display: flex;
@@ -57,6 +58,10 @@ header {
 	background-color: transparent;
 	position: fixed;
 	z-index: 30;
+}
+
+.difference{
+	mix-blend-mode: difference;
 }
 
 /* 로고 들어갈 곳 */
@@ -91,7 +96,6 @@ header .custom-menu ul.custom-main li {
 	justify-content: center;
 	align-items: center;
 	font-weight: bold;
-
 }
 
 header .custom-menu ul.custom-main li a {
@@ -109,10 +113,6 @@ header .custom-menu ul.custom-main li a {
 	z-index: 29;
 }
 
-.custom-menu.custom-sub .custom-submenu {
-	height: 200px;
-	background-color: #386641;
-}
 
 /* 로고 아래 서브메뉴*/
 .custom-menu.custom-sub .custom-submenu1 {
@@ -134,6 +134,10 @@ header .custom-menu ul.custom-main li a {
 	padding: 8px;
 }
 
+.custom-menu.custom-sub .custom-submenu2 ul li a{
+	color:white;
+}
+
 /* 아이콘들 아래 서브메뉴 */
 .custom-menu.custom-sub .custom-submenu3 {
 	width: 25%;
@@ -147,6 +151,25 @@ header .custom-menu ul.custom-main li a {
 	justify-content: space-around;
 }
 
+.custom-right .top {
+	width: 50%;
+	display: flex;
+	justify-content: space-around;
+	align-self: flex-start;
+}
+
+.custom-right .middle {
+	width: 50%;
+	display: flex;
+	justify-content: space-evenly;
+	align-self: center;
+}
+
+
+.right{
+	color: white;
+		font-size: small;
+}
 /* 햄버거 버튼, 닫기 버튼 */
 .menu-btn,
 .close-btn {
@@ -170,11 +193,10 @@ header .custom-menu ul.custom-main li a {
 	background-color: #f2e8cf;
 	overflow: hidden;
 	z-index: 31;
-
 }
 
 #small-header a {
-	color: black;
+	color: white;
 }
 
 ul.small-main .small-bold {
@@ -208,14 +230,14 @@ ul.small-main .small-bold {
 	right: 5%;
 }
 
+
 .green-navbar {
 	background-color: #386641;
-	color: black;
 }
 
-.black-icons {
+/*.black-icons {
 	color: black;
-}
+}*/
 
 .small-search input {
 	width: 300px;
@@ -343,6 +365,7 @@ ul.small-main .small-bold {
 	}
 }
 
+
 .scroll-to-top {
 	position: fixed;
 	bottom: 30px;
@@ -354,6 +377,3 @@ ul.small-main .small-bold {
 	border: none;
 	border-radius: 50%;
 }
-
-
-

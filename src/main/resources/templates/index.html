@@ -5,8 +5,10 @@
 
 	<div layout:fragment="content">
 		<link rel="stylesheet" href="/css/index.css" />
+		<div class="backBg"></div>
 		<div class="full-screen">
-			<video src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline loop></video>
+			<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
+				loop></video>
 			<form action="/load/recommend" method="post" class="videoBox">
 				<div class="row videoBoxText">
 					<div class="col">
@@ -465,6 +467,42 @@
 						stopMoCarousel();
 					}
 				);
+
+				const navbar = $("header")
+				const menu = $(".custom-menu");
+				const submenu = $(".custom-menu.custom-sub");
+
+				menu.mouseover(function () {
+					navbar.css({background: "#386641"})
+				});
+
+				submenu.mouseover(function () {
+					navbar.css({background: "#386641"})
+				})
+
+				menu.mouseout(function () {
+					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+				})
+
+				submenu.mouseout(function () {
+					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+				})
+				var height = $("#places").offset().top - 40;
+				var hasClass = false;
+				var isMouseOverPlace = false;
+				$(window).on("scroll", () => {
+
+					if (isMouseOverPlace) return;
+
+					if ($(window).scrollTop() > height && !hasClass) {
+						navbar.css({background: "#386641"})
+						hasClass = true;
+					}
+					if ($(window).scrollTop() < height && hasClass) {
+						navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+						hasClass = false;
+					}
+				})
 
 			})
 		</script>
