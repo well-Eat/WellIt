@@ -1,5 +1,6 @@
 package com.wellit.project.shop;
 
+import com.wellit.project.order.OrderItem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -13,8 +14,6 @@ import java.util.List;
 public class ProdReviewForm {
 
 
-    @NotBlank(message = "상품명은 필수 입력 사항입니다.")
-    private String prodName;
 
     @NotBlank(message = "리뷰 내용은 필수 입력 사항입니다.")
     @Size(min = 3, message = "리뷰 내용은 최소 10자 이상이어야 합니다.")
@@ -22,7 +21,13 @@ public class ProdReviewForm {
 
     private Long prodId;
 
+    private Integer rating;
+
+    private String paid;
+
 
     private List<MultipartFile> prodRevImgList;
+
+    private String orderItemId;
 
 }

@@ -93,9 +93,7 @@ public class CartService {
 
     public String getMemberAddress(String memberId) {
         Member member = memberRepository.findByMemberId(memberId);
-        if (member == null) {
-            throw new IllegalArgumentException("Member not found: " + memberId);
-        }
+
         return member.getMemberAddress();
     }
 

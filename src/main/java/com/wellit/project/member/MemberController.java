@@ -2,12 +2,18 @@ package com.wellit.project.member;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.wellit.project.order.OrderService;
+import com.wellit.project.order.PoHistoryForm;
+import com.wellit.project.order.PurchaseOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -604,76 +610,174 @@ public class MemberController {
 
 		return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
 	}
+    
+    @GetMapping("/findPassword")
+    public String getFindPassword() {
+    	return "/member/findPassword";
+    }
+    
+    @PostMapping("/findPassword")
+    public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session, Model model) {
+    	
+    	Optional<Member> thisMember = memberService.findByMemberEmail(email);
+    	
+    	if (!thisMember.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
+        }
+    	
+    	// 이메일 인증 여부 확인
+        Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+        System.out.println("isEmailVerified: " + isEmailVerified);
+     // 이메일 인증이 완료되지 않았을 때
+        if (isEmailVerified == null || !isEmailVerified) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
+        }
+    	
+        return memberService.sendPasswordResetEmail(email);
+    }
+    
+    @GetMapping("/reset_password")
+    public String getResetPassword(@RequestParam("token") String token, Model model) {
+        model.addAttribute("token", token);
+        System.out.println("Token received: " + token); // 토큰 값을 로그에 출력
+    	return "/member/reset_password";
+    }
+    
+    @PostMapping("/reset_password")
+    @Transactional
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+                                                 @RequestParam("newPassword") String password,
+                                                 @RequestParam("newPassword2") String password2, Model model) {
+        
+        // 비밀번호 형식 검증
+        String passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
+        if (!Pattern.matches(passwordPattern, password)) {
+            return ResponseEntity.badRequest().body("비밀번호는 최소 6자 이상이어야 하며, 문자와 숫자를 포함해야 합니다.");
+        }
 
-	@GetMapping("/findPassword")
-	public String getFindPassword() {
-		return "/member/findPassword";
-	}
+        // 비밀번호 확인 일치 검증
+        if (!password.equals(password2)) {
+            return ResponseEntity.badRequest().body("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
 
-	@PostMapping("/findPassword")
-	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session,
-			Model model) {
+        // 토큰 검증
+        model.addAttribute("token", token); // 모델에 token 추가
+        System.out.println("Token received: " + token);
+        Optional<Member> thisMember = memberRepository.findByResetToken(token);
+        if (thisMember.isEmpty()) {
+            return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
+        }
 
-		Optional<Member> thisMember = memberService.findByMemberEmail(email);
+        Member member = thisMember.get();
 
-		if (!thisMember.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
-		}
+        // 비밀번호 업데이트
+        member.setMemberPassword(passwordEncoder.encode(password));
+        member.setResetToken(null); // 토큰 무효화
+        memberRepository.save(member);
 
-		// 이메일 인증 여부 확인
-		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-		System.out.println("isEmailVerified: " + isEmailVerified);
-		// 이메일 인증이 완료되지 않았을 때
-		if (isEmailVerified == null || !isEmailVerified) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
-		}
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+    }
+    
+    
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
 
-		return memberService.sendPasswordResetEmail(email);
-	}
 
-	@GetMapping("/reset_password")
-	public String getResetPassword(@RequestParam("token") String token, Model model) {
-		model.addAttribute("token", token);
-		System.out.println("Token received: " + token); // 토큰 값을 로그에 출력
-		return "/member/reset_password";
-	}
 
-	@PostMapping("/reset_password")
-	@Transactional
-	public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
-			@RequestParam("newPassword") String password, @RequestParam("newPassword2") String password2, Model model) {
 
-		// 비밀번호 형식 검증
-		String passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
-		if (!Pattern.matches(passwordPattern, password)) {
-			return ResponseEntity.badRequest().body("비밀번호는 최소 6자 이상이어야 하며, 문자와 숫자를 포함해야 합니다.");
-		}
 
-		// 비밀번호 확인 일치 검증
-		if (!password.equals(password2)) {
-			return ResponseEntity.badRequest().body("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-		}
 
-		// 토큰 검증
-		model.addAttribute("token", token); // 모델에 token 추가
-		System.out.println("Token received: " + token);
-		Optional<Member> thisMember = memberRepository.findByResetToken(token);
-		if (thisMember.isEmpty()) {
-			return ResponseEntity.badRequest().body("유효하지 않은 토큰입니다.");
-		}
 
-		Member member = thisMember.get();
 
-		// 비밀번호 업데이트
-		member.setMemberPassword(passwordEncoder.encode(password));
-		member.setResetToken(null); // 토큰 무효화
-		memberRepository.save(member);
 
-		return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
-	}
 
-	public String getMethodName(@RequestParam String param) {
-		return new String();
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Autowired
+    private final OrderService orderService;
+
+
+
+    @GetMapping("/mypage2")
+    public String getMypageYs(Model model,
+                              @RequestParam(value = "search", required = false) String search,
+                              @RequestParam(value = "status", required = false) String status,
+                              @RequestParam(value = "page", defaultValue = "0") int page
+                              ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+            Member member = memberService.getMember(memberId);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedRegDate = member.getMemberRegDate().format(formatter);
+
+
+            // mypage : 주문 내역 확인
+            List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
+
+            model.addAttribute("poHistoryList", poHistoryList);
+            model.addAttribute("member", member);
+            model.addAttribute("formattedRegDate", formattedRegDate);
+
+        }
+        return "/order/mypage_orderHistory";
+    }
+
+    @GetMapping("/mypage2/")
+    public String getOrderList(
+            ) {
+
+
+
+        return "/order/admin_polist";
+    }
+
+
 
 }

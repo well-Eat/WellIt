@@ -23,8 +23,6 @@ public class PurchaseOrder {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
 
-    private String tmpAddr; // 배송지 주소(임시)
-
 
     /* 금액 관련 필드 */
     private Integer orgPrice; //원래 상품 가격
@@ -58,12 +56,13 @@ public class PurchaseOrder {
         this.updatedAt = LocalDateTime.now();
     }
 
+    //결제정보
+    @OneToOne(mappedBy = "purchaseOrder", cascade=CascadeType.ALL)
+    private Payment payment;
 
     //배송정보
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="delivery_id")
+    @OneToOne(mappedBy = "purchaseOrder", cascade=CascadeType.ALL)
     private Delivery delivery;
-
 
 
     //주문 상품 리스트

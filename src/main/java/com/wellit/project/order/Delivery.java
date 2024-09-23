@@ -21,7 +21,9 @@ public class Delivery {
     private DeliveryStatus deliveryStatus;
 
 
-    private String deliveryAddr; // 배송 주소
+    private String addr1; // 배송 도로명주소
+    private String addr2; // 배송 상세주소
+
     private String deliveryName; // 받는분
     private String deliveryPhone; // 받는분 연락처
 
@@ -44,6 +46,10 @@ public class Delivery {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private PurchaseOrder purchaseOrder;
 
 
 

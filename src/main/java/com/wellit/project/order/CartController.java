@@ -3,6 +3,8 @@ package com.wellit.project.order;
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.ArrayList;
+
 import java.util.List;
 
 @Controller
@@ -21,11 +24,12 @@ public class CartController {
     private final MemberService memberService;
 
     @GetMapping("/list")
-    public String getCartPage(Model model, Principal principal){
+    public String getCartPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
 
-        List<CartItem> cartItemList = cartService.getCartItemList(principal.getName());
+        List<CartItem> cartItemList = cartService.getCartItemList(userDetails.getUsername());
 
-        String memberAddress = cartService.getMemberAddress(principal.getName());
+
+        String memberAddress = cartService.getMemberAddress(userDetails.getUsername());
 
         OrderForm orderForm = new OrderForm();
 
@@ -47,8 +51,6 @@ public class CartController {
         model.addAttribute("memAddr", memberAddress);
         model.addAttribute("orderForm", orderForm);
 
-
-
         return "/order/order_cart";
     }
 
@@ -62,10 +64,7 @@ public class CartController {
 
 
 
-    /* 인증된 사용자의 Member 인스턴스 반환 */
-    private Member getMember(Principal principal){
-        return memberService.getMember(principal.getName());
-    }
+
 
 
 }

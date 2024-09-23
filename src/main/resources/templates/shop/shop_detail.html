@@ -50,9 +50,9 @@
 					<span class="badge text-bg-success"
 					      th:if="${product.prodDiscount != null and product.prodDiscount > 0}">세일상품</span>
 					
-					<!--리뷰 개수가 1000개를 초과할 경우 인기상품 태그 표시-->
+					<!--리뷰 개수가 100개를 초과할 경우 인기상품 태그 표시-->
 					<span class="badge text-bg-success"
-					      th:if="${product.prodReview != null and #lists.size(product.prodReview) > 1000}">인기상품</span>
+					      th:if="${product.prodReview != null and #lists.size(product.prodReview) > 100}">인기상품</span>
 				</div>
 				
 				<h5 class="prodName card-title f28" th:text="${product.prodName}"></h5> <!--상품명-->
@@ -120,12 +120,8 @@
 		</div> <!--col-6 card-->
 	</section>  <!--prodInfo-->
 	
-	<!--todo: 관련 상품 -->
-	<section class="border" style="display:none;">
-		<div> 관련상품추천</div>
-	</section>
+
 	
-	<!--todo: sticky bar + scrollspy 상품평 상세페이지 -->
 	
 	
 	<!--상품 상세 정보 출력-->
@@ -143,7 +139,7 @@
 		<h5>상품후기 &nbsp; <span class="revCnt">(<small th:text="${#lists.size(product.prodReview)}"></small>건)</span></h5>
 		
 		<!--이미지 리뷰 라인-->
-		<section class="imgReviewList" th:replace="shop/shop_imgReview::imgReviewContainer">
+		<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
 			shop_imgReview.html 파일 내용으로 대체
 		</section>
 		

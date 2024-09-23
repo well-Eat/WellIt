@@ -12,18 +12,9 @@
 	<!-- 제이쿼리 라이브러리 로드 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	
-	
-	<!--swiper cdn-->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-	
-	
 	<!--order style link-->
 	<link rel="stylesheet" th:href="@{/css/order.css}">
 	
-	<!--order js link-->
-	<script src="/js/order.js"></script>
-
 	
 	<section>
 		<p th:text="${product.prodId}"></p>
@@ -31,12 +22,6 @@
 			<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal">
 				폼열기
 			</a>
-<!--
-			<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal"
-			   th:data-prod-name="${product.prodName}">
-				폼열기
-			</a>
--->
 		</div>
 		
 		
@@ -49,7 +34,7 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body container-fluid">
-						<form th:action="@{/order/review/{prodId}(prodId=${product.prodId})}" th:object="${prodReviewForm}" method="post" enctype="multipart/form-data">
+						<form th:action="@{/shop/review/{prodId}(prodId=${product.prodId})}" th:object="${prodReviewForm}" method="post" enctype="multipart/form-data">
 							<div class="row">
 								
 								<style>
@@ -150,41 +135,32 @@
 								<div class="col-6 modalColRight">
 									
 									<p>
-										<label for="prodName" class="form-label">상품명</label>
+										<label class="form-label">상품명</label>
 										<input type="text" class="form-control" th:field="*{prodName}" aria-describedby="fieldHelp" />
 									</p>
 									<p>
-										<label for="revText" class="form-label">리뷰내용</label>
+										<label class="form-label">리뷰내용</label>
 										<input type="text" class="form-control" th:field="*{revText}" aria-describedby="fieldHelp" />
 									</p>
 									<p th:if="${#fields.hasErrors('prodName')}" th:errors="*{prodName}">상품명 에러</p>
 									<p th:if="${#fields.hasErrors('revText')}" th:errors="*{revText}">리뷰 내용 에러</p>
 									<input type="hidden" th:field="*{prodId}" />
 									<input type="submit">
-									
+								
 								</div> <!--// modalColRight-->
 							</div> <!--//row-->
 						</form>
 					</div> <!--// modal-body-->
-					<!--	<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					</div>-->
+
 				</div> <!--// modal-content-->
 			</div> <!--// modal-dialog-->
 		</div><!-- // modal#revFormModal-->
 	
 	</section>
-	<script>
-		$(function (){
-  
-            $(".revFormLink").on("click", function (){
-                // const prodName = $(this).data('prod-name');
-                // console.log(prodName);
-                // $("#prodName").val(prodName);
-            })
-		})
-	</script>
+	
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
 	
 
 </div> <!--//layout::content-->

@@ -150,7 +150,15 @@ body > .container * {
 
 
 
+.vacantCart{
+    background-image: url('../imgs/shop/cart/vacantCart.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 150px;
 
+}
 
 .cartItemList h5.prodName{
     font-weight: 700;
@@ -188,12 +196,14 @@ body > .container * {
     font-weight: 600;
     font-size: 20px;
 }
-   
+
+.cartItemTable .card-footer{
+    border-top-width: 0 !important;
+}
 
 
 
-
-/*********** order_po : 주문서 스타일 ***************/
+    /*********** order_po : 주문서 스타일 ***************/
 /*********** order_po : 주문서 스타일 ***************/
 /*********** order_po : 주문서 스타일 ***************/
 .order_po{
@@ -216,7 +226,7 @@ section.orderItem *{
 }
 
 /* 주문상품 섹션 */
-.orderItemTable .prodImageBoxWrpper{
+.orderItemTable .prodImageBoxWrapper{
     width: 25%;
     max-width: 100px;
 }
@@ -287,4 +297,45 @@ section.row > p.subtle::after {
     color: #999999;
     font-weight: 500;
     font-size: 14px;
+}
+
+
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+
+#drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#drop-area.highlight {
+    border-color: purple;
+}
+
+#gallery img {
+    width: 100px;
+    margin: 10px;
+}
+
+.star-rating {
+    direction: rtl;
+    display: inline-flex;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107;
 }

@@ -1,0 +1,316 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>주문완료</title>
+</head>
+<body>
+<div layout:fragment="content" class="container  order_po mb-5">
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	
+	<!-- 제이쿼리 라이브러리 로드 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	<!--포트원 cdn-->
+	
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	
+	<th:block th:object="${poDetail}">
+		
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col-12 text-left" th:if="${orderSuccess}">
+				주문이 완료되었습니다.
+			</div>
+			
+		</div>
+		
+		<section class="row orderInfo position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				주문 정보
+			</p>
+			<div>
+				<table class="table table-borderless">
+					<tr>
+						<th scope="row">주문번호</th>
+						<td><span th:text="${poDetail.orderId}"></span></td>
+					</tr>
+					<tr>
+						<th scope="row">현재상태</th>
+						<td>
+							<span th:text="${poDetail.orderStatus.renderStatus()}"></span>
+						</td>
+					</tr>
+					<tr th:unless="${poDetail.invoiceNum == '99999'}">
+						<th scope="row">송장번호</th>
+						<td><span th:text="${poDetail.invoiceNum}"></span></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+			
+		</section>
+		
+		<section class="row orderItem position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				주문 상품
+			</p>
+			
+			<!-- 주문 상품 목록 -->
+			<div class="orderItemTable">
+				
+				
+				<th:block th:each="orderItem, iterStat : ${orderItemList}">
+					<div class="d-flex gap-3 border-bottom border-light">
+						
+						<!-- 상품이미지 -->
+						<div class="vstack gap-2 prodImageBoxWrapper my-3">
+							
+							<div class="prodImageBox border"
+							     style="width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;"
+							     th:style="|background-image: url(@{  ${orderItem.product.prodMainImg}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
+							</div>
+						</div> <!-- // prodImageBoxWrapper -->
+						
+						
+						<div class="vstack pl-3 ml-3 calcItem my-3">
+							<h5 class="card-title fw700 c444 f18 mb-3" th:text="${orderItem.product.prodName}">상품명</h5>
+							<!--상품명-->
+							
+							<p class="card-text d-inline-block mb-1 secondaryLine">
+
+								<span class="card-text text-end d-inline-block c555 f14 commaNums"
+								      th:attr="data-nums=${orderItem.product.prodFinalPrice}"></span>
+								<span class="f14 won">원</span>
+								
+								
+								<!--할인율 > 0 일때-->
+								<th:block th:if="${orderItem.product.prodDiscount != null and orderItem.product.prodDiscount > 0}">
+											<span
+													class="card-text mb-1 c999 f12 text-decoration-line-through d-inline-block commaNums"
+													th:attr="data-nums=${orderItem.product.prodOrgPrice}" }></span><span
+										class="f12 won text-decoration-line-through c999">원</span>
+								</th:block>
+								<!--할인 후 가격 * 수량-->
+							</p>
+							
+							<p class="card-text d-inline-block">
+
+										<span class="card-text text-end d-inline-block c333 fw700 commaNums f16"
+										      th:attr="data-nums=${orderItem.product.prodFinalPrice * orderItem.quantity }"></span>
+								<span class="f14 won">원</span>
+								
+								<span class="f14 c999 px-2">|</span>
+								<span class="card-text text-end d-inline-block c555 fw700 c16 commaNums"
+								      th:attr="data-nums=${orderItem.quantity}"></span>
+								
+								<span class="f14 ea c555">ea</span>
+							
+							</p>
+						
+						
+						</div>
+					
+					
+					</div> <!-- //card-body -->
+				
+				</th:block> <!--//orderItemList-->
+			
+			
+			</div> <!-- //orderItemTable 왼쪽열 -->
+		
+		</section> <!-- //orderItem -->
+		
+		
+		<section class="row orderMember position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				주문자 정보
+			</p>
+			
+			<div>
+				<table class="table table-borderless">
+					<tr>
+						<th scope="row">보내는 분</th>
+						<td><span th:text="${member.memberName}" id="memberName"></span></td>
+					</tr>
+					<tr>
+						<th scope="row">휴대폰</th>
+						<td>
+							<span th:text="${@orderService.formatPhoneNumber(member.memberPhone)}"></span>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">이메일</th>
+						<td><span th:text="${member.memberEmail}" id="memberEmail"></span></td>
+					</tr>
+				
+				</table>
+			</div>
+		
+		</section> <!-- //orderMember -->
+		
+		
+		<section class="row deleveryInfo position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				배송 정보
+			</p>
+			
+			
+			<div>
+				<table class="table table-borderless">
+					<tr>
+						<th scope="row">배송지</th>
+						<td>
+							
+							<!-- 주소 -->
+							<div class="row justify-content-start">
+								
+								<div class="col-12 d-flex column-gap-1">
+									<p id="sample4_roadAddress" class="addr inputed" th:text="*{addr1}">
+								</div>
+								<div class="col-12 mt-1">
+									<p id="sample4_detailAddress" class="addr inputed" th:text="*{addr2}">
+								</div>
+							</div>
+						
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">받는 분</th>
+						<td><p th:text="*{deliveryName}" class="inputed"></td>
+					</tr>
+					<tr>
+						<th scope="row">받는 분 휴대폰</th>
+						<td class="container">
+							<span th:text="*{deliveryPhone}" class="inputed"></span>
+						</td>
+					</tr>
+					<tr class="align-middle">
+						<th scope="row">배송 요청사항</th>
+						<td><span class="inputed" th:text="*{deliveryMsg}"></span> </td>
+					</tr>
+				
+				</table>
+			</div>
+		
+		
+		</section> <!-- //deleveryInfo -->
+		
+		
+		<section class="row totalPriceSec position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				결제금액
+			</p>
+			
+			<div class="cardWrapper">
+				
+				<div class="card priceCard c999">
+					<div class="card-body">
+						<div class="tableWrapper">
+							<table class="table table-borderless priceTable">
+								
+								<tr>
+									<th>결제 시간</th>
+									<td>
+										<span th:text="${#temporals.format(poDetail.paidAt, 'yyyy.MM.dd. hh:mm:ss')}"></span>
+									</td>
+								</tr>
+								<tr  class="milege">
+									<th>결제 수단</th>
+									<td>
+										<span th:text="${poDetail.pgProvider}" ></span>
+									</td>
+								</tr>
+								
+								
+								
+								<tr  class="border-top totalPay">
+									<th>주문금액</th>
+									<td>
+										<span class="commaNums"
+										      th:attr="data-nums=${poDetail.finalPrice}" id="finalPrice"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								<tr>
+									<th class="sm">&nbsp; 상품금액</th>
+									<td class="sm">
+										<span class="commaNums"
+										      th:attr="data-nums=${poDetail.orgPrice}"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								<tr>
+									<th class="sm">&nbsp; 상품할인금액</th>
+									<td class="sm">
+										<span class="commaNums"
+										      th:attr="data-nums=${poDetail.discPrice}"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								<tr>
+									<th>배송비</th>
+									<td>
+										<span class="commaNums"
+										      th:attr="data-nums=${poDetail.deliveryFee}"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								<tr class="milege">
+									<th>마일리지할인</th>
+									<td>
+										<span class="commaNums milePay"
+										      th:attr="data-nums=${poDetail.milePay}"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								
+								<tr class="border-top totalFinal">
+									<th>최종결제금액</th>
+									<td>
+										<span class="commaNums totalPay"
+										      th:attr="data-nums=${poDetail.totalPay}"></span>
+										<span class="won">원</span>
+									</td>
+								</tr>
+								
+								
+								
+							</table>
+						</div> <!-- //tableWrapper -->
+					</div> <!-- //card-body -->
+				</div> <!-- //card priceCard -->
+			
+			
+			</div> <!-- //cardWrapper -->
+		
+		
+		</section> <!-- //totalPriceSec -->
+		
+		<!--결제 성공 페이지에서는 주문 취소 버튼 제외-->
+		<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-start"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:unless="${orderSuccess}">주문취소</span>
+	</th:block>
+	
+	<!--포트원 cdn-->
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+	<script src="/js/payment.js"></script>
+	
+
+</div> <!--//layout::content-->
+
+<script layout:fragment="script" th:inline="javascript"></script>
+
+</body>
+</html>

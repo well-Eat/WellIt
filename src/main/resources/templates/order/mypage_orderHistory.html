@@ -1,0 +1,105 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				주문 내역
+			</div>
+		</div>
+		
+		<section class="row vstack orderItem position-relative mb-5">
+			<p class="subtle f18 c666 fw-bold">
+				주문 내역
+			</p>
+			
+			<div class="col gap-3 g-3" th:each="poHistory, iterStat : ${poHistoryList}">
+				<div class="card " style="max-width: 800px; ">
+					<div class="card-header border-bottom-0 pb-0 d-flex flex-row align-items-center justify-content-between">
+						<span class="c333 fw700 f18" style="color: white;">[[${poHistory.orderStatus.renderStatus()}]]</span>
+						<a th:href="@{|/order/po/detail/${poHistory.orderId}|}" class="f12 align-text-bottom c888">주문상세내역
+							&raquo;</a>
+					</div>
+					
+					<!-- 주문 상품 목록 th:block-->
+					<div class="orderItemTable card-body gap-2 bg-light vstack">
+						<th:block th:each="orderItem, iterStat : ${poHistory.orderItems}">
+							<div class="d-flex gap-3 border-bottom border-light bg-white rounded-2 px-3 itemBlock"
+							     th:attr="data-orderitem-id=${orderItem.orderItemId}, data-reviewed=${orderItem.reviewed}">
+								
+								<!-- 상품이미지 -->
+								<div class="vstack gap-2 prodImageBoxWrapper my-3">
+									
+									<div class="prodImageBox border flex-grow-0"
+									     style="aspect-ratio: 1; background-size: cover; background-position: center;  max-width: 140px;"
+									     th:style="|background-image: url(@{  ${orderItem.prodThumb}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
+									</div>
+								</div> <!-- // prodImageBoxWrapper -->
+								
+								
+								<div class="d-flex flex-column pl-3 ml-3 calcItem my-3 clearfix align-items-stretch flex-grow-1">
+									<h5 class="card-title fw700 c444 f18 mb-2 d-inline-block" th:text="${orderItem.prodName}">상품명</h5>
+									
+									<p class="card-text d-inline-block mb-1">
+	
+										<span class="card-text text-end d-inline-block c333 fw700 commaNums f16 sumFinalPrice"
+										      th:attr="data-nums=${orderItem.sumFinalPrice}">상품금액합계</span>
+										<span class="f14 won">원</span>
+									</p>
+									
+									<p class="card-text gap-2 flex-grow-1 align-items-end itemBtnLine" style="display: inline-flex;">
+										
+										<!-- 리뷰 작성되지 않은 경우 -->
+										<span
+												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
+												th:unless="${orderItem.reviewed}">리뷰쓰기</span>
+										
+										<!-- 리뷰가 작성된 경우, prodReview가 null이 아닐 때만 접근 -->
+										<span
+												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId},
+                   data-review-rating=${orderItem.prodReview.revRating}, data-review-text=${orderItem.prodReview.revText}"
+												th:if="${orderItem.prodReview != null}">내 리뷰 보기</span>
+									
+									</p>
+								
+								</div>
+							
+							</div>
+						</th:block> <!--//orderItemList-->
+						<div class="text-end bg-light cart-text pt-2">
+							
+							<span class="d-inline-block c333 fw700 commaNums f22"
+							      th:attr="data-nums=${poHistory.totalPrice}">주문금액총합계</span>
+							<span class="f18 won fw500 c666">원</span>
+						
+						</div>
+					</div> <!-- //card-body -->
+					
+					<div class="card-footer border-top-0 pt-0 d-flex flex-row align-items-center justify-content-between">
+						<span class="f14 c999"><span
+								th:text="${#temporals.format(poHistory.paidAt,'yyyy. MM. dd')}"></span> 구매</span>
+						<span class="btn badge text-bg-success f16">리뷰쓰고 추가 마일리지 적립 혜택을 받으세요</span>
+					</div> <!-- //card-footer -->
+				</div> <!-- //card -->
+			</div> <!-- //col -->
+			
+			
+			<script th:inline="javascript">
+
+			</script>
+		
+		</section> <!--		//orderItem-->
+	
+	</div><!-- // #wrapper -->
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+
+</div>
+</html>

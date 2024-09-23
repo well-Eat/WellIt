@@ -69,6 +69,9 @@ public class ShopService {
         List<ProdReview> imgReviewList = product.getProdReview().stream()
                                                 .filter(review -> review.getRevImg() != null)
                                                 .collect(Collectors.toList());
+
+        log.info("############### ShopService(getImgReview)");
+        log.info(imgReviewList.size());
         return imgReviewList;
     }
 
@@ -84,20 +87,6 @@ public class ShopService {
         Page<ProdReview> pagedRevlist = prodReviewRepository.findAllByProduct(product, pageable);
 
         return pagedRevlist;
-    }
-
-
-    /* create : 리뷰 작성 */
-    public ProdReview createProdReview(ProdReview prodReview) throws IOException {
-
-        ProdReview savedReview = prodReviewRepository.save(prodReview);
-        return savedReview;
-    }
-
-
-    /* 리뷰 작성 : 이미지 등록 */
-    public void addProdRevImg(ProdReviewImg prodReviewImg) {
-        prodReviewImgRepository.save(prodReviewImg);
     }
 
 

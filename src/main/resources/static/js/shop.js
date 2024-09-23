@@ -710,15 +710,14 @@ function addToCart(prodId, quantity) {
                 icon: 'success',
                 showCancelButton: true,
                 confirmButtonText: '장바구니로 이동',
-                cancelButtonText: '쇼핑 계속하기',
+                cancelButtonText: '상품 목록',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     // '장바구니로 이동'을 선택한 경우
                     window.location.href = '/cart/list';
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    // '쇼핑 계속하기'를 선택한 경우
-                    //Swal.fire('계속 쇼핑해주세요!', '', 'info');
+                    window.location.href = '/shop/list';
                 }
             });
         })
