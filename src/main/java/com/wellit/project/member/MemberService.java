@@ -39,7 +39,8 @@ public class MemberService {
 	public Member create(String memberId, String memberPassword, String memberName, String memberAlias,
 			String memberEmail, String memberPhone, String memberAddress, String memberBirth, String memberGender,
 			String memberVeganType, String zipcode, String roadAddress, String addressDetail, String birth_year,
-			String birth_month, String birth_day, MultipartFile imageFile, Boolean isBusiness, String businessName) throws IOException {
+			String birth_month, String birth_day, MultipartFile imageFile, Boolean isBusiness, String businessName)
+			throws IOException {
 
 		Member member = new Member();
 		member.setMemberId(memberId);
@@ -86,7 +87,6 @@ public class MemberService {
 		Cart cart = new Cart(member);
 		member.setCart(cart);
 
-
 		return memberRepository.save(member);
 	}
 
@@ -97,16 +97,14 @@ public class MemberService {
 	// 로그인한 사용자명을 알 수 있는 메소드
 	public Member getMember(String memberId) {
 
-	    Member member = this.memberRepository.findByMemberId(memberId);
-	    
-	    if (member != null) {
-	        return member;
-	    } else {
-	        throw new DataNotFoundException("해당 회원이 없습니다.");
-	    }
+		Member member = this.memberRepository.findByMemberId(memberId);
+
+		if (member != null) {
+			return member;
+		} else {
+			throw new DataNotFoundException("해당 회원이 없습니다.");
+		}
 	}
-
-
 
 	// 회원 정보 수정 로직
 	public void updateMember(Member member, String newPassword, String newName, String newAlias, String newEmail,
@@ -159,7 +157,7 @@ public class MemberService {
 	public void deleteMember(String memberId) {
 		Member member = memberRepository.findByMemberId(memberId);
 		if (member == null) {
-		    throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
+			throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
 		}
 
 		// 프로필 이미지 삭제 로직 추가
@@ -227,29 +225,16 @@ public class MemberService {
 		return memberRepository.findByMemberId(memberId); // memberId로 직접 조회
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// 마일리지 업데이트 : by yoonseo
-	public void updateMileage(String memberId, int amount){
+	public void updateMileage(String memberId, int amount) {
 		Member member = this.getMember(memberId);
 		member.setMileage(member.getMileage() + amount);
 		memberRepository.save(member);
 	}
 
+	// 아이디 중복 체크
+	public boolean isIdExists(String memberId) {
+		return memberRepository.existsByMemberId(memberId);
+	}
 
 }

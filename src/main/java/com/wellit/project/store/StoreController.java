@@ -63,14 +63,19 @@ public class StoreController {
     public String recommend(@RequestParam("vegetarian") String stoVegetarianType, 
                             @RequestParam("sido") String stoRegionProvince, 
                             @RequestParam("sigungu") String stoRegionCity, 
-                            Model model) {
+                            Model model, HttpSession session) {
         
         try {
+        	String memberId = (String) session.getAttribute("UserId"); // 세션에서 사용자 ID 가져오기
+
         	List<AllStore> findStores = allStoreService.findStoresByVegetarianAndLocation(stoVegetarianType, stoRegionProvince, stoRegionCity);
             model.addAttribute("findStores", findStores);
             List<AllStore> stores = allStoreService.getAllStores(); // 데이터 가져오기
             model.addAttribute("stores", stores); // 모델에 데이터 추가
-            System.out.println("================================="+findStores.toString());
+            if (memberId != null) {
+                List<FavoriteStore> favoriteStores = favoriteStoreService.getFavoriteStoresByMember(memberId); // 즐겨찾기 목록 가져오기
+                model.addAttribute("favoriteStores", favoriteStores); // 모델에 추가
+            }
             return "load/place"; // 추천 결과를 보여줄 뷰 이름
         } catch (Exception e) {
             // 에러 처리 로직

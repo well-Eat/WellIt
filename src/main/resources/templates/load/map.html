@@ -1,5 +1,5 @@
 <html layout:decorate="~{layout}">
-<div layout:fragment="content" class="container">
+<div layout:fragment="content" class="container-fluid">
 	<link rel="stylesheet" href="/css/map.css" />
 	<link rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
@@ -16,43 +16,61 @@
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
 
-	<div class="selectRegion my-2">
-		<h2 class="my-3">지역을 선택해주세요</h2>
-		<form class="selectRegionForm">
-			<label for="city">시/도 선택:</label>
-			<select id="city">
-				<option value="">선택하세요</option>
-				<option value="서울">서울</option>
-				<option value="부산">부산</option>
-				<option value="대구">대구</option>
-				<option value="인천">인천</option>
-				<option value="광주">광주</option>
-				<option value="대전">대전</option>
-				<option value="울산">울산</option>
-				<option value="세종">세종</option>
-				<option value="경기">경기</option>
-				<option value="강원">강원</option>
-				<option value="충북">충북</option>
-				<option value="충남">충남</option>
-				<option value="전북">전북</option>
-				<option value="전남">전남</option>
-				<option value="경북">경북</option>
-				<option value="경남">경남</option>
-				<option value="제주">제주</option>
-			</select>
+	<div class="searchWrapper bg-light">
+		<div class="selectRegion ">
+				<h5 class="selectRegionForm border-bottom p-3 text-center">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#6a994e"
+						class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
+						<path
+							d="m10.495 6.92 1.278-.619a.483.483 0 0 0 .126-.782c-.252-.244-.682-.139-.932.107-.23.226-.513.373-.816.53l-.102.054c-.338.178-.264.626.1.736a.48.48 0 0 0 .346-.027ZM7.741 9.808V9.78a.413.413 0 1 1 .783.183l-.22.443a.6.6 0 0 1-.12.167l-.193.185a.36.36 0 1 1-.5-.516l.112-.108a.45.45 0 0 0 .138-.326M5.672 12.5l.482.233A.386.386 0 1 0 6.32 12h-.416a.7.7 0 0 1-.419-.139l-.277-.206a.302.302 0 1 0-.298.52z" />
+						<path
+							d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z" />
+					</svg>
+					지역 가게 보기
 
-			<label for="district">구 선택:</label>
-			<select id="district" disabled>
-				<option value="">시/도를 선택하세요</option>
-			</select>
-			<span title="현재 위치" class="getUserLocationBtn"><img
-					src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span>
-		</form>
+				</h5>
+				<form class="selectRegionForm border-bottom p-3">
+					<label for="city">시/도 선택:</label>
+					<select id="city">
+						<option value="">선택하세요</option>
+						<option value="서울">서울</option>
+						<option value="부산">부산</option>
+						<option value="대구">대구</option>
+						<option value="인천">인천</option>
+						<option value="광주">광주</option>
+						<option value="대전">대전</option>
+						<option value="울산">울산</option>
+						<option value="세종">세종</option>
+						<option value="경기">경기</option>
+						<option value="강원">강원</option>
+						<option value="충북">충북</option>
+						<option value="충남">충남</option>
+						<option value="전북">전북</option>
+						<option value="전남">전남</option>
+						<option value="경북">경북</option>
+						<option value="경남">경남</option>
+						<option value="제주">제주</option>
+					</select>
+					<br />
+					<label for="district" class="mt-2">구 선택:</label>
+					<select id="district" disabled>
+						<option value="">시/도를 선택하세요</option>
+					</select>
+
+				</form>
+			</div>
+			<div id="restaurantList" >
+			</div>
 	</div>
-	<div class="container mapWrapper asd">
-		<div id="restaurantList"></div>
+	<div class="mapWrapper">
 		<div id="pagination"></div>
-		<div id="map"></div>
+		<div id="map">
+			<button id="zoomIn">+</button>
+			<button id="zoomOut">-</button>
+			<button id="location"> <span title="현재 위치" class="getUserLocationBtn"><img
+						src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span></button>
+		</div>
+
 	</div>
 	<script>
 		const districts = {
@@ -342,9 +360,40 @@
 		};
 
 		$(document).ready(function () {
+			fetchStores();
 
+			//모든 가게 표시
+			function displayStoresOnMap(allStores) {
+				const mapContainer = document.getElementById('map');
+				const mapOption = {
+					center: new kakao.maps.LatLng(allStores[0].stoLatitude, allStores[0].stoLongitude), // 첫 번째 가게 위치로 중심 설정
+					level: 9 // 초기 확대 수준
+				};
+				const map = new kakao.maps.Map(mapContainer, mapOption);
 
-			loadAllStores();
+				// 모든 가게에 대해 마커 추가
+				allStores.forEach(store => {
+					const markerPosition = new kakao.maps.LatLng(store.stoLatitude, store.stoLongitude);
+					const marker = new kakao.maps.Marker({
+						position: markerPosition,
+						title: store.stoName // 마커에 가게 이름 추가
+					});
+					marker.setMap(map); // 마커를 지도에 표시
+
+					// InfoWindow 추가
+					const infowindow = new kakao.maps.InfoWindow({
+						content: `<div style="padding:5px;">${store.stoName}</div>`, // InfoWindow에 표시할 내용
+						removable: true // 닫기 버튼을 추가
+					});
+					infowindow.open(map, marker); // 마커 위에 InfoWindow 표시
+				});
+			}
+
+			async function fetchStores() {
+				const response = await fetch('/load/stores'); // API 호출
+				const allStores = await response.json(); // JSON 데이터로 변환
+				displayStoresOnMap(allStores); // 가져온 가게 정보를 지도에 표시하는 함수 호출
+			}
 			let city, district;
 
 			$('#city').change(function () {
@@ -416,8 +465,7 @@
 				});
 			}
 
-			// 페이지 로드 시 사용자의 위치를 가져옴
-			getUserLocation();
+
 
 			$(".getUserLocationBtn").on("click", function () {
 				if (confirm("현재 위치로 이동하시겠습니까?")) {
@@ -793,7 +841,6 @@
 					// 기본적으로 첫 번째 항목 확장
 					if (paginatedRestaurants.length > 0) {
 						const firstItem = $('.restaurant-item').first();
-						firstItem.addClass('expanded');
 						initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
 					}
 
@@ -834,16 +881,13 @@
 			return R * c; // 거리 반환 (킬로미터)
 		}
 
-		// 페이지 로드 시 사용자의 위치 근처 가게 로드
-		$(document).ready(() => {
-			loadNearbyStores(); // 홈페이지 로드 시 사용자 위치 근처 가게 로드
-		});
+
 
 		function initMap(lat, lng, placeName) {
 			const mapContainer = document.getElementById('map');
 			const mapOption = {
 				center: new kakao.maps.LatLng(lat, lng),
-				level: 5 // 지도의 확대 수준
+				level: 3 // 초기 확대 수준
 			};
 			const map = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -851,16 +895,25 @@
 			const markerPosition = new kakao.maps.LatLng(lat, lng);
 			const marker = new kakao.maps.Marker({
 				position: markerPosition,
-				title: placeName // 마커에 식당 이름 추가
+				title: placeName
 			});
-			marker.setMap(map); // 마커를 지도에 표시
+			marker.setMap(map);
 
 			// InfoWindow 추가
 			const infowindow = new kakao.maps.InfoWindow({
-				content: `<div style="padding:5px;">${placeName}</div>`, // InfoWindow에 표시할 내용
-				removable: true // 닫기 버튼을 추가
+				content: `<div style="padding:5px;">${placeName}</div>`,
+				removable: true
 			});
-			infowindow.open(map, marker); // 마커 위에 InfoWindow 표시
+			infowindow.open(map, marker);
+
+			// 사용자 정의 확대/축소 버튼 이벤트 리스너
+			document.getElementById('zoomIn').addEventListener('click', function () {
+				map.setLevel(map.getLevel() - 1); // 확대
+			});
+
+			document.getElementById('zoomOut').addEventListener('click', function () {
+				map.setLevel(map.getLevel() + 1); // 축소
+			});
 		}
 
 		//찜하기 함수
@@ -984,7 +1037,7 @@
 			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
 			const userId = window.currentUserId;
 			if (userId == '로그인되지 않았습니다.') {
-				alert(userId)
+				window.location.href = 'http://localhost:8080/member/login'; // 로그인 페이지 URL로 수정
 			}
 
 			const stoId = window.currentStoId;
@@ -1040,6 +1093,8 @@
 				alert("날짜 및 시간 선택기가 초기화되지 않았습니다.");
 			}
 		}
+
+
 
 	</script>
 </div>

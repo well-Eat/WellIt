@@ -7,27 +7,8 @@
 	padding: 0;
 }
 
-header {
-	height: 100px;
-
-}
 
 
-header .custom-logo img {
-	height: 50px;
-}
-
-/* 상단 네브바 메뉴 */
-header .custom-menu ul.custom-main {
-
-	height: 100px;
-}
-
-header .custom-menu ul.custom-main li {
-	height: 100px;
-
-
-}
 
 body {
 	background-color: #fff;

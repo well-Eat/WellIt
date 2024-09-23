@@ -55,7 +55,7 @@ public class StoreReservationController {
         // 회원 정보 가져오기
         Member member = memberRepository.findByMemberId(userId);
         if (member == null) {
-            throw new RuntimeException("회원이 존재하지 않습니다.");
+            throw new RuntimeException("로그인되지 않았습니다.");
         }
 
         // 가게 정보 가져오기

@@ -38,6 +38,8 @@
 		<div id="restaurantList"></div>
 		<div id="pagination"></div>
 		<div id="map"></div>
+		<button id="zoomIn">+123</button>
+		<button id="zoomOut">-123</button>
 	</div>
 	<script>
 		const districts = {
@@ -512,27 +514,36 @@
 		}
 
 		function initMap(lat, lng, placeName) {
-			const mapContainer = document.getElementById('map');
-			const mapOption = {
-				center: new kakao.maps.LatLng(lat, lng),
-				level: 5 // 지도의 확대 수준
-			};
-			const map = new kakao.maps.Map(mapContainer, mapOption);
+		    const mapContainer = document.getElementById('map');
+		    const mapOption = {
+		        center: new kakao.maps.LatLng(lat, lng),
+		        level: 3 // 초기 확대 수준
+		    };
+		    const map = new kakao.maps.Map(mapContainer, mapOption);
 
-			// 마커 추가
-			const markerPosition = new kakao.maps.LatLng(lat, lng);
-			const marker = new kakao.maps.Marker({
-				position: markerPosition,
-				title: placeName // 마커에 식당 이름 추가
-			});
-			marker.setMap(map); // 마커를 지도에 표시
+		    // 마커 추가
+		    const markerPosition = new kakao.maps.LatLng(lat, lng);
+		    const marker = new kakao.maps.Marker({
+		        position: markerPosition,
+		        title: placeName
+		    });
+		    marker.setMap(map);
 
-			// InfoWindow 추가
-			const infowindow = new kakao.maps.InfoWindow({
-				content: `<div style="padding:5px;">${placeName}</div>`, // InfoWindow에 표시할 내용
-				removable: true // 닫기 버튼을 추가
-			});
-			infowindow.open(map, marker); // 마커 위에 InfoWindow 표시
+		    // InfoWindow 추가
+		    const infowindow = new kakao.maps.InfoWindow({
+		        content: `<div style="padding:5px;">${placeName}</div>`,
+		        removable: true
+		    });
+		    infowindow.open(map, marker);
+
+		    // 사용자 정의 확대/축소 버튼 이벤트 리스너
+		    document.getElementById('zoomIn').addEventListener('click', function() {
+		        map.setLevel(map.getLevel() - 1); // 확대
+		    });
+
+		    document.getElementById('zoomOut').addEventListener('click', function() {
+		        map.setLevel(map.getLevel() + 1); // 축소
+		    });
 		}
 
 

@@ -2,74 +2,114 @@ header {
 	position: relative;
 	background-color: #386641;
 }
-
+.searchWrapper{
+	position: absolute;
+	width: 20%;
+	top: calc( 10% + 15px);
+	border: 1px solid lightgray;
+	left: 30px;
+	overflow-y: scroll;
+	z-index: 20;
+	height: calc( 90% - 60px);
+}
 .selectRegion {
 	position: relative;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+	width: 100%;
+	height: 180px;
+	margin-top: 10px;
+	z-index: 21;
 }
-.mapWrapper{
-	min-height: 700px;
+.container-fluid{
+	padding-left: 0;
+	padding-right: 0;	
+}
+
+.mapWrapper {
+	position: relative;
+	width: 100%;
 }
 
 #map {
-	width: 60%;
-	height: 500px;
+	width: 100%;
+	height: 100vh;
 	float: right;
 }
+.selectRegionForm{
+	width: 90%;
+}
+
 #restaurantList {
-    margin-bottom: 20px;
-	width: 40%;
-	float: right;
-	padding: 40px 20px;
+	position: relative;
+	width: 100%;
 }
-#restaurantList>div{
+
+#restaurantList>div {
 	margin-bottom: 20px;
 	border: 1px solid #6a994e;
 	padding: 0 25px 25px;
 	border-radius: 45px;
 	cursor: pointer;
-
+	width: 90%;
+	margin-left: 5%;
 }
-.solo{
+
+.solo {
 	max-height: 50px;
 	line-height: 50px;
 	margin-bottom: 0;
 }
+
 #pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	z-index: 3;
-	position: relative;
+	position: absolute;
 	top: 550px;
 }
+
 .restaurant-item {
-    overflow: hidden;
-    max-height: 50px; /* 기본 높이 */
-    transition: max-height 0.5s ease; /* 부드러운 애니메이션 */
+	overflow: hidden;
+	max-height: 50px;
+	/* 기본 높이 */
+	transition: max-height 0.5s ease;
+	/* 부드러운 애니메이션 */
 }
-.asd{
-	height: 5000px;
-}
+
+
+
 .restaurant-item.expanded {
 	max-height: 2000px;
 }
+
 #pagination button {
-    margin: 0 10px;
-    padding: 10px 15px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+	margin: 0 10px;
+	padding: 10px 15px;
+	border: none;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+	border-radius: 5px;
 }
 
 #pagination button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+	background-color: #ccc;
+	cursor: not-allowed;
 }
-.getUserLocationBtn{
-	margin-left: 20px;
+
+#zoomIn,
+#zoomOut, #location {
+	z-index: 10;
+	position: relative;
+	border: 1px solid black;
+	background-color: transparent;
+	width: 30px;
+	height: 30px;
+	left: 10px;
+	top: 10px;
+	margin-right: 10px;
+	border-radius: 50%;
 }

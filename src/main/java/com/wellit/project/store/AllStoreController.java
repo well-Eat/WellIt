@@ -26,6 +26,11 @@ public class AllStoreController {
 	public List<AllStore> getAllStores() {
 		return allStoreService.getAllStores();
 	}
+	
+	@GetMapping("/stores")
+	public List<AllStore> getAllStores2() {
+		return allStoreService.getAllStores();
+	}
 
 	@GetMapping("/getUserId")
 	public ResponseEntity<Map<String, String>> getUserId(HttpServletRequest request) {

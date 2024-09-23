@@ -4,7 +4,6 @@ package com.wellit.project.order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    private final RedisTemplate<String, String> redisTemplate;
     private final String TOKEN_KEY = "iamport:accessToken";
     private final String EXPIRE_TIME_KEY = "iamport:expireTime";
 
