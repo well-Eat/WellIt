@@ -1,5 +1,6 @@
 package com.wellit.project.shop;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wellit.project.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class FavoriteProduct {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonBackReference("member-favorite-product")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)

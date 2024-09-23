@@ -53,6 +53,8 @@ $(function () {
         let minValue = parseInt($input.attr("min"));
         if (parseInt($input.val()) > minValue) {
             $input.val(parseInt($input.val()) - 1);
+        } else {
+            alert("최소 구매 수량은 1개 입니다.");
         }
         updateTotalPrice(finalPrice, $input.val());
         console.log(totalPrice);
@@ -65,6 +67,8 @@ $(function () {
         let maxValue = parseInt($input.attr("max"));
         if (parseInt($input.val()) < maxValue) {
             $input.val(parseInt($input.val()) + 1);
+        } else {
+            alert("최대 구매 수량을 초과하였습니다.");
         }
         updateTotalPrice(finalPrice, $input.val());
     });
@@ -94,9 +98,9 @@ $(function () {
                     slidesPerGroup: 6,
                 },
                 1200: {
-                    slidesPerView: 8,
-                    slidesPerGroup: 8,
-                    spaceBetween: 8,
+                    slidesPerView: 7,
+                    slidesPerGroup: 7,
+                    spaceBetween: 10,
                 },
             },
             navigation: {
@@ -138,13 +142,13 @@ $(function () {
                         <div class="modal-body container-fluid">
                             <div class="row">
                                 <div class="col-6 modalColLeft text-center">
-                                    <img src="${revImg}" alt="Review Image" class="img-fluid">
+                                    <img src="${revImg}" alt="Review Image" class="img-fluid rounded-2">
                                 </div>
                                 <div class="col-6 modalColRight">
-                                    <p><strong>작성자:</strong> ${revWriter}</p>
-                                    <p><strong>작성일:</strong> ${revCreated}</p>
-                                    <p><strong>평점:</strong> ${revRating}</p>
-                                    <p><strong>내용:</strong> ${revText}</p>
+                                    <p class="revWriter">${revWriter}</p>
+                                    <p class="revCreated">${revCreated}</p>
+                                    <p class="revRating">${revRating}</p>
+                                    <p class="revText">${revText}</p>
                                 </div>
                             </div>
                         </div>
@@ -160,15 +164,7 @@ $(function () {
         dynamicModal.show();
     });
 
-    /*    $('.modal').on('show.bs.modal', function () {
-            if ($(document).height() > $(window).height()) {
-                $('body').css('overflow', 'hidden'); // 모달이 열릴 때 스크롤 잠금
-            }
-        });
 
-        $('.modal').on('hidden.bs.modal', function () {
-            $('body').css('overflow', 'auto'); // 모달이 닫힐 때 스크롤 복원
-        });*/
 }); // $(function(){}); jQuery END
 
 // 이미지 리뷰 버튼 위치 업데이트 함수
@@ -223,22 +219,28 @@ let curRevPage = 0;
 let totalRevPages = 0;
 
 // 리뷰 로드를 위한 함수
-function loadReviews(prodId, revPage) {
-    $.ajax({
-        url: '/shop/review/' + prodId + '/' + revPage,
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            console.log(JSON.stringify(data, null, 2));
-            totalRevPages = data.totalPages; // 전체 리뷰 페이지 수
-            console.log("totalRevPages : " + totalRevPages);
-            renderReviews(data.reviews);
-            updateButtons();
-        },
-        error: function (xhr, status, error) {
-            console.error("Failed to load reviews:", error);
-        }
-    });
+async function loadReviews(prodId, revPage) {
+    try {
+        // 서버로 GET 요청 보내기
+        const response = await fetch(`/shop/review/${prodId}/${revPage}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // 응답을 JSON으로 변환
+        const data = await response.json();
+
+        // 리뷰 리스트를 화면에 렌더링
+        renderReviews(data.reviews);
+
+        // 페이징 정보 업데이트
+        totalRevPages = data.totalPages;
+        updateButtons();
+    } catch (error) {
+        console.error('Failed to fetch reviews:', error);
+    }
 }
 
 // 리뷰 페이지 버튼 상태 업데이트 함수
@@ -270,9 +272,9 @@ function renderReviews(reviews) {
             review.prodReviewImgList.forEach(function (imgData) {
                 imgHtml += `
                     <div class="col-auto">
-                        <div class="revImgBox rounded-2" 
-                             style="width: 80px; height: 80px; background-image: url(${imgData.imagePath}); background-size: cover; background-position: center;"
-                             data-rev-img="${imgData.imagePath}" data-rev-text="${review.revText}" data-rev-rating="${review.revRating}" data-rev-created="${review.createdAt}" data-rev-writer="${review.writer}">
+                        <div class="revImgBox rounded-2  border" 
+                             style="width: 80px; height: 80px; background-image: url(${imgData}); background-size: cover; background-position: center;"
+                             data-rev-img="${imgData}" data-rev-text="${review.revText}" data-rev-rating="${review.revRating}" data-rev-created="${review.createdAt}" data-rev-writer="${review.writer}">
                         </div>
                     </div>`;
             });
@@ -281,7 +283,7 @@ function renderReviews(reviews) {
 
         const reviewHtml = `
             <div class="row border-bottom py-2">
-                <div class="col-md-2 writer mt-3">${maskWriter(review.writer)}</div>
+                <div class="col-md-2 writer mt-3">${review.writer}</div>
                 <div class="col-md-10">
                     ${imgHtml} <!-- 이미지가 있을 경우 표시 -->
                     <div class="row revText justify-content-start mb-3">
@@ -325,7 +327,7 @@ function renderReviews(reviews) {
                         <div class="modal-body container-fluid">
                             <div class="row">
                                 <div class="col-6 modalColLeft text-center">
-                                    <img src="${revImg}" alt="Review Image" class="img-fluid">
+                                    <img src="${revImg}" alt="Review Image" class="img-fluid rounded-2">
                                 </div>
                                 <div class="col-6 modalColRight">
                                     <p class="revWriter">${revWriter}</p>
@@ -343,7 +345,7 @@ function renderReviews(reviews) {
             const $item = $(this);
             modalHtml += `
                                     <div class="col-auto">
-                                        <div class="revImgBox rounded-2" style="width: 80px; height: 80px; 
+                                        <div class="revImgBox rounded-2 border" style="width: 80px; height: 80px; 
                                             background-clip: border-box;
                                             background-image: url(${$item.data('rev-img')}); 
                                             background-size: cover; 
@@ -393,16 +395,6 @@ function renderReviews(reviews) {
 /** shop_detail : section.prodReview : 리뷰리스트 출력 : END **/
 /** shop_detail : section.prodReview : 리뷰리스트 출력 : END **/
 
-
-/** shop_detail : likeBtn : 찜하기 버튼 : START **/
-/** shop_detail : likeBtn : 찜하기 버튼 : START **/
-
-
-
-
-
-/** shop_detail : likeBtn : 찜하기 버튼 : END **/
-/** shop_detail : likeBtn : 찜하기 버튼 : END **/
 
 
 /** shop_create : 상품 상세정보 입력 **/
@@ -715,7 +707,6 @@ function addToCart(prodId, quantity) {
             console.log('Cart updated successfully', data);
             updateCartBadge();
 
-            // SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
             Swal.fire({
                 title: '상품이 장바구니에 추가되었습니다!',
                 text: "장바구니로 이동하시겠습니까?",
@@ -729,9 +720,18 @@ function addToCart(prodId, quantity) {
                     // '장바구니로 이동'을 선택한 경우
                     window.location.href = '/cart/list';
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    window.location.href = '/shop/list';
+                    const currentPath = window.location.pathname;
+
+                    // 현재 페이지가 /shop/detail/~~~이면 /shop/list로 이동
+                    if (currentPath.startsWith('/shop/detail/')) {
+                        window.location.href = '/shop/list';
+                    } else {
+                        // 그 외의 경우 현재 페이지를 리로드
+                        window.location.reload();
+                    }
                 }
             });
+
         })
         .catch(error => {
             console.error('Error:', error);
@@ -740,7 +740,141 @@ function addToCart(prodId, quantity) {
 }
 
 
-// SweetAlert2로 쇼핑 계속하기 또는 장바구니 이동 확인
+//찜한 상품 목록 가져오기
+$(function (){
+    const favoriteProdElem = $(".favoriteProduct");
+    const memberId = $(".pageTitle.favoriteProduct").attr("data-member-id");
+
+    if (favoriteProdElem) {
+        fetchFavoriteProductList(memberId)
+    }
+})
+
+//찜한 상품 목록 데이터 get
+function fetchFavoriteProductList(memberId){
+    fetch(`/shop/favorite/list/${memberId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // 서버에서 받은 데이터를 출력하여 확인
+            renderFavoriteProducts(data); // 데이터 렌더링 함수 호출
+        })
+        .catch(error => {
+            console.error('Error fetching favorite products:', error);
+        });
+}
+
+// 찜한 상품 목록 렌더링 함수
+function renderFavoriteProducts(products) {
+    const favoriteList = $(".favoriteList");
+
+    if (products.length > 0) {
+        // 찜 목록이 있을 때 DOM에 렌더링
+        products.forEach(product => {
+            const productHTML = `
+                <div class="prodItem col mb-4" data-prod-id="${product.prodId}">
+                    <div class="card">
+                        
+                        <!-- 상품이미지 -->
+                        <div class="card-img-wrapper rounded-2 mb-3">
+                            <a href="/shop/detail/${product.prodId}" class="d-block h-100">
+                                <div class="card-img-box" style="background-image: url('${product.prodMainImg}');" alt="${product.prodName}"></div>
+                            </a>
+                        </div>
+                        
+                        <div class="d-flex gap-1">
+                            <!--찜하기버튼-->
+                            <a href="javascript:void(0);" class="btn btn-outline-success heart removeFavoriteProductBtn" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+                            <!-- 담기버튼 -->
+                            <a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary flex-grow-1" onclick="addToCart(${product.prodId}, 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
+                        </div>
+                        
+                        <!-- 상품설명 -->
+                        <div class="card-body">
+                            <a href="/shop/detail/${product.prodId}" class="d-block">
+                                <h5 class="prodName card-title">${product.prodName}</h5>
+                            </a>
+                        </div> <!-- //card-body -->
+                    </div> <!-- //card -->
+                </div> <!-- ///////// prodItem -->
+            `;
+            favoriteList.append(productHTML);
+            const heartBtn = $(".heart");
+            heartBtn.css("backgroundColor", "#198754");
+            heartBtn.find(".fa-heart").css("color", "#ffffff");
+        });
+    } else {
+        // 찜 목록이 없을 때 처리
+        favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+    }
+}
+
+//찜목록 해제
+$(document).on("click", ".removeFavoriteProductBtn", function () {
+    const prodItem = $(this).closest(".prodItem");
+    const prodId = prodItem.attr("data-prod-id");
+    const memberId = $(".pageTitle.favoriteProduct").attr("data-member-id");
+
+    Swal.fire({
+        title: '해당 상품을 찜 리스트에서 해제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '찜상품 해제',
+        cancelButtonText: '취소',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            myFavoriteProduct(prodId, memberId, true);
+        }
+    });
+
+    async function myFavoriteProduct(prodId, memberId, favorite) {
+        console.log(prodId);
+        console.log(memberId);
+        const response = await fetch(`/shop/favorite/change?prodId=${prodId}&memberId=${memberId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({prodId: prodId, memberId: memberId})
+        });
+
+        if (response.ok) {
+            const message = await response.text();  // response body의 텍스트를 가져옴
+            console.log(message);  // 응답 메시지를 사용자에게 보여줌
+            prodItem.remove();
+            var cntFavorite = $(".prodItem").count();
+            console.log(cntFavorite);
+
+            if (cntFavorite==0 || cntFavorite ==null){
+                const favoriteList = $(".favoriteList");
+                // 찜 목록이 없을 때 처리
+                favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+            }
+        } else {
+            const errorMessage = await response.text();  // 오류 메시지 표시
+            if (errorMessage === "로그인해주세요") {
+                alert(errorMessage);
+                window.location.href = '/member/login';  // 로그인 페이지로 리다이렉트
+            } else {
+                alert(errorMessage);  // 기타 오류 메시지 표시
+            }
+        }
+    }
+})
+
+
+
+
+
+
+
+
+
+
 
 
 /******* Common Util : END *********/

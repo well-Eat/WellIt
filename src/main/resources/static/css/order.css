@@ -307,7 +307,7 @@ section.row > p.subtle::after {
 #drop-area {
     border: 2px dashed #ccc;
     padding: 20px;
-    width: 300px;
+    width: 100%;
     margin: 0 auto;
     text-align: center;
 }
@@ -335,6 +335,18 @@ section.row > p.subtle::after {
     color: #ddd;
     cursor: pointer;
 }
+.view-star-rating{
+    direction: rtl;
+    display: inline-flex;
+}
+.view-star-rating > i{
+    font-size: 2em;
+    color: #ddd;
+}
+.view-star-rating > i.check,
+.view-star-rating > i.check ~ i{
+    color: #ffc107;
+}
 
 .star-rating input[type="radio"]:checked ~ label {
     color: #ffc107;
@@ -346,4 +358,8 @@ section.row > p.subtle::after {
     text-decoration-line: underline;
     text-decoration: #343a40;
     font-weight: 600;
+}
+
+.star-rating.check{
+    color: #ffc107;
 }

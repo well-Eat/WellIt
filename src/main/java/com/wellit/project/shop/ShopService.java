@@ -2,12 +2,11 @@ package com.wellit.project.shop;
 
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
+import com.wellit.project.order.OrderItem;
+import com.wellit.project.order.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,23 +28,16 @@ public class ShopService {
     private final ProdReviewRepository prodReviewRepository;
     private final ProdImageRepository prodImageRepository;
     private final ProdInfoRepository prodInfoRepository;
-    private final ProdReviewImgRepository prodReviewImgRepository;
     private final FavoriteProductRepository favoriteProductRepository;
     private final MemberService memberService;
+    private final OrderItemRepository orderItemRepository;
+    private final ProdReviewRepository reviewRepository;
+
 
     // 파일 업로드 위치 (서버 대신 업로드 할 임시 위치)
     private static final String UPLOAD_DIR = "C:/uploads/";
 
 
-/*    public ShopService(ProductRepository productRepository, ProdReviewRepository prodReviewRepository,
-                       ProdInfoRepository prodInfoRepository, ProdReviewImgRepository prodReviewImgRepository,
-                       ProdImageRepository prodImageRepository) {
-        this.prodReviewRepository = prodReviewRepository;
-        this.productRepository = productRepository;
-        this.prodInfoRepository = prodInfoRepository;
-        this.prodReviewImgRepository = prodReviewImgRepository;
-        this.prodImageRepository = prodImageRepository;
-    }*/
 
     /*상품 리스트 리턴*/
     public List<Product> getProdCateList() {
@@ -61,37 +53,79 @@ public class ShopService {
         return optionalProduct.get();
     }
 
-    public List<ProdReview> getOneProdReviewList(Long prodId) {
-        Product product = productRepository.findById(prodId).orElseThrow();
-        log.info(product.getProdReview());
-        return product.getProdReview();
+    //상품 리뷰 리스트 리턴
+    public int getCountProdReview(Long prodId) {
+
+        // OrderItem을 통해 해당 Product의 리뷰를 조회
+        List<OrderItem> orderItems = orderItemRepository.findAllByProduct_ProdId(prodId);
+
+        List<ProdReview> reviewList = orderItems.stream()
+                                                   .map(OrderItem::getProdReview)  // OrderItem에서 ProdReview 가져오기
+                                                .filter(review -> review != null)
+                                                   .collect(Collectors.toList());
+        return reviewList.size();
     }
 
 
     /*이미지 리뷰 리스트*/
-    public List<ProdReview> getImgReviews(Product product) {
-        List<ProdReview> imgReviewList = product.getProdReview().stream()
-                                                .filter(review -> review.getRevImg() != null)
-                                                .collect(Collectors.toList());
+    public List<ProdReview> getImgReviews(long prodId) {
+
+        // OrderItem을 통해 해당 Product의 리뷰를 조회
+        List<OrderItem> orderItems = orderItemRepository.findAllByProduct_ProdId(prodId);
+
+        List<ProdReview> imgReviewList = orderItems.stream()
+                                                   .map(OrderItem::getProdReview)  // OrderItem에서 ProdReview 가져오기
+                                                   .filter(review -> review != null && review.getRevImg() != null)
+                                                   .collect(Collectors.toList());
 
         log.info("############### ShopService(getImgReview)");
-        log.info(imgReviewList.size());
+        log.info("Image Review Count: " + imgReviewList.size());
         return imgReviewList;
     }
 
 
-    /*리뷰 페이지별로 가져오기*/
-    public Page<ProdReview> getPagedRevList(int revPage, long prodId) {
+
+    //상품상세페이지 리뷰 리스트(페이징)
+    public Page<ProdReviewDTO> getPagedRevList(int revPage, long prodId) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
         Pageable pageable = PageRequest.of(revPage, 5, Sort.by(sorts));
 
-        Product product = productRepository.findById(prodId).orElseThrow();
+        // OrderItem을 통해 리뷰를 가져오는 방식으로 변경
+        List<OrderItem> orderItems = orderItemRepository.findAllByProduct_ProdId(prodId);
+        List<Long> orderItemIds = orderItems.stream()
+                                            .map(OrderItem::getId)
+                                            .collect(Collectors.toList());
 
-        Page<ProdReview> pagedRevlist = prodReviewRepository.findAllByProduct(product, pageable);
+        // OrderItem ID를 기준으로 ProdReview 조회
+        Page<ProdReview> pagedRevlist = prodReviewRepository.findAllByOrderItemIdIn(orderItemIds, pageable);
 
-        return pagedRevlist;
+        // 엔티티를 DTO로 변환
+        List<ProdReviewDTO> reviewDTOs = pagedRevlist.getContent().stream()
+                                                     .map(this::convertToProdReviewDTO)
+                                                     .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewDTOs, pageable, pagedRevlist.getTotalElements());
     }
+
+    // 엔티티 -> DTO 변환 메서드
+    private ProdReviewDTO convertToProdReviewDTO(ProdReview review) {
+        ProdReviewDTO dto = new ProdReviewDTO();
+        dto.setRevId(review.getRevId());
+        dto.setRevText(review.getRevText());
+        dto.setRevRating(review.getRevRating());
+        dto.setWriter(review.getWriter());
+        dto.setCreatedAt(review.getCreatedAt());
+
+        // 이미지 리스트 설정
+        List<String> imgList = review.getProdReviewImgList().stream()
+                                     .map(ProdReviewImg::getImagePath) // 이미지 경로만 가져오기
+                                     .collect(Collectors.toList());
+        dto.setProdReviewImgList(imgList);
+
+        return dto;
+    }
+
 
 
     /* Create : 상품 생성 */
@@ -106,6 +140,7 @@ public class ShopService {
         product.setProdDesc(productForm.getProdDesc());
         product.setProdStock(productForm.getProdStock());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
+        product.setViewCnt(0);
 
         if (productForm.getProdDiscount() == null) {
             product.setProdFinalPrice(productForm.getProdOrgPrice());
@@ -209,8 +244,6 @@ public class ShopService {
             product.setProdMainImg("/imgs/shop/product/" + thumbFileName);
         }
 
-        //product.getProdInfoList().clear();
-
         /*상품 정보 저장*/
         List<ProdInfo> prodInfoList = new ArrayList<>();
         for (ProdInfo prodInfo : productForm.getProdInfoList()) {
@@ -303,6 +336,45 @@ public class ShopService {
         return isFavoriteProduct(prodId, memberId);
     }
 
+
+
+    //찜한 상품 리스트 리턴
+    public List<FavoriteProductDTO> getFavoriteProductList(String memberId){
+        List<FavoriteProduct> productList = favoriteProductRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(memberId);
+
+        List<FavoriteProductDTO> dtoList = new ArrayList<>();
+
+        for (FavoriteProduct favProd: productList) {
+            FavoriteProductDTO dto = new FavoriteProductDTO();
+            dto.setFavoriteProductId(favProd.getId());
+            dto.setMemberName(favProd.getMember().getMemberName());
+            dto.setMemberId(favProd.getMember().getMemberId());
+            dto.setProdId(favProd.getProduct().getProdId());
+            dto.setProdName(favProd.getProduct().getProdName());
+            dto.setProdMainImg(favProd.getProduct().getProdMainImg());
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+
+    // 상품별 리뷰, 찜 개수 dto 리스트로 리턴
+    public List<ProdCnt> getProdCntList(){
+
+        List<Product> productList = productRepository.findAll();
+        List<ProdCnt> prodCntList = new ArrayList<>();
+
+        for (Product product : productList) {
+            ProdCnt prodCnt = new ProdCnt();
+            prodCnt.setProdId(product.getProdId());
+            prodCnt.setRevCnt(reviewRepository.countByOrderItem_Product_ProdId(product.getProdId()));
+            prodCnt.setFavoriteCnt(favoriteProductRepository.countByProduct_ProdId(product.getProdId()));
+            prodCntList.add(prodCnt);
+        }
+
+        return prodCntList;
+    }
 
 
 

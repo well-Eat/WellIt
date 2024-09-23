@@ -16,6 +16,12 @@ public class PoDetailForm {
     private String orderId;
     private OrderStatus orderStatus;
 
+    //주문자 정보
+    private String memberId;
+    private String memberName;
+    private String memberPhone;
+    private String memberEmail;
+
     /* 금액 관련 필드 */
     private Integer orgPrice; //원래 상품 가격
     private Integer discPrice; //할인 금액(음수)
@@ -44,7 +50,7 @@ public class PoDetailForm {
     private String InvoiceNum;
 
     //구매 아이템
-    private List<OrderItemDTO> orderItems;
+    //private List<OrderItemDTO> orderItems;
 
     public PoDetailForm(){}
 

@@ -1,6 +1,9 @@
 package com.wellit.project.order;
 
 import com.wellit.project.member.MemberRepository;
+import com.wellit.project.shop.Product;
+import com.wellit.project.shop.ProductRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -8,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,10 +25,21 @@ public class OrderController {
 
     private final OrderService orderService;
     private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     //카트 -> 주문서 생성
     @PostMapping("/create")
-    public String  createOrder( @ModelAttribute OrderForm orderForm, @AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String  createOrder(@Valid @ModelAttribute OrderForm orderForm, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails, Model model){
+
+        // 재고 수량 확인 (백엔드에서 재고 체크)
+        for (OrderItemQuantity orderItemQuantity : orderForm.getOrderItemQuantityList()) {
+            Product product = productRepository.findById(orderItemQuantity.getProdId()).orElseThrow();
+            if (orderItemQuantity.getQuantity() > product.getProdStock()) {
+                bindingResult.rejectValue("orderItemQuantityList[" + orderForm.getOrderItemQuantityList().indexOf(orderItemQuantity) + "].quantity",
+                                          "error.orderItemQuantity", "재고 수량이 부족합니다.");
+                return "order/order_cart"; // 재고 수량이 부족할 경우
+            }
+        }
 
 
             PurchaseOrder savedPo = orderService.addOrder(orderForm, userDetails.getUsername());
@@ -129,12 +144,12 @@ public class OrderController {
         log.info(po.getOrderId());
         PoDetailForm poDetail =orderService.getOnePoDetail(orderId);
 
-        List<OrderItem> orderItemList = orderService.getOrderItemList(orderId);
+        List<OrderItemProcessDTO> orderItemList = orderService.getOrderItemProcessDtoList(po);
 
+        //List<OrderItem> orderItemList = orderService.getOrderItemList(orderId);
 
         model.addAttribute("orderItemList", orderItemList);
         model.addAttribute("poDetail", poDetail);
-        model.addAttribute("member", po.getMember());
         model.addAttribute("cancelBtn", orderService.isCancelBtn(success, po.getStatus()));
 
         return "/order/order_poDetail";

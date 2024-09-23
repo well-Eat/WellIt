@@ -30,10 +30,10 @@
 					<div class="orderItemTable card-body gap-2 bg-light vstack">
 						<th:block th:each="orderItem, iterStat : ${poHistory.orderItems}">
 							<div class="d-flex gap-3 border-bottom border-light bg-white rounded-2 px-3 itemBlock"
-							     th:attr="data-orderitem-id=${orderItem.orderItemId}, data-reviewed=${orderItem.reviewed}">
+							     th:attr="data-orderitem-id=${orderItem.orderItemId}, data-reviewed=${orderItem.reviewed}, data-product-id=${orderItem.prodId}">
 								
 								<!-- 상품이미지 -->
-								<div class="vstack gap-2 prodImageBoxWrapper my-3">
+								<div class="vstack gap-2 prodImageBoxWrapper my-3 flex-shrink-0">
 									
 									<div class="prodImageBox border flex-grow-0"
 									     style="aspect-ratio: 1; background-size: cover; background-position: center;  max-width: 140px;"
@@ -52,20 +52,26 @@
 										<span class="f14 won">원</span>
 									</p>
 									
-									<p class="card-text gap-2 flex-grow-1 align-items-end itemBtnLine" style="display: inline-flex;">
+									
+									<p class="card-text gap-2 flex-grow-1 align-items-end itemBtnLine justify-content-end" style="display: inline-flex;">
+										<!-- 배송전인경우 -->
+										<a th:href="@{|/shop/detail/${orderItem.prodId}|}" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block px-5"
+										   th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
+										   th:unless="${poHistory.orderStatus.renderStatus()=='배송완료'}">
+										<span>상품상세보기</span></a>
 										
 										<!-- 리뷰 작성되지 않은 경우 -->
 										<span
-												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block openReviewFormBtn newReviewBtn px-5"
 												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
-												th:unless="${orderItem.reviewed}">리뷰쓰기</span>
+												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && !orderItem.reviewed}">리뷰쓰기</span>
 										
 										<!-- 리뷰가 작성된 경우, prodReview가 null이 아닐 때만 접근 -->
 										<span
-												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 openReviewFormBtn"
+												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block openReviewFormBtn viewReviewBtn px-5"
 												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId},
                    data-review-rating=${orderItem.prodReview.revRating}, data-review-text=${orderItem.prodReview.revText}"
-												th:if="${orderItem.prodReview != null}">내 리뷰 보기</span>
+												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && orderItem.reviewed}">내 리뷰 보기</span>
 									
 									</p>
 								
@@ -85,7 +91,7 @@
 					<div class="card-footer border-top-0 pt-0 d-flex flex-row align-items-center justify-content-between">
 						<span class="f14 c999"><span
 								th:text="${#temporals.format(poHistory.paidAt,'yyyy. MM. dd')}"></span> 구매</span>
-						<span class="btn badge text-bg-success f16">리뷰쓰고 추가 마일리지 적립 혜택을 받으세요</span>
+						<span class="btn badge text-bg-success f16" th:if="${poHistory.orderStatus.renderStatus()=='배송완료'}" >리뷰쓰고 추가 마일리지 적립 혜택을 받으세요</span>
 					</div> <!-- //card-footer -->
 				</div> <!-- //card -->
 			</div> <!-- //col -->
@@ -100,6 +106,7 @@
 	</div><!-- // #wrapper -->
 	<!--order js link-->
 	<script src="/js/order.js"></script>
+	<script src="/js/order_history_review.js"></script>
 
 </div>
 </html>

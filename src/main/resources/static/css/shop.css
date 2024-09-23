@@ -181,7 +181,10 @@ ul.sortBox li:not(:last-of-type)::after{
         display: inline-block;
 }
 .prodInfo p.prodReview,
-.prodItem p.prodReview{
+.prodItem p.prodReview,
+.prodItem p.prodView,
+.prodItem p.prodFavorite,
+.prodItem p.prodCount{
     font-size: 16px;
     color:#bbb;
 }

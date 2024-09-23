@@ -23,10 +23,12 @@ public class OrderRestController {
     public ResponseEntity<Map<String, Object>> getOrders(
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "page", defaultValue = "1") int page) {
 
         // 주문 목록 가져오기 (검색, 필터링 및 페이지네이션 적용)
-        Page<PurchaseOrder> ordersPage = orderService.findOrders(search, status, page);
+        Page<PurchaseOrder> ordersPage = orderService.findOrders(search, status, startDate, endDate, page);
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
@@ -38,7 +40,7 @@ public class OrderRestController {
             orderData.put("memberName", order.getMember().getMemberName());
             orderData.put("memberId", order.getMember().getMemberId());
             orderData.put("status", order.getStatus().renderStatus());
-            orderData.put("createdAt", order.getCreatedAt());
+            orderData.put("createdAt", order.getCreatedAt().toString());
             orderData.put("totalPay", order.getTotalPay());
             ordersList.add(orderData);
         }

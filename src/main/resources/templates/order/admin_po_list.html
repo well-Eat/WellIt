@@ -24,14 +24,19 @@
 			<div class="col gap-3 g-3">
 				<!-- 검색 및 필터 기능 -->
 				<form class="mb-3 d-flex" id="searchForm">
+					<!-- 시작 날짜 선택 -->
+					<input type="date" id="startDate" class="form-control me-2" name="startDate">
+					
+					<!-- 끝 날짜 선택 -->
+					<input type="date" id="endDate" class="form-control me-2" name="endDate">
 					<input type="text" id="searchInput" class="form-control me-2" placeholder="Search by Order ID" name="search">
 					<select class="form-select me-2" id="statusSelect" name="status">
-						<option value="">All Statuses</option>
-						<option value="CREATED">Created</option>
-						<option value="PAID">Paid</option>
-						<option value="SHIPPED">Shipped</option>
-						<option value="DELIVERED">Delivered</option>
-						<option value="CANCELLED">Cancelled</option>
+						<option value="">모두 보기</option>
+						<option value="PRODUCT_PREPARE">신규주문</option>
+						<option value="DELIVERING">배송중</option>
+						<option value="COMPLETED">배송완료</option>
+						<option value="CANCELLED">주문취소</option>
+						<option value="WAITING_CANCEL">취소승인대기</option>
 					</select>
 					<button type="button" class="btn btn-primary" onclick="fetchOrders()">Search</button>
 				</form>
@@ -40,6 +45,7 @@
 				<table class="table table-hover" id="orderTable">
 					<thead>
 					<tr>
+						<th scope="col">No.</th>
 						<th scope="col">주문일자</th>
 						<th scope="col">주문번호 ID</th>
 						<th scope="col">구매자 ID</th>

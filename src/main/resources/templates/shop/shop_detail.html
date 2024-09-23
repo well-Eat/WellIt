@@ -50,7 +50,7 @@
 					
 					<!--리뷰 개수가 100개를 초과할 경우 인기상품 태그 표시-->
 					<span class="badge text-bg-success"
-					      th:if="${product.prodReview != null and #lists.size(product.prodReview) > 100}">인기상품</span>
+					      th:if="${reviewCnt != null and reviewCnt > 100}">인기상품</span>
 				</div>
 				
 				<h5 class="prodName card-title f28" th:text="${product.prodName}"></h5> <!--상품명-->
@@ -87,7 +87,7 @@
 							<label for="quantity" class="form-label pr-5 align-self-center fw700 c333">구매수량</label>
 							<div class="number-input rounded-1">
 								<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
-								<input type="number" min="1" max="100" class="form-control rounded-0" value="1" id="quantity" name="quantity"/>
+								<input type="number" min="1" th:max="${product.prodStock < 10} ? ${product.prodStock} : 10" class="form-control rounded-0" value="1" id="quantity" name="quantity"/>
 								<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
 							</div>
 						</div>
@@ -134,7 +134,9 @@
 	
 	<!--상품 리뷰 -->
 	<section class="prodReview container" id="prodReview">
-		<h5>상품후기 &nbsp; <span class="revCnt">(<small th:text="${#lists.size(product.prodReview)}"></small>건)</span></h5>
+		<h5>상품후기 &nbsp;
+			<span class="revCnt">(<small th:text="${reviewCnt}"></small>건)</span>
+		</h5>
 		<!--이미지 리뷰 라인-->
 				<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
 					shop_imgReview.html 파일 내용으로 대체
@@ -168,11 +170,13 @@
 	<!--shop js link-->
 	<script src="/js/shop.js"></script>
 	<script th:inline="javascript">
-			let isFavorite = [[${favorite}]];
+      let isFavorite = [[${favorite}]];
+
       $(function (){
           isFavoriteProduct(isFavorite);
-      })
-      //찜하기 선택 여부 확인 -> 버튼 색상 변경
+      });
+
+      // 찜하기 선택 여부 확인 -> 버튼 색상 변경
       function isFavoriteProduct(isFavorite){
           const heartBtn = $(".heart");
           if (isFavorite){
@@ -183,10 +187,13 @@
               heartBtn.find(".fa-heart").css("color", "#198754");
           }
       }
-      $(".heart").on("click", function (){
-					myFavoriteProduct([[${product.prodId}]], [[${memberId}]], isFavorite);
-      })
 
+      // 버튼 클릭 시 찜 상태 변경
+      $(".heart").on("click", function (){
+          myFavoriteProduct([[${product.prodId}]], [[${memberId}]], isFavorite);
+      });
+
+      // 찜 상태 변경 API 호출 및 처리
       async function myFavoriteProduct(prodId, memberId, favorite) {
           const response = await fetch(`/shop/favorite/change?prodId=${prodId}&memberId=${memberId}`, {
               method: 'POST',
@@ -198,16 +205,45 @@
 
           if (response.ok) {
               const message = await response.text();  // response body의 텍스트를 가져옴
-              alert(message);  // 응답 메시지를 사용자에게 보여줌
-              isFavorite = !isFavorite;  // 찜 상태를 반전
+
+		          if (message == "찜 목록을 해제하였습니다."){
+                  Swal.fire({
+                      title: message,
+                      icon: 'warning',
+                      confirmButtonText: '확인'
+                  });
+		          } else {
+                  Swal.fire({
+                      title: message,
+                      icon: 'success',
+                      confirmButtonText: '확인'
+                  });
+		          }
+
+              // 찜 상태를 반전
+              isFavorite = !isFavorite;
               isFavoriteProduct(isFavorite);  // 버튼 색상 변경
+
           } else {
               const errorMessage = await response.text();  // 오류 메시지 표시
+
               if (errorMessage === "로그인해주세요") {
-                  alert(errorMessage);
-                  window.location.href = '/member/login';  // 로그인 페이지로 리다이렉트
+                  Swal.fire({
+                      title: '로그인 필요',
+                      text: errorMessage,
+                      icon: 'warning',
+                      confirmButtonText: '로그인하기'
+                  }).then(() => {
+                      window.location.href = '/member/login';  // 로그인 페이지로 리다이렉트
+                  });
+
               } else {
-                  alert(errorMessage);  // 기타 오류 메시지 표시
+                  Swal.fire({
+                      title: '오류',
+                      text: errorMessage,
+                      icon: 'error',
+                      confirmButtonText: '확인'
+                  });
               }
           }
       }

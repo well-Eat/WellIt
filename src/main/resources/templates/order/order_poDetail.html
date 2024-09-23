@@ -24,7 +24,7 @@
 				주문 상세 정보
 			</div>
 			
-			<div class="pageTitle col-12 text-left" th:if="${orderSuccess}">
+			<div class="pageTitle col-12 text-left orderSuccess" th:if="${orderSuccess}">
 				주문이 완료되었습니다.
 			</div>
 			
@@ -74,27 +74,27 @@
 							
 							<div class="prodImageBox border"
 							     style="width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;"
-							     th:style="|background-image: url(@{  ${orderItem.product.prodMainImg}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
+							     th:style="|background-image: url(@{  ${orderItem.prodThumb}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
 							</div>
 						</div> <!-- // prodImageBoxWrapper -->
 						
 						
 						<div class="vstack pl-3 ml-3 calcItem my-3">
-							<h5 class="card-title fw700 c444 f18 mb-3" th:text="${orderItem.product.prodName}">상품명</h5>
+							<h5 class="card-title fw700 c444 f18 mb-3" th:text="${orderItem.prodName}">상품명</h5>
 							<!--상품명-->
 							
 							<p class="card-text d-inline-block mb-1 secondaryLine">
 
 								<span class="card-text text-end d-inline-block c555 f14 commaNums"
-								      th:attr="data-nums=${orderItem.product.prodFinalPrice}"></span>
+								      th:attr="data-nums=${orderItem.prodFinalPrice}"></span>
 								<span class="f14 won">원</span>
 								
 								
 								<!--할인율 > 0 일때-->
-								<th:block th:if="${orderItem.product.prodDiscount != null and orderItem.product.prodDiscount > 0}">
+								<th:block th:if="${orderItem.prodDiscount != null and orderItem.prodDiscount > 0}">
 											<span
 													class="card-text mb-1 c999 f12 text-decoration-line-through d-inline-block commaNums"
-													th:attr="data-nums=${orderItem.product.prodOrgPrice}" }></span><span
+													th:attr="data-nums=${orderItem.prodOrgPrice}" }></span><span
 										class="f12 won text-decoration-line-through c999">원</span>
 								</th:block>
 								<!--할인 후 가격 * 수량-->
@@ -103,7 +103,7 @@
 							<p class="card-text d-inline-block">
 
 										<span class="card-text text-end d-inline-block c333 fw700 commaNums f16"
-										      th:attr="data-nums=${orderItem.product.prodFinalPrice * orderItem.quantity }"></span>
+										      th:attr="data-nums=${orderItem.prodFinalPrice * orderItem.quantity }"></span>
 								<span class="f14 won">원</span>
 								
 								<span class="f14 c999 px-2">|</span>
@@ -136,18 +136,18 @@
 			<div>
 				<table class="table table-borderless">
 					<tr>
-						<th scope="row">보내는 분</th>
-						<td><span th:text="${member.memberName}" id="memberName"></span></td>
+						<th scope="row">주문자 성명</th>
+						<td><span th:text="*{memberName}" id="memberName"></span></td>
 					</tr>
 					<tr>
 						<th scope="row">휴대폰</th>
 						<td>
-							<span th:text="${@orderService.formatPhoneNumber(member.memberPhone)}"></span>
+							<span th:text="${@orderService.formatPhoneNumber(poDetail.memberPhone)}"></span>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">이메일</th>
-						<td><span th:text="${member.memberEmail}" id="memberEmail"></span></td>
+						<td><span th:text="*{memberEmail}" id="memberEmail"></span></td>
 					</tr>
 				
 				</table>
@@ -294,16 +294,99 @@
 		</section> <!-- //totalPriceSec -->
 		
 		<!--결제 성공 페이지에서는 주문 취소 버튼 제외-->
-		<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-start"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:if="${cancelBtn}">주문취소</span>
+		<p>
+			<span class="btn badge rounded-pill border-secondary-subtle text-secondary f14 py-2 px-3 d-inline-block float-end mb-5"  onclick="cancelRequest(this);" th:attr="data-orderId=${poDetail.orderId}" th:if="${cancelBtn}">주문 취소 신청</span>
+		</p>
+		
 	</th:block>
 	</div>
 	
 	<!--포트원 cdn-->
 	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+	
 	<!--order js link-->
 	<script src="/js/order.js"></script>
-	<script src="/js/payment.js"></script>
+	
+	<!-- EmailJS SDK Load -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"> </script>
+	<script th:inline="javascript">
+      $(function () {
+          const urlParams = new URLSearchParams(window.location.search);
+
+          // 주소값에서 "success" 파라미터가 있는지 확인 : 결제 직후만 메일 발송
+          if (urlParams.has('success')) {
+              const poDetail = [[${poDetail}]];
+              const orderItemList = [[${orderItemList}]];
+
+              // todo : Email JS 발송 함수 - 주석처리 해제 (월 200건 발송 제한으로, 마지막에 주석 해제 해주세요)
+               //submitEmailJs(poDetail, orderItemList);
+          }
+      });
+
+      //주문 확인 메일 발송
+      function submitEmailJs(poDetail, orderItemList) {
+          emailjs.init({
+              publicKey: 'ANALmNfMIjs9dAW1W',
+          });
+
+          console.log(orderItemList);
+          console.log(poDetail.orderStatus)
+          // 주문 아이템 목록을 HTML로 구성 (필요한 속성만 추출)
+          let orderItemsHtml = '';
+          orderItemList.forEach(item => {
+              orderItemsHtml += `
+                <tr>
+                    <td>${item.prodName}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.prodFinalPrice} 원</td>
+                    <td>${item.prodFinalPrice * item.quantity} 원</td>
+                </tr>
+            `;
+          });
+          console.log(orderItemsHtml);
+
+          // EmailJS 전송 템플릿 데이터
+          const templateParams = {
+              order_id: poDetail.orderId,
+              order_status: toKoreanOrderStatus(poDetail.orderStatus),
+              member_name: poDetail.memberName,
+              member_phone: poDetail.memberPhone,
+              member_email: poDetail.memberEmail,
+              delivery_name: poDetail.deliveryName,
+              delivery_phone: poDetail.deliveryPhone,
+              delivery_address: `${poDetail.addr1} ${poDetail.addr2}`,
+              delivery_message: poDetail.deliveryMsg,
+              payment_time: new Date(poDetail.paidAt).toLocaleString(),
+              pg_provider: poDetail.pgProvider,
+              final_price: poDetail.finalPrice,
+              org_price: poDetail.orgPrice,
+              disc_price: poDetail.discPrice,
+              delivery_fee: poDetail.deliveryFee,
+              mile_pay: poDetail.milePay,
+              total_pay: poDetail.totalPay,
+              order_items: orderItemsHtml,
+              logo_based64: 'data:image/png;base64,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'// 주문 아이템 HTML을 템플릿에 포함
+          };
+
+          console.log(templateParams);
+
+
+          // EmailJS로 전송
+          emailjs.send('service_qw7xalg', 'template_ixxzc4m', templateParams)
+              .then(function(response) {
+                  console.log('EmailJS SUCCESS!', response.status, response.text);
+              }, function(error) {
+                  console.log('EmailJS FAILED...', error);
+              });
+
+      }
+	
+	
+	
+	</script>
+	
+	
 	
 
 </div> <!--//layout::content-->

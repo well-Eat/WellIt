@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("/shop")
@@ -22,6 +23,8 @@ import java.util.*;
 public class ShopController {
 
     private final ShopService shopService;
+    private final ProductRepository productRepository;
+    private final ProdReviewService reviewService;
 
     private static final String UPLOAD_DIR = "C:/uploads/";
 
@@ -37,8 +40,17 @@ public class ShopController {
     public String getShopList(Model model) {
 
         List<Product> prodList = shopService.getProdCateList();
+        List<ProdCnt> prodCnts = shopService.getProdCntList();
+
+        // prodId를 키로, 리뷰, 찜 카운트 Map
+        Map<Long, Integer> revCntMap = prodCnts.stream()
+                                                    .collect(Collectors.toMap(ProdCnt::getProdId, ProdCnt::getRevCnt));
+        Map<Long, Integer> favoriteCntMap = prodCnts.stream()
+                                                    .collect(Collectors.toMap(ProdCnt::getProdId, ProdCnt::getFavoriteCnt));
 
         model.addAttribute("prodlist", prodList);
+        model.addAttribute("revCntMap", revCntMap);
+        model.addAttribute("favoriteCntMap", favoriteCntMap);
 
         return "shop/shop_list";
     }
@@ -61,11 +73,15 @@ public class ShopController {
 
 
         Product product = shopService.getOneProd(prodId);
-        List<ProdReview> imgReviewList = shopService.getImgReviews(product);
+        product.setViewCnt(product.getViewCnt()+1);
+        productRepository.save(product);
+
+        List<ProdReview> imgReviewList = shopService.getImgReviews(prodId);
         CartItemRequest cartItemRequest = new CartItemRequest();
 
         model.addAttribute("cartItemRequest", cartItemRequest);
 
+        model.addAttribute("reviewCnt", shopService.getCountProdReview(prodId));
 
         model.addAttribute("product", product);
         model.addAttribute("imgReviewList", imgReviewList);
@@ -80,7 +96,7 @@ public class ShopController {
             @PathVariable("revPage") int revPage,
             @PathVariable("prodId") int prodId) {
 
-        Page<ProdReview> pagedRevList = shopService.getPagedRevList(revPage, prodId);
+        Page<ProdReviewDTO> pagedRevList = shopService.getPagedRevList(revPage, prodId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("reviews", pagedRevList.getContent());
@@ -189,6 +205,15 @@ public class ShopController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/favorite/list/{memberId}")
+    @ResponseBody
+    public ResponseEntity<List<FavoriteProductDTO>> getFavoriteProductList(@PathVariable(value = "memberId")String memberId){
+
+        List<FavoriteProductDTO> favoriteList = shopService.getFavoriteProductList(memberId);
+
+        return ResponseEntity.ok(favoriteList);
     }
 
 

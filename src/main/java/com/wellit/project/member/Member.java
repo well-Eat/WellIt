@@ -95,6 +95,7 @@ public class Member {
 	    }
 
 		@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+		@JsonManagedReference("member-cart")
 		private Cart cart;
 	    
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
@@ -118,6 +119,7 @@ public class Member {
 	    private List<FavoriteStore> favoriteStores;
 
 		@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+		@JsonManagedReference("member-favorite-product")
 		private List<FavoriteProduct> favoriteProductList = new ArrayList<>();
 
 	    @Column

@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class PoProcessForm {
 
-    //private PurchaseOrder po;
 
     //PO 정보
     private String orderId;

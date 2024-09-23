@@ -27,6 +27,6 @@ public class ProdReviewLoadForm {
 
     private List<String> prodRevImgList;
 
-    private String orderItemId;
+    private Long orderItemId;
 
 }

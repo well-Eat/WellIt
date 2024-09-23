@@ -626,7 +626,18 @@ public class MemberController {
 
 
 
-
+    @GetMapping("/mypage/favorite/product")
+    public String getFavoriteShop(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+            Member member = memberService.getMember(memberId);
+            model.addAttribute("member", member);
+            model.addAttribute("memberId", memberId);
+        }
+        return "/shop/mypage_favoriteProduct";
+    }
 
 
 

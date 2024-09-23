@@ -205,35 +205,50 @@ function removeAtCart(prodId) {
         .then(data => {
             console.log(data);
             removeItemDOM(prodId);
-            updateCartBadge();
+            updateCartBadge(); // 아이템 개수 업데이트 호출
             calcTotalPrice();
         })
-
-
+        .catch(error => console.error('Error:', error));
 }
 
-
-//카트 아이템 dom 제거
+//카트 아이템 DOM 제거
 function removeItemDOM(prodId) {
     $(".itemId").each(function () {
         if ($(this).val() == prodId) {
             $(this).parents(".card-body").remove();
         }
+    });
+
+    checkCartEmpty();
+}
+
+// 장바구니 비었는지 확인 후 DOM 업데이트
+function checkCartEmpty() {
+    fetch('/cart/data/item-count', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
-    console.log($(".cardItemTable").find(".card-body"))
-    if ($(".cardItemTable").find(".card-body").length == 0) {
-        var vacantCartDOM = `
-            <div class="card-body border-bottom d-flex gap-3 justify-content-center " >
-                <div class="row">
-                    <div class="col-auto align-items-center justify-content-center d-flex flex-column">
-                        <div class="vacantCart "></div>
-                        <p class="mt-3 f24 fw700 c555">장바구니에 상품을 추가해주세요</p>
+        .then(response => response.json())
+        .then(data => {
+            if (data.cartItemCount == 0) {
+                // 장바구니 비었을 때 처리
+                var vacantCartDOM = `
+                <div class="card-body border-bottom d-flex gap-3 justify-content-center " >
+                    <div class="row">
+                        <div class="col-auto align-items-center justify-content-center d-flex flex-column">
+                            <div class="vacantCart "></div>
+                            <p class="my-3 f24 fw700 c555">장바구니에 상품을 추가해주세요</p>
+                            <p><a href="/shop/list" class="text-success text-decoration-underline">쇼핑하러가기</a></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        $(".cartItemTable .card-header").after(vacantCartDOM);
-    }
+            `;
+                $(".cartItemTable .card-header").after(vacantCartDOM);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 
@@ -251,15 +266,6 @@ $('input.addr').on('change', function () {
 function updateAddr() {
     $("div.addr").text($("input.addr").val());
 }
-
-/*// 전역 변수로 스크롤 위치를 저장할 변수를 선언
-var savedScrollPosition = 0;
-
-// 팝업을 열기 전에 현재 스크롤 위치를 저장
-savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-// 팝업이 닫힌 후 원래의 스크롤 위치로 이동
-window.scrollTo(0, savedScrollPosition);*/
 
 function sample4_execDaumPostcode() {
     new daum.Postcode({
@@ -448,207 +454,6 @@ function cancelRequest(cancelBtn) {
     })
 }
 
-/****** mypage : order_history *****/
-/****** mypage : order_history *****/
-/****** mypage : order_history *****/
-//리뷰 쓰기 버튼 클릭 시,
-$(document).on("click", ".openReviewFormBtn", function () {
-    let prodId = $(this).attr("data-product-id");
-    let orderItemId = $(this).attr("data-orderitem-id");
-    let reviewed = $(this).attr("data-reviewed");
-
-    console.log(prodId);
-    console.log(orderItemId);
-    console.log(reviewed);
-
-
-    // 리뷰 폼을 동적으로 생성
-    let prodReviewForm = `
-	        <div class="card-text reviewWrap">
-	            <form id="prodReviewForm" enctype="multipart/form-data" name="prodReviewForm">
-	                <div class="row">
-	                    <div class="col-6 modalColLeft border">
-	                        <div id="drop-area">
-	                            <p class="c666 fw700">리뷰 이미지 등록</p>
-	                            <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple>
-	                            <label class="button hidden" for="prodRevImg">또는 파일 선택</label>
-	                            <div id="gallery"></div>
-	                        </div>
-	                    </div>
-	
-	                    <div class="col-6 modalColRight">
-							<p class="mb-0">
-								<div class="star-rating">
-									<input type="radio" id="star5" name="rating" value="5" checked/>
-									<label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
-									<input type="radio" id="star4" name="rating" value="4" />
-									<label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
-									<input type="radio" id="star3" name="rating" value="3" />
-									<label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
-									<input type="radio" id="star2" name="rating" value="2" />
-									<label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
-									<input type="radio" id="star1" name="rating" value="1" />
-									<label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
-								</div>
-							</p>
-	                        <p>
-	                            <textarea class="form-control overflow-y-scroll" id="revText" name="revText" style="resize: none;"></textarea>
-	                        </p>
-	
-	                        <input type="hidden" id="prodId" name="prodId" value="${prodId}" />
-	                        <input type="hidden" id="paid" name="paid"/>
-	                        <input type="hidden" id="orderItemId" name="orderItemId" value="${orderItemId}"/>
-	                        
-	                        <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end">리뷰 제출하기</button>
-	                    </div>
-	                </div>
-	            </form>
-	        </div>
-	    `;
-
-    $(".reviewWrap").remove(); //기존에 열린 폼이 있으면 닫고,
-    $('.itemBtnLine').show(); // 다른 버튼라인들은 모두 나타나도록
-    $(this).parents('.itemBtnLine').hide(); // 현재 열린 버튼라인만 hide
-
-    // 동적으로 생성된 폼을 DOM에 추가
-    $(this).parent().after(prodReviewForm);
-
-    const sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
-
-    $("#revText").val($(this).attr('data-review-text'));
-    $('#paid').val(sumFinalPrice);
-
-
-    //기존 작성된 리뷰 있는지 확인
-    fetch(`/shop/review/exist/${orderItemId}`, {
-        method: 'GET'
-    }).then(response => {
-        return response.json();
-    }).then(reviewed => {
-        if (reviewed) {
-            // 작성 리뷰 있는 경우 폼에 불러오기
-            fetch(`/shop/review/get/${orderItemId}`, {
-                method: 'GET'
-            }).then(resp => {
-                return resp.json();
-            }).then(prodReviewLoadForm => { // 불러온 리뷰 데이터를 폼에 적용
-                document.querySelector("#revText").value = prodReviewLoadForm.revText; // 리뷰 텍스트 적용
-                document.querySelector(`#star${prodReviewLoadForm.rating}`).checked = true; // 별점 적용
-
-                // 이미지 목록 불러오기
-                const gallery = document.querySelector("#gallery");
-                prodReviewLoadForm.prodRevImgList.forEach(imagePath => {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = imagePath; // 이미지 경로 설정
-                    imgElement.style.width = "100px"; // 이미지 크기 조절
-                    imgElement.style.marginRight = "10px"; // 간격 설정
-                    gallery.appendChild(imgElement);
-                });
-            }).catch(err => {
-                console.log('안가져옴')
-            })
-
-        }
-    })
-
-    // 리뷰 제출 버튼 클릭 이벤트
-    $('#submitReviewForm').on('click', function () {
-        // FormData 생성
-        let formData = new FormData(document.getElementById('prodReviewForm'));
-        formData.set('paid', sumFinalPrice);
-        formData.set('reviewed', true);
-        formData.set('orderItemId', orderItemId);
-        formData.set('prodId', prodId);
-        console.log("prodId",prodId);
-
-        // fetch API로 폼 데이터 전송
-        fetch(`/shop/review/save/${prodId}`, {
-            method: 'POST',
-            body: formData,  // FormData는 자동으로 multipart/form-data로 처리됨
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                    //return response.text();  // 서버로부터의 응답을 텍스트로 처리
-                } else {
-                    throw new Error('리뷰 저장 실패');
-                }
-            })
-            .then(data => {
-                // 성공 시 실행될 로직
-                alert('리뷰가 성공적으로 저장되었습니다.');
-            })
-            .catch(error => {
-                // 실패 시 실행될 로직
-                alert('리뷰 저장에 실패했습니다.');
-            });
-    });
-
-
-    // 이미지 드래그 앤 드롭 영역
-    const dropArea = document.getElementById("drop-area");
-    const gallery = document.getElementById("gallery");
-    const fileInput = document.getElementById("prodRevImg");
-
-    let filesArray = []; // 업로드할 파일들을 저장할 배열
-
-    // 기본 동작 방지
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-        document.body.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    // 드래그 오버시 하이라이트 주기
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
-    });
-
-    // 파일 드롭 시 이벤트
-    dropArea.addEventListener('drop', handleDrop, false);
-    fileInput.addEventListener('change', handleFiles, false);
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles({target: {files: files}});
-    }
-
-    function handleFiles(e) {
-        const newFiles = Array.from(e.target.files);
-
-        document.getElementById('prodRevImg').files = e.target.files;
-
-        if (filesArray.length + newFiles.length > 3) {
-            alert('최대 3개의 이미지만 업로드할 수 있습니다.');
-            return;
-        }
-
-        filesArray = filesArray.concat(newFiles).slice(0, 3); // 3개까지만 허용
-        gallery.innerHTML = ''; // 기존 미리보기 초기화
-        filesArray.forEach(previewFile);
-    }
-
-    function previewFile(file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = function () {
-            const img = document.createElement('img');
-            img.src = reader.result;
-            img.style.width = '100px';
-            img.style.margin = '10px';
-            gallery.appendChild(img);
-        }
-    }
-});
 
 
 
@@ -656,30 +461,77 @@ $(document).on("click", ".openReviewFormBtn", function () {
 /***************** admin : po_list ******************/
 /***************** admin : po_list ******************/
 document.addEventListener("DOMContentLoaded", function () {
-    fetchOrders(); // 페이지 로드 시 주문 목록 불러오기
+    // #orderTable이 문서에 있는지 확인
+    if (document.querySelector('#orderTable')) {
+        // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        // 날짜를 'YYYY-MM-DD' 형식으로 변환하는 함수
+        document.getElementById('startDate').value = formatDateForInput(firstDayOfMonth);
+        document.getElementById('endDate').value = formatDateForInput(today);
+
+        // 페이지 로드 시 주문 목록 불러오기
+        fetchOrders();
+    }
 });
+
+
 
 async function fetchOrders() {
     // 검색어와 상태 필터 값 가져오기
     const search = document.getElementById("searchInput").value;
     const status = document.getElementById("statusSelect").value;
 
+    // 시작 날짜와 끝 날짜 값 가져오기
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
     // Fetch API를 사용하여 서버에서 데이터 가져오기
-    const response = await fetch(`/api/orders?search=${search}&status=${status}`);
+    const response = await fetch(`/api/orders?search=${search}&status=${status}&startDate=${startDate}&endDate=${endDate}`);
     const data = await response.json();
 
     // 테이블에 주문 목록 렌더링
     const orderTableBody = document.getElementById("orderTableBody");
     orderTableBody.innerHTML = ""; // 기존 내용 제거
 
-    data.orders.forEach(order => {
+    data.orders.forEach((order,index) => {
+        // 상태에 따라 배경색 클래스를 동적으로 설정
+        let rowClass = '';
+        switch (order.status) {
+            case '상품준비중':
+                rowClass = 'table-light';  // 파란색
+                statClass = 'text-primary fw700';
+                break;
+            case '배송중':
+                rowClass = 'table-info';     // 밝은 파란색
+                statClass = 'c333 fw700';
+                break;
+            case '배송완료':
+                rowClass = 'table-success';  // 녹색
+                statClass = 'c333 fw700';
+                break;
+            case '주문취소':
+                rowClass = 'table-danger';   // 빨간색
+                statClass = 'text-danger fw700';
+                break;
+            case '취소승인대기중':
+                rowClass = 'table-warning';  // 노란색
+                statClass = 'text-warning fw700';
+                break;
+            default:
+                rowClass = ''; // 기본값 (특별한 배경색 없음)
+        }
+        console.log(order.status);
+
         const row = `
-            <tr>
+            <tr class="${rowClass} orderRow">
+                <td>${index+1}</td>
                 <td>${formatDateTime(order.createdAt)}</td>
-                <td><a href="/order/admin/po/${order.orderId}" class="tableLink">${order.orderId}</a></td>
+                <td><a href="/order/admin/po/${order.orderId}" class="${statClass} tableLink">${order.orderId}</a></td>
                 <td>${order.memberId}</td>
-                <td>${order.status}</td>
-                <td class="text-right">${formatCurrency(order.totalPay)}</td>
+                <td class="${statClass}">${order.status}</td>
+                <td class="text-end me-5">${formatCurrency(order.totalPay)}</td>
             </tr>
         `;
         orderTableBody.insertAdjacentHTML('beforeend', row);
@@ -701,15 +553,29 @@ async function fetchOrders() {
 
 
 
+//OrderStatus Enum 한글명 매핑 함수
+function toKoreanOrderStatus(orderStatus) {
+    const statusMap = {
+        "PAYMENT_WAIT": "결제대기",
+        "PRODUCT_PREPARE": "상품준비중",
+        "DELIVERING": "배송중",
+        "COMPLETED": "배송완료",
+        "CANCELLED": "주문취소",
+        "WAITING_CANCEL": "취소승인대기중"
+    };
+
+    return statusMap[orderStatus] || orderStatus;
+}
 
 
 
-
-
-
-
-
-
+// 날짜 포맷팅 함수 (YYYY-MM-DD 형식으로 변환)
+function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 
 

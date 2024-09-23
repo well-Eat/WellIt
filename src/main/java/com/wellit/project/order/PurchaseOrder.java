@@ -66,7 +66,7 @@ public class PurchaseOrder {
 
 
     //주문 상품 리스트
-    @OneToMany(mappedBy = "purchaseOrder", cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "purchaseOrder", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 

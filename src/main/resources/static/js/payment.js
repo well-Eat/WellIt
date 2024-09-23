@@ -1,7 +1,7 @@
 
 // 구매자 정보
 
-const final_pay = parseInt( $("input#totalPay").val() );
+
 
 
 
@@ -25,7 +25,7 @@ buyButton.setAttribute('onclick', `kakaoPay('${user_email}', '${username}')`)
 
 async function kakaoPay(useremail, username) {
     const orderId = $("#orderId").val();
-
+    const final_pay = parseInt( $("input#totalPay").val() );
     if (confirm("구매 하시겠습니까?")) {
         IMP.init("imp51662258"); // 가맹점 식별코드
         IMP.request_pay({
@@ -85,8 +85,6 @@ async function kakaoPay(useremail, username) {
 
 
 
-// 예시로 결제 취소 버튼에 이벤트 추가
-const cancelButton = document.getElementById('cancelPaymentButton');
 
 
 
