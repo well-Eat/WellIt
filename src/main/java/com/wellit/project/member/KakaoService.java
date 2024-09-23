@@ -168,9 +168,9 @@ public class KakaoService {
         String kakaoUserId = String.valueOf(kakaoUserInfo.getId());
 
         // 기존 회원 여부 확인
-        Optional<Member> existingMember = memberRepository.findByMemberId(kakaoUserId);
+        Member existingMember = memberRepository.findByMemberId(kakaoUserId);
 
-        if (existingMember.isPresent()) {
+        if (existingMember != null) {
             // 이미 가입된 회원이 존재할 경우 예외를 발생시킴
             throw new CustomUserAlreadyExistsException(kakaoUserId);
         } else {
@@ -185,9 +185,10 @@ public class KakaoService {
     	log.info("Updating Kakao member with ID: {}", kakaoSignupForm.getMemberId());
     	    	 
         // 1. 카카오 로그인으로 저장된 회원을 찾아옴
-        Member member = memberRepository.findByMemberId(kakaoSignupForm.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        
+    	Member member = memberRepository.findByMemberId(kakaoSignupForm.getMemberId());
+    	if (member == null) {
+    	    throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+    	}
         log.info("Found member: {}", member);
 
         // 2. 추가 정보를 업데이트

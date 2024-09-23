@@ -38,7 +38,7 @@ public class MemberService {
 	public Member create(String memberId, String memberPassword, String memberName, String memberAlias,
 			String memberEmail, String memberPhone, String memberAddress, String memberBirth, String memberGender,
 			String memberVeganType, String zipcode, String roadAddress, String addressDetail, String birth_year,
-			String birth_month, String birth_day, MultipartFile imageFile) throws IOException {
+			String birth_month, String birth_day, MultipartFile imageFile, Boolean isBusiness, String businessName) throws IOException {
 
 		Member member = new Member();
 		member.setMemberId(memberId);
@@ -59,6 +59,8 @@ public class MemberService {
 		member.setBirth_day(birth_day);
 		member.setMileage(0); // 기본 마일리지 설정
 		member.setMemberType("default");
+		member.setBusiness(isBusiness);
+		member.setBusinessName(businessName);
 
 		// 회원 프로필 이미지 등록한다면 해당 이미지 이름도 DB저장
 		String existingImagePath = member.getImageFile();
@@ -81,26 +83,24 @@ public class MemberService {
 
 		return memberRepository.save(member);
 	}
-	
+
 	public boolean isEmailExist(String email) {
-        return memberRepository.findByMemberEmail(email) != null;
-    }
+		return memberRepository.findByMemberEmail(email) != null;
+	}
 
 	// 로그인한 사용자명을 알 수 있는 메소드
 	public Member getMember(String memberId) {
-		Optional<Member> member = this.memberRepository.findByMemberId(memberId);
-//			
-		if (member.isPresent()) {
-			return member.get();
-		} else {
-			throw new DataNotFoundException("해당 회원이 없습니다.");			
-		}
+
+	    Member member = this.memberRepository.findByMemberId(memberId);
+	    
+	    if (member != null) {
+	        return member;
+	    } else {
+	        throw new DataNotFoundException("해당 회원이 없습니다.");
+	    }
 	}
 
-	// 아이디 중복 체크
-	public boolean isIdExists(String memberId) {
-		return memberRepository.existsByMemberId(memberId);
-	}
+
 
 	// 회원 정보 수정 로직
 	public void updateMember(Member member, String newPassword, String newName, String newAlias, String newEmail,
@@ -151,8 +151,10 @@ public class MemberService {
 
 	// 멤버 삭제
 	public void deleteMember(String memberId) {
-		Member member = memberRepository.findByMemberId(memberId)
-				.orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
+		Member member = memberRepository.findByMemberId(memberId);
+		if (member == null) {
+		    throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
+		}
 
 		// 프로필 이미지 삭제 로직 추가
 		String imagePath = member.getImageFile();
@@ -183,39 +185,45 @@ public class MemberService {
 	public Optional<Member> findByIdAndNameAndEmail(String memberId, String memberName, String memberEmail) {
 		return memberRepository.findByMemberIdAndMemberNameAndMemberEmail(memberId, memberName, memberEmail);
 	}
-	
-	//이메일 중복?
+
+	// 이메일 중복?
 	public boolean isEmailExists(String email) {
-        return memberRepository.existsByMemberEmail(email);
-    }
-	
-	public ResponseEntity<String> sendPasswordResetEmail(String email) {
-        Optional<Member> thisMember = memberRepository.findByMemberEmail(email);
-        
-     // 회원이 존재하는지 확인
-        if (thisMember.isPresent()) {
-            Member member = thisMember.get(); // Optional에서 Member 추출
-            String token = generateResetToken(); // 토큰 생성 메소드
-            member.setResetToken(token); // 토큰을 사용자 객체에 저장
-            memberRepository.save(member); // 변경 사항 저장
-
-            String resetLink = "http://localhost:8080/member/reset_password?token=" + token;
-            String emailText = "비밀번호 재설정을 위해 다음 링크를 클릭하세요: " + resetLink;
-            
-            emailService.sendSimpleMessage(email, "비밀번호 재설정", emailText);
-            return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 주소가 등록되어 있지 않습니다.");
-        }
-    }
-
-
-    private String generateResetToken() {
-        // 랜덤 토큰 생성 로직
-        return UUID.randomUUID().toString();
-    }
-
-	public Optional<Member> findByMemberId(String memberId) {
-		return memberRepository.findByMemberId(memberId);
+		return memberRepository.existsByMemberEmail(email);
 	}
+
+	public ResponseEntity<String> sendPasswordResetEmail(String email) {
+		Optional<Member> thisMember = memberRepository.findByMemberEmail(email);
+
+		// 회원이 존재하는지 확인
+		if (thisMember.isPresent()) {
+			Member member = thisMember.get(); // Optional에서 Member 추출
+			String token = generateResetToken(); // 토큰 생성 메소드
+			member.setResetToken(token); // 토큰을 사용자 객체에 저장
+			memberRepository.save(member); // 변경 사항 저장
+
+			String resetLink = "http://localhost:8080/member/reset_password?token=" + token;
+			String emailText = "비밀번호 재설정을 위해 다음 링크를 클릭하세요: " + resetLink;
+
+			emailService.sendSimpleMessage(email, "비밀번호 재설정", emailText);
+			return ResponseEntity.ok("비밀번호 재설정 이메일이 발송되었습니다.");
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 주소가 등록되어 있지 않습니다.");
+		}
+	}
+
+	private String generateResetToken() {
+		// 랜덤 토큰 생성 로직
+		return UUID.randomUUID().toString();
+	}
+
+	// memberId로 멤버 조회
+	public Member findByMemberId(String memberId) {
+		return memberRepository.findByMemberId(memberId); // memberId로 직접 조회
+	}
+	//아이디 중복 체크
+	public boolean isIdExists(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
+    }
+
+
 }

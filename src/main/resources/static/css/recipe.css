@@ -1,0 +1,317 @@
+/* 웹페이지 전체 공통 (추후 제외할 내용) */
+* {margin: 0;padding: 0;}
+body{
+    background-color : #fff;
+    color: #333;
+}
+
+/* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
+li a{
+    text-decoration: none !important;
+}
+
+
+/* 디폴트 스타일 reset */
+ul {
+    margin-bottom: 0;
+}
+
+
+
+/********************** common *********************/
+/********************** common *********************/
+/********************** common *********************/
+section {
+    height: auto;
+}
+:root{
+    --swiper-navigation-size: 32px;
+}
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+nav header {
+    background-color: #386641;
+    position: relative;
+}
+
+nav {
+    position: relative;
+}
+
+nav ~ .container {
+    position: relative;
+}
+
+
+/*** 페이지 타이틀 ***/
+.pageTitle{
+    /* !!!!!!!!!!!! 왜 헤더부분이랑 겹치게 배치되는지 확인 필요*/
+    /*위치 다시 잡아야함!!!!!!!*/
+    /* padding-top: 100px;*/
+    font-size: 32px;
+    font-weight: 800;
+}
+
+
+
+/********************** recipe_create *********************/
+/********************** recipe_create *********************/
+/********************** recipe_create *********************/
+
+ol {
+    padding-left: 0;
+}
+
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+.gallery img {
+    width: 100px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.preview {
+    height: 150px;
+    margin-top: 3px;
+}
+
+.preview img {
+    object-fit: contain;
+    max-width: 100%;
+    height: 100%;
+}
+
+.recpInfo .infoGroup {
+    margin-bottom: 8px;
+}
+
+.recpInfo label.form-label {
+    margin-bottom: 2px;
+}
+.mainCookCard .card-header{
+    background-color: var(--bs-success);
+
+}
+.mainCookCard .card-header p{
+    font-size: 22px;
+    /*color: var(--bs-success);*/
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+
+
+/* 드래그 앤 드롭 시 활성화된 느낌을 주기 위한 스타일 */
+/*.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    position: relative;
+}*/
+
+.drop-area.active {
+    border-color: #3498db;
+    background-color: #ecf0f1;
+}
+
+/* 이미지 프레임 스타일 */
+.mainImgFrame {
+    position: relative;
+    border: 2px solid #ddd;
+    min-height: 150px;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    width: 100%; /* 추가: width 100% */
+    box-sizing: border-box;
+}
+
+/* 이미지가 영역에 맞도록 contain 크기로 조정 */
+.mainImgFrame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* 추가: 이미지가 영역을 벗어나지 않고 contain 방식으로 맞춤 */
+    display: block;
+    margin: 0 auto;
+}
+
+/* 파일 선택 안내 텍스트 스타일 */
+.drop-area p {
+    font-size: 16px;
+    color: #777;
+}
+
+/* 삭제 버튼 스타일 */
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    line-height: 25px;
+    text-align: center;
+    display: none; /* 기본적으로는 숨김 */
+}
+
+/* .cookingDropArea에 파일이 있을 때만 삭제 버튼이 보이도록 */
+.cookingDropArea:hover img + .remove-btn {
+    display: block;
+}
+
+
+.mainImgFrame:hover img + .remove-btn {
+    display: block;
+}
+
+
+/* 추가: sortable 기능을 적용하기 위한 스타일 */
+#mainDropArea {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.mainImgFrame {
+    width: 30%; /* 각 이미지 영역의 너비 설정 */
+}
+
+
+
+
+
+
+
+
+.howToMake {
+    height: 100%;
+}
+
+ol#cookOrderCardList{
+    padding-left: 0;
+}
+/*레시피카드 헤더*/
+.cookOrderCard .card-header{
+    padding: 0;
+}
+.cookOrderCard .removeCard,
+.cookOrderCard .addCard{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    font-size: 16px;
+}
+.cookOrderCard span.textStep{
+    text-align: right;
+}
+
+.cookOrderCard span.textStep,
+.cookOrderCard input.cookOrderNum{
+    font-size: 22px;
+    color: var(--bs-success);
+    font-weight: 600;
+    display: inline-block;
+    padding: 0;
+    width: 100px;
+}
+
+
+.addCard:hover, .removeCard:hover {
+    background-color: var(--bs-success);
+    opacity: 20%;
+}
+
+.addCard:active, .removeCard:active {
+    background-color: var(--bs-success) !important;
+    opacity: 50%;
+}
+
+.preview{
+    overflow: hidden;
+}
+.preview p{
+    font-size: 12px;
+    color: #999999;
+}
+textarea.form-control{
+    resize: none;
+}
+
+
+
+
+
+/******************** recp_detail ********************/
+/******************** recp_detail ********************/
+/******************** recp_detail ********************/
+
+.detail section.main > div{
+    border: 1px solid lightblue;
+}
+
+.detail .mainImgContainer{
+    height: 50vh;
+    min-height: 400px;
+}
+
+.detail .swiper-slide .mainImgFrame{
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: top;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
