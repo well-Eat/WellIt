@@ -29,8 +29,7 @@ nav~.container {
 	position: relative;
 }
 .rowTitle{
-	background-color: #f2e8cf;
-	height: 200px;
+	height: 100px;
 	display: flex;
 	align-items: center;
 }
@@ -101,4 +100,30 @@ h4 {
     .card-title {
         font-size: 1.3rem;
     }
+	
+	.greentext{
+		font-size: 1.5rem;
+	}
+}
+
+/* wellit 페이지 스타일 */
+.greentext{
+	color: #386641;
+}
+
+
+.weltitle{
+	color: #6a994e;
+	font-weight: 900;
+}
+
+.bold{
+	font-weight: 600;
+	color: #6c757d;
+}
+
+.custom-img {
+    height: 250px; /* 원하는 고정 높이 설정 */
+    object-fit: cover; /* 이미지 비율을 유지하며 고정 크기에 맞게 자릅니다 */
+    width: 100%; /* 이미지가 카드의 전체 너비를 차지하도록 설정 */
 }

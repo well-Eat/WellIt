@@ -23,7 +23,7 @@ public class StoreReservation {
 
     @ManyToOne // AllStore와의 관계
     @JoinColumn(name = "stoId", nullable = false) // 외래 키 설정
-    @JsonBackReference("member-reservations") // 이름 설정
+    @JsonBackReference("store-reservations") // 이름 설정
     private AllStore allStore; // 관련 가게 정보
 
     @ManyToOne // Member와의 관계

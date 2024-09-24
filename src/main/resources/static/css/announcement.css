@@ -51,3 +51,26 @@ textarea{
 .card{
 	width: 60%;
 }
+.table-group-divider{
+ color:#6a994e;
+}
+
+    table {
+        width: 100%; /* 테이블이 전체 화면 너비를 차지하게 설정 */
+        table-layout: fixed; /* 셀 너비를 고정 */
+    }
+
+    th {
+        text-align: left; /* 제목은 좌측 정렬 */
+    }
+
+    /* 각 열의 비율을 설정 */
+    th:nth-child(1) { /* # (번호) */
+        width: 10%; /* 10% 정도로 짧게 */
+    }
+    th:nth-child(2) { /* 제목 */
+        width: 50%; /* 제목은 가장 넓게 */
+    }
+    th:nth-child(3), th:nth-child(4) { /* 글쓴이, 작성시간 */
+        width: 20%; /* 글쓴이와 작성시간은 동일한 너비 */
+    }

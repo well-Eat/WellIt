@@ -189,21 +189,33 @@ public class MemberController {
 	}
 
 	@GetMapping("/mypage")
-    public String getMypage(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-            Member member = memberService.getMember(memberId);
-            
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String formattedRegDate = member.getMemberRegDate().format(formatter);
-            
-            model.addAttribute("member", member);
-            model.addAttribute("formattedRegDate", formattedRegDate);
-        }
-        return "member/mypage";
-    }
+	public String getMypage(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
+		return "member/mypage";
+	}
 	
     
 	@GetMapping("/enter_password")
@@ -629,15 +641,60 @@ public class MemberController {
 
     @GetMapping("/mypage/favorite/product")
     public String getFavoriteShop(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-            Member member = memberService.getMember(memberId);
-            model.addAttribute("member", member);
-            model.addAttribute("memberId", memberId);
-        }
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
         return "/shop/mypage_favoriteProduct";
+    }
+    
+    @GetMapping("/mypage/favorite/store")
+    public String getFavoriteStore(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
+        return "/load/mypage_favoriteStore";
     }
 
 
@@ -649,25 +706,60 @@ public class MemberController {
 
     @GetMapping("/mypage/orderhistory")
     public String getOrderHistory(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-            Member member = memberService.getMember(memberId);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String formattedRegDate = member.getMemberRegDate().format(formatter);
-
-
-            // mypage : 주문 내역 확인
-            List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
-
-            model.addAttribute("poHistoryList", poHistoryList);
-            model.addAttribute("member", member);
-            model.addAttribute("formattedRegDate", formattedRegDate);
-
-        }
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
         return "/order/mypage_orderHistory";
+    }
+    
+    @GetMapping("/mypage/memberinfo")
+    public String getMemberInfo(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
+        return "/member/memberinfo";
     }
 
 

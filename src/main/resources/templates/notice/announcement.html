@@ -3,7 +3,7 @@
 	<!-- shop style link -->
 	<link rel="stylesheet" th:href="@{/css/announcement.css}">
 	<!-- 페이지 제목 -->
-	<div class="row rowTitle">
+	 <div class="row rowTitle">
 		<div th:if="${pageType.equals('announcement')}" class="pageTitle col text-center">
 			공지사항
 		</div>
@@ -15,7 +15,7 @@
 		<!-- 공지사항 목록 테이블 -->
 		<table class="table table-hover">
 			<thead>
-				<tr class="table-success">
+				<tr>
 					<th scope="col">#</th>
 					<th scope="col">제목</th>
 					<th scope="col">글쓴이</th>
@@ -38,16 +38,16 @@
 			                class="badge text-bg-primary mx-2"></span>
 			        </td>
 			        <td th:text="${question.qAuthor}"></td>
-			        <td th:text="${#temporals.format(question.qCreatedTime, 'yyyy.MM.dd.hh.mm.ss')}"></td>
+			        <td th:text="${#temporals.format(question.qCreatedTime, 'yyyy-MM-dd')}"></td>
 			    </tr>
 			</tbody>
 		</table>
 		<div th:if="${pageType.equals('announcement')}">
 			<a th:if="${session.UserId == 'admin'}" th:href="@{/notice/announcementQuestion(memberId=${session.UserId})}"
 				class="btn btn-info">공지사항 작성</a>
-		</div>
+		</div>	
 		<a th:if="${pageType.equals('qna')}" th:href="@{/notice/qnaQuestion(memberId=${session.UserId})}"
-			class="btn btn-success">질문 등록하기</a>
+			class="btn btn-success float-end my-3">질문 등록하기</a>
 	</div>
 </div>
 
