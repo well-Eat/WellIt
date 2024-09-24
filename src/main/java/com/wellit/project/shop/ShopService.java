@@ -225,6 +225,19 @@ public class ShopService {
         product.setProdDiscount(productForm.getProdDiscount());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
 
+        // 기존 상품 세부 정보 삭제 -> 수정 내용으로 새로운 리스트 추가
+        prodInfoRepository.deleteAllByProduct(product);
+        List<ProdInfo> prodInfoList = productForm.getProdInfoList();
+        if (prodInfoList != null && !prodInfoList.isEmpty()) {
+            for (ProdInfo prodInfo : prodInfoList) {
+                prodInfo.setProduct(product);
+                prodInfoRepository.save(prodInfo);
+            }
+        }
+
+
+
+
         // 썸네일 이미지 처리
         if (!thumbFile.isEmpty()) {
             String thumbFileName = UUID.randomUUID().toString() + "_" + thumbFile.getOriginalFilename();

@@ -207,10 +207,10 @@ public class ShopController {
                                                 @PathVariable Long prodId,
                                                 @ModelAttribute ProductForm productForm,
                                                 @RequestParam(required=false) List<String> toBeDeleted,
-                                                @RequestParam("existingImages[]") List<String> existingImages,
-                                                @RequestParam("existingImageOrders[]") List<Integer> existingImageOrders,
-                                                @RequestParam("newImages[]") List<MultipartFile> newImages,
-                                                @RequestParam("newImageOrders[]") List<Integer> newImageOrders
+                                                @RequestParam(value = "existingImages[]",required=false) List<String> existingImages,
+                                                @RequestParam(value = "existingImageOrders[]",required=false) List<Integer> existingImageOrders,
+                                                @RequestParam(value = "newImages[]",required=false) List<MultipartFile> newImages,
+                                                @RequestParam(value = "newImageOrders[]",required=false) List<Integer> newImageOrders
                                                ) throws IOException {
 
         // 현재 로그인한 사용자가 admin인지 확인

@@ -125,9 +125,11 @@
 	
 	
 	<!--상품 상세 정보 출력-->
-	<section class="prodDetail container border border-success mb-3 text-center vstack">
+	<section class="prodDetail container border border-success mb-3 d-flex flex-column justify-content-center align-items-center">
 		<th:block th:each="prodImage : ${sortedImages}">
-			<img th:src="${prodImage.imagePath}" class="img-fluid" style="object-fit: contain; max-width: 100%">
+			<div class="d-inline-block w-100 text-center">
+				<img th:src="${prodImage.imagePath}" class="img-fluid" style="object-fit: contain;">
+			</div>
 		</th:block>
 	</section>
 	

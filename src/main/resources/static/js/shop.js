@@ -707,7 +707,7 @@ $(document).ready(function () {
 
             let formData = new FormData(this);
 
-            // 이미지 카드 순회 -> 기존 이미지와 새 이미지를 구분 & 순서 부여
+            // 이미지 카드  -> 기존 이미지와 새 이미지를 구분 & 순서 부여
             $('li.prodImageCard').each(function () {
                 const imgSrc = $(this).find('.preview img').attr('src');
                 const fileInput = $(this).find('.prodImageInput');
@@ -721,6 +721,18 @@ $(document).ready(function () {
                     formData.append('newImageOrders[]', imageOrder);
                 }
             });
+
+            // 상품 상세 정보(prodInfoList) 리스트
+            $('#prodInfoList tr').each(function (index) {
+                const infoKey = $(this).find('.infoKey').val();
+                const infoValue = $(this).find('.infoValue').val();
+
+                if (infoKey && infoValue) {
+                    formData.append(`prodInfoList[${index}].infoKey`, infoKey);
+                    formData.append(`prodInfoList[${index}].infoValue`, infoValue);
+                }
+            });
+
 
             // Fetch API로 폼 데이터 전송
             fetch($(this).attr('action'), {
@@ -842,8 +854,8 @@ function fetchFavoriteProductList(memberId){
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); // 서버에서 받은 데이터를 출력하여 확인
-            renderFavoriteProducts(data); // 데이터 렌더링 함수 호출
+            console.log(data);
+            renderFavoriteProducts(data); // 데이터 렌더링
         })
         .catch(error => {
             console.error('Error fetching favorite products:', error);
@@ -891,7 +903,25 @@ function renderFavoriteProducts(products) {
         });
     } else {
         // 찜 목록이 없을 때 처리
-        favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+        favoriteList.html(`
+                     <div class="container w-100">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+                                        <div class="icon-heart my-5">
+                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                        </div>
+                                        <div class="message mb-5">
+                                            <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
+                                            <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
+                                        </div>
+                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                
+                `);
     }
 }
 
@@ -928,13 +958,31 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
             const message = await response.text();  // response body의 텍스트를 가져옴
             console.log(message);  // 응답 메시지를 사용자에게 보여줌
             prodItem.remove();
-            var cntFavorite = $(".prodItem").count();
+            var cntFavorite = $(".prodItem").length;
             console.log(cntFavorite);
 
             if (cntFavorite==0 || cntFavorite ==null){
                 const favoriteList = $(".favoriteList");
                 // 찜 목록이 없을 때 처리
-                favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+                favoriteList.html(`
+                     <div class="container w-100">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+                                        <div class="icon-heart my-5">
+                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                        </div>
+                                        <div class="message mb-5">
+                                            <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
+                                            <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
+                                        </div>
+                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                
+                `);
             }
         } else {
             const errorMessage = await response.text();  // 오류 메시지 표시

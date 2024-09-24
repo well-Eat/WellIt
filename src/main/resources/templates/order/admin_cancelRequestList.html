@@ -37,6 +37,9 @@
 					</tr>
 					</thead>
 					<tbody id="orderTableBody">
+					<tr th:if="${cancelRequestList==null || cancelRequestList.size() == 0}">
+						<td colspan="6" class="text-center"><span>주문 취소 신청 건이 없습니다.</span></td>
+					</tr>
 					<tr th:each="cancelRequest, iterStat : ${cancelRequestList}">
 						<td th:text="${iterStat.index+1}"></td>
 						<td th:text="${#temporals.format(cancelRequest.cancelRequestAt, 'yyyy.MM.dd. hh:mm:ss')}"></td>
