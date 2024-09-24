@@ -75,7 +75,11 @@ public class ShopController {
 
 
         Product product = shopService.getOneProd(prodId);
-        product.setViewCnt(product.getViewCnt() + 1);
+        if(product.getViewCnt() == null) {
+            product.setViewCnt(1);
+        }else {
+            product.setViewCnt(product.getViewCnt() + 1);
+        }
         productRepository.save(product);
 
         List<ProdReview> imgReviewList = shopService.getImgReviews(prodId);
@@ -233,8 +237,8 @@ public class ShopController {
     // 상품 상세페이지 : 찜하기 버튼
     @PostMapping("/favorite/change")
     @ResponseBody
-    public ResponseEntity<String> isFavoriteProduct(@RequestParam(required=true) Long prodId,
-                                                    @RequestParam(required=true) String memberId) {
+    public ResponseEntity<String> isFavoriteProduct(@RequestParam(value="prodId",required=true) Long prodId,
+                                                    @RequestParam(value="memberId",required=true) String memberId) {
 
         log.info(prodId);
         log.info(memberId);

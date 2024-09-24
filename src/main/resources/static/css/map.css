@@ -12,6 +12,7 @@ header {
 	overflow-y: scroll;
 	z-index: 20;
 	height: calc(90% - 60px);
+	max-width: 500px;
 }
 
 .searchWrapper::-webkit-scrollbar {
@@ -27,7 +28,6 @@ header {
 	height: 200px;
 	margin: 10px 0;
 	z-index: 21;
-
 }
 
 .container-fluid {
@@ -261,7 +261,12 @@ header {
 footer{
 	display: none;
 }
-
+.btnGreen{
+	background-color: #a7c957;
+}
+.btnGreen:hover{
+	background-color: #a7c957;
+}
 @media (max-width: 768px) {
 	.selectRegionForm {
 		font-size: 1rem;
@@ -271,6 +276,7 @@ footer{
 		left: 5%;
 		height: 20%;
 		transition: height 1s;
+		max-width: 768px;
 	}
 	.hideBtn{
 		display: block;
