@@ -378,6 +378,85 @@ public class ShopService {
 
 
 
+    //admin : 상품 리스트 페이징 리턴
+    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String startDate, String endDate, int page) {
+        // 페이징 처리 및 정렬
+        Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);
+
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+
+        // 날짜 필터링 처리
+        if (startDate != null && !startDate.isEmpty()) {
+            LocalDate start = LocalDate.parse(startDate);
+            startDateTime = start.atStartOfDay();
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            LocalDate end = LocalDate.parse(endDate).plusDays(1);  // 종료일을 포함하기 위해 하루 더함
+            endDateTime = end.atStartOfDay();
+        }
+
+        // 상품 정보와 판매 수량 및 매출 금액을 조회
+        Page<Product> productPage;
+
+        if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
+            // 상품 자체는 검색 기간과 상관없이 모두 조회
+            productPage = productRepository.findByProdNameContainingAndProdCate(search, prodCate, pageable);
+        } else if (search != null && !search.isEmpty()) {
+            productPage = productRepository.findByProdNameContaining(search, pageable);
+        } else if (prodCate != null && !prodCate.isEmpty()) {
+            productPage = productRepository.findByProdCate(prodCate, pageable);
+        } else {
+            // 검색 조건이 없으면 모든 상품을 조회
+            productPage = productRepository.findAll(pageable);
+        }
+
+        // 판매 수량 및 매출 집계 데이터 조회
+        List<Object[]> salesData = orderItemRepository.findProductSalesByDateRange(startDateTime, endDateTime);
+
+        // ProductAdminDTO 리스트로 변환 및 매출 데이터 추가
+        return productPage.map(product -> {
+            ProductAdminDTO dto = convertToProductAdminDTO(product);
+
+            // 매출 데이터 반영
+            salesData.stream()
+                     .filter(data -> data[0].equals(product.getProdId()))  // 상품 ID로 매칭
+                     .findFirst()
+                     .ifPresent(data -> {
+                         dto.setSumQuantity((data[1] != null) ? ((Number) data[1]).intValue() : 0);  // 판매 수량
+                         dto.setTotalFinalPrice((data[2] != null) ? ((Number) data[2]).intValue() : 0);  // 매출 금액
+                     });
+
+            return dto;
+        });
+    }
+
+    // Product 엔티티를 ProductAdminDTO로 변환하는 메서드
+    private ProductAdminDTO convertToProductAdminDTO(Product product) {
+        ProductAdminDTO dto = new ProductAdminDTO();
+        dto.setProdId(product.getProdId());
+        dto.setProdName(product.getProdName());
+        dto.setProdOrgPrice(product.getProdOrgPrice());
+        dto.setProdDiscount(product.getProdDiscount());
+        dto.setProdCate(product.getProdCate());
+        dto.setProdFinalPrice(calculateFinalPrice(product.getProdOrgPrice(), product.getProdDiscount()));
+        dto.setProdStock(product.getProdStock());
+        dto.setViewCnt(product.getViewCnt());
+        dto.setCreatedAt(product.getCreatedAt());
+        return dto;
+    }
+
+
+
+    // 개당 단가 최종 가격 계산(할인율 반영)(
+    private Integer calculateFinalPrice(Integer orgPrice, Double discount) {
+        double v = orgPrice * (1 - discount);
+        int prodFinalPrice = ((int) (v / 100)) * 100;
+
+        return prodFinalPrice;
+    }
+
 
 
 

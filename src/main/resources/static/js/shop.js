@@ -868,6 +868,98 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 
 
 
+/***************** admin : productList ******************/
+/***************** admin : productList ******************/
+/***************** admin : productList ******************/
+document.addEventListener("DOMContentLoaded", function () {
+    // #orderTable이 문서에 있는지 확인
+    if (document.querySelector('#prodTable')) {
+        // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        // 날짜를 'YYYY-MM-DD' 형식으로 변환하는 함수
+        document.getElementById('startDate').value = formatDateForInput(firstDayOfMonth);
+        document.getElementById('endDate').value = formatDateForInput(today);
+
+        // 페이지 로드 시 주문 목록 불러오기
+        fetchProducts();
+    }
+});
+
+
+
+async function fetchProducts() {
+    // 검색어와 상태 필터 값 가져오기
+    const search = document.getElementById("searchInput").value;
+    const category = document.getElementById("categorySelect").value;
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    console.log()
+    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&startDate=${startDate}&endDate=${endDate}`);
+    //const response = await fetch(`/shop/api/products?search=${search}`);
+    const data = await response.json();
+
+    console.log(data);
+
+    // 테이블에 주문 목록 렌더링
+    const prodTableBody = document.getElementById("prodTableBody");
+    prodTableBody.innerHTML = ""; // 기존 내용 제거
+
+    data.products.forEach((product,index) => {
+        // 상태에 따라 배경색 클래스를 동적으로 설정
+        let rowClass = '';
+        /*
+        switch (order.status) {
+            case '상품준비중':
+                rowClass = 'table-light';  // 파란색
+                statClass = 'text-primary fw700';
+                break;
+            case '배송중':
+                rowClass = 'table-info';     // 밝은 파란색
+                statClass = 'c333 fw700';
+                break;
+            case '배송완료':
+                rowClass = 'table-success';  // 녹색
+                statClass = 'c333 fw700';
+                break;
+            case '주문취소':
+                rowClass = 'table-danger';   // 빨간색
+                statClass = 'text-danger fw700';
+                break;
+            case '취소승인대기중':
+                rowClass = 'table-warning';  // 노란색
+                statClass = 'text-warning fw700';
+                break;
+            default:
+                rowClass = ''; // 기본값 (특별한 배경색 없음)
+        }
+        console.log(order.status);
+*/
+        const row = `
+            <tr class="prodRow">
+                <td>${index + 1}</td>
+                <td>${product.prodId}</td>
+                <td>${product.prodName}</td>
+                <td>${product.createdAt}</td>
+                <td>${product.sumQuantity || 0}</td>
+                <td>${product.totalFinalPrice || 0}</td>
+                <td><a href="/shop/admin/edit/${product.prodId}" tableLink">수정</a></td>
+            </tr>
+        `;
+        prodTableBody.insertAdjacentHTML('beforeend', row);
+    });
+}
+
+
+
+/*<td>${formatDateTime(order.createdAt)}</td>
+<td><a href="/order/admin/po/${order.orderId}" className="${statClass} tableLink">${order.orderId}</a></td>
+<td>${order.memberId}</td>
+<td className="${statClass}">${order.status}</td>
+<td className="text-end me-5">${formatCurrency(order.totalPay)}</td>*/
+
 
 
 
@@ -878,6 +970,15 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 
 
 /******* Common Util : END *********/
+// 날짜 포맷팅 함수 (YYYY-MM-DD 형식으로 변환)
+function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+
 // 작성자 ID 마스킹 함수
 function maskWriter(writer) {
     let maskedWriter = writer.slice(0, 2);

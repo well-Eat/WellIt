@@ -387,6 +387,7 @@ public class OrderService {
     /************** 주문 처리 로직 ************************/
     /************** 주문 처리 로직 ************************/
     /************** 주문 처리 로직 ************************/
+    //admin : 주문 리스트 페이징 리턴
     public Page<PurchaseOrder> findOrders(String search, String status, String startDate, String endDate, int page) {
         Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);

@@ -1,0 +1,81 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	
+	
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				상품 리스트
+			</div>
+		</div>
+		
+		<section class="row vstack prodItem position-relative mb-5">
+			
+			<p class="subtle f18 c666 fw-bold">
+				상품 내역
+			</p>
+			
+			<div class="col gap-3 g-3">
+				<!-- 검색 및 필터 기능 -->
+				<form class="mb-3 d-flex" id="searchForm">
+					<input type="text" id="searchInput" class="form-control me-2" placeholder="Search by Order ID" name="search">
+					<!-- 시작 날짜 선택 -->
+					<input type="date" id="startDate" class="form-control me-2" name="startDate">
+					
+					<!-- 끝 날짜 선택 -->
+					<input type="date" id="endDate" class="form-control me-2" name="endDate">
+					
+					<select class="form-select me-2" id="categorySelect" name="category">
+						<option value="">모두 보기</option>
+						<option value="mealkit">밀키트</option>
+						<option value="sidedish">반찬배송</option>
+						<option value="organicfood">유기농식재료</option>
+						<option value="organicgoods">오가닉 제품</option>
+						<option value="babygoods">베이비</option>
+						<option value="petgoods">펫</option>
+						<option value="books">책</option>
+						<option value="wellitgoods">웨릿 굿즈</option>
+					</select>
+					
+					<button type="button" class="btn btn-success" onclick="fetchProducts()">Search</button>
+				</form>
+				
+				<!-- 상품 목록 테이블 -->
+				<table class="table table-hover" id="prodTable">
+					<thead>
+					<tr>
+						<th scope="col">No.</th>
+						<th scope="col">상품코드</th>
+						<th scope="col">상품명</th>
+						<th scope="col">상품 등록일자</th>
+						<th scope="col">판매수량</th>
+						<th scope="col">매출금액</th>
+						<th scope="col">편집버튼</th>
+					</tr>
+					</thead>
+					<tbody id="prodTableBody">
+					<!-- Fetch로 받은 데이터를 여기에 렌더링 -->
+					</tbody>
+				</table>
+			
+			</div> <!-- //col -->
+			
+			
+			<script th:inline="javascript">
+			</script>
+		
+		</section>
+	
+	</div><!-- // #wrapper -->
+	
+	<!--shop js link-->
+	<script src="/js/shop.js"></script>
+
+</div>
+</html>
