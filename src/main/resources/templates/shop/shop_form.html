@@ -23,16 +23,18 @@
 	
 	<!--페이지 제목-->
 	<div class="row mb-5">
-		<div class="pageTitle col text-center">
+		<div class="pageTitle col text-center" th:unless="${productForm.prodId != null}">
 			신규 상품 등록
+		</div>
+		<div class="pageTitle col text-center" th:if="${productForm.prodId != null}">
+			상품 정보 수정
 		</div>
 	</div>
 	
 	
 	<form
 			th:action="${productForm.prodId != null} ? @{/shop/update/{prodId}(prodId=${productForm.prodId})} : @{/shop/save}"
-			th:object="${productForm}"
-			method="post" enctype="multipart/form-data">
+			th:object="${productForm}" method="post" enctype="multipart/form-data" class="productForm">
 		
 		<input type="hidden" id="toBeDeleted" name="toBeDeleted" value="">
 		
@@ -119,41 +121,41 @@
 							
 							
 							<p class="card-text mb-5">
-							<p class="c999">* 상품 상세 정보</p>
-							<!-- <label class="form-label">재료 및 양</label> -->
-							<table class="table table-sm">
-								<thead>
-								<tr>
-									<th scope="col"></th>
-									<th scope="col">key</th>
-									<th scope="col">value</th>
-									<th scope="col"></th>
-								</tr>
-								</thead>
-								<tbody id="prodInfoList">
-								<tr th:if="${productForm.prodInfoList == null}">
-									<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-									<td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[0].infoKey"
-									           placeholder="key"></td>
-									<td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[0].infoValue"
-									           placeholder="value"></td>
-									<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-								</tr>
-								<tr th:each="info, iterStat : ${productForm.prodInfoList}">
-									<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-									<td><input type="text" class="form-control form-control-sm infoKey"
-									           th:name="|prodInfoList[${iterStat.index}].infoKey|"
-									           th:value="${info.infoKey}"
-									           placeholder="key"></td>
-									<td><input type="text" class="form-control form-control-sm infoValue"
-									           th:name="|prodInfoList[${iterStat.index}].infoValue|"
-									           th:value="${info.infoValue}"
-									           placeholder="value"></td>
-									<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-								</tr>
-								
-								</tbody>
-							</table>
+								<p class="c999">* 상품 상세 정보</p>
+								<!-- <label class="form-label">재료 및 양</label> -->
+								<table class="table table-sm">
+									<thead>
+									<tr>
+										<th scope="col"></th>
+										<th scope="col">항목</th>
+										<th scope="col">값</th>
+										<th scope="col"></th>
+									</tr>
+									</thead>
+									<tbody id="prodInfoList">
+									<tr th:if="${productForm.prodInfoList == null || productForm.prodInfoList.size() ==0}">
+										<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
+										<td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[0].infoKey"
+										           placeholder="항목"></td>
+										<td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[0].infoValue"
+										           placeholder="값"></td>
+										<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
+									</tr>
+									<tr th:each="info, iterStat : ${productForm.prodInfoList}">
+										<td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
+										<td><input type="text" class="form-control form-control-sm infoKey"
+										           th:name="|prodInfoList[${iterStat.index}].infoKey|"
+										           th:value="${info.infoKey}"
+										           placeholder="항목"></td>
+										<td><input type="text" class="form-control form-control-sm infoValue"
+										           th:name="|prodInfoList[${iterStat.index}].infoValue|"
+										           th:value="${info.infoValue}"
+										           placeholder="값"></td>
+										<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
+									</tr>
+									</tbody>
+								</table>
+							</p>
 						</div>
 					</div> <!-- //row card-body -->
 				
@@ -166,106 +168,89 @@
 		<!--상품 상세 정보 입력-->
 		<section class="prodImageSec">
 			<ol id="prodImageCardList">
-				
-				<li class="card prodImageCard my-3 border-3 border-success-subtle" th:if="${productForm.prodId == null}">
+				<!-- 새로운 이미지 추가용 기본 카드 -->
+				<li class="card prodImageCard my-3 border-3 border-success-subtle"
+				    th:if="${productForm.prodId == null || imageFiles.size() == 0}">
 					<div class="card-header">
 						<div class="row">
 							<div class="col-md-2">
-								<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
-								       value="이미지 제외 (-)"/>
+								<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="이미지 제외 (-)" />
 							</div>
 							<div class="col-md-8">
 								<!-- 이미지 순서 -->
-								<p class="text-center mb-0"><span class="textStep ">No</span><input type="text" readonly
-								                                                                    class="form-control-plaintext prodImageNum text-left"
-								                                                                    value="1" name="" tabindex="-1"></p>
-							
+								<p class="text-center mb-0">
+									<span class="textStep">No</span>
+									<input type="text" readonly class="form-control-plaintext prodImageNum text-left"
+									       value="1" name="prodImageNums[]" tabindex="-1" />
+								</p>
 							</div>
 							<div class="col-md-2">
-								<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100"
-								       value="이미지 추가 (+)"/>
+								<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="이미지 추가 (+)" />
 							</div>
 						</div>
-					</div> <!-- //card-header -->
+					</div>
 					<div class="card-body">
 						<div class="row">
-							
 							<div class="">
 								<div class="drop-area prodImageDropArea">
-									<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]"
-									       data-image-num="1"/>
+									<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" data-image-num="1" />
 									<div class="preview border" style="position: relative;">
 										<p>이미지를 여기에 드래그 앤 드롭하세요</p>
 									</div>
-									<!--<button type="button" class="remove-btn">X</button> &lt;!&ndash; 삭제 버튼 &ndash;&gt;-->
 								</div>
-							
-							</div> <!-- // prodImageImgArea -->
-						
-						
+							</div>
 						</div>
-					
-					</div> <!-- //card-body -->
-				</li> <!-- //card -->
+					</div>
+				</li>
 				
-				
+				<!-- 기존 이미지들 로딩 -->
 				<th:block th:each="prodImageSrc, iterStat : ${imageFiles}">
 					<li class="card prodImageCard my-3 border-3 border-success-subtle">
 						<div class="card-header">
 							<div class="row">
 								<div class="col-md-2">
-									<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
-									       value="이미지 제외 (-)"/>
+									<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="이미지 제외 (-)" />
 								</div>
 								<div class="col-md-8">
 									<!-- 이미지 순서 -->
-									<p class="text-center mb-0"><span class="textStep ">No</span><input type="text" readonly
-									                                                                    class="form-control-plaintext prodImageNum text-left"
-									                                                                    th:value="${iterStat.index + 1}"
-									                                                                    name="" tabindex="-1"></p>
-								
+									<p class="text-center mb-0">
+										<span class="textStep">No</span>
+										<input type="text" readonly class="form-control-plaintext prodImageNum text-left"
+										       th:value="${iterStat.index + 1}" name="prodImageNums[]" tabindex="-1" />
+									</p>
 								</div>
 								<div class="col-md-2">
-									<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100"
-									       value="이미지 추가 (+)"/>
+									<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="이미지 추가 (+)" />
 								</div>
 							</div>
-						</div> <!-- //card-header -->
+						</div>
 						<div class="card-body">
 							<div class="row">
-								
 								<div class="">
 									<div class="drop-area prodImageDropArea">
-										<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]"
-										       th:data-image-num="${iterStat.index + 1}"/>
+										<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" th:data-image-num="${iterStat.index + 1}" />
 										<div class="preview border" style="position: relative;">
-											<img th:src="@{|${prodImageSrc.imagePath}|}" alt="">
+											<img th:src="@{|${prodImageSrc.imagePath}|}" alt="" class="img-fluid">
 											<button class="remove-btn" type="button" style="display: inline-block;">-</button>
-										
 										</div>
 									</div>
-								</div> <!-- // prodImageImgArea -->
+								</div>
 							</div>
-						</div> <!-- //card-body -->
-					</li> <!-- //card -->
-				
+						</div>
+					</li>
 				</th:block>
-			
-			
 			</ol>
-		</section> <!--이미지 카드 등록-->
+		</section>
+		
+		
 		<section class="mb-3 row">
 			<!--상품 등록 버튼 #2-->
 			<script th:inline="javascript">
           // 전역 변수를 통해 prodName을 외부 js에서 접근할 수 있게 설정
           var prodName = [[${productForm.prodName}]];  // Thymeleaf로 서버에서 전달된 상품명
 			</script>
-			<div class="col-md-2">
-				<input type="button" class="form-control btn btn-lg btn-secondary col-md-2 d-block" value="삭제"
-				       onclick="javascript:deleteProd();" th:if="${productForm.prodId != null}">
-			</div>
 			
-			<div class="col-md-10"><input type="submit" class="form-control btn btn-lg btn-success d-block"
+			<div class="col"><input type="submit" class="form-control btn btn-lg btn-success d-block"
 			                              th:value="|${productForm.prodId != null ? '상품 수정' : '상품 등록하기'} |"></div>
 		</section>
 	

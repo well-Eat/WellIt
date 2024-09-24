@@ -110,13 +110,16 @@
 								<div class="mb-3 quantityBox d-flex align-items-center">
 									<div class="number-input rounded-1">
 										<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
-										<input type="number" min="1" max="100" class="form-control rounded-0 quantity"
+										<input type="number" min="1" th:max="${cartItem.product.prodStock < 10} ? ${cartItem.product.prodStock} : 10" class="form-control rounded-0 quantity"
 										       th:value="${cartItem.quantity}"
 										       th:id="|quantity[${iterStat.index}]|"
 										       th:field="*{orderItemQuantityList[__${iterStat.index}__].quantity}"/>
 										<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
 									</div>
 								</div>
+								
+								<!-- quantity 오류 메시지 -->
+								<div class="messageBox" id="quantityMessage" style="color: orangered; margin-top: 3px; font-size: 12px; min-height:15px;"></div>
 								
 								<th:block class="hiddenInput">
 									<!--1개가격-->
@@ -215,6 +218,29 @@
               e.preventDefault();
           }
 
+      })
+      
+      $(function (){
+          // URL의 쿼리 파라미터를 확인하는 함수
+          function getUrlParameter(name) {
+              name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+              let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+              let results = regex.exec(location.search);
+              return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+          }
+
+          // error_stock 파라미터가 있는지 확인
+          if (getUrlParameter('error_stock') !== '') {
+              Swal.fire({
+                  icon: 'error',
+                  title: '재고 부족',
+                  text: '재고 수량이 부족합니다.'
+              });
+              // 알림 후 쿼리 파라미터 제거 (사용자가 새로고침을 할 때 다시 알림이 나타나지 않게)
+              let url = new URL(window.location.href);
+              url.searchParams.delete('error_stock');  // 'error_stock' 파라미터 제거
+              window.history.replaceState({}, document.title, url.toString());
+          }
       })
 	
 	

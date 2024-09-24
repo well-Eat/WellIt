@@ -13,6 +13,8 @@ $(function () {
         let minValue = parseInt($input.attr("min"));
         if (parseInt($input.val()) > minValue) {
             $input.val(parseInt($input.val()) - 1);
+        } else {
+            showMessage("quantityMessage", "최소 구매 수량은 1개 입니다.");
         }
         let $orgPrice = $(this).parents('.calcItem').find('.orgPrice').val();
         let $finalPrice = $(this).parents('.calcItem').find('.finalPrice').val();
@@ -38,6 +40,8 @@ $(function () {
         let maxValue = parseInt($input.attr("max"));
         if (parseInt($input.val()) < maxValue) {
             $input.val(parseInt($input.val()) + 1);
+        } else {
+            showMessage("quantityMessage", "최대 구매 수량을 초과하였습니다.(재고수량 이내 & 최대 10개 구매)");
         }
         let $orgPrice = $(this).parents('.calcItem').find('.orgPrice').val();
         let $finalPrice = $(this).parents('.calcItem').find('.finalPrice').val();
@@ -566,6 +570,38 @@ function toKoreanOrderStatus(orderStatus) {
 
     return statusMap[orderStatus] || orderStatus;
 }
+
+
+//오류 메시지 박스 초기화
+$(function (){
+    const messageBox = $(".messageBox");
+    if (messageBox){
+        messageBox.css("visibility", "hidden")
+    }
+})
+
+//오류 메시지 박스 show
+function showMessage(id, message) {
+    let $messageBox = $("#" + id);  // 전달받은 id로 메시지 박스를 선택
+    $messageBox.text(message).css("visibility", "visible");  // 메시지 박스에 텍스트 추가 및 표시
+
+    let timeoutId = $messageBox.data("timeoutId");
+
+    // 기존 타이머가 있을 경우 취소
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+
+    // 새로운 타이머 시작
+    timeoutId = setTimeout(function() {
+        $messageBox.css("visibility", "hidden");  // 2초 후에 메시지 박스를 사라지게 함
+        $messageBox.removeData("timeoutId");  // 타이머 ID 삭제
+    }, 2000);  // 2초(2000밀리초)
+
+    // 타이머 ID를 메시지 박스에 저장
+    $messageBox.data("timeoutId", timeoutId);
+}
+
 
 
 

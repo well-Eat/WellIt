@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,9 +62,9 @@ public class ShopService {
         List<OrderItem> orderItems = orderItemRepository.findAllByProduct_ProdId(prodId);
 
         List<ProdReview> reviewList = orderItems.stream()
-                                                   .map(OrderItem::getProdReview)  // OrderItem에서 ProdReview 가져오기
+                                                .map(OrderItem::getProdReview)  // OrderItem에서 ProdReview 가져오기
                                                 .filter(review -> review != null)
-                                                   .collect(Collectors.toList());
+                                                .collect(Collectors.toList());
         return reviewList.size();
     }
 
@@ -205,21 +207,17 @@ public class ShopService {
         prodImageRepository.deleteByImagePath(imagePath);
     }
 
-
-    /* update : 상품 수정 */
     @Transactional
     public void updateProduct(Long prodId, ProductForm productForm, MultipartFile thumbFile,
-                              List<MultipartFile> imageFiles)
-            throws IOException {
+                              List<String> toBeDeleted,  // 삭제할 이미지 리스트
+                              List<String> existingImages,  // 기존 이미지 경로 리스트
+                              List<Integer> existingImageOrders,  // 기존 이미지 순서
+                              List<MultipartFile> newImages,  // 새로운 이미지 리스트
+                              List<Integer> newImageOrders) throws IOException {
 
         Product product = getOneProd(prodId);
 
-        prodInfoRepository.deleteAllByProduct(product);
-        //prodImageRepository.deleteAllByProduct(product);
-
-        //product.getProdImages().clear();
-        //product.getProdInfoList().clear();
-
+        // 상품 정보 업데이트
         product.setProdName(productForm.getProdName());
         product.setProdCate(productForm.getProdCate());
         product.setProdDesc(productForm.getProdDesc());
@@ -227,16 +225,7 @@ public class ShopService {
         product.setProdDiscount(productForm.getProdDiscount());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
 
-        if (productForm.getProdDiscount() > 0) {
-            product.setProdFinalPrice(
-                    (int) (productForm.getProdOrgPrice() * (1 - product.getProdDiscount()) / 100) * 100);
-        } else {
-            product.setProdDiscount(0.0);
-            product.setProdFinalPrice(productForm.getProdOrgPrice());
-        }
-
-
-        // 썸네일 이미지 업로드 처리
+        // 썸네일 이미지 처리
         if (!thumbFile.isEmpty()) {
             String thumbFileName = UUID.randomUUID().toString() + "_" + thumbFile.getOriginalFilename();
             Path thumbFilePath = Paths.get(UPLOAD_DIR, thumbFileName);
@@ -244,33 +233,54 @@ public class ShopService {
             product.setProdMainImg("/imgs/shop/product/" + thumbFileName);
         }
 
-        /*상품 정보 저장*/
-        List<ProdInfo> prodInfoList = new ArrayList<>();
-        for (ProdInfo prodInfo : productForm.getProdInfoList()) {
-            prodInfo.setProduct(product);
-            prodInfoList.add(prodInfo);
-        }
-        product.setProdInfoList(prodInfoList);
-
-        // 여러 이미지 업로드 처리
-        List<ProdImage> prodImageList = new ArrayList<>();
-        for (MultipartFile imageFile : imageFiles) {
-            if (!imageFile.isEmpty()) {
-                String imageFileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
-                Path imagePath = Paths.get(UPLOAD_DIR, imageFileName);
-                Files.write(imagePath, imageFile.getBytes());
-
-                ProdImage prodImage = new ProdImage();
-                prodImage.setImagePath("/imgs/shop/product/" + imageFileName);
-                prodImage.setProduct(product);
-                prodImageList.add(prodImage);
+        // 삭제할 이미지 처리
+        if (toBeDeleted != null && !toBeDeleted.isEmpty()) {
+            for (String src : toBeDeleted) {
+                deleteImageByPath(src);
             }
         }
-        product.setProdImages(prodImageList);
 
+        // 기존 이미지 순서 업데이트
+        if (existingImages != null && existingImageOrders != null) {
+            for (int i = 0; i < existingImages.size(); i++) {
+                String imagePath = existingImages.get(i);
+                int order = existingImageOrders.get(i);
+                updateExistingImageOrder(imagePath, order);
+            }
+        }
+
+        // 새로운 이미지 처리
+        if (newImages != null && newImageOrders != null) {
+            for (int i = 0; i < newImages.size(); i++) {
+                MultipartFile newImageFile = newImages.get(i);
+                int order = newImageOrders.get(i);
+
+                if (!newImageFile.isEmpty()) {
+                    String fileName = UUID.randomUUID().toString() + "_" + newImageFile.getOriginalFilename();
+                    Path imagePath = Paths.get(UPLOAD_DIR, fileName);
+                    Files.write(imagePath, newImageFile.getBytes());
+
+                    ProdImage newImage = new ProdImage();
+                    newImage.setImagePath("/imgs/shop/product/" + fileName);
+                    newImage.setProdImageNum(order);  // 이미지 순서 저장
+                    newImage.setProduct(product);
+                    prodImageRepository.save(newImage);
+                }
+            }
+        }
+
+        // 상품 정보 업데이트
         productRepository.save(product);
-
     }
+
+    public void updateExistingImageOrder(String imagePath, int order) {
+        ProdImage existingImage = prodImageRepository.findByImagePath(imagePath);
+        if (existingImage != null) {
+            existingImage.setProdImageNum(order);  // 이미지 순서 업데이트
+            prodImageRepository.save(existingImage);
+        }
+    }
+
 
     //상품 삭제
     public void deleteProduct(Long prodId) {

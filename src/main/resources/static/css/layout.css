@@ -377,3 +377,12 @@ ul.small-main .small-bold {
 	border: none;
 	border-radius: 50%;
 }
+
+/*카트리스트 뱃지 숫자*/
+.cart-badge {
+	font-size: 0.75rem; /* 숫자를 더 작게 */
+	padding: 0.2rem 0.2rem; /* 뱃지 크기 조절 */
+	line-height: 1; /* 숫자가 뱃지 중앙에 정렬되도록 */
+	font-weight: 400;
+	margin-top: 10px;
+}
