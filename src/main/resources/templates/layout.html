@@ -19,13 +19,16 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28da3dbc8c389b574e0c32075b4e02ba"></script>
 	<link rel="stylesheet" href="/css/layout.css" />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 	
 </head>
 
 <body>
 	<div class="d-flex flex-column min-vh-100" id="wrapper">
 		<!-- navbar 포함 -->
-		<div th:replace="navbar :: navbar"></div>
+		<div th:replace="~{navbar :: navbar}"></div>
 		<!--기본 템플릿 안에 삽입될 내용 start-->
 		<th:block layout:fragment="content"></th:block>
 		<button class="scroll-to-top" id="scrollToTopBtn" title="맨 위로 가기">
@@ -38,7 +41,7 @@
 		<!--자바스크립트 start-->
 		<th:block layout:fragment="script"></th:block>
 		<!--자바스크립트 end-->
-		<footer th:replace="footer :: footer"></footer>
+		<footer th:replace="~{footer :: footer}"></footer>
 	</div>
 	<script>
 		$(document).ready(() => {
@@ -75,7 +78,7 @@
 				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");				
-				//navbar.css({backgroundColor : "transparent"})
+				//navbar.css({backgroundColor : "transparent"};
 				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")

@@ -22,19 +22,22 @@ public class MemberSecurityService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
-		System.out.println("Requested memberId: " + memberId);  // 요청된 memberId 출력
-		Optional<Member> _member = this.memberRepository.findByMemberId(memberId);
-		System.out.println(_member);
-		if(_member.isEmpty()) {
-			throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
-		}
-		Member member = _member.get();
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		if("admin".equals(memberId)) {
-			authorities.add(new SimpleGrantedAuthority(MemberRole.ADMIN.getValue()));
-		}else {
-			authorities.add(new SimpleGrantedAuthority(MemberRole.USER.getValue()));
-		}
-		return new User(member.getMemberId(), member.getMemberPassword(), authorities);	
+	    System.out.println("Requested memberId: " + memberId);  // 요청된 memberId 출력
+	    Member member = this.memberRepository.findByMemberId(memberId);
+	    System.out.println(member);
+	    
+	    // null 체크
+	    if (member == null) {
+	        throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
+	    }
+	    
+	    List<GrantedAuthority> authorities = new ArrayList<>();
+	    if ("admin".equals(memberId)) {
+	        authorities.add(new SimpleGrantedAuthority(MemberRole.ADMIN.getValue()));
+	    } else {
+	        authorities.add(new SimpleGrantedAuthority(MemberRole.USER.getValue()));
+	    }
+	    
+	    return new User(member.getMemberId(), member.getMemberPassword(), authorities);
 	}
 }

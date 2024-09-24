@@ -68,8 +68,16 @@ public class AllStore {
     @Column(name = "kakao_store_id", nullable = false, unique = true)
     private String kakaoStoreId; // 카카오맵 가게 고유 ID
     
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("createdAt DESC") // 생성일 기준으로 내림차순 정렬
-    @JsonManagedReference // 추가
+    @JsonManagedReference("reviews")
     private List<StoreReview> storeReviews;
+    
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("favorites")
+    private List<FavoriteStore> favoriteStores;
+    
+    @OneToMany(mappedBy = "allStore", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("store-reservations")
+    private List<StoreReservation> reservations; // 가게에 대한 예약 목록
 }

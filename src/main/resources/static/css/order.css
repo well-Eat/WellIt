@@ -1,0 +1,341 @@
+/* 웹페이지 전체 공통 (추후 제외할 내용) */
+* {margin: 0;padding: 0;}
+body{
+    background-color : #fff;
+    color: #333;
+}
+
+/* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
+li a{
+    text-decoration: none !important;
+}
+
+
+/* 디폴트 스타일 reset */
+ul {
+    margin-bottom: 0;
+}
+
+
+
+/********************** common *********************/
+/********************** common *********************/
+/********************** common *********************/
+section {
+    height: auto;
+}
+:root{
+    --swiper-navigation-size: 32px;
+}
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+/********************** common : 메뉴바 재설정 *********************/
+nav header {
+    background-color: #386641;
+    position: relative;
+}
+
+nav {
+    position: relative;
+}
+
+nav ~ .container {
+    position: relative;
+}
+
+
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+/********************** Shop List *********************/
+.navbar ~ .container {
+    position: relative;
+}
+
+/*** 페이지 타이틀 ***/
+.pageTitle{
+    /* padding-top: 100px;*/
+    font-size: 32px;
+    font-weight: 800;
+}
+
+
+
+/*********************************************************************/
+body > .container * {
+    color: #333333;
+}
+
+.removeItem {
+    color: #666666ad;
+}
+
+.removeItem:hover {
+    cursor: pointer;
+}
+
+.removeItem:active {
+    color: #333333ad;
+}
+
+.contRightSide * {
+    /* border: 1px solid lightsteelblue; */
+    box-sizing: border-box;
+}
+
+.dlvrAddrCard p input {
+    padding: 0;
+}
+
+.stickyBox {
+    position: sticky;
+    top: 28px;
+}
+
+/*폼 스타일 */
+/*구매 수량 quantity input*/
+.quantityBox label.form-label{
+    margin-bottom: 0;
+       padding-right: 50px;
+   }
+   .number-input {
+       display: flex;
+       height: 30px;
+       align-items: stretch;
+       border: 1px solid #bbb;
+       width: fit-content;
+   }
+   
+   .number-input input[type="number"] {
+       border: 0;
+       padding: 1px;
+       text-align: center;
+       width: 60px;
+       -moz-appearance: textfield; /* Firefox에서 기본 스핀 버튼 숨기기 */
+       color: #333333;
+       font-weight: 600;
+       font-size: 14px;
+   }
+   
+   .number-input input[type="number"]:active, .number-input input[type="number"]:focus {
+       box-shadow: none;
+   }
+   .number-input input[type="number"]::-webkit-outer-spin-button,
+   .number-input input[type="number"]::-webkit-inner-spin-button {
+       -webkit-appearance: none;
+       margin: 0; /* 기본 스핀 버튼 숨기기 */
+   }
+   
+   .number-input button {
+       background-color: transparent;
+       border: none;
+       padding: 0 10px;
+       cursor: pointer;
+       font-size: 18px;
+       width: 30px;
+       text-align: center;
+   }
+   
+   .number-input button i{
+       color: var(--bs-success);
+       opacity: 0.7;
+   }
+   .number-input button:active i{
+       color: var(--bs-success);
+       opacity: 1;
+   }
+
+
+
+
+
+
+
+.vacantCart{
+    background-image: url('../imgs/shop/cart/vacantCart.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 150px;
+
+}
+
+.cartItemList h5.prodName{
+    font-weight: 700;
+}
+
+.cartItemList p.prodOrgPrice{
+    color: #999;
+    text-decoration: line-through;
+    display: inline-block;
+    margin-right: 10px;
+}
+.cartItemList p.prodDiscount{
+    font-size: 14px;
+    color: rgb(255, 102, 46);
+    font-weight: bold;
+    display: inline-block;
+}
+.cartItemList p.prodFinalPrice{
+    font-size: 20px;
+    font-weight: 700;
+        display: inline-block;
+}
+.cartItemList .prodFinalPrice{
+    font-size: 24px;
+    font-weight: 700;
+        display: inline-block;
+}
+.cartItemList p.prodReview{
+    font-size: 16px;
+    color:#bbb;
+}
+
+
+.cartItemList .prodTotalPrice{
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.cartItemTable .card-footer{
+    border-top-width: 0 !important;
+}
+
+
+
+    /*********** order_po : 주문서 스타일 ***************/
+/*********** order_po : 주문서 스타일 ***************/
+/*********** order_po : 주문서 스타일 ***************/
+.order_po{
+    max-width: 800px;
+}
+.order_po table th,
+.order_po table td{
+    color:#333;
+}
+
+.order_po table:not(.priceTable) th{
+    max-width: 250px !important;
+    width: 25%;
+}
+
+
+section.orderItem *{
+    /* border : 1px solid lightblue; */
+    
+}
+
+/* 주문상품 섹션 */
+.orderItemTable .prodImageBoxWrapper{
+    width: 25%;
+    max-width: 100px;
+}
+
+/* 주문서 섹션 제목 구분선 */
+section.row > p.subtle::after {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background-color: #1a1a1a3f;
+    position: relative;
+    display: block;
+    margin-top: 12px;
+}
+
+
+/* 주문서 :결제금액 카드 */
+.priceCard{
+    width: fit-content;
+    overflow: hidden;
+    background-color: #eeeeee2f;
+    border: 0;
+}
+.priceCard .card-body{
+    position: relative;
+}
+
+
+.priceCard .tableWrapper {
+    
+    height: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    padding: 10px;
+}
+
+.priceCard table{
+    margin-bottom: 0;
+}
+
+.priceCard table tr th{
+    padding-right: 60px;
+    padding-bottom: 4px;
+    
+}
+.priceCard table tr td{
+    text-align: end;
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+.priceCard table tr.totalFinal th,
+.priceCard table tr.totalFinal td{
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 18px;
+}
+.priceCard table tr.milege th,
+.priceCard table tr.milege td{
+    padding-bottom: 15px;
+}
+
+
+.priceCard .sm {
+    padding-top: 0;
+    padding-bottom: 0;
+    color: #999999;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+/***** 리뷰 스타일 *****/
+
+#drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#drop-area.highlight {
+    border-color: purple;
+}
+
+#gallery img {
+    width: 100px;
+    margin: 10px;
+}
+
+.star-rating {
+    direction: rtl;
+    display: inline-flex;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}

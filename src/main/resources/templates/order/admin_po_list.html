@@ -1,0 +1,70 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	
+	
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				주문 처리
+			</div>
+		</div>
+		
+		<section class="row vstack orderItem position-relative mb-5">
+			
+			<p class="subtle f18 c666 fw-bold">
+				주문 내역
+			</p>
+			
+			<div class="col gap-3 g-3">
+				<!-- 검색 및 필터 기능 -->
+				<form class="mb-3 d-flex" id="searchForm">
+					<input type="text" id="searchInput" class="form-control me-2" placeholder="Search by Order ID" name="search">
+					<select class="form-select me-2" id="statusSelect" name="status">
+						<option value="">All Statuses</option>
+						<option value="CREATED">Created</option>
+						<option value="PAID">Paid</option>
+						<option value="SHIPPED">Shipped</option>
+						<option value="DELIVERED">Delivered</option>
+						<option value="CANCELLED">Cancelled</option>
+					</select>
+					<button type="button" class="btn btn-primary" onclick="fetchOrders()">Search</button>
+				</form>
+				
+				<!-- 주문 목록 테이블 -->
+				<table class="table table-hover" id="orderTable">
+					<thead>
+					<tr>
+						<th scope="col">Order Date</th>
+						<th scope="col">Order ID</th>
+						<th scope="col">Customer Name</th>
+						<th scope="col">Status</th>
+						<th scope="col">Total Payment</th>
+						<th scope="col">Actions</th>
+					</tr>
+					</thead>
+					<tbody id="orderTableBody">
+					<!-- Fetch로 받은 데이터를 여기에 렌더링 -->
+					</tbody>
+				</table>
+			
+			</div> <!-- //col -->
+			
+			
+			<script th:inline="javascript">
+			</script>
+		
+		</section>
+	
+	</div><!-- // #wrapper -->
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+
+</div>
+</html>

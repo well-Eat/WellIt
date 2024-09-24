@@ -1,0 +1,553 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<link rel="stylesheet" href="./css/map.css" />
+
+	<div class="selectRegion my-2">
+		<h2 class="my-3">지역을 선택해주세요</h2>
+		<form class="selectRegionForm">
+			<label for="city">시/도 선택:</label>
+			<select id="city">
+				<option value="">선택하세요</option>
+				<option value="서울">서울</option>
+				<option value="부산">부산</option>
+				<option value="대구">대구</option>
+				<option value="인천">인천</option>
+				<option value="광주">광주</option>
+				<option value="대전">대전</option>
+				<option value="울산">울산</option>
+				<option value="세종">세종</option>
+				<option value="경기">경기</option>
+				<option value="강원">강원</option>
+				<option value="충북">충북</option>
+				<option value="충남">충남</option>
+				<option value="전북">전북</option>
+				<option value="전남">전남</option>
+				<option value="경북">경북</option>
+				<option value="경남">경남</option>
+				<option value="제주">제주</option>
+			</select>
+
+			<label for="district">구 선택:</label>
+			<select id="district" disabled>
+				<option value="">시/도를 선택하세요</option>
+			</select>
+			<span title="현재 위치" class="getUserLocationBtn"><img src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span>
+		</form>
+	</div>
+	<div class="container mapWrapper">
+		<div id="restaurantList"></div>
+		<div id="pagination"></div>
+		<div id="map"></div>
+		<button id="zoomIn">+123</button>
+		<button id="zoomOut">-123</button>
+	</div>
+	<script>
+		const districts = {
+			서울: {
+				coords: {lat: 37.5665, lng: 126.978},
+				districts: {
+					"강남구": {coords: {lat: 37.5172, lng: 127.0473}},
+					"강동구": {coords: {lat: 37.5303, lng: 127.1238}},
+					"강북구": {coords: {lat: 37.6398, lng: 127.0255}},
+					"관악구": {coords: {lat: 37.4783, lng: 126.9512}},
+					"구로구": {coords: {lat: 37.4955, lng: 126.8832}},
+					"금천구": {coords: {lat: 37.4545, lng: 126.9005}},
+					"노원구": {coords: {lat: 37.6550, lng: 127.0565}},
+					"도봉구": {coords: {lat: 37.6684, lng: 127.0288}},
+					"동대문구": {coords: {lat: 37.5744, lng: 127.0422}},
+					"동작구": {coords: {lat: 37.5045, lng: 126.9515}},
+					"마포구": {coords: {lat: 37.5482, lng: 126.9033}},
+					"서대문구": {coords: {lat: 37.5793, lng: 126.9655}},
+					"서초구": {coords: {lat: 37.4839, lng: 127.0324}},
+					"성동구": {coords: {lat: 37.5636, lng: 127.0428}},
+					"성북구": {coords: {lat: 37.5890, lng: 127.0170}},
+					"송파구": {coords: {lat: 37.5049, lng: 127.1149}},
+					"양천구": {coords: {lat: 37.5162, lng: 126.8660}},
+					"영등포구": {coords: {lat: 37.5260, lng: 126.8958}},
+					"용산구": {coords: {lat: 37.5326, lng: 126.9905}},
+					"은평구": {coords: {lat: 37.6090, lng: 126.9345}},
+					"종로구": {coords: {lat: 37.5700, lng: 126.9980}},
+					"중구": {coords: {lat: 37.5636, lng: 126.9970}},
+					"중랑구": {coords: {lat: 37.6060, lng: 127.0920}}
+				}
+			},
+			부산: {
+				coords: {lat: 35.1796, lng: 129.0756},
+				districts: {
+					"강서구": {coords: {lat: 35.1744, lng: 128.9470}},
+					"금정구": {coords: {lat: 35.2280, lng: 129.0790}},
+					"기장군": {coords: {lat: 35.2390, lng: 129.2270}},
+					"남구": {coords: {lat: 35.1460, lng: 129.1000}},
+					"동구": {coords: {lat: 35.0660, lng: 129.0400}},
+					"부산진구": {coords: {lat: 35.1595, lng: 129.0594}},
+					"북구": {coords: {lat: 35.2000, lng: 129.0010}},
+					"사상구": {coords: {lat: 35.1440, lng: 128.9790}},
+					"사하구": {coords: {lat: 35.0960, lng: 128.9790}},
+					"서구": {coords: {lat: 35.0960, lng: 129.0140}},
+					"수영구": {coords: {lat: 35.1580, lng: 129.1160}},
+					"연제구": {coords: {lat: 35.1790, lng: 129.0860}},
+					"영도구": {coords: {lat: 35.0660, lng: 129.1000}},
+					"중구": {coords: {lat: 35.1130, lng: 129.0400}}
+				}
+			},
+			대구: {
+				coords: {lat: 35.8714, lng: 128.6014},
+				districts: {
+					"남구": {coords: {lat: 35.8450, lng: 128.6010}},
+					"달서구": {coords: {lat: 35.8350, lng: 128.5800}},
+					"달성군": {coords: {lat: 35.7070, lng: 128.4870}},
+					"동구": {coords: {lat: 35.8700, lng: 128.6100}},
+					"북구": {coords: {lat: 35.8950, lng: 128.6000}},
+					"서구": {coords: {lat: 35.8700, lng: 128.5500}},
+					"수성구": {coords: {lat: 35.8460, lng: 128.6100}},
+					"중구": {coords: {lat: 35.8700, lng: 128.6000}}
+				}
+			},
+			인천: {
+				coords: {lat: 37.4563, lng: 126.7052},
+				districts: {
+					"강화군": {coords: {lat: 37.7030, lng: 126.4870}},
+					"계양구": {coords: {lat: 37.5160, lng: 126.7250}},
+					"남동구": {coords: {lat: 37.4480, lng: 126.7240}},
+					"동구": {coords: {lat: 37.4870, lng: 126.6170}},
+					"미추홀구": {coords: {lat: 37.4630, lng: 126.6340}},
+					"부평구": {coords: {lat: 37.5070, lng: 126.7240}},
+					"서구": {coords: {lat: 37.4870, lng: 126.6500}},
+					"연수구": {coords: {lat: 37.4480, lng: 126.6830}},
+					"옹진군": {coords: {lat: 37.5000, lng: 126.5000}},
+					"중구": {coords: {lat: 37.4630, lng: 126.6500}}
+				}
+			},
+			광주: {
+				coords: {lat: 35.1595, lng: 126.8526},
+				districts: {
+					"광산구": {coords: {lat: 35.1890, lng: 126.8450}},
+					"남구": {coords: {lat: 35.1450, lng: 126.8500}},
+					"동구": {coords: {lat: 35.1570, lng: 126.8500}},
+					"북구": {coords: {lat: 35.1740, lng: 126.8500}},
+					"서구": {coords: {lat: 35.1550, lng: 126.8500}}
+				}
+			},
+			대전: {
+				coords: {lat: 36.3504, lng: 127.3845},
+				districts: {
+					"대덕구": {coords: {lat: 36.3730, lng: 127.3960}},
+					"동구": {coords: {lat: 36.3470, lng: 127.3920}},
+					"서구": {coords: {lat: 36.3530, lng: 127.3850}},
+					"유성구": {coords: {lat: 36.3660, lng: 127.3660}},
+					"중구": {coords: {lat: 36.3480, lng: 127.3840}}
+				}
+			},
+			울산: {
+				coords: {lat: 35.5384, lng: 129.3114},
+				districts: {
+					"남구": {coords: {lat: 35.5250, lng: 129.3000}},
+					"동구": {coords: {lat: 35.5500, lng: 129.3000}},
+					"북구": {coords: {lat: 35.5700, lng: 129.3000}},
+					"울주군": {coords: {lat: 35.5400, lng: 129.3000}},
+					"중구": {coords: {lat: 35.5300, lng: 129.3000}}
+				}
+			},
+			세종: {
+				coords: {lat: 36.4802, lng: 127.2895},
+				districts: {
+					"세종시": {coords: {lat: 36.4802, lng: 127.2895}}
+				}
+			},
+			경기: {
+				coords: {lat: 37.4138, lng: 127.5183},
+				districts: {
+					"가평군": {coords: {lat: 37.8340, lng: 127.4870}},
+					"고양시": {coords: {lat: 37.6700, lng: 126.8300}},
+					"과천시": {coords: {lat: 37.4780, lng: 126.9890}},
+					"광명시": {coords: {lat: 37.4780, lng: 126.9000}},
+					"광주시": {coords: {lat: 37.3980, lng: 127.2530}},
+					"구리시": {coords: {lat: 37.6000, lng: 127.1300}},
+					"군포시": {coords: {lat: 37.3590, lng: 126.9500}},
+					"김포시": {coords: {lat: 37.6160, lng: 126.6500}},
+					"남양주시": {coords: {lat: 37.6350, lng: 127.2000}},
+					"동두천시": {coords: {lat: 37.9010, lng: 127.0600}},
+					"부천시": {coords: {lat: 37.4870, lng: 126.7830}},
+					"성남시": {coords: {lat: 37.4400, lng: 127.1280}},
+					"수원시": {coords: {lat: 37.2630, lng: 127.0280}},
+					"시흥시": {coords: {lat: 37.3830, lng: 126.8000}},
+					"안산시": {coords: {lat: 37.3190, lng: 126.8300}},
+					"안성시": {coords: {lat: 37.0050, lng: 127.2770}},
+					"양주시": {coords: {lat: 37.8000, lng: 127.0500}},
+					"양평군": {coords: {lat: 37.5000, lng: 127.5000}},
+					"여주시": {coords: {lat: 37.3000, lng: 127.4000}},
+					"오산시": {coords: {lat: 37.1500, lng: 127.0500}},
+					"용인시": {coords: {lat: 37.2410, lng: 127.1770}},
+					"의왕시": {coords: {lat: 37.3350, lng: 126.9930}},
+					"의정부시": {coords: {lat: 37.7380, lng: 127.0500}},
+					"이천시": {coords: {lat: 37.2800, lng: 127.4500}},
+					"파주시": {coords: {lat: 37.7590, lng: 126.7700}},
+					"평택시": {coords: {lat: 37.0730, lng: 127.1000}},
+					"하남시": {coords: {lat: 37.5450, lng: 127.2000}},
+					"화성시": {coords: {lat: 37.2050, lng: 126.8000}}
+				}
+			},
+			강원: {
+				coords: {lat: 37.8228, lng: 128.1555},
+				districts: {
+					"강릉시": {coords: {lat: 37.7510, lng: 128.8760}},
+					"고성군": {coords: {lat: 38.2000, lng: 128.6000}},
+					"동해시": {coords: {lat: 37.5080, lng: 128.8950}},
+					"삼척시": {coords: {lat: 37.4480, lng: 129.1640}},
+					"속초시": {coords: {lat: 38.2070, lng: 128.5910}},
+					"양구군": {coords: {lat: 38.1000, lng: 128.5000}},
+					"양양군": {coords: {lat: 38.0660, lng: 128.6170}},
+					"영월군": {coords: {lat: 37.1740, lng: 127.6000}},
+					"원주시": {coords: {lat: 37.3470, lng: 127.9200}},
+					"철원군": {coords: {lat: 38.2000, lng: 127.3000}},
+					"춘천시": {coords: {lat: 37.8830, lng: 127.7300}},
+					"태백시": {coords: {lat: 37.1500, lng: 128.9960}},
+					"평창군": {coords: {lat: 37.3660, lng: 128.4000}},
+					"홍천군": {coords: {lat: 37.7000, lng: 127.8000}},
+					"화천군": {coords: {lat: 38.1000, lng: 127.5000}},
+					"횡성군": {coords: {lat: 37.3000, lng: 127.6000}}
+				}
+			},
+			충북: {
+				coords: {lat: 36.6359, lng: 127.4914},
+				districts: {
+					"괴산군": {coords: {lat: 36.7400, lng: 137.0000}},
+					"단양군": {coords: {lat: 36.9990, lng: 128.3000}},
+					"보은군": {coords: {lat: 36.5000, lng: 127.7000}},
+					"영동군": {coords: {lat: 36.3000, lng: 127.5000}},
+					"옥천군": {coords: {lat: 36.5000, lng: 127.4000}},
+					"음성군": {coords: {lat: 36.5000, lng: 127.6000}},
+					"제천시": {coords: {lat: 37.1500, lng: 128.2000}},
+					"청주시": {coords: {lat: 36.6500, lng: 127.5000}},
+					"충주시": {coords: {lat: 36.9500, lng: 127.4000}}
+				}
+			},
+			충남: {
+				coords: {lat: 36.6359, lng: 126.6772},
+				districts: {
+					"계룡시": {coords: {lat: 36.3000, lng: 127.1000}},
+					"공주시": {coords: {lat: 36.5000, lng: 127.2000}},
+					"논산시": {coords: {lat: 36.2000, lng: 127.3000}},
+					"당진시": {coords: {lat: 36.8000, lng: 126.7000}},
+					"보령시": {coords: {lat: 36.3000, lng: 126.6000}},
+					"서산시": {coords: {lat: 36.7000, lng: 126.5000}},
+					"아산시": {coords: {lat: 36.5000, lng: 126.8000}},
+					"천안시": {coords: {lat: 36.8000, lng: 127.0000}},
+					"청양군": {coords: {lat: 36.5000, lng: 126.8000}},
+					"태안군": {coords: {lat: 36.5000, lng: 126.3000}},
+					"홍성군": {coords: {lat: 36.5000, lng: 126.6000}}
+				}
+			},
+			전북: {
+				coords: {lat: 35.7194, lng: 127.1445},
+				districts: {
+					"고창군": {coords: {lat: 35.4000, lng: 126.7000}},
+					"군산시": {coords: {lat: 35.9650, lng: 126.7300}},
+					"김제시": {coords: {lat: 35.8000, lng: 126.9000}},
+					"남원시": {coords: {lat: 35.4000, lng: 127.4000}},
+					"익산시": {coords: {lat: 35.9500, lng: 126.8000}},
+					"전주시": {coords: {lat: 35.8000, lng: 127.1500}},
+					"정읍시": {coords: {lat: 35.5700, lng: 126.8500}},
+					"완주군": {coords: {lat: 35.8000, lng: 127.2000}},
+					"임실군": {coords: {lat: 35.5000, lng: 127.3000}},
+					"장수군": {coords: {lat: 35.6000, lng: 127.5000}},
+					"진안군": {coords: {lat: 35.7000, lng: 127.3000}}
+				}
+			},
+			전남: {
+				coords: {lat: 34.8144, lng: 126.4633},
+				districts: {
+					"강진군": {coords: {lat: 34.6000, lng: 126.7000}},
+					"고흥군": {coords: {lat: 34.6000, lng: 126.5000}},
+					"곡성군": {coords: {lat: 35.0000, lng: 127.0000}},
+					"광양시": {coords: {lat: 34.9500, lng: 127.7000}},
+					"구례군": {coords: {lat: 35.2000, lng: 127.6000}},
+					"나주": {coords: {lat: 35.0000, lng: 126.8000}},
+					"담양군": {coords: {lat: 35.3000, lng: 126.8000}},
+					"목포시": {coords: {lat: 34.8000, lng: 126.4000}},
+					"무안군": {coords: {lat: 34.8000, lng: 126.6000}},
+					"보성군": {coords: {lat: 34.8000, lng: 127.0000}},
+					"신안군": {coords: {lat: 34.6000, lng: 126.3000}},
+					"여수시": {coords: {lat: 34.7500, lng: 127.7000}},
+					"영광군": {coords: {lat: 35.2000, lng: 126.6000}},
+					"영암군": {coords: {lat: 34.8000, lng: 126.6000}},
+					"완도군": {coords: {lat: 34.3000, lng: 126.7000}},
+					"장성군": {coords: {lat: 35.3000, lng: 126.8000}},
+					"장흥군": {coords: {lat: 34.6000, lng: 126.5000}},
+					"진도군": {coords: {lat: 34.5000, lng: 126.3000}},
+					"함평군": {coords: {lat: 35.0000, lng: 126.5000}},
+					"해남군": {coords: {lat: 34.5000, lng: 126.5000}},
+					"화순군": {coords: {lat: 35.0000, lng: 126.7000}}
+				}
+			},
+			경북: {
+				coords: {lat: 36.4911, lng: 128.8889},
+				districts: {
+					"경산시": {coords: {lat: 35.8000, lng: 128.7000}},
+					"경주": {coords: {lat: 35.8500, lng: 129.2000}},
+					"고령군": {coords: {lat: 35.6000, lng: 128.4000}},
+					"구미시": {coords: {lat: 36.1000, lng: 128.3000}},
+					"김천시": {coords: {lat: 35.7000, lng: 128.1000}},
+					"문경시": {coords: {lat: 36.5700, lng: 128.3000}},
+					"상주": {coords: {lat: 36.4000, lng: 128.2000}},
+					"성주군": {coords: {lat: 35.8000, lng: 128.5000}},
+					"안동시": {coords: {lat: 36.5600, lng: 128.7000}},
+					"영주": {coords: {lat: 36.8000, lng: 128.6000}},
+					"영천시": {coords: {lat: 35.9000, lng: 128.8000}},
+					"예천군": {coords: {lat: 36.5000, lng: 128.3000}},
+					"울릉군": {coords: {lat: 37.5000, lng: 130.8000}},
+					"울진군": {coords: {lat: 36.9000, lng: 129.4000}},
+					"포항시": {coords: {lat: 36.0200, lng: 129.3500}}
+				}
+			},
+			경남: {
+				coords: {lat: 35.2345, lng: 128.6922},
+				districts: {
+					"거제시": {coords: {lat: 34.9000, lng: 128.6000}},
+					"거창군": {coords: {lat: 35.6000, lng: 127.9000}},
+					"고성군": {coords: {lat: 35.2000, lng: 128.5000}},
+					"김해시": {coords: {lat: 35.2000, lng: 128.8000}},
+					"남해군": {coords: {lat: 34.8000, lng: 128.4000}},
+					"밀양시": {coords: {lat: 35.5000, lng: 128.7000}},
+					"사천시": {coords: {lat: 35.0000, lng: 128.6000}},
+					"산청군": {coords: {lat: 35.3000, lng: 127.8000}},
+					"양산시": {coords: {lat: 35.3000, lng: 129.0000}},
+					"의령군": {coords: {lat: 35.3000, lng: 128.5000}},
+					"진주": {coords: {lat: 35.2000, lng: 128.1000}},
+					"창녕군": {coords: {lat: 35.3000, lng: 128.4000}},
+					"창원시": {coords: {lat: 35.2000, lng: 128.6000}},
+					"통영시": {coords: {lat: 34.8000, lng: 128.4000}}
+				}
+			},
+			제주: {
+				coords: {lat: 33.4996, lng: 126.5312},
+				districts: {
+					"서귀포시": {coords: {lat: 33.2540, lng: 126.5600}},
+					"제주시": {coords: {lat: 33.4996, lng: 126.5312}}
+				}
+			}
+		};
+
+		$(document).ready(function () {
+			$('#city').change(function () {
+				const city = $(this).val();
+				const districtSelect = $('#district');
+				districtSelect.empty(); // 기존 옵션 제거
+				if (city) {
+					districtSelect.append('<option value="">구 선택</option>');
+					// Object.keys()를 사용하여 구역 이름을 가져옴
+					Object.keys(districts[city].districts).forEach(function (district) {
+						districtSelect.append(`<option value="${district}">${district}</option>`);
+					});
+					districtSelect.prop('disabled', false); // 구 선택 가능
+				} else {
+					districtSelect.append('<option value="">시/도를 선택하세요</option>');
+					districtSelect.prop('disabled', true); // 구 선택 불가능
+				}
+			});
+
+			$('#district').change(function () {
+				const city = $('#city').val();
+				const district = $(this).val();
+				if (city && district) {
+					fetchRestaurants(city, district);
+				}
+			});
+			
+			
+			// 사용자의 위치를 가져오는 함수
+			    function getUserLocation() {
+			        if (navigator.geolocation) {
+			            navigator.geolocation.getCurrentPosition(function (position) {
+			                const lat = position.coords.latitude;
+			                const lng = position.coords.longitude;
+			                fetchRestaurantsByLocation(lat, lng); // 사용자 위치로 식당 정보 요청
+			            }, function () {
+			                alert("위치 정보를 가져오는 데 실패했습니다.");
+			            });
+			        } else {
+			            alert("이 브라우저는 Geolocation을 지원하지 않습니다.");
+			        }
+			    }
+
+			    // 사용자 위치를 기반으로 식당 정보를 가져오는 함수
+			    function fetchRestaurantsByLocation(lat, lng) {
+			        const radius = 5000; // 5km 반경
+			        const apiUrl = `https://dapi.kakao.com/v2/local/search/keyword.json?query=비건&category_group_code=FD6&x=${lng}&y=${lat}&radius=${radius}&size=15`;
+
+			        $.ajax({
+			            url: apiUrl,
+			            type: 'GET',
+			            headers: {
+			                Authorization: 'KakaoAK 79b293f9f7248b594b68090c70db6c6f' // 카카오 REST API 키 입력
+			            },
+			            success: function (data) {
+			                allRestaurants = data.documents; // 식당 정보를 저장
+			                displayRestaurants(allRestaurants); // 식당 리스트 표시
+			                if (allRestaurants.length > 0) {
+			                    const firstRestaurant = allRestaurants[0];
+			                    initMap(firstRestaurant.y, firstRestaurant.x, firstRestaurant.place_name); // 첫 번째 식당의 위치로 지도 초기화
+			                } else {
+			                    alert("해당 지역에 비건 식당이 없습니다.");
+			                }
+			            },
+			            error: function (error) {
+			                console.error("Error fetching data: ", error);
+			                alert("식당 정보를 가져오는 데 오류가 발생했습니다.");
+			            }
+			        });
+			    }
+
+			    // 페이지 로드 시 사용자의 위치를 가져옴
+			    getUserLocation();
+				
+				$(".getUserLocationBtn").on("click",function(){
+					if(confirm("현재 위치로 이동하시겠습니까?")){
+						getUserLocation();
+					}
+				})
+		});
+
+		let allRestaurants = []; // 모든 식당 정보를 저장할 배열
+		let currentPage = 1; // 현재 페이지
+		const itemsPerPage = 5; // 페이지당 식당 수
+
+		function fetchRestaurants(city, district) {
+			// 새로운 지역을 선택할 때 allRestaurants를 초기화
+			allRestaurants = []; // 배열 초기화
+			currentPage = 1; // 페이지 초기화
+
+			const coords = districts[city].districts[district].coords;
+			const lat = coords.lat; // 위도
+			const lng = coords.lng; // 경도
+			const radius = 5000; // 2km 반경
+			const apiUrl = `https://dapi.kakao.com/v2/local/search/keyword.json?query=비건&category_group_code=FD6&x=${lng}&y=${lat}&radius=${radius}&size=15`;
+
+			function fetchPage(page) {
+				$.ajax({
+					url: `${apiUrl}&page=${page}`, // 페이지 번호 추가
+					type: 'GET',
+					headers: {
+						Authorization: 'KakaoAK 79b293f9f7248b594b68090c70db6c6f' // 카카오 REST API 키 입력
+					},
+					success: function (data) {
+						allRestaurants = allRestaurants.concat(data.documents); // 현재 페이지의 식당 정보를 추가
+						if (data.meta.is_end) {
+							displayRestaurants(allRestaurants);
+							if (allRestaurants.length > 0) {
+								const firstRestaurant = allRestaurants[0];
+								const lat = firstRestaurant.y; // 위도
+								const lng = firstRestaurant.x; // 경도
+								initMap(lat, lng, firstRestaurant.place_name); // 첫 번째 식당의 위치로 지도 초기화 및 마커 추가
+							} else {
+								alert("해당 지역에 비건 식당이 없습니다.");
+							}
+						} else {
+							fetchPage(page + 1); // 다음 페이지가 있으면 계속해서 가져옴
+						}
+					},
+					error: function (error) {
+						console.error("Error fetching data: ", error);
+						alert("식당 정보를 가져오는 데 오류가 발생했습니다.");
+					}
+				});
+			}
+
+			fetchPage(1); // 첫 페이지부터 시작
+		}
+
+		function displayRestaurants(restaurants) {
+			const restaurantList = $('#restaurantList');
+			restaurantList.empty(); // 기존 리스트 제거
+
+			const startIndex = (currentPage - 1) * itemsPerPage;
+			const endIndex = startIndex + itemsPerPage;
+			const paginatedRestaurants = restaurants.slice(startIndex, endIndex); // 현재 페이지에 해당하는 식당만 가져옴
+
+			if (paginatedRestaurants.length === 0) {
+				restaurantList.append('<div>비건 식당이 없습니다.</div>');
+				return;
+			}
+
+			paginatedRestaurants.forEach(function (restaurant) {
+				// 식당 정보에서 필요한 데이터 추출
+				const placeName = restaurant.place_name;
+				const address = restaurant.road_address_name || restaurant.address_name;
+				const phoneNumber = restaurant.phone || '전화번호 없음';
+				const category = restaurant.category_name || '카테고리 없음';
+				const lat = restaurant.y; // 위도
+				        const lng = restaurant.x; // 경도
+
+				        // HTML에 추가
+				        const restaurantItem = $(`
+				            <div class="restaurant-item" data-lat="${lat}" data-lng="${lng}">
+				                <strong>${placeName}</strong> - ${address}<br>
+				                전화번호: ${phoneNumber}<br>
+				                카테고리: ${category}<br>
+				            </div>
+				        `);
+
+				        // 클릭 이벤트 추가
+				        restaurantItem.on('click', function () {
+				            initMap(lat, lng, placeName); // 클릭한 식당의 위치로 지도 이동
+				        });
+
+				        restaurantList.append(restaurantItem);
+			});
+
+			setupPagination(restaurants.length); // 페이지네이션 설정
+		}
+
+		function setupPagination(totalItems) {
+			const pagination = $('#pagination');
+			pagination.empty(); // 기존 페이지네이션 제거
+
+			const totalPages = Math.ceil(totalItems / itemsPerPage); // 총 페이지 수
+
+			for (let i = 1; i <= totalPages; i++) {
+				const pageButton = $('<button>').text(i).on('click', function () {
+					currentPage = i; // 클릭한 페이지로 이동
+					displayRestaurants(allRestaurants); // 식당 리스트 재표시
+				});
+				pagination.append(pageButton);
+			}
+		}
+
+		function initMap(lat, lng, placeName) {
+		    const mapContainer = document.getElementById('map');
+		    const mapOption = {
+		        center: new kakao.maps.LatLng(lat, lng),
+		        level: 3 // 초기 확대 수준
+		    };
+		    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+		    // 마커 추가
+		    const markerPosition = new kakao.maps.LatLng(lat, lng);
+		    const marker = new kakao.maps.Marker({
+		        position: markerPosition,
+		        title: placeName
+		    });
+		    marker.setMap(map);
+
+		    // InfoWindow 추가
+		    const infowindow = new kakao.maps.InfoWindow({
+		        content: `<div style="padding:5px;">${placeName}</div>`,
+		        removable: true
+		    });
+		    infowindow.open(map, marker);
+
+		    // 사용자 정의 확대/축소 버튼 이벤트 리스너
+		    document.getElementById('zoomIn').addEventListener('click', function() {
+		        map.setLevel(map.getLevel() - 1); // 확대
+		    });
+
+		    document.getElementById('zoomOut').addEventListener('click', function() {
+		        map.setLevel(map.getLevel() + 1); // 축소
+		    });
+		}
+
+
+	</script>
+</div>
+
+</html>

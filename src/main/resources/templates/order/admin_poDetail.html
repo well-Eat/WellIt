@@ -1,0 +1,411 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+	
+	
+	<div class="d-flex flex-column min-vh-100 px-1" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5 clearfix">
+			<div class="pageTitle col-12 text-center">
+				주문 처리 상세
+			</div>
+		</div>
+		
+		<div class="row mb-3">
+			<div class="col">
+				<a href="/order/admin/po/list" class="btn btn-success d-block" style="width: fit-content;">목록으로 돌아가기</a>
+				<input type="button" class="btn btn-outline-danger d-block" style="width: fit-content;" id="cancelBtn"
+				       value="주문취소">
+				<script src="/js/payment.js"></script>
+			</div>
+		</div>
+		
+		<section class="row vstack orderItem position-relative mb-5">
+			
+			<div class="col gap-3 g-3">
+				
+				<section class="row orderInfo position-relative mb-5" id="orderInfo"></section>
+				
+				<section class="row orderItem position-relative mb-5" id="orderItem"></section>
+				
+				<section class="row orderMember position-relative mb-5" id="orderMember"></section>
+				
+				<section class="row deleveryInfo position-relative mb-5" id="deleveryInfo"></section>
+				
+				<section class="row paymentInfo position-relative mb-5" id="paymentInfo"></section>
+			
+			
+			</div> <!-- //col -->
+			
+			<!--포트원 cdn-->
+			<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+			<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+			
+			<!--스크립트 코드-->
+			<script th:inline="javascript">
+
+          let poDetail = {};
+
+          /*주문 정보 로딩*/
+          document.addEventListener("DOMContentLoaded", function () {
+              const parentPath = "/order/admin/po/"
+              const childPath = window.location.pathname;
+              const orderId = childPath.slice(parentPath.length, childPath.length);
+              viewOrderItems(orderId); // 페이지 로드 시 주문 목록 불러오기
+          });
+
+          <!-- 주문 상세 정보 비동기 불러오기 -->
+          async function viewOrderItems(orderId) {
+              try {
+                  const response = await fetch(`/api/orders/${orderId}`, {
+                      method: "GET",
+                      headers: {
+                          "Content-Type": "application/json",
+                      },
+                  });
+
+                  // 응답이 정상적이지 않을 경우 예외 처리
+                  if (!response.ok) {
+                      throw new Error('에러 발생');
+                  }
+
+                  // 응답을 JSON 형식으로 변환
+                  poDetail = await response.json();
+
+                  // 변환된 데이터를 콘솔에 출력
+                  console.log(poDetail);
+
+                  orderInfoRender(poDetail);
+                  orderItemRender(poDetail);
+                  orderMemberRender(poDetail);
+                  deliveryRender(poDetail);
+                  paymentRender(poDetail);
+
+
+              } catch (error) {
+                  // 에러 처리
+                  alert(error.message);
+              }
+
+
+          }
+
+          //주문 정보 html
+          function orderInfoRender(poDetail) {
+              let renderFormHtml = `
+					      <p class="subtle f18 c666 fw-bold">
+					        주문 정보
+					      </p>
+					      <div>
+		              <table class="table table-borderless">
+					          <tr>
+					            <th scope="row">주문번호</th>
+					            <td><span>${poDetail.orderId}</span></td>
+					          </tr>
+					          <tr>
+					            <th scope="row">현재상태</th>
+					            <td>
+					              <span>${poDetail.orderStatus}</span>
+					            </td>
+					          </tr>
+					          <tr>
+					            <th scope="row">송장번호</th>`;
+
+              // 송장번호 출력 부분 양식 선택
+              renderFormHtml = isDeliveryStart(poDetail.orderStatus, renderFormHtml, poDetail.orderId, poDetail.invoiceNum);
+
+              renderFormHtml += `
+					          </tr>
+					        </table>
+				        </div>
+              `;
+
+              document.getElementById('orderInfo').innerHTML = renderFormHtml;
+          }
+
+          //현재 상태 확인하여, 폼의 invoice 입력란 렌더링 또는 invoice 번호 출력 선택
+          function isDeliveryStart(orderStatus, renderFormHtml, orderId, invoiceNum) {
+              console.log(orderStatus);
+              if (orderStatus == 'PRODUCT_PREPARE') {
+                  renderFormHtml += `
+	                  <td>
+                      <input type="text" class="form-control" name="invoiceNum" id="invoiceNum"/><input type="button" value="출고처리" class="btn btn-outline-success" onclick="processShipment('${orderId}')"/>
+                    </td>
+                  `;
+              } else {
+                  renderFormHtml += `
+	                  <td>
+		                  <span>${invoiceNum}</span>
+	                  </td>
+                  `;
+              }
+              return renderFormHtml;
+          }
+
+          //출고처리
+          async function processShipment(orderId) {
+              console.log(orderId);
+              const invoiceNum = document.getElementById('invoiceNum').value;
+
+              if (!invoiceNum) {
+                  alert("송장 번호를 입력해 주세요.");
+                  return;
+              }
+
+              try {
+                  const response = await fetch(`/api/orders/${orderId}/ship`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          invoiceNum: invoiceNum
+                      }),
+                  });
+
+                  if (!response.ok) {
+                      throw new Error('출고 처리 중 오류가 발생했습니다.');
+                  }
+
+                  const result = await response.text();
+                  alert(result); // "출고 처리 완료" 메시지 출력
+
+                  location.reload();
+              } catch (error) {
+                  alert(error.message);
+              }
+          }
+
+
+          //주문 상품 html
+          function orderItemRender(poDetail) {
+              let renderFormHtml = `
+	              <p class="subtle f18 c666 fw-bold">
+			            주문 상품
+			          </p>
+			          
+			          <div>
+			            <table class="table table-borderless">
+			              <thead>
+			              <tr>
+			                <th scope="col">상품번호</th>
+			                <th scope="col">상품사진</th>
+			                <th scope="col">상품명</th>
+			                <th scope="col">주문수량</th>
+			                
+			              </tr>
+			              </thead>
+			              <tbody>
+              `;
+
+              poDetail.orderItems.forEach(item => {
+                  renderFormHtml += `
+	                      <tr>
+					                <td><span>${item.prodId}</span></td>
+					                <td><div><img src="${item.prodThumb}" alt="${item.prodName}" style="width: 40px; height: 40px;"></div></td>
+					                <td><span>${item.prodName}</span></td>
+					                <td><span>${item.quantity}</span></td>
+					              </tr>
+                      `;
+              })
+
+              renderFormHtml += `
+					          </tbody>
+			            </table>
+			          </div>
+		          `;
+
+              document.getElementById('orderItem').innerHTML = renderFormHtml;
+
+          }
+
+          //주문자 정보
+          function orderMemberRender(poDetail) {
+              let renderFormHtml = `
+					      <p class="subtle f18 c666 fw-bold">
+					        주문자 정보
+					      </p>
+					      <div>
+		              <table class="table table-borderless">
+					          <tr>
+					            <th scope="row">주문자 ID</th>
+					            <td><span>${poDetail.memberId}</span></td>
+					          </tr>
+					          <tr>
+					            <th scope="row">주문자 연락처</th>
+					            <td>
+					              <span>${poDetail.memberPhone}</span>
+					            </td>
+					          </tr>
+					        </table>
+				        </div>
+              `;
+
+              document.getElementById('orderMember').innerHTML = renderFormHtml;
+          }
+
+          //배송 정보
+          function deliveryRender(poDetail) {
+              let renderFormHtml = `
+					      <p class="subtle f18 c666 fw-bold">
+									배송 정보
+								</p>
+								
+								<div>
+									<table class="table table-borderless">
+										<tr>
+											<th scope="row">배송지</th>
+											<td>
+												<!-- 주소 -->
+														<span>${poDetail.addr1}</span>
+														<span>&nbsp;</span>
+														<span>${poDetail.addr2}</span>
+											</td>
+										</tr>
+										<tr>
+											<th scope="row">받는 분</th>
+											<td><span>${poDetail.deliveryName}</span></td>
+										</tr>
+										<tr>
+											<th scope="row">받는 분 휴대폰</th>
+											<td>
+												<span>${poDetail.deliveryPhone}</span>
+											</td>
+										</tr>
+										<tr class="align-middle">
+											<th scope="row">배송 요청사항</th>
+											<span>${poDetail.deliveryMsg}</span>
+										</tr>
+									
+									</table>
+								</div>
+              `;
+
+              document.getElementById('deleveryInfo').innerHTML = renderFormHtml;
+          }
+
+          //주문 취소 버튼 클릭 시
+          document.querySelector("#cancelBtn").addEventListener("click", function (e) {
+              orderCancel(poDetail);
+          })
+
+          //Payment 정보
+          function paymentRender(poDetail) {
+              let renderFormHtml = `
+					      <p class="subtle f18 c666 fw-bold">
+									결제 정보
+								</p>
+								
+								<div>
+									<table class="table table-borderless">
+										<tr>
+											<th scope="row">상품 금액</th>
+											<td class="text-end"><span>${poDetail.finalPrice.toLocaleString()}</span> <span>원</span></td>
+										</tr>
+										<tr>
+											<th scope="row">배송비</th>
+											<td class="text-end"> <span>${poDetail.deliveryFee.toLocaleString()}</span> <span>원</span></td>
+										</tr>
+										<tr>
+											<th scope="row">마일리지 사용금액</th>
+											<td class="text-end"> <span>${poDetail.milePay.toLocaleString()}</span> <span>원</span></td>
+										</tr>
+										<tr>
+											<th scope="row">총 지불금액</th>
+											<td class="text-end"> <span>${poDetail.totalPay.toLocaleString()}</span> <span>원</span></td>
+										</tr>
+
+									
+									</table>
+								</div>
+              `;
+
+              document.getElementById('paymentInfo').innerHTML = renderFormHtml;
+          }
+
+          //주문 취소 프로세스 시작
+          function orderCancel(poDetail) {
+              console.log("===========orderCancel()============")
+              console.log(poDetail);
+              const impUid = poDetail.impUid;  // 실제 imp_uid 값
+              console.log(impUid);
+              const orderId = poDetail.orderId;
+              console.log(orderId);
+              const merchantUid = poDetail.merchantUid; // 실제 merchant_uid 값
+              console.log(merchantUid);
+              const reason = prompt("결제 취소 사유를 입력해 주세요.");
+              if (reason) {
+                  cancelPayment(impUid, reason, orderId);
+              }
+          }
+
+          // 비동기로 결제 취소
+          async function cancelPayment(impUid, reason, orderId) {
+              console.log("=============== async function cancelPayment ===============");
+              console.log("impUid:", impUid);
+              console.log("reason:", reason);
+
+              if (confirm("결제를 취소하시겠습니까?")) {
+                  try {
+                      // 결제 취소 요청 (DB 업데이트 포함)
+                      const response = await fetch(`/api/payment/cancel`, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                              impUid: impUid,
+                              reason: reason
+                          })
+                      });
+
+                      // 응답이 정상인지 확인
+                      if (!response.ok) {
+                          throw new Error('결제 취소 중 오류 발생');
+                      }
+
+                      // 서버 응답 처리
+                      const result = await response.json();
+                      console.log("Cancel response result:", result);
+
+                      // 결제 취소 성공 후 DB 업데이트 요청 (orderId 포함)
+                      const dbUpdateResponse = await fetch(`/order/admin/cancel/${orderId}`, {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/x-www-form-urlencoded',
+                          },
+                          body: new URLSearchParams({
+                              impUid: impUid,
+                              reason: reason
+                          })
+                      });
+
+                      if (!dbUpdateResponse.ok) {
+                          throw new Error('DB 업데이트 중 오류 발생');
+                      }
+
+                      alert('결제가 성공적으로 취소되었습니다!');
+                      location.reload();
+
+                  } catch (error) {
+                      alert('결제 또는 DB 저장 처리 중 문제가 발생했습니다: ' + error.message);
+                      console.error('Error:', error);
+                  }
+              } else {
+                  return false; // 취소 거부
+              }
+          }
+			</script>
+		
+		</section>
+	
+	</div><!-- // #wrapper -->
+
+</div>
+</html>

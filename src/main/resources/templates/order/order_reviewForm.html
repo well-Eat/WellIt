@@ -1,0 +1,175 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>리뷰쓰기</title>
+</head>
+<div layout:fragment="content" class="container">
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	
+	<!-- 제이쿼리 라이브러리 로드 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	
+	
+	<section>
+		<p th:text="${product.prodId}"></p>
+		<div class="rounded-2 btn bg-warning">
+			<a class="revFormLink" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#revFormModal">
+				폼열기
+			</a>
+		</div>
+		
+		
+		<!-- Modal -->
+		<div class="modal" id="revFormModal" tabindex="-1" aria-labelledby="revFormModalLabel" aria-hidden="true">
+			<div class="modal-dialog  modal-dialog-scrollable modal-lg modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5 fw700" id="revFormModalLabel" th:text="${product.prodName}">리뷰쓰기</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body container-fluid">
+						<form th:action="@{/shop/review/{prodId}(prodId=${product.prodId})}" th:object="${prodReviewForm}" method="post" enctype="multipart/form-data">
+							<div class="row">
+								
+								<style>
+                    #drop-area {
+                        border: 2px dashed #ccc;
+                        padding: 20px;
+                        width: 300px;
+                        margin: 0 auto;
+                        text-align: center;
+                    }
+                    #drop-area.highlight {
+                        border-color: purple;
+                    }
+                    #gallery img {
+                        width: 100px;
+                        margin: 10px;
+                    }
+								</style>
+								
+								<div class="col-6 modalColLeft border">
+									<div id="drop-area">
+										<h3>이미지를 여기에 드래그 앤 드롭하세요</h3>
+										<input type="file" class="form-control" name="imageFile" id="prodRevImg" th:field="*{prodRevImgList}" accept="image/*" style="display:none" multiple>
+										<label class="button" for="prodRevImg">또는 파일 선택</label>
+										<div id="gallery"></div>
+									</div>
+								</div>
+								
+								<script>
+                    const dropArea = document.getElementById("drop-area");
+                    const gallery = document.getElementById("gallery");
+                    const fileInput = document.getElementById("prodRevImg");
+
+                    let filesArray = []; // 업로드할 파일들을 저장할 배열
+
+                    // Prevent default behaviors
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, preventDefaults, false);
+                        document.body.addEventListener(eventName, preventDefaults, false);
+                    });
+
+                    function preventDefaults(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+
+                    // Highlight drop area when item is dragged over it
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+                    });
+
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+                    });
+
+                    // Handle dropped files
+                    dropArea.addEventListener('drop', handleDrop, false);
+                    fileInput.addEventListener('change', handleFiles, false);
+
+                    function handleDrop(e) {
+                        const dt = e.dataTransfer;
+                        const files = dt.files;
+                        handleFiles({ target: { files: files } });
+                    }
+
+                    function handleFiles(e) {
+                        const newFiles = Array.from(e.target.files);
+
+                        document.getElementById('prodRevImg').files = e.target.files;
+
+                        if (filesArray.length + newFiles.length > 3) {
+                            alert('최대 3개의 이미지만 업로드할 수 있습니다.');
+                            return;
+                        }
+
+                        filesArray = filesArray.concat(newFiles).slice(0, 3); // 3개까지만 허용
+                        gallery.innerHTML = ''; // 기존 미리보기 초기화
+                        filesArray.forEach(previewFile);
+                    }
+
+                    function previewFile(file) {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onloadend = function() {
+                            const img = document.createElement('img');
+                            img.src = reader.result;
+                            img.style.width = '100px';
+                            img.style.margin = '10px';
+                            gallery.appendChild(img);
+                        }
+                    }
+								</script>
+								
+								
+								
+								
+								
+								<div class="col-6 modalColRight">
+									
+									<p>
+										<label class="form-label">상품명</label>
+										<input type="text" class="form-control" th:field="*{prodName}" aria-describedby="fieldHelp" />
+									</p>
+									<p>
+										<label class="form-label">리뷰내용</label>
+										<input type="text" class="form-control" th:field="*{revText}" aria-describedby="fieldHelp" />
+									</p>
+									<p th:if="${#fields.hasErrors('prodName')}" th:errors="*{prodName}">상품명 에러</p>
+									<p th:if="${#fields.hasErrors('revText')}" th:errors="*{revText}">리뷰 내용 에러</p>
+									<input type="hidden" th:field="*{prodId}" />
+									<input type="submit">
+								
+								</div> <!--// modalColRight-->
+							</div> <!--//row-->
+						</form>
+					</div> <!--// modal-body-->
+
+				</div> <!--// modal-content-->
+			</div> <!--// modal-dialog-->
+		</div><!-- // modal#revFormModal-->
+	
+	</section>
+	
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+	
+
+</div> <!--//layout::content-->
+
+<script layout:fragmsent="script" th:inline="javascript">
+
+
+</script>
+
+
+</html>
+

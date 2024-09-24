@@ -1,0 +1,221 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>카트</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+	
+	<!-- 제이쿼리 라이브러리 로드 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	
+	<!--order style link-->
+	<link rel="stylesheet" th:href="@{/css/order.css}">
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	
+	
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	
+	<form action="/order/create" method="post" th:object="${orderForm}" id="orderForm">
+		<div class="row justify-content-center my-5">
+			
+			<!-- 장바구니 물품 목록 -->
+			<div class="col-md-8 col-lg-6 contLeftSide cartItemTable">
+				
+				<div class="card mb-3"> <!-- 아이템 리스트 출력 박스 -->
+					<div class="card-header">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
+							<label class="form-check-label f14 c777 fw700" for="checkAll"> 전체선택</label>
+							<span class="printCheckedNumber">
+								(
+								<span id="checkedItem"></span>
+								/
+								<span id="allItem"></span>
+								)
+							</span>
+						</div>
+					</div> <!-- //card-header -->
+
+					<div class="card-body border-bottom d-flex gap-3 justify-content-center " th:if="${cartItemList.size()==0}">
+<!--						"if다"-->
+						<div class="row">
+							<div class="col-auto align-items-center justify-content-center d-flex flex-column">
+								<div class="vacantCart ">
+								</div>
+								<p class="mt-3 f24 fw700 c555">장바구니에 상품을 추가해주세요</p>
+							
+							</div>
+						</div>
+					</div>
+					
+					<th:block th:each="cartItem, iterStat : ${cartItemList}" th:unless="${cartItemList.size()==0}">
+						<div class="card-body border-bottom d-flex gap-3">
+							<!--주문 아이템 : prodId-->
+							<input type="hidden" th:value="${cartItem.product.prodId}" class="itemId"
+							       th:data-org-price="${cartItem.product.prodOrgPrice}"
+							       th:data-final-price="${cartItem.product.prodFinalPrice}"
+							       th:field="*{orderItemQuantityList[__${iterStat.index}__].prodId}"/>
+							
+							<i class="fa-solid fa-xmark removeItem" style="position: absolute; right: 15px;"></i>
+							<div class="vstack w-25 gap-2 clearfix">
+								
+								<input class="form-check-input itemCheck" type="checkbox"
+								       th:field="*{orderItemQuantityList[__${iterStat.index}__].booleanOrder}" checked="checked"/>
+								
+								<div class="prodImageBox border"
+								     style="width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;"
+								     th:style="|background-image: url(@{  ${cartItem.product.prodMainImg}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|"></div>
+							</div>
+							
+							<!--상품명-->
+							<div class="vstack w-75 pl-3 ml-3 calcItem">
+								<h5 class="card-title fw700 c666 f18 mt-4" th:text="${cartItem.product.prodName}"></h5>
+								
+								<!--할인율 > 0 일때-->
+								<th:block th:if="${cartItem.product.prodDiscount != null and cartItem.product.prodDiscount > 0}">
+									<div>
+										<p class="prodOrgPrice card-text mb-1 c999 f14 text-decoration-line-through d-inline-block"
+										   th:text="|${#numbers.formatInteger(cartItem.product.prodOrgPrice  * cartItem.quantity ,3,'COMMA')}원|"></p>
+										<span>&nbsp;</span>
+										<p class="prodDiscount card-text mr-4 d-inline-block f14 fw700" style="color:orangered;"
+										   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,2,0)}"></p>
+									</div>
+								</th:block>
+								<!--할인 후 가격 * 수량-->
+								<p class="card-text d-inline-block">
+                    <span class="prodTotalPrice card-text text-end d-inline-block c333 fw700"
+                          th:text="|${#numbers.formatInteger(cartItem.product.prodFinalPrice * cartItem.quantity ,3,'COMMA')}|">40,000</span>
+									<span class="f14 won">원</span>
+								</p>
+								
+								
+								<!--quantity : 구매수량 input, 버튼-->
+								<div class="mb-3 quantityBox d-flex align-items-center">
+									<div class="number-input rounded-1">
+										<button class="minus"><i class="fa-solid fa-minus fa-2xs"></i></button>
+										<input type="number" min="1" max="100" class="form-control rounded-0 quantity"
+										       th:value="${cartItem.quantity}"
+										       th:id="|quantity[${iterStat.index}]|"
+										       th:field="*{orderItemQuantityList[__${iterStat.index}__].quantity}"/>
+										<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
+									</div>
+								</div>
+								
+								<th:block class="hiddenInput">
+									<!--1개가격-->
+									<input type="hidden" th:id="|orgPrice[${iterStat.index}]|" th:value="${cartItem.product.prodOrgPrice}"
+									       class="orgPrice"/>
+									<input type="hidden" th:id="|finalPrice[${iterStat.index}]|"
+									       th:value="${cartItem.product.prodFinalPrice}" class="finalPrice"/>
+									
+									<!--곱한가격-->
+									<input type="hidden" th:id="|sumOrgPrice[${iterStat.index}]|" class="sumOrgPrice"
+									       th:field="*{orderItemQuantityList[__${iterStat.index}__].sumOrgPrice}"
+									       th:value="${cartItem.product.prodOrgPrice * cartItem.quantity}">
+									<input type="hidden" th:id="|sumFinalPrice[${iterStat.index}]|" class="sumFinalPrice"
+									       th:name="|sumFinalPrice[${iterStat.index}]|"
+									       th:value="${cartItem.product.prodFinalPrice * cartItem.quantity}">
+									<input type="hidden" th:id="|sumDiscPrice[${iterStat.index}]|" class="sumDiscPrice" th:field="*{orderItemQuantityList[__${iterStat.index}__].sumDiscPrice}" >
+								</th:block>
+							</div>
+						
+						</div> <!-- //card-body -->
+					</th:block> <!--//cartItemList-->
+					
+					<!-- 체크 금액 합계 -->
+					
+					<div class="card-footer text-center">
+						<p style="margin-bottom: 5px;" class="f14 c888 fw700">상품 금액 합계</p>
+						<h3 class="fw700 f22 d-inline-block totalFinalPrice"></h3><span class="d-inline-block">&nbsp;원</span>
+					</div>
+				
+				</div> <!-- //card -->
+			</div> <!-- //col-md-6 contLeftSide cartItemTable 왼쪽열 -->
+			
+			
+			<div class="col-md-4 contRightSide">
+				
+				<div class="stickyBox border-success vstack gap-3 ">
+					<div class="card totalPriceCard">
+						<div class="card-body">
+							
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">상품 금액</div>
+								<div class="col-6 text-end price fw700"><span class=" totalOrgPrice"></span> <span class="won">원</span></div>
+							</div>
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">할인 금액</div>
+								<div class="col-6 text-end price fw700 "><span class=" totalDiscPrice"></span> <span class="won">원</span></div>
+							</div>
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom ">배송비</div>
+								<div class="col-6 text-end price fw700"><span class=" deliveryFee"></span> <span class="won">원</span></div>
+							</div>
+							<hr>
+							<div class="row pricePart my-2">
+								<div class="col-6 part c888 f14 fw700 align-text-bottom">최종 결제 금액</div>
+								<div class="col-6 text-end price fw700 "><span class=" totalFinalCalcedPrice"></span> <span class="won">원</span>
+								</div>
+							</div>
+						</div>
+					</div> <!-- //card deliveryAddress-->
+					<div class="card">
+						<input class="card-link btn text-bg-success" type="submit" value="주문하기"/>
+					</div> <!-- // 결제하기 버튼 -->
+				
+				</div> <!-- //stickyBox -->
+			
+			
+			</div> <!-- //contRightSide -->
+			
+		</div> <!-- //전체 row -->
+	</form>
+	
+	<!--order js link-->
+	<script src="/js/order.js"></script>
+	
+	<!-- alertMessage가 존재 시 sweetAlert 창 띄움 -->
+	<script>
+			$("#orderForm").on("submit", function (e){
+                let isValid = true;
+                console.log($("span#allItem").text()=='0')
+                if ($("span#allItem").text()=='0'){
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: '주문 아이템 입력 오류',
+                        text: '주문 아이템은 필수 항목입니다.'
+                    });
+                    isValid = false;
+                }
+
+          // 폼 유효하지 않으면 제출 중단
+          if (!isValid) {
+              e.preventDefault();
+          }
+                
+			})
+   
+
+	</script>
+
+
+</div> <!--//layout::content-->
+
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+
+</body>
+</html>
+

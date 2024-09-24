@@ -17,7 +17,7 @@ public class DataLoader implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		long count = storeRepository.count();
-
+		/*
 		if (count < 20) {
 			// 비건 카페 A
 			storeRepository.save(createStore("비건 카페 A", "비건 디저트 전문점", "100% 비건 재료로 만든 다양한 디저트를 제공합니다.", "카페", "서울특별시",
@@ -119,7 +119,7 @@ public class DataLoader implements CommandLineRunner {
 					"02-3456-7890", "서울특별시 서대문구 연세로 45", "/imgs/main/goods06.jpg", "10:00 - 20:00", "매주 금요일",
 					"비건 망고 스무디", "주차 불가", 37.5636, 126.9380, "Y"));
 
-		}
+		}*/
 	}
 
 	private Store createStore(String name, String title, String content, String category, String regionProvince,
@@ -144,4 +144,5 @@ public class DataLoader implements CommandLineRunner {
 		store.setStoIsOpen(isOpen);
 		return store;
 	}
+	
 }

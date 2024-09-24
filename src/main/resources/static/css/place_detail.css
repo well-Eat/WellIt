@@ -8,6 +8,8 @@
 }
 
 
+
+
 body {
 	background-color: #fff;
 	/*font-family: 'Noto Sans KR', sans-serif;*/
@@ -83,9 +85,7 @@ body {
 	cursor: pointer;
 }
 
-#reviewForm {
-	border: 1px solid paleturquoise;
-}
+
 
 .star {
 	color: gray;
@@ -143,26 +143,37 @@ body {
 	display: flex;
 	justify-content: space-around;
 }
+#reviewForm{
+	display: none;
+}
 /* 모달 크기 조정 */
-    .modal-dialog {
-        max-width: 60%; /* 모달의 최대 너비를 60%로 설정 */
-        margin: auto; /* 중앙 정렬 */
-		display: flex; /* Flexbox 사용 */
-		        align-items: center; /* 세로 중앙 정렬 */
-		        height: 100vh; /* 전체 화면 높이 */
-    }
+.modal-dialog {
+	max-width: 60%;
+	/* 모달의 최대 너비를 60%로 설정 */
+	margin: auto;
+	/* 중앙 정렬 */
+	display: flex;
+	/* Flexbox 사용 */
+	align-items: center;
+	/* 세로 중앙 정렬 */
+	height: 100vh;
+	/* 전체 화면 높이 */
+}
 
-    /* 모달의 내용이 화면 중앙에 위치하도록 조정 */
-    .modal-content {
-        text-align: center; /* 내용 중앙 정렬 */
-    }
-	#modalImage{
-		max-height: 600px;
-	}
-	.modal-body .col-5{
-		text-align: start;
-	}
-	
+/* 모달의 내용이 화면 중앙에 위치하도록 조정 */
+.modal-content {
+	text-align: center;
+	/* 내용 중앙 정렬 */
+}
+
+#modalImage {
+	max-height: 600px;
+}
+
+.modal-body .col-5 {
+	text-align: start;
+}
+
 /* 웹페이지 전체 공통 (전체 페이지에도 있는지 확인하기) */
 li a {
 	text-decoration: none !important;
@@ -221,13 +232,57 @@ nav~.container {
 
 /*card-body : 아이템 정보*/
 /**** shop/list, shop/detail 공통 *****/
-.placeInfo h5.placeName {
-	font-weight: 700;
+.placeInfo h3.placeName {
+	font-weight: 800;
+}
+
+.placeTitle {
+	font-weight: bold;
+	color: #808080;
+	font-size: 14px;
+	margin-bottom: 0.5rem;
+}
+
+.icons svg {
+	margin-left: 0.7rem;
+}
+
+.icons span {
+	margin-left: 0.3rem;
+}
+
+.table {
+	border-collapse: collapse;
+	/* 테이블 경계선 없애기 */
+}
+
+.table td {
+	border: none;
+	/* 경계선 없애기 */
+	padding: 0.8rem;
+	/* 여백 조정 */
+	position: relative;
+	/* 밑줄을 위한 위치 설정 */
+	font-size: 14px;
+}
+
+.table td::after {
+	content: '';
+	/* 밑줄 생성 */
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 1px;
+	/* 밑줄 두께 */
+	width: 100%;
+	/* 전체 너비 */
+	background-color: rgb(228, 228, 228);
+	/* 밑줄 색상 */
 }
 
 .placeInfo p.placeDesc {
 	color: #999;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 .placeInfo p.placeOrgPrice {
@@ -253,7 +308,8 @@ nav~.container {
 	color: #bbb;
 }
 
-
+/*예약 박스*/
+.reservationBox {}
 
 /******* shop_detail : 상품 상세페이지 *******/
 /******* shop_detail : 상품 상세페이지 *******/
@@ -261,18 +317,37 @@ nav~.container {
 /*상품 이미지*/
 .placeInfo .card-img-wrapper {
 	width: 100%;
-	height: 300px;
-	overflow: hidden;
 }
 
 .placeInfo .card-img-box {
 	width: 100%;
-	height: 100%;
-	background-position: center;
+	height: 80%;
+	background-position: top;
 	background-repeat: no-repeat;
 	background-size: cover;
-	transition: transform 300ms ease;
+	border-radius: 4px;
 }
+
+.no-reviews-box {
+	background-color: #f8f9fa;
+	/* 연한 회색 배경 */
+	border: 1px solid #dee2e6;
+	/* 연한 회색 경계선 */
+	color: #6c757d;
+	/* 텍스트 색상 */
+}
+
+.no-reviews-box h5 {
+	font-weight: bold;
+	/* 제목 두껍게 */
+}
+
+.no-reviews-box p {
+	margin-bottom: 0;
+	/* 아래 여백 없애기 */
+}
+
+.placeInfo {}
 
 /*카드 기본 스타일 리셋*/
 .placeInfo .card {

@@ -1,0 +1,1195 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container-fluid">
+	<link rel="stylesheet" href="/css/map.css" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+	<!-- 한글 언어 파일 추가 -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.kr.min.js"></script>
+
+	<!-- Tempus Dominus (다른 날짜 선택기) 관련 링크는 필요에 따라 유지 -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+	<div class="searchWrapper bg-light">
+		<div class="selectRegion ">
+			<div class="searchBox">
+				<input type="text" class="search-input" placeholder="검색어를 입력하세요..." id="searchInput">
+				<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" viewBox="0 0 16 16">
+					<path
+						d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+				</svg>
+			</div>
+			<div id="results"></div> <!-- 검색 결과를 표시할 영역 -->
+			<h5 class="selectRegionForm border-bottom p-3 text-center">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#6a994e"
+					class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
+					<path
+						d="m10.495 6.92 1.278-.619a.483.483 0 0 0 .126-.782c-.252-.244-.682-.139-.932.107-.23.226-.513.373-.816.53l-.102.054c-.338.178-.264.626.1.736a.48.48 0 0 0 .346-.027ZM7.741 9.808V9.78a.413.413 0 1 1 .783.183l-.22.443a.6.6 0 0 1-.12.167l-.193.185a.36.36 0 1 1-.5-.516l.112-.108a.45.45 0 0 0 .138-.326M5.672 12.5l.482.233A.386.386 0 1 0 6.32 12h-.416a.7.7 0 0 1-.419-.139l-.277-.206a.302.302 0 1 0-.298.52z" />
+					<path
+						d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z" />
+				</svg>
+				지역 가게 보기
+
+			</h5>
+			<form class="selectRegionForm border-bottom p-3">
+				<label for="city">시/도 선택:</label>
+				<select id="city">
+					<option value="">선택하세요</option>
+					<option value="서울">서울</option>
+					<option value="부산">부산</option>
+					<option value="대구">대구</option>
+					<option value="인천">인천</option>
+					<option value="광주">광주</option>
+					<option value="대전">대전</option>
+					<option value="울산">울산</option>
+					<option value="세종">세종</option>
+					<option value="경기">경기</option>
+					<option value="강원">강원</option>
+					<option value="충북">충북</option>
+					<option value="충남">충남</option>
+					<option value="전북">전북</option>
+					<option value="전남">전남</option>
+					<option value="경북">경북</option>
+					<option value="경남">경남</option>
+					<option value="제주">제주</option>
+				</select>
+				<br />
+				<label for="district" class="mt-2">구 선택:</label>
+				<select id="district" disabled>
+					<option value="">시/도를 선택하세요</option>
+				</select>
+
+			</form>
+		</div>
+		<div class="hideBtn">
+			<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+				class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+				<path fill-rule="evenodd"
+					d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z" />
+			</svg>
+		</div>
+		<div id="restaurantList">
+		</div>
+		<div id="pagination" class="my-2"></div>
+
+	</div>
+	<div class="mapWrapper">
+		<div id="map">
+			<button id="zoomIn">+</button>
+			<button id="zoomOut">-</button>
+			<button id="location"> <span title="현재 위치" class="getUserLocationBtn"><img
+						src="/imgs/map/my_location_30dp_5F6368_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span></button>
+		</div>
+
+	</div>
+	<script>
+		const districts = {
+			서울: {
+				coords: {lat: 37.5665, lng: 126.978},
+				districts: {
+					"강남구": {coords: {lat: 37.5172, lng: 127.0473}},
+					"강동구": {coords: {lat: 37.5303, lng: 127.1238}},
+					"강북구": {coords: {lat: 37.6398, lng: 127.0255}},
+					"관악구": {coords: {lat: 37.4783, lng: 126.9512}},
+					"구로구": {coords: {lat: 37.4955, lng: 126.8832}},
+					"금천구": {coords: {lat: 37.4545, lng: 126.9005}},
+					"노원구": {coords: {lat: 37.6550, lng: 127.0565}},
+					"도봉구": {coords: {lat: 37.6684, lng: 127.0288}},
+					"동대문구": {coords: {lat: 37.5744, lng: 127.0422}},
+					"동작구": {coords: {lat: 37.5045, lng: 126.9515}},
+					"마포구": {coords: {lat: 37.5482, lng: 126.9033}},
+					"서대문구": {coords: {lat: 37.5793, lng: 126.9655}},
+					"서초구": {coords: {lat: 37.4839, lng: 127.0324}},
+					"성동구": {coords: {lat: 37.5636, lng: 127.0428}},
+					"성북구": {coords: {lat: 37.5890, lng: 127.0170}},
+					"송파구": {coords: {lat: 37.5049, lng: 127.1149}},
+					"양천구": {coords: {lat: 37.5162, lng: 126.8660}},
+					"영등포구": {coords: {lat: 37.5260, lng: 126.8958}},
+					"용산구": {coords: {lat: 37.5326, lng: 126.9905}},
+					"은평구": {coords: {lat: 37.6090, lng: 126.9345}},
+					"종로구": {coords: {lat: 37.5700, lng: 126.9980}},
+					"중구": {coords: {lat: 37.5636, lng: 126.9970}},
+					"중랑구": {coords: {lat: 37.6060, lng: 127.0920}}
+				}
+			},
+			부산: {
+				coords: {lat: 35.1796, lng: 129.0756},
+				districts: {
+					"강서구": {coords: {lat: 35.1744, lng: 128.9470}},
+					"금정구": {coords: {lat: 35.2280, lng: 129.0790}},
+					"기장군": {coords: {lat: 35.2390, lng: 129.2270}},
+					"남구": {coords: {lat: 35.1460, lng: 129.1000}},
+					"동구": {coords: {lat: 35.0660, lng: 129.0400}},
+					"부산진구": {coords: {lat: 35.1595, lng: 129.0594}},
+					"북구": {coords: {lat: 35.2000, lng: 129.0010}},
+					"사상구": {coords: {lat: 35.1440, lng: 128.9790}},
+					"사하구": {coords: {lat: 35.0960, lng: 128.9790}},
+					"서구": {coords: {lat: 35.0960, lng: 129.0140}},
+					"수영구": {coords: {lat: 35.1580, lng: 129.1160}},
+					"연제구": {coords: {lat: 35.1790, lng: 129.0860}},
+					"영도구": {coords: {lat: 35.0660, lng: 129.1000}},
+					"중구": {coords: {lat: 35.1130, lng: 129.0400}}
+				}
+			},
+			대구: {
+				coords: {lat: 35.8714, lng: 128.6014},
+				districts: {
+					"남구": {coords: {lat: 35.8450, lng: 128.6010}},
+					"달서구": {coords: {lat: 35.8350, lng: 128.5800}},
+					"달성군": {coords: {lat: 35.7070, lng: 128.4870}},
+					"동구": {coords: {lat: 35.8700, lng: 128.6100}},
+					"북구": {coords: {lat: 35.8950, lng: 128.6000}},
+					"서구": {coords: {lat: 35.8700, lng: 128.5500}},
+					"수성구": {coords: {lat: 35.8460, lng: 128.6100}},
+					"중구": {coords: {lat: 35.8700, lng: 128.6000}}
+				}
+			},
+			인천: {
+				coords: {lat: 37.4563, lng: 126.7052},
+				districts: {
+					"강화군": {coords: {lat: 37.7030, lng: 126.4870}},
+					"계양구": {coords: {lat: 37.5160, lng: 126.7250}},
+					"남동구": {coords: {lat: 37.4480, lng: 126.7240}},
+					"동구": {coords: {lat: 37.4870, lng: 126.6170}},
+					"미추홀구": {coords: {lat: 37.4630, lng: 126.6340}},
+					"부평구": {coords: {lat: 37.5070, lng: 126.7240}},
+					"서구": {coords: {lat: 37.4870, lng: 126.6500}},
+					"연수구": {coords: {lat: 37.4480, lng: 126.6830}},
+					"옹진군": {coords: {lat: 37.5000, lng: 126.5000}},
+					"중구": {coords: {lat: 37.4630, lng: 126.6500}}
+				}
+			},
+			광주: {
+				coords: {lat: 35.1595, lng: 126.8526},
+				districts: {
+					"광산구": {coords: {lat: 35.1890, lng: 126.8450}},
+					"남구": {coords: {lat: 35.1450, lng: 126.8500}},
+					"동구": {coords: {lat: 35.1570, lng: 126.8500}},
+					"북구": {coords: {lat: 35.1740, lng: 126.8500}},
+					"서구": {coords: {lat: 35.1550, lng: 126.8500}}
+				}
+			},
+			대전: {
+				coords: {lat: 36.3504, lng: 127.3845},
+				districts: {
+					"대덕구": {coords: {lat: 36.3730, lng: 127.3960}},
+					"동구": {coords: {lat: 36.3470, lng: 127.3920}},
+					"서구": {coords: {lat: 36.3530, lng: 127.3850}},
+					"유성구": {coords: {lat: 36.3660, lng: 127.3660}},
+					"중구": {coords: {lat: 36.3480, lng: 127.3840}}
+				}
+			},
+			울산: {
+				coords: {lat: 35.5384, lng: 129.3114},
+				districts: {
+					"남구": {coords: {lat: 35.5250, lng: 129.3000}},
+					"동구": {coords: {lat: 35.5500, lng: 129.3000}},
+					"북구": {coords: {lat: 35.5700, lng: 129.3000}},
+					"울주군": {coords: {lat: 35.5400, lng: 129.3000}},
+					"중구": {coords: {lat: 35.5300, lng: 129.3000}}
+				}
+			},
+			세종: {
+				coords: {lat: 36.4802, lng: 127.2895},
+				districts: {
+					"세종시": {coords: {lat: 36.4802, lng: 127.2895}}
+				}
+			},
+			경기: {
+				coords: {lat: 37.4138, lng: 127.5183},
+				districts: {
+					"가평군": {coords: {lat: 37.8340, lng: 127.4870}},
+					"고양시": {coords: {lat: 37.6700, lng: 126.8300}},
+					"과천시": {coords: {lat: 37.4780, lng: 126.9890}},
+					"광명시": {coords: {lat: 37.4780, lng: 126.9000}},
+					"광주시": {coords: {lat: 37.3980, lng: 127.2530}},
+					"구리시": {coords: {lat: 37.6000, lng: 127.1300}},
+					"군포시": {coords: {lat: 37.3590, lng: 126.9500}},
+					"김포시": {coords: {lat: 37.6160, lng: 126.6500}},
+					"남양주시": {coords: {lat: 37.6350, lng: 127.2000}},
+					"동두천시": {coords: {lat: 37.9010, lng: 127.0600}},
+					"부천시": {coords: {lat: 37.4870, lng: 126.7830}},
+					"성남시": {coords: {lat: 37.4400, lng: 127.1280}},
+					"수원시": {coords: {lat: 37.2630, lng: 127.0280}},
+					"시흥시": {coords: {lat: 37.3830, lng: 126.8000}},
+					"안산시": {coords: {lat: 37.3190, lng: 126.8300}},
+					"안성시": {coords: {lat: 37.0050, lng: 127.2770}},
+					"양주시": {coords: {lat: 37.8000, lng: 127.0500}},
+					"양평군": {coords: {lat: 37.5000, lng: 127.5000}},
+					"여주시": {coords: {lat: 37.3000, lng: 127.4000}},
+					"오산시": {coords: {lat: 37.1500, lng: 127.0500}},
+					"용인시": {coords: {lat: 37.2410, lng: 127.1770}},
+					"의왕시": {coords: {lat: 37.3350, lng: 126.9930}},
+					"의정부시": {coords: {lat: 37.7380, lng: 127.0500}},
+					"이천시": {coords: {lat: 37.2800, lng: 127.4500}},
+					"파주시": {coords: {lat: 37.7590, lng: 126.7700}},
+					"평택시": {coords: {lat: 37.0730, lng: 127.1000}},
+					"하남시": {coords: {lat: 37.5450, lng: 127.2000}},
+					"화성시": {coords: {lat: 37.2050, lng: 126.8000}}
+				}
+			},
+			강원: {
+				coords: {lat: 37.8228, lng: 128.1555},
+				districts: {
+					"강릉시": {coords: {lat: 37.7510, lng: 128.8760}},
+					"고성군": {coords: {lat: 38.2000, lng: 128.6000}},
+					"동해시": {coords: {lat: 37.5080, lng: 128.8950}},
+					"삼척시": {coords: {lat: 37.4480, lng: 129.1640}},
+					"속초시": {coords: {lat: 38.2070, lng: 128.5910}},
+					"양구군": {coords: {lat: 38.1000, lng: 128.5000}},
+					"양양군": {coords: {lat: 38.0660, lng: 128.6170}},
+					"영월군": {coords: {lat: 37.1740, lng: 127.6000}},
+					"원주시": {coords: {lat: 37.3470, lng: 127.9200}},
+					"철원군": {coords: {lat: 38.2000, lng: 127.3000}},
+					"춘천시": {coords: {lat: 37.8830, lng: 127.7300}},
+					"태백시": {coords: {lat: 37.1500, lng: 128.9960}},
+					"평창군": {coords: {lat: 37.3660, lng: 128.4000}},
+					"홍천군": {coords: {lat: 37.7000, lng: 127.8000}},
+					"화천군": {coords: {lat: 38.1000, lng: 127.5000}},
+					"횡성군": {coords: {lat: 37.3000, lng: 127.6000}}
+				}
+			},
+			충북: {
+				coords: {lat: 36.6359, lng: 127.4914},
+				districts: {
+					"괴산군": {coords: {lat: 36.7400, lng: 137.0000}},
+					"단양군": {coords: {lat: 36.9990, lng: 128.3000}},
+					"보은군": {coords: {lat: 36.5000, lng: 127.7000}},
+					"영동군": {coords: {lat: 36.3000, lng: 127.5000}},
+					"옥천군": {coords: {lat: 36.5000, lng: 127.4000}},
+					"음성군": {coords: {lat: 36.5000, lng: 127.6000}},
+					"제천시": {coords: {lat: 37.1500, lng: 128.2000}},
+					"청주시": {coords: {lat: 36.6500, lng: 127.5000}},
+					"충주시": {coords: {lat: 36.9500, lng: 127.4000}}
+				}
+			},
+			충남: {
+				coords: {lat: 36.6359, lng: 126.6772},
+				districts: {
+					"계룡시": {coords: {lat: 36.3000, lng: 127.1000}},
+					"공주시": {coords: {lat: 36.5000, lng: 127.2000}},
+					"논산시": {coords: {lat: 36.2000, lng: 127.3000}},
+					"당진시": {coords: {lat: 36.8000, lng: 126.7000}},
+					"보령시": {coords: {lat: 36.3000, lng: 126.6000}},
+					"서산시": {coords: {lat: 36.7000, lng: 126.5000}},
+					"아산시": {coords: {lat: 36.5000, lng: 126.8000}},
+					"천안시": {coords: {lat: 36.8000, lng: 127.0000}},
+					"청양군": {coords: {lat: 36.5000, lng: 126.8000}},
+					"태안군": {coords: {lat: 36.5000, lng: 126.3000}},
+					"홍성군": {coords: {lat: 36.5000, lng: 126.6000}}
+				}
+			},
+			전북: {
+				coords: {lat: 35.7194, lng: 127.1445},
+				districts: {
+					"고창군": {coords: {lat: 35.4000, lng: 126.7000}},
+					"군산시": {coords: {lat: 35.9650, lng: 126.7300}},
+					"김제시": {coords: {lat: 35.8000, lng: 126.9000}},
+					"남원시": {coords: {lat: 35.4000, lng: 127.4000}},
+					"익산시": {coords: {lat: 35.9500, lng: 126.8000}},
+					"전주시": {coords: {lat: 35.8000, lng: 127.1500}},
+					"정읍시": {coords: {lat: 35.5700, lng: 126.8500}},
+					"완주군": {coords: {lat: 35.8000, lng: 127.2000}},
+					"임실군": {coords: {lat: 35.5000, lng: 127.3000}},
+					"장수군": {coords: {lat: 35.6000, lng: 127.5000}},
+					"진안군": {coords: {lat: 35.7000, lng: 127.3000}}
+				}
+			},
+			전남: {
+				coords: {lat: 34.8144, lng: 126.4633},
+				districts: {
+					"강진군": {coords: {lat: 34.6000, lng: 126.7000}},
+					"고흥군": {coords: {lat: 34.6000, lng: 126.5000}},
+					"곡성군": {coords: {lat: 35.0000, lng: 127.0000}},
+					"광양시": {coords: {lat: 34.9500, lng: 127.7000}},
+					"구례군": {coords: {lat: 35.2000, lng: 127.6000}},
+					"나주": {coords: {lat: 35.0000, lng: 126.8000}},
+					"담양군": {coords: {lat: 35.3000, lng: 126.8000}},
+					"목포시": {coords: {lat: 34.8000, lng: 126.4000}},
+					"무안군": {coords: {lat: 34.8000, lng: 126.6000}},
+					"보성군": {coords: {lat: 34.8000, lng: 127.0000}},
+					"신안군": {coords: {lat: 34.6000, lng: 126.3000}},
+					"여수시": {coords: {lat: 34.7500, lng: 127.7000}},
+					"영광군": {coords: {lat: 35.2000, lng: 126.6000}},
+					"영암군": {coords: {lat: 34.8000, lng: 126.6000}},
+					"완도군": {coords: {lat: 34.3000, lng: 126.7000}},
+					"장성군": {coords: {lat: 35.3000, lng: 126.8000}},
+					"장흥군": {coords: {lat: 34.6000, lng: 126.5000}},
+					"진도군": {coords: {lat: 34.5000, lng: 126.3000}},
+					"함평군": {coords: {lat: 35.0000, lng: 126.5000}},
+					"해남군": {coords: {lat: 34.5000, lng: 126.5000}},
+					"화순군": {coords: {lat: 35.0000, lng: 126.7000}}
+				}
+			},
+			경북: {
+				coords: {lat: 36.4911, lng: 128.8889},
+				districts: {
+					"경산시": {coords: {lat: 35.8000, lng: 128.7000}},
+					"경주": {coords: {lat: 35.8500, lng: 129.2000}},
+					"고령군": {coords: {lat: 35.6000, lng: 128.4000}},
+					"구미시": {coords: {lat: 36.1000, lng: 128.3000}},
+					"김천시": {coords: {lat: 35.7000, lng: 128.1000}},
+					"문경시": {coords: {lat: 36.5700, lng: 128.3000}},
+					"상주": {coords: {lat: 36.4000, lng: 128.2000}},
+					"성주군": {coords: {lat: 35.8000, lng: 128.5000}},
+					"안동시": {coords: {lat: 36.5600, lng: 128.7000}},
+					"영주": {coords: {lat: 36.8000, lng: 128.6000}},
+					"영천시": {coords: {lat: 35.9000, lng: 128.8000}},
+					"예천군": {coords: {lat: 36.5000, lng: 128.3000}},
+					"울릉군": {coords: {lat: 37.5000, lng: 130.8000}},
+					"울진군": {coords: {lat: 36.9000, lng: 129.4000}},
+					"포항시": {coords: {lat: 36.0200, lng: 129.3500}}
+				}
+			},
+			경남: {
+				coords: {lat: 35.2345, lng: 128.6922},
+				districts: {
+					"거제시": {coords: {lat: 34.9000, lng: 128.6000}},
+					"거창군": {coords: {lat: 35.6000, lng: 127.9000}},
+					"고성군": {coords: {lat: 35.2000, lng: 128.5000}},
+					"김해시": {coords: {lat: 35.2000, lng: 128.8000}},
+					"남해군": {coords: {lat: 34.8000, lng: 128.4000}},
+					"밀양시": {coords: {lat: 35.5000, lng: 128.7000}},
+					"사천시": {coords: {lat: 35.0000, lng: 128.6000}},
+					"산청군": {coords: {lat: 35.3000, lng: 127.8000}},
+					"양산시": {coords: {lat: 35.3000, lng: 129.0000}},
+					"의령군": {coords: {lat: 35.3000, lng: 128.5000}},
+					"진주": {coords: {lat: 35.2000, lng: 128.1000}},
+					"창녕군": {coords: {lat: 35.3000, lng: 128.4000}},
+					"창원시": {coords: {lat: 35.2000, lng: 128.6000}},
+					"통영시": {coords: {lat: 34.8000, lng: 128.4000}}
+				}
+			},
+			제주: {
+				coords: {lat: 33.4996, lng: 126.5312},
+				districts: {
+					"서귀포시": {coords: {lat: 33.2540, lng: 126.5600}},
+					"제주시": {coords: {lat: 33.4996, lng: 126.5312}}
+				}
+			}
+		};
+
+		$(document).ready(function () {
+			//모바일 화면 크기
+			$(".hideBtn").data("expanded", false); // 초기 상태 설정
+
+			$(".hideBtn").click(function () {
+				const searchWrapper = $(".searchWrapper");
+				const isExpanded = $(this).data("expanded"); // 현재 상태 가져오기
+
+				if (isExpanded) {
+					searchWrapper.css("height", "20%"); // 높이를 20%로 설정
+					$(this).css("transform", "rotate(0deg)"); // 아이콘 원래 방향
+				} else {
+					searchWrapper.css("height", "85%"); // 높이를 80%로 설정
+					$(this).css("transform", "rotate(180deg)"); // 아이콘 반전
+				}
+
+				// 상태 토글
+				$(this).data("expanded", !isExpanded);
+			});
+
+			loadAllStores()
+
+			let city, district;
+
+			$('#city').change(function () {
+				city = $(this).val();
+				const districtSelect = $('#district');
+
+				districtSelect.empty(); // 기존 옵션 제거
+				if (city) {
+					districtSelect.append('<option value="">구 선택</option>');
+					// Object.keys()를 사용하여 구역 이름을 가져옴
+					Object.keys(districts[city].districts).forEach(function (district) {
+						districtSelect.append(`<option value="${district}">${district}</option>`);
+					});
+					districtSelect.prop('disabled', false); // 구 선택 가능
+				} else {
+					districtSelect.append('<option value="">시/도를 선택하세요</option>');
+					districtSelect.prop('disabled', true); // 구 선택 불가능
+				}
+			});
+
+			$('#district').change(function () {
+				const district = $(this).val();
+
+				if (city && district) {
+					fetchRestaurants(city, district);
+					loadAllStores(city, district);
+				}
+			});
+
+
+			// 사용자의 위치를 가져오는 함수
+			function getUserLocation() {
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(function (position) {
+						const lat = position.coords.latitude;
+						const lng = position.coords.longitude;
+						fetchRestaurantsByLocation(lat, lng); // 사용자 위치로 식당 정보 요청
+						// 화면 너비가 768px 미만일 때만 높이를 80%로 설정
+						if (window.innerWidth < 768) {
+							$(".searchWrapper").css("height", "85%"); // 높이를 80%로 설정
+							$(".hideBtn").data("expanded", true); // 초기 상태 설정
+						}
+
+					}, function () {
+						alert("위치 정보를 가져오는 데 실패했습니다.");
+					});
+				} else {
+					alert("이 브라우저는 Geolocation을 지원하지 않습니다.");
+				}
+			}
+
+			// 사용자 위치를 기반으로 식당 정보를 가져오는 함수
+			function fetchRestaurantsByLocation(lat, lng) {
+				const radius = 5000; // 5km 반경
+				const apiUrl = `https://dapi.kakao.com/v2/local/search/keyword.json?query=비건&category_group_code=FD6&x=${lng}&y=${lat}&radius=${radius}&size=15`;
+				$.ajax({
+					url: apiUrl,
+					type: 'GET',
+					headers: {
+						Authorization: 'KakaoAK 79b293f9f7248b594b68090c70db6c6f' // 카카오 REST API 키 입력
+					},
+					success: function (data) {
+						allRestaurants = data.documents; // 식당 정보를 저장
+						allRestaurants.forEach(restaurant => {
+							const addressParts = restaurant.address_name.split(' '); // 주소를 공백으로 분할
+							const region = addressParts.slice(0, 1).join(' '); // 첫 번째 부분 (예: 경기도)
+							const district = addressParts.slice(1, 2).join(' '); // 두 번째 부분 (예: 수원시)
+							displayRestaurants(allRestaurants, region, district); // 각 식당 리스트 표시
+						});
+					},
+					error: function (error) {
+						console.error("Error fetching data: ", error);
+						alert("식당 정보를 가져오는 데 오류가 발생했습니다.");
+					}
+				});
+			}
+
+			// 페이지 로드 시 사용자의 위치를 가져옴
+			getUserLocation();
+
+			$(".getUserLocationBtn").on("click", function () {
+				if (confirm("현재 위치로 이동하시겠습니까?")) {
+					loadNearbyStores();
+				}
+			})
+
+
+		});
+
+		let allRestaurants = []; // 모든 식당 정보를 저장할 배열
+		let currentPage = 1; // 현재 페이지
+
+		function fetchRestaurants(city, district) {
+
+			// 새로운 지역을 선택할 때 allRestaurants를 초기화
+			allRestaurants = []; // 배열 초기화
+			currentPage = 1; // 페이지 초기화
+
+			const coords = districts[city].districts[district].coords;
+			const lat = coords.lat; // 위도
+			const lng = coords.lng; // 경도
+			const radius = 5000; // 2km 반경
+			const apiUrl = `https://dapi.kakao.com/v2/local/search/keyword.json?query=비건&category_group_code=FD6&x=${lng}&y=${lat}&radius=${radius}&size=15`;
+
+			function fetchPage(page) {
+				$.ajax({
+					url: `${apiUrl}&page=${page}`, // 페이지 번호 추가
+					type: 'GET',
+					headers: {
+						Authorization: 'KakaoAK 79b293f9f7248b594b68090c70db6c6f' // 카카오 REST API 키 입력
+					},
+					success: function (data) {
+						allRestaurants = allRestaurants.concat(data.documents); // 현재 페이지의 식당 정보를 추가
+						if (data.meta.is_end) {
+							displayRestaurants(allRestaurants, city, district);
+
+						} else {
+							fetchPage(page + 1); // 다음 페이지가 있으면 계속해서 가져옴
+						}
+					},
+					error: function (error) {
+						console.error("Error fetching data: ", error);
+						alert("식당 정보를 가져오는 데 오류가 발생했습니다.");
+					}
+				});
+			}
+
+			fetchPage(1); // 첫 페이지부터 시작
+		}
+
+
+
+		// 랜덤 배열 생성 (각각 20개 항목)
+		const stoTitles = [
+			'친환경 건강 카페', '비건 레스토랑', '자연주의 요리', '채식 전문점', '유기농 채식당',
+			'비건 버거샵', '채식 뷔페', '비건 디저트 카페', '로컬 재료 비건 식당', '비건 피자 하우스',
+			'비건 스시 바', '비건 샌드위치 스토어', '비건 비빔밥 전문점', '무첨가 건강식당', '채식 버섯집',
+			'비건 타코 하우스', '채소와 콩 식당', '비건 스무디 카페', '지속가능 식단 전문점', '비건 도시락 가게'
+		];
+
+		const stoContents = [
+			'건강한 식단을 제공합니다.', '다양한 채식 요리를 맛보세요.', '비건 디저트가 유명한 곳입니다.',
+			'유기농 재료만 사용합니다.', '환경 친화적인 가게입니다.', '비건 버거를 즐길 수 있는 곳입니다.',
+			'매일 신선한 채소를 사용합니다.', '글루텐 프리 옵션도 있습니다.', '로컬 재료를 사용한 메뉴를 선보입니다.',
+			'가족과 함께 즐길 수 있는 비건 식당입니다.', '채식의 매력을 느낄 수 있는 곳입니다.', '비건 와플을 제공합니다.',
+			'색다른 비건 요리를 만날 수 있습니다.', '비건 피크닉 세트가 있습니다.', '채식만으로도 든든한 한 끼를 제공합니다.',
+			'아이들을 위한 비건 메뉴도 준비되어 있습니다.', '해외 비건 요리를 선보이는 곳입니다.', '주말 브런치가 인기입니다.',
+			'비건 소스와 드레싱을 만날 수 있습니다.', '비건 전문 요리사들이 준비한 식당입니다.'
+		];
+
+		const stoImages = [
+			'/imgs/map/image1.jpg', '/imgs/map/image2.jpg', '/imgs/map/image3.jpg',
+			'/imgs/map/image4.jpg', '/imgs/map/image5.jpg', '/imgs/map/image6.jpg',
+			'/imgs/map/image7.jpg', '/imgs/map/image8.jpg', '/imgs/map/image9.jpg',
+			'/imgs/map/image10.jpg', '/imgs/map/image11.jpg', '/imgs/map/image12.jpg',
+			'/imgs/map/image13.jpg', '/imgs/map/image14.jpg', '/imgs/map/image15.jpg',
+			'/imgs/map/image16.jpg', '/imgs/map/image17.jpg', '/imgs/map/image18.jpg',
+			'/imgs/map/image19.jpg', '/imgs/map/image20.jpg'
+		];
+
+		const stoOperatingHours = [
+			'10:00 - 22:00', '11:00 - 21:00', '09:00 - 20:00', '12:00 - 23:00', '08:00 - 18:00',
+			'10:00 - 21:00', '11:30 - 22:30', '07:00 - 19:00', '10:00 - 20:00', '09:00 - 22:00',
+			'08:30 - 19:30', '09:00 - 21:00', '12:00 - 21:00', '11:00 - 20:00', '09:30 - 22:00',
+			'10:00 - 20:30', '07:00 - 18:00', '10:00 - 23:00', '08:00 - 20:00', '09:00 - 19:00'
+		];
+
+		const stoClosedDays = [
+			'매주 월요일 휴무', '첫째 주 화요일 휴무', '매주 수요일 휴무', '공휴일 휴무', '매주 금요일 휴무',
+			'둘째, 넷째 주 일요일 휴무', '매월 마지막 주 토요일 휴무', '연중무휴', '매주 토요일 휴무', '둘째 주 목요일 휴무',
+			'매주 목요일 휴무', '매월 둘째 주 수요일 휴무', '셋째 주 일요일 휴무', '공휴일 전날 휴무', '매달 첫째 주 월요일 휴무',
+			'공휴일 개장', '주말과 공휴일 연장 영업', '첫째, 셋째 주 월요일 휴무', '비오는 날 휴무', '여름 휴가철 휴무'
+		];
+
+		const stoRecommendedMenus = [
+			'비건 버거', '토마토 파스타', '아보카도 샐러드', '구운 채소 플래터', '비건 피자',
+			'렌틸콩 스프', '그린 스무디', '비건 초콜릿 케이크', '유기농 현미밥', '비건 라자냐',
+			'비건 타코', '양상추 랩', '비건 초밥', '채소 덮밥', '비건 라면',
+			'코코넛 카레', '두부 샐러드', '과일 플래터', '비건 치즈 케이크', '비건 파니니'
+		];
+
+		const stoParkingInfos = [
+			'주차 가능', '주차 불가', '인근 공용 주차장 이용', '가게 앞 무료 주차', '발렛 파킹 서비스 제공',
+			'가게 뒤쪽 주차장', '지하 주차장', '인근 유료 주차장 이용', '주차 공간 협소', '주차 지원 없음',
+			'주차 구역 안내표지 있음', '주차장 있음', '주차가 혼잡할 수 있음', '주말에만 주차 가능', '가게 앞 주차 금지',
+			'자전거 주차 가능', '전기차 충전 주차 가능', '1시간 무료 주차', '주차 공간 넉넉함', '저녁 시간 주차 금지'
+		];
+
+		const stoVegetarianType = [
+			'비건', '프루테리언', '락토 베지테리언', '오보 베지테리언', '락토 오보 베지테리언', '페스코 베지테리언',
+			'폴로 베지테리언', '플렉시테리언'
+		]
+
+		// 랜덤 선택 함수
+		function getRandomItem(arr) {
+			return arr[Math.floor(Math.random() * arr.length)];
+		}
+
+		async function displayRestaurants(restaurants, city, district) {
+			const restaurantList = $('#restaurantList');
+
+			for (const restaurant of restaurants) {
+				const placeName = restaurant.place_name;
+				const address = restaurant.road_address_name || restaurant.address_name;
+				const phoneNumber = restaurant.phone || '전화번호 없음';
+				const category = restaurant.category_name || '카테고리 없음';
+				const lat = restaurant.y; // 위도
+				const lng = restaurant.x; // 경도
+				const uniqueId = restaurant.id; // 카카오맵 API에서 제공하는 고유 ID
+
+
+
+
+				// 랜덤한 값을 사용하여 데이터 채우기
+				const storeData = {
+					stoName: placeName,
+					stoTitle: getRandomItem(stoTitles),
+					stoContent: getRandomItem(stoContents),
+					stoCategory: category,
+					stoRegionProvince: city,
+					stoRegionCity: district,
+					viewCount: 0,
+					recommendationCount: 0,
+					stoContact: phoneNumber,
+					stoAddress: address,
+					stoImage: getRandomItem(stoImages),
+					stoOperatingHours: getRandomItem(stoOperatingHours),
+					stoClosedDays: getRandomItem(stoClosedDays),
+					stoRecommendedMenu: getRandomItem(stoRecommendedMenus),
+					stoParkingInfo: getRandomItem(stoParkingInfos),
+					stoLatitude: lat,
+					stoLongitude: lng,
+					stoVegetarianType: getRandomItem(stoVegetarianType),
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					isOpen: true,
+					kakaoStoreId: uniqueId
+				};
+
+				// 고유 ID 존재 여부 체크
+				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
+				const exists = await checkIfExists(uniqueId);
+				if (exists) {
+					continue; // 중복된 경우 다음 레스토랑으로 넘어감
+				}
+
+				// API를 통해 데이터 저장
+				await saveStoreData(storeData);
+
+				// 일정 시간 대기 (API 호출 간 간격 유지)
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+		}
+
+		//데이터 저장하는 함수
+		async function saveStoreData(storeData) {
+			try {
+				const response = await fetch('http://localhost:8080/load/store/save', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(storeData),
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to save store data');
+				}
+
+				const data = await response.json();
+				console.log('Store data saved successfully:', data);
+			} catch (error) {
+				console.error('Error saving store data:', error);
+			}
+		}
+		// 고유 ID 존재 여부 체크 함수 (예시)
+		async function checkIfExists(uniqueId) {
+			const response = await fetch(`http://localhost:8080/load/store/save/${uniqueId}`);
+			return response.ok; // 존재하면 true 반환
+		}
+
+
+		// 지도 표시 함수
+		function loadNearbyStores() {
+			const restaurantList = $('#restaurantList');
+			restaurantList.empty(); // 기존 리스트 제거
+			// 사용자의 현재 위치 가져오기
+			navigator.geolocation.getCurrentPosition(position => {
+				const {latitude, longitude} = position.coords;
+
+				fetch('/load/store')
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
+					.then(stores => {
+						// 사용자의 위치 근처 가게 필터링 (예: 5km 이내)
+						const nearbyStores = stores.filter(store => {
+
+							const distance = calculateDistance(latitude, longitude, store.stoLatitude, store.stoLongitude);
+							return distance <= 5; // 5km 이내
+						});
+						displayAllRestaurants(nearbyStores, 1); // 첫 페이지 표시
+
+						// 첫 번째 식당에 대해 지도 초기화
+						if (nearbyStores.length > 0) {
+							initMap(nearbyStores[0].stoLatitude, nearbyStores[0].stoLongitude, nearbyStores[0].stoName);
+						}
+					})
+					.catch(error => console.error('Error fetching stores:', error));
+			}, () => {
+				console.error('Unable to retrieve location.');
+			});
+		}
+
+		function loadAllStores(city, district) {
+			const restaurantList = $('#restaurantList');
+			restaurantList.empty(); // 기존 리스트 제거
+			fetch('/load/store')
+				.then(response => response.json())
+				.then(stores => {
+					const filteredStores = stores.filter(store => {
+						return store.stoRegionProvince === city && store.stoRegionCity === district;
+					});
+					displayAllRestaurants(filteredStores, 1); // 첫 페이지 표시
+				})
+				.catch(error => console.error('Error fetching stores:', error));
+		}
+
+		function displayAllRestaurants(filteredStores, currentPage) {
+			fetch('/load/getUserId') // 서버의 엔드포인트로 요청
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('네트워크 문제가 발생했습니다.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					const userId = data.userId; // 서버에서 받은 UserId
+					const restaurantList = $('#restaurantList');
+					const itemsPerPage = 5; // 페이지당 항목 수
+					const startIndex = (currentPage - 1) * itemsPerPage;
+					const endIndex = startIndex + itemsPerPage;
+					const paginatedRestaurants = filteredStores.slice(startIndex, endIndex);
+					restaurantList.empty(); // 기존 리스트 제거
+					if (paginatedRestaurants.length === 0) {
+						restaurantList.append('<div>식당이 없습니다.</div>');
+						return;
+					}
+
+					paginatedRestaurants.forEach((store, index) => {
+						const {
+							stoId,
+							stoName,
+							stoTitle,
+							stoContent,
+							stoCategory,
+							viewCount,
+							recommendationCount,
+							stoContact,
+							stoAddress,
+							stoImage,
+							stoOperatingHours,
+							stoClosedDays,
+							stoRecommendedMenu,
+							stoParkingInfo,
+							stoLatitude,
+							stoLongitude,
+							stoVegetarianType,
+							stoRegionProvince,
+							stoRegionCity,
+							kakaoStoreId,
+							storeReviews,
+							favoriteStores
+						} = store;
+
+						const isOpen = checkIfOpen(stoOperatingHours); // 여기서 isOpen 값을 설정
+
+						function checkIfOpen(operatingHours) {
+							const [openTime, closeTime] = operatingHours.split(' - ');
+							const currentTime = new Date();
+							const currentHours = currentTime.getHours();
+							const currentMinutes = currentTime.getMinutes();
+
+							const [openHours, openMinutes] = openTime.split(':').map(Number);
+							const [closeHours, closeMinutes] = closeTime.split(':').map(Number);
+
+							const currentTotalMinutes = currentHours * 60 + currentMinutes;
+							const openTotalMinutes = openHours * 60 + openMinutes;
+							const closeTotalMinutes = closeHours * 60 + closeMinutes;
+
+							return currentTotalMinutes >= openTotalMinutes && currentTotalMinutes < closeTotalMinutes;
+						}
+
+						const storeItem = $(`
+                    <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
+                        <p class='solo'>${stoName} - ${stoTitle} </p>
+						<div class="cardIcons ">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080" class="bi bi-eye" viewBox="0 0 16 16">
+						<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+						<path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+						</svg>
+						<span class='text-secondary'>${viewCount}</span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080" class="bi bi-chat" viewBox="0 0 16 16">
+						<path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
+						</svg>
+						<span class='text-secondary'>${storeReviews.length}</span> 
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080" class="bi bi-heart" viewBox="0 0 16 16">
+						<path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+						</svg>
+						<span class='text-secondary'>${favoriteStores.length}</span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080" class="bi bi-star" viewBox="0 0 16 16">
+						  <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+						</svg> 
+						<span class='text-secondary'>${recommendationCount}</span>			
+						</div>
+                        <img src="${stoImage}" alt="${stoName}" class='img-fluid w-100 mb-3'><br>
+						<p><strong>전화번호:</strong> ${stoContact}</p>
+						<p><strong>주소:</strong> ${stoAddress}</p>
+						<p><strong>운영시간:</strong> ${stoOperatingHours} (${isOpen ? '영업중' : '영업종료'})</p>
+						<p><strong>휴무일:</strong> ${stoClosedDays}</p>
+						<p><strong>추천 메뉴:</strong> ${stoRecommendedMenu}</p>
+						<p><strong>주차 정보:</strong> ${stoParkingInfo}</p>
+						<p><strong>채식 종류:</strong> ${stoVegetarianType}</p>
+						<small><strong>카테고리:</strong> ${stoCategory}</small>
+                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btn-info">자세히보기</a>
+						<span class='mx-2 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
+						<span class='btn btn-success w-100' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}', event)">예약🗓️</span>
+						<div id="reservationForm_${stoId}" style="display: none;" onclick="event.stopPropagation();">
+						    <h5>예약 시간 선택</h5>
+							<div class="form-group">
+							    <label for="reservationDate_${stoId}">예약 날짜 선택:</label>
+							    <div class="input-group">
+							        <input type="text" class="form-control" id="reservationDate_${stoId}" placeholder="YYYY-MM-DD" required>
+							        <div class="input-group-append">
+							            <span class="input-group-text">
+							                <i class="fa fa-calendar" aria-hidden="true"></i>
+							            </span>
+							        </div>
+							    </div>
+							
+							</div>
+							<div class="form-group my-2">
+							    <label for="reservationTime_${stoId}">예약 시간 선택:</label>
+							    <select id="reservationTime_${stoId}" class="form-control">
+							        
+							    </select>
+							</div>
+						    <button class="btn btn-primary" onclick="makeReservation()">확인</button>
+						    <button class="btn btn-secondary" onclick="hideReservationForm()">취소</button>
+						</div>
+                    </div>
+                `);
+
+						restaurantList.append(storeItem);
+
+						storeItem.on('click', function () {
+							// 클릭한 항목이 이미 확장된 상태인지 확인
+							if ($(this).hasClass('expanded')) {
+								$(this).removeClass('expanded'); // 클래스 제거
+							} else {
+								$('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
+								$(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
+							}
+
+							initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
+							$(`#${store.stoId}`).datetimepicker(); // 고유 ID로 초기화
+						});
+
+
+					});
+
+					// 기본적으로 첫 번째 항목 확장
+					if (paginatedRestaurants.length > 0) {
+						const firstItem = $('.restaurant-item').first();
+						initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
+					}
+
+					setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
+				})
+				.catch(error => console.error('Error:', error));
+		}
+
+
+		//페이지네이션 설정 함수
+		//페이지네이션 함수
+		function setupPagination(totalItems, itemsPerPage, filteredStores) {
+			const pagination = $('#pagination');
+			pagination.empty(); // 기존 페이지네이션 제거
+			const totalPages = Math.ceil(totalItems / itemsPerPage); // 총 페이지 수
+			const maxButtons = 3; // 표시할 최대 버튼 수
+			let startPage, endPage;
+
+			// 시작 페이지와 끝 페이지 계산
+			if (totalPages <= maxButtons) {
+				startPage = 1;
+				endPage = totalPages;
+			} else {
+				startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+				endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+				// 시작 페이지가 1보다 작은 경우 조정
+				if (startPage === 1) {
+					endPage = Math.min(maxButtons, totalPages);
+				}
+				// 끝 페이지가 총 페이지 수보다 큰 경우 조정
+				if (endPage === totalPages) {
+					startPage = Math.max(1, totalPages - maxButtons + 1);
+				}
+			}
+
+			// 이전 버튼 추가
+			const prevButton = $('<button>').html('<i class="fas fa-chevron-left"></i>').on('click', function () {
+				if (currentPage > 1) {
+					currentPage--; // 페이지 감소
+					setupPagination(totalItems, itemsPerPage, filteredStores); // 페이지네이션 업데이트
+					displayAllRestaurants(filteredStores, currentPage); // 해당 페이지의 식당 리스트 표시
+				}
+			});
+			// 이전 버튼 비활성화 여부 설정
+			if (currentPage === 1) {
+				prevButton.prop('disabled', true).addClass('disabled'); // 비활성화 상태
+			}
+			pagination.append(prevButton);
+
+			// 페이지 버튼 추가
+			for (let i = startPage; i <= endPage; i++) {
+				const pageButton = $('<button>').text(i).on('click', function () {
+					currentPage = i; // 클릭한 페이지로 이동
+					displayAllRestaurants(filteredStores, currentPage); // 해당 페이지의 식당 리스트 표시
+					setupPagination(totalItems, itemsPerPage, filteredStores); // 페이지네이션 업데이트
+				});
+
+				if (i === currentPage) {
+					pageButton.addClass('active');
+				}
+
+				pagination.append(pageButton);
+			}
+
+			// 다음 버튼 추가
+			const nextButton = $('<button>').html('<i class="fas fa-chevron-right"></i>').on('click', function () {
+				if (currentPage < totalPages) {
+					currentPage++; // 페이지 증가
+					setupPagination(totalItems, itemsPerPage, filteredStores); // 페이지네이션 업데이트
+					displayAllRestaurants(filteredStores, currentPage); // 해당 페이지의 식당 리스트 표시
+				}
+			});
+			// 다음 버튼 비활성화 여부 설정
+			if (currentPage === totalPages) {
+				nextButton.prop('disabled', true).addClass('disabled'); // 비활성화 상태
+			}
+			pagination.append(nextButton);
+		}
+
+
+		// 거리 계산 함수
+		function calculateDistance(lat1, lon1, lat2, lon2) {
+			const R = 6371; // 지구 반지름 (킬로미터)
+			const dLat = (lat2 - lat1) * Math.PI / 180;
+			const dLon = (lon2 - lon1) * Math.PI / 180;
+			const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+				Math.sin(dLon / 2) * Math.sin(dLon / 2);
+			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+			return R * c; // 거리 반환 (킬로미터)
+		}
+
+		// 페이지 로드 시 사용자의 위치 근처 가게 로드
+		$(document).ready(() => {
+			loadNearbyStores(); // 홈페이지 로드 시 사용자 위치 근처 가게 로드
+		});
+
+		function initMap(lat, lng, placeName) {
+			const mapContainer = document.getElementById('map');
+			const mapOption = {
+				center: new kakao.maps.LatLng(lat, lng),
+				level: 3 // 초기 확대 수준
+			};
+			const map = new kakao.maps.Map(mapContainer, mapOption);
+
+			// 마커 추가
+			const markerPosition = new kakao.maps.LatLng(lat, lng);
+			const marker = new kakao.maps.Marker({
+				position: markerPosition,
+				title: placeName
+			});
+			marker.setMap(map);
+
+			// Custom Overlay 추가
+			const customOverlay = new kakao.maps.CustomOverlay({
+				content: `
+							<div class='infowindowBox'>
+								<span class='closeBtn' onclick='this.parentElement.parentElement.style.display="none"'>✖</span>
+								<div style='font-size: 16px; color: #333;'>${placeName}</div>
+							</div>`,
+				position: markerPosition // Overlay 위치 설정
+			});
+			customOverlay.setMap(map);
+
+			// 사용자 정의 확대/축소 버튼 이벤트 리스너
+			document.getElementById('zoomIn').addEventListener('click', function () {
+				map.setLevel(map.getLevel() - 1); // 확대
+			});
+
+			document.getElementById('zoomOut').addEventListener('click', function () {
+				map.setLevel(map.getLevel() + 1); // 축소
+			});
+		}
+
+		//찜하기 함수
+		function addFavorite(memberId, stoId) {
+			console.log('memberId:', memberId); // 디버깅용 출력
+			console.log('stoId:', stoId); // 디버깅용 출력
+			fetch(`/store/favorite/add?memberId=${memberId}&stoId=${stoId}`, { // 서버의 API 엔드포인트
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({memberId: memberId, stoId: stoId})
+			})
+				.then(response => {
+					if (response.ok) {
+						alert('찜하기에 성공했습니다!');
+					} else {
+						return response.text().then(text => {
+							if (text === "로그인해주세요") {
+								alert(text);
+								// 로그인 페이지로 리다이렉트
+								window.location.href = 'http://localhost:8080/member/login'; // 로그인 페이지 URL로 수정
+							} else {
+								alert(text); // 다른 에러 메시지 표시
+							}
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('서버 오류가 발생했습니다.');
+				});
+		}
+
+
+		//예약 시간 함수
+		function populateReservationTimes(operatingHours) {
+			const timeSelect = document.getElementById(`reservationTime_${window.currentStoId}`);
+			timeSelect.innerHTML = ''; // 기존 옵션 삭제
+
+			const [start, end] = operatingHours.split(' - '); // 시작 시간과 종료 시간 분리
+			const [startHour, startMinute] = start.split(':').map(Number);
+			const [endHour, endMinute] = end.split(':').map(Number);
+			const interval = 30; // 간격 (분 단위)
+
+			const now = new Date(); // 현재 시간
+			const currentHour = now.getHours();
+			const currentMinute = now.getMinutes();
+
+			// 종료 시간에서 30분 전 계산
+			let adjustedEndHour = endHour;
+			let adjustedEndMinute = endMinute - 30;
+
+			if (adjustedEndMinute < 0) {
+				adjustedEndHour -= 1;
+				adjustedEndMinute += 60; // 60분으로 보정
+			}
+
+			// 종료 시간이 0시가 되지 않도록 처리
+			if (adjustedEndHour < startHour) {
+				adjustedEndHour = startHour;
+				adjustedEndMinute = 0;
+			}
+
+			let hasAvailableTime = false; // 예약 가능한 시간이 있는지 여부
+
+			for (let hour = startHour; hour <= adjustedEndHour; hour++) {
+				for (let minute = (hour === startHour ? startMinute : 0); minute < 60; minute += interval) {
+					if (hour === adjustedEndHour && minute > adjustedEndMinute) break; // 조정된 종료 시간 초과 시 중단
+
+					// 현재 시간보다 이전의 옵션 제거
+					if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+						continue; // 이전 시간은 건너뜀
+					}
+
+					hasAvailableTime = true; // 예약 가능한 시간이 있음을 표시
+
+					const formattedHour = hour.toString().padStart(2, '0');
+					const formattedMinute = minute.toString().padStart(2, '0');
+					const optionValue = `${formattedHour}:${formattedMinute}`;
+					const option = document.createElement('option');
+					option.value = optionValue;
+					option.textContent = optionValue;
+					timeSelect.appendChild(option);
+				}
+			}
+
+			// 예약 가능한 시간이 없을 경우 placeholder처럼 보이도록 설정
+			if (!hasAvailableTime) {
+				const placeholderOption = document.createElement('option');
+				placeholderOption.value = '';
+				placeholderOption.textContent = '예약 가능한 시간이 없습니다';
+				placeholderOption.disabled = true; // 선택할 수 없도록 비활성화
+				placeholderOption.selected = true; // 기본 선택 상태
+				timeSelect.appendChild(placeholderOption);
+			}
+		}
+
+		// 예약 폼이 열릴 때 시간 옵션을 채우도록 변경
+		function showReservationForm(userId, stoId, operatingHours, event) {
+			event.stopPropagation()
+			document.getElementById(`reservationForm_${stoId}`).style.display = 'block';
+			window.currentUserId = userId;
+			window.currentStoId = stoId;
+			populateReservationTimes(operatingHours); // 시간 옵션 채우기
+
+
+
+			// Bootstrap Datepicker 초기화 (한글 설정)
+			$(`#reservationDate_${stoId}`).datepicker({ // 수정
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayHighlight: true,
+				language: "kr",
+				startDate: new Date() // 오늘 날짜부터 선택 가능
+			}).datepicker('setDate', new Date()); // 오늘 날짜로 초기화
+		}
+
+
+		function makeReservation() {
+			const reservationDate = $(`#reservationDate_${window.currentStoId}`).val();
+			const reservationTime = $(`#reservationTime_${window.currentStoId}`).val();
+			const userId = window.currentUserId;
+			if (userId == '로그인되지 않았습니다.') {
+				window.location.href = 'http://localhost:8080/member/login'; // 로그인 페이지 URL로 수정
+			}
+
+			const stoId = window.currentStoId;
+
+			const reservationData = {
+				userId: userId,
+				stoId: stoId,
+				reservationTime: `${reservationDate} ${reservationTime}`,
+			};
+
+			fetch('/store/reservations', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(reservationData),
+			})
+				.then(response => {
+					if (!response.ok) {
+						return response.json().then(err => {
+							throw new Error(err.message || '예약 요청 중 오류가 발생했습니다.');
+						});
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('예약이 완료되었습니다!');
+					hideReservationForm();  // 예약 완료 후 폼 숨기기
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+		function hideReservationForm() {
+			document.getElementById(`reservationForm_${window.currentStoId}`).style.display = 'none'; // 수정
+		}
+
+		// 날짜 및 시간 선택기 토글 함수
+		function toggleDateTimePicker() {
+			const picker = $(`#datetimepicker_${window.currentStoId}`);
+
+			// DateTimePicker가 초기화되었는지 확인
+			const dateTimePicker = picker.data("DateTimePicker");
+			if (dateTimePicker) {
+				if (dateTimePicker.date()) {
+					dateTimePicker.date(null); // 닫기
+				} else {
+					dateTimePicker.show(); // 열기
+				}
+			} else {
+				console.error("DateTimePicker가 초기화되지 않았습니다.");
+				alert("날짜 및 시간 선택기가 초기화되지 않았습니다.");
+			}
+		}
+
+
+	</script>
+</div>
+
+</html>

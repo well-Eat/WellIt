@@ -34,6 +34,7 @@ public class SecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests((requests) -> requests //requests:authorizeHttpRequests
+		        .requestMatchers("/getUserId").permitAll() // 이 엔드포인트에 대한 접근 허용
 				.requestMatchers(new AntPathRequestMatcher("/**")).permitAll())	
 			    .headers((headers) -> headers
 			    		.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))

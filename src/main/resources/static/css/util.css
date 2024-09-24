@@ -1,0 +1,93 @@
+/******* util Style *********/
+/******* util Style *********/
+/******* util Style *********/
+.f12{
+    font-size: 12px;
+}
+.f14{
+    font-size: 14px;
+}
+.f16{
+    font-size: 16px;
+}
+.f18{
+    font-size: 18px;
+}
+.f20{
+    font-size: 20px;
+}
+.f22{
+    font-size: 22px;
+}
+.f24{
+    font-size: 24px;
+}
+
+.f28 {
+    font-size: 28px;
+}
+.f32 {
+    font-size: 32px;
+}
+.c333{
+    color: #333333 !important;
+}
+.c444{
+    color: #444444 !important;
+}
+.c555{
+    color: #555555 !important;
+}
+.c666{
+    color: #666666 !important;
+}
+.c777{
+    color: #777777 !important;
+}
+.c888{
+    color: #888888 !important;
+}
+.c999{
+    color: #999999 !important;
+}
+
+.fw500{
+    font-weight: 500;
+}
+.fw700{
+    font-weight: 700;
+}
+.wl-red{
+    color:#bc4749;
+}
+
+input[type="checkbox"] {
+    accent-color: red; /* 체크박스 체크 색상 변경 */
+    /* background-color: orange; */ /* 체크된 상태에서 배경색 */
+    border-color: #999999a2;/* 테두리 색상 */
+    appearance: none;
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 커스텀 체크박스 색상 변경 예시 */
+.form-check-input[type="checkbox"]:checked {
+    appearance: none;
+    /* accent-color: purple; */
+    background-color: #fff; /* 체크된 상태에서 배경색 */
+    border-color: #999999a2; /* 테두리 색상 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23198754' stroke-linecap='square' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3 6-6'/%3E%3C/svg%3E");
+      background-position: center;
+  }
+
+  .form-check-input[type="checkbox"]:focus{
+    box-shadow: 0 0 5px -1px #198754de;
+    background-color: #fff;
+    border-color: #999999a2; /* 테두리 색상 */
+    /* border-color: var(--bs-success); */
+  }
+  .form-check-input[type="checkbox"]:active{
+    background-color: #fff;
+  }
+
+
