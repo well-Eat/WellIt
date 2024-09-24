@@ -1,6 +1,5 @@
 header {
-	position: relative;
-	background-color: #386641 !important;
+	position: relative;	
 }
 
 .formStyle {
@@ -15,9 +14,35 @@ header {
 .greenBtn {
 	background-color: #6A994E;
 }
+.sidebar {
+	border-radius: 10px;
+}
+
+.round{
+	border-radius: 10px;
+}
 
 .greenBtn:hover {
 	background-color: #A7C957;
+}
+#nav_accordion{
+	padding-right: 0px;
+	border-bottom: none;
+}
+.lightgreen{
+	background-color: #C0DA74;
+}
+
+.beige{
+	background-color: #f2e8cf !important;
+}
+
+.mpcolor{
+ background-color: #DBEAAE;
+}
+
+.greenfont{
+	color: #6A994E;
 }
 
 .eye-icon {
@@ -30,10 +55,6 @@ header {
 .eye {
 	cursor: pointer;
 	color: black;
-}
-
-#mypage {
-	margin-top: 100px;
 }
 
 .sidebar {
@@ -49,7 +70,7 @@ header {
 }
 
 .nav-link {
-	color: black
+	color: black; 
 }
 
 .error-message {
@@ -61,4 +82,8 @@ header {
 
 .error-message p {
 	margin-bottom: 0;
+}
+
+.tabnav{
+	flex: 1 1 45%;
 }

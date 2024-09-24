@@ -71,13 +71,14 @@
 				isMouseOverPlace = true;
 				submenu.stop().slideDown();
 				navbar.addClass("green-navbar");
-				navbar.css({backgroundColor : "#386641"})
+				//navbar.css({backgroundColor : "#386641"})
 				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
 			menu.mouseout(function () {
 				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");				
+				//navbar.css({backgroundColor : "transparent"};
 				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")
@@ -87,7 +88,7 @@
 			submenu.mouseover(function () {
 				isMouseOverPlace = true;
 				submenu.stop().slideDown();
-				navbar.addClass("green-navbar");
+				//navbar.addClass("green-navbar");
 				navbar.css({backgroundColor : "#386641"})
 				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
 			});
@@ -96,6 +97,7 @@
 				isMouseOverPlace = false;
 				submenu.stop().slideUp();
 				navbar.removeClass("green-navbar");
+				//navbar.css({backgroundColor : "transparent"})
 				$(".custom-sub").css({display: "none"})
 				if ($(window).scrollTop() > height) {
 					navbar.addClass("green-navbar")

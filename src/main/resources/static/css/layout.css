@@ -136,6 +136,7 @@ header .custom-menu ul.custom-main li a {
 
 .custom-menu.custom-sub .custom-submenu2 ul li a{
 	color:white;
+	font-weight: bold;
 }
 
 /* 아이콘들 아래 서브메뉴 */
