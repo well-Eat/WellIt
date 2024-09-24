@@ -1,6 +1,5 @@
 package com.wellit.project.order;
 
-import com.wellit.project.shop.ProdReview;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +12,8 @@ public class OrderItemProcessDTO {
     private String prodThumb;
     private Integer prodOrgPrice; //상품 원래 가격
     private Integer prodFinalPrice; //판매 가격(할인율 반영)
+
+    private Double prodDiscount; //할인율
 
 
 

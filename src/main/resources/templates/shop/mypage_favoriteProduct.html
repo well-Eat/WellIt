@@ -1,0 +1,38 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+	
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	
+	
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+		
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center favoriteProduct" th:attr="data-member-id=${memberId}">
+				찜한 상품
+			</div>
+		</div>
+		
+		<!--판매 상품 리스트-->
+		<div
+				class="favoriteList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 py-5">
+		
+		
+		</div>
+	
+	
+	</div><!-- // #wrapper -->
+	<script th:inline="javascript">
+      window.memberId = [[${memberId}]];
+	</script>
+	<!--shop js link-->
+	<script src="/js/shop.js"></script>
+	
+</div>
+</html>

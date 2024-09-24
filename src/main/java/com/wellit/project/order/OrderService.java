@@ -7,17 +7,19 @@ import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.annotation.Lazy;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,7 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final DeliveryService deliveryService;
     private final CancelOrderRequestRepository cancelOrderRequestRepository;
+    private final OrderItemRepository orderItemRepository;
 
     /*주문 생성*/
     public PurchaseOrder addOrder(OrderForm orderForm, String memberId){
@@ -56,8 +59,12 @@ public class OrderService {
         for (OrderItemQuantity orderItemQuantity : orderItemQuantityList) {
             if (!orderItemQuantity.isBooleanOrder()) continue;
             OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(productRepository.findById(orderItemQuantity.getProdId()).orElseThrow());
+            Product product = productRepository.findById(orderItemQuantity.getProdId()).orElseThrow();
+            orderItem.setProduct(product);
             orderItem.setQuantity(orderItemQuantity.getQuantity());
+            //재고수량 차감
+            product.setProdStock(product.getProdStock()-orderItemQuantity.getQuantity());
+
             orderItem.setSumOrgPrice(orderItemQuantity.getSumOrgPrice());
             orderItem.setSumDiscPrice(orderItemQuantity.getSumDiscPrice());
             orderItem.setPurchaseOrder(po);
@@ -89,6 +96,36 @@ public class OrderService {
         return purchaseOrderRepository.save(po);
 
     }
+
+    @Transactional
+    @Scheduled(fixedRate = 300000) // 30분마다 실행
+    public void removeExpiredOrders() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime cutoffTime = now.minusMinutes(30); // 30분 전 시간 계산
+
+        // 10분이 지난 PAYMENT_WAIT 상태의 주문 찾기
+        List<PurchaseOrder> expiredOrders = purchaseOrderRepository.findByStatusAndCreatedAtBefore(OrderStatus.PAYMENT_WAIT, cutoffTime);
+
+        for (PurchaseOrder order : expiredOrders) {
+            // orderItems 명시적 초기화
+            Hibernate.initialize(order.getOrderItems());
+
+            // 주문의 각 OrderItem에 대해 재고 복구
+            for (OrderItem orderItem : order.getOrderItems()) {
+                Product product = orderItem.getProduct();
+
+                // 재고 복구 (차감된 수량을 다시 복구)
+                product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+
+                // 재고 업데이트
+                productRepository.save(product);
+            }
+
+            // 주문 삭제
+            purchaseOrderRepository.delete(order);
+        }
+    }
+
 
     /* 주문 검색 */
     public PurchaseOrder getOnePO(String orderId){
@@ -188,7 +225,7 @@ public class OrderService {
         // 금액 업데이트
         po.setMilePay(poForm.getMilePay());
         po.setTotalPay(poForm.getTotalPay());
-        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay());
+        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay()*(-1));
         log.info("금액 업뎃 저장완료");
 
 
@@ -205,35 +242,6 @@ public class OrderService {
     }
 
 
-    //주문 취소 후 db내용 변경 프로세스
-    @Transactional
-    public boolean updateOrderStatusToCanceled(String orderId, String  impUid, String reason){
-
-        try{
-            //연동된 주문서 찾기
-            PurchaseOrder po = getOnePO(orderId);
-
-            //payment 정보 변경
-            Payment payment = po.getPayment();
-
-            if (payment == null) {
-                throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
-            }
-
-            payment.setPaymentStatus("cancelled");
-            payment.setCancelReason(reason);
-
-            po.setStatus(OrderStatus.CANCELLED);
-            po.setPayment(payment);
-            purchaseOrderRepository.save(po);
-
-            return true;
-        } catch (Error error){
-            throw new RuntimeException("orderService() : updateOrderStatusToCanceled() : db저장중 오류 발생");
-        }
-
-    }
-
 
 
 
@@ -242,7 +250,9 @@ public class OrderService {
     // mypage : 주문내역 리스트
     public List<PoHistoryForm> getPoHistoryList(String memberId){
 
-        List<PurchaseOrder> poList = purchaseOrderRepository.findAllByMember_MemberIdAndStatusNot(memberId, OrderStatus.PAYMENT_WAIT);
+        List<PurchaseOrder> poList = purchaseOrderRepository.findAllByMember_MemberIdAndStatusNotOrderByCreatedAtDesc(memberId, OrderStatus.PAYMENT_WAIT);
+
+        log.info("poList.size()"+poList.size());
 
         List<PoHistoryForm> poHistoryList = poList.stream().map(this::poHistoryConvertToDTO)
                                                   .collect(Collectors.toList());
@@ -294,6 +304,13 @@ public class OrderService {
         dto.setOrderId(po.getOrderId());
         dto.setOrderStatus(po.getStatus());
 
+        //주문자 정보
+        dto.setMemberId(po.getMember().getMemberId());
+        dto.setMemberName(po.getMember().getMemberName());
+        dto.setMemberPhone(po.getMember().getMemberPhone());
+        dto.setMemberEmail(po.getMember().getMemberEmail());
+
+
         //PurchaseOrder 금액 필드
         dto.setOrgPrice(po.getOrgPrice() );
         dto.setDiscPrice(po.getDiscPrice() );
@@ -327,8 +344,8 @@ public class OrderService {
 
 
         //ItemList 추가 (PO별 구매 아이템)
-        List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
-        dto.setOrderItems(orderItemDTOList);
+        //List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
+        //dto.setOrderItems(orderItemDTOList);
 
         return dto;
 
@@ -370,14 +387,24 @@ public class OrderService {
     /************** 주문 처리 로직 ************************/
     /************** 주문 처리 로직 ************************/
     /************** 주문 처리 로직 ************************/
-    public Page<PurchaseOrder> findOrders(String search, String status, int page) {
-        // 검색 및 필터링 로직 추가
+    //admin : 주문 리스트 페이징 리턴
+    public Page<PurchaseOrder> findOrders(String search, String status, String startDate, String endDate, int page) {
         Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);
+
+        // 시작 날짜와 끝 날짜 처리
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate).plusDays(1) : null;
+
+        LocalDateTime startDateTime = (start != null) ? start.atStartOfDay() : null;  // LocalDate -> LocalDateTime
+        LocalDateTime endDateTime = (end != null) ? end.atStartOfDay() : null;        // LocalDate -> LocalDateTime
+
         if (search != null && !search.isEmpty()) {
             return purchaseOrderRepository.findByOrderIdContaining(search, pageable);
         } else if (status != null && !status.isEmpty()) {
-            return purchaseOrderRepository.findByStatus(OrderStatus.valueOf(status), pageable);
+            return purchaseOrderRepository.findByStatusAndCreatedAtBetween(OrderStatus.valueOf(status), startDateTime, endDateTime, pageable);
+        } else if (startDateTime != null && endDateTime != null) {
+            return purchaseOrderRepository.findByCreatedAtBetween(startDateTime, endDateTime, pageable);
         } else {
             return purchaseOrderRepository.findAll(pageable);
         }
@@ -395,7 +422,7 @@ public class OrderService {
 
         //PurchaseOrder 기본정보 추가
         dto.setOrderId(po.getOrderId());
-        dto.setOrderStatus(po.getStatus());
+        dto.setOrderStatus(po.getStatus().renderStatus());
 
         //주문자 정보
         dto.setMemberName(po.getMember().getMemberName());
@@ -446,7 +473,7 @@ public class OrderService {
     }
 
     // 구매 아이템 조회 (PO별 구매 아이템 리스트 반환)
-    private List<OrderItemProcessDTO> getOrderItemProcessDtoList(PurchaseOrder po){
+    public List<OrderItemProcessDTO> getOrderItemProcessDtoList(PurchaseOrder po){
         List<OrderItemProcessDTO> orderItemProcessDTOList = po.getOrderItems().stream()
                                                 .map(orderItem -> {
                                                     OrderItemProcessDTO itemDTO = new OrderItemProcessDTO();
@@ -457,6 +484,8 @@ public class OrderService {
                                                     itemDTO.setProdThumb(product.getProdMainImg());
                                                     itemDTO.setProdOrgPrice(product.getProdOrgPrice());
                                                     itemDTO.setProdFinalPrice(product.getProdFinalPrice());
+
+                                                    itemDTO.setProdDiscount(product.getProdDiscount());
 
                                                     itemDTO.setQuantity(orderItem.getQuantity());
                                                     itemDTO.setSumFinalPrice(orderItem.getSumOrgPrice()+orderItem.getSumDiscPrice());
@@ -471,20 +500,6 @@ public class OrderService {
     }
 
 
-
-
-
-
-
-    /*public void cancelOrder(String orderId) {
-        PurchaseOrder order = findOrderById(orderId);
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new IllegalArgumentException("이미 취소된 주문입니다.");
-        }
-        order.setStatus(OrderStatus.CANCELLED);
-        purchaseOrderRepository.save(order);
-    }*/
-
      //주문 출고 처리 메서드
     public void shipOrder(String orderId, String invoiceNum) {
         PurchaseOrder order = getOnePO(orderId);
@@ -498,6 +513,72 @@ public class OrderService {
         order.setStatus(OrderStatus.DELIVERING);
         purchaseOrderRepository.save(order);
     }
+
+     //배송완료 처리 메서드
+    public void deliveryComplete(String orderId, String invoiceNum) {
+        PurchaseOrder order = getOnePO(orderId);
+
+
+        // 배송 정보 업데이트 및 송장번호 저장
+        Delivery delivery = order.getDelivery();
+        //delivery.setInvoiceNum(invoiceNum);
+        delivery.setDeliveryStatus(DeliveryStatus.DELIVERED);
+
+
+        order.setStatus(OrderStatus.COMPLETED);
+        purchaseOrderRepository.save(order);
+    }
+
+
+
+
+
+    //주문 취소 후 db내용 변경 프로세스
+    @Transactional
+    public boolean updateOrderStatusToCanceled(String orderId, String  impUid, String reason){
+
+        try{
+            //연동된 주문서 찾기
+            PurchaseOrder po = getOnePO(orderId);
+
+            //payment 정보 변경
+            Payment payment = po.getPayment();
+
+            if (payment == null) {
+                throw new IllegalStateException("결제 정보가 없습니다. Order ID: " + orderId);
+            }
+
+            payment.setPaymentStatus("cancelled");
+            payment.setCancelReason(reason);
+
+            // 마일리지 복구
+        log.info("마일리지 사용 금액 :"+ po.getMilePay());
+        log.info("마일리지 복구 전 :"+ po.getMember().getMileage() );
+        po.getMember().setMileage( po.getMember().getMileage() + po.getMilePay());
+        log.info("마일리지 복구 후 :"+ po.getMember().getMileage() );
+
+        //재고 복구
+            List<OrderItem> orderItems = po.getOrderItems();
+            for (OrderItem orderItem : orderItems) {
+                Product product = orderItem.getProduct();
+                log.info("복구 전 재고: {}:{}", product.getProdName(), product.getProdStock());
+                product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+                productRepository.save(product); // Product 재고 업데이트
+            }
+
+
+            //주문서 상태 변경
+            po.setStatus(OrderStatus.CANCELLED);
+            po.setPayment(payment);
+            purchaseOrderRepository.save(po);
+
+            return true;
+        } catch (Error error){
+            throw new RuntimeException("orderService() : updateOrderStatusToCanceled() : db저장중 오류 발생");
+        }
+
+    }
+
 
     //주문 취소 상태 업데이트
     public PurchaseOrder updateCancelState(String impUid, String cancelReason){
@@ -578,6 +659,23 @@ public class OrderService {
 
         }
         return cancelRequestFormList;
+    }
+
+
+    //주문 상세페이지 주문 취소 버튼 여부
+    public boolean isCancelBtn(String success, OrderStatus status){
+        if(success != null){
+            return false;
+        }
+        if(status.equals(OrderStatus.CANCELLED) || status.equals(OrderStatus.WAITING_CANCEL) || status.equals(OrderStatus.PAYMENT_WAIT)){
+            return false;
+        }
+        return true;
+    }
+
+    public Long getProdIdByOrderItemId(Long orderItemId){
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).get();
+        return orderItem.getProduct().getProdId();
     }
 
 

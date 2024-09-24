@@ -208,14 +208,24 @@
 					</tr>
 					<tr>
 						<th scope="row">사용금액</th>
-						<td class="input-group">
-							<input type="number" class="form-control milePay" th:value="0" th:field="*{milePay}" id="milePay" step="1000">
-							<a href="javascript:void(0);" class="btn btn-sm border float-start useAll" onclick="useAllMileage();">&nbsp; 모두사용 &nbsp;</a>
+						
+						
+						<td>
+							<div class="row justify-content-start">
+								<div class="col-12 d-flex column-gap-1">
+									<input type="number" class="form-control milePay" th:value="0" th:field="*{milePay}" id="milePay"
+									       step="1000">
+									<input type="button" onclick="useAllMileage()" class="btn card-link useAll border"
+									       value="&nbsp; 모두사용 &nbsp;">
+									<!--<a href="javascript:void(0);" class="btn btn-sm border float-start useAll" onclick="useAllMileage();">&nbsp; 모두사용 &nbsp;</a>-->
+								</div>
+							</div>
 						</td>
+	
 					</tr>
 				
 				</table>
-				<p class="c999"><small>* 당 주문 건의 마일리지는 배송완료 3일 후 지급됩니다.</small> </p>
+
 			</div>
 		</section> <!-- //mileage -->
 		
@@ -298,14 +308,21 @@
 		
 		<section class="row payment position-relative mb-5">
 			<p class="subtle f18 c666 fw-bold">
-				결제 수단
+				카카오 페이로 결제 하기
 			</p>
 			<div class="cardWrapper">
-				
-				<div class="card border">
-					결제 api 적용할 곳
+
+				<div class="card border-0">
+					<a href="javascript:void(0);" id="payment" class="btn d-flex border btn-warning p-2 rounded-3 justify-content-center align-content-center"
+					   style="height: 40px;">
+						<picture>
+							<source srcset="/imgs/shop/payment/kakaopay_CI_small_textdark.png" media="(max-width: 600px)">
+							<img src="/imgs/shop/payment/kakaopay_CI_big_textdark.png" alt="결제하기 버튼"
+								 class="c333 fw700" style="max-height: 80%; max-width: 100%;">
+						</picture>
+					</a>
 				</div>
-			
+
 			</div>
 		</section> <!-- //payment -->
 		
@@ -314,18 +331,7 @@
 		<input type="hidden" th:field="*{totalPay}" id="totalPay" th:attr="data-nums=${poForm.totalPay}" placeholder="마일리지 할인까지 하고 난 지불해야할 금액">
 		
 		
-		
-		<section class="submitBtn">
-			<a href="javascript:void(0);" id="payment" class="btn d-flex border btn-warning p-2 rounded-3 justify-content-center align-content-center"
-			   style="height: 40px;">
-				<picture>
-					<source srcset="/imgs/shop/payment/kakaopay_CI_small_textdark.png" media="(max-width: 600px)">
-					<img src="/imgs/shop/payment/kakaopay_CI_big_textdark.png" alt="결제하기 버튼"
-					     class="c333 fw700" style="max-height: 80%; max-width: 100%;">
-				</picture>
-<!--				<span class="align-bottom" style="margin-left: 10px; line-height: 24px;">결제하기</span>-->
-			</a>
-		</section> <!-- //submitBtn -->
+
 		
 	
 	

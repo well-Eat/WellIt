@@ -1,6 +1,7 @@
 package com.wellit.project.member;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,8 +12,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 
 import com.wellit.project.order.Cart;
+import com.wellit.project.shop.FavoriteProduct;
 import jakarta.persistence.*;
-import org.hibernate.validator.constraints.Length;
 
 
 import jakarta.validation.constraints.Email;
@@ -94,38 +95,42 @@ public class Member {
 	    }
 
 		@OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+		@JsonManagedReference("member-cart")
 		private Cart cart;
 	    
 	    private String resetToken; // 비밀번호 재설정 토큰을 저장할 필드
 	    
 	    private Integer mileage;
 
-	   
+
 	    public Collection<? extends GrantedAuthority> getAuthorities() {
 	        // 사용자 권한 설정 (예: ROLE_USER)
 	        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
 	    }
-	    
+
 	    private String memberType;
-	    
 
 
 
-	    
+
+
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 		@JsonManagedReference("member-favorites") // 이름 설정
 	    private List<FavoriteStore> favoriteStores;
-	    
+
+		@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+		@JsonManagedReference("member-favorite-product")
+		private List<FavoriteProduct> favoriteProductList = new ArrayList<>();
+
 	    @Column
 	    private boolean isBusiness; // 사업자용 여부
-	    
+
 	    @Column
 	    private String businessName; // 가게 이름 추가
-	    
+
 	    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	    @JsonManagedReference("member-reservations")
 	    private List<StoreReservation> reservations; // 회원이 가진 예약 목록
-	    
-	    
-}
 
+
+}

@@ -75,29 +75,47 @@
 				<!-- 상품설명 -->
 				<div class="card-body">
 					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
-						<h5 class="prodName card-title" th:text="${item.prodName}"></h5>
+						<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
 						<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
 						
 						<!--할인율 있는 경우 가격 표시 -->
 						<th:block th:if="${item.prodDiscount != null and item.prodDiscount > 0}">
 							<p class="prodOrgPrice card-text" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
 							<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,2,0)}"></p>
-							<p class="prodFinalPrice card-text" th:text="|${#numbers.formatInteger( item.prodOrgPrice - item.prodOrgPrice * item.prodDiscount ,3,'COMMA') }원|"></p>
+							<p class="prodFinalPrice card-text c333" th:text="|${#numbers.formatInteger( item.prodOrgPrice - item.prodOrgPrice * item.prodDiscount ,3,'COMMA') }원|"></p>
 						</th:block>
 						
 						<!--할인율 없는 경우 가격 표시-->
-						<p class="prodFinalPrice card-text" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
+						<p class="prodFinalPrice card-text c333" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
 						
+						<!--상품 카운트 뷰 라인-->
+						<p class="prodCount card-text d-flex ">
+							
+							<!--조회수-->
+							<p class="prodView d-inline-block me-2">
+								<i class="fa-regular fa-eye"></i>
+								<span th:text="${item.viewCnt}"></span>
+							</p>
 						
-						<p class="prodReview card-text">
-							<i class="fa-regular fa-comment-dots"></i>
-							[[${#numbers.formatInteger(item.prodReview != null ? #lists.size(item.prodReview) : 0, 3, 'COMMA')}]]
+							<!--리뷰수-->
+							<p class="prodReview d-inline-block me-2">
+								<i class="fa-regular fa-comment-dots"></i>
+								<span th:text="${revCntMap[item.prodId] ?: 0}"></span>
+							</p>
+
+							<!--하트수-->
+							<p class="prodFavorite d-inline-block">
+								<i class="fa-regular fa-heart"></i>
+								<span th:text="${favoriteCntMap[item.prodId] ?: 0}"></span>
+							</p>
 						</p>
+						
+						
 						
 						<div class="prodTags">
 							<!--할인율 있는 경우 세일상품 태그 표시-->
 							<span class="badge text-bg-success" th:text="️세일상품"  th:if="${item.prodDiscount != null and item.prodDiscount > 0}"></span>
-							<span class="badge text-bg-success" th:text="️인기상품"  th:if="${item.prodReview != null and #lists.size( item.prodReview) > 1000}"></span>
+							<span class="badge text-bg-success" th:text="️인기상품"  th:if="${revCntMap[item.prodId] != null and revCntMap[item.prodId] > 1000}"></span>
 						</div>
 					</a>
 				</div> <!-- //card-body -->

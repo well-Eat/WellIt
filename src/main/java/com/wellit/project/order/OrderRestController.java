@@ -23,10 +23,12 @@ public class OrderRestController {
     public ResponseEntity<Map<String, Object>> getOrders(
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "page", defaultValue = "1") int page) {
 
         // 주문 목록 가져오기 (검색, 필터링 및 페이지네이션 적용)
-        Page<PurchaseOrder> ordersPage = orderService.findOrders(search, status, page);
+        Page<PurchaseOrder> ordersPage = orderService.findOrders(search, status, startDate, endDate, page);
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
@@ -36,8 +38,9 @@ public class OrderRestController {
             Map<String, Object> orderData = new HashMap<>();
             orderData.put("orderId", order.getOrderId());
             orderData.put("memberName", order.getMember().getMemberName());
-            orderData.put("status", order.getStatus());
-            orderData.put("createdAt", order.getCreatedAt());
+            orderData.put("memberId", order.getMember().getMemberId());
+            orderData.put("status", order.getStatus().renderStatus());
+            orderData.put("createdAt", order.getCreatedAt().toString());
             orderData.put("totalPay", order.getTotalPay());
             ordersList.add(orderData);
         }
@@ -68,6 +71,17 @@ public class OrderRestController {
 
         return ResponseEntity.ok("출고 처리 완료");
     }
+
+    // 배송완료 처리 API
+    @PostMapping("/{orderId}/deliveryComplete")
+    public ResponseEntity<String> processDeliveryComplete(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+        String invoiceNum = body.get("invoiceNum");
+        orderService.deliveryComplete(orderId, invoiceNum);
+
+        return ResponseEntity.ok("배송 완료 처리");
+    }
+
+
 
     // 주문 취소 신청
     @PostMapping("/cancelRequest")

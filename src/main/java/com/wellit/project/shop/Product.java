@@ -36,6 +36,8 @@ public class Product {
 
     private Long prodStock; //재고수량
 
+    private Integer viewCnt; //조회수
+
 
     // 여러 개의 상품 이미지
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
@@ -48,11 +50,6 @@ public class Product {
     @JsonManagedReference("product-info") // 이름 설정
     private List<ProdInfo> prodInfoList;
 
-
-    //상품별 리뷰 리스트
-    @OneToMany(mappedBy = "product", cascade=CascadeType.REMOVE)
-    @JsonManagedReference("product-reviews") // 이름 설정
-    private List<ProdReview> prodReview;
 
     private LocalDateTime createdAt; //등록 일자
     private LocalDateTime updatedAt; //수정 일자
@@ -68,9 +65,14 @@ public class Product {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FavoriteProduct> favoriteProductList = new ArrayList<>();
+
+
 }

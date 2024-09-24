@@ -43,8 +43,6 @@ public class CartController {
             orderForm.getOrderItemQuantityList().add(orderItemQuantity);
         }
 
-        // OrderForm에 사용자 주소 설정
-        orderForm.setAddr1(memberAddress);
 
         // 모델에 데이터 추가
         model.addAttribute("cartItemList", cartItemList);

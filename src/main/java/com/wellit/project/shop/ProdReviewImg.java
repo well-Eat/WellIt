@@ -18,7 +18,7 @@ public class ProdReviewImg {
 
     @ManyToOne
     @JoinColumn(name = "rev_id")
-    @JsonBackReference
+//    @JsonBackReference
     private ProdReview prodReview;
 
 }

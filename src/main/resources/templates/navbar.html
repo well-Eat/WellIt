@@ -35,8 +35,8 @@
 					<a href="#"><span class="material-symbols-outlined">favorite</span></a>
 				</li>
 				<!-- 장바구니 -->
-				<li>
-					<a href="member/"><span class="material-symbols-outlined">shopping_cart</span></a>
+				<li sec:authorize="isAuthenticated()">
+					<a  th:href="@{/cart/list}"><span class="material-symbols-outlined">shopping_cart</span></a>
 				</li>
 				<li sec:authorize="isAuthenticated()">
 					<a th:href="@{/member/kakao-logout}"><span class="material-symbols-outlined">logout</span></a>

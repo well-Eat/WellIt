@@ -9,6 +9,15 @@
 	
 	
 	<div class="d-flex flex-column min-vh-100 px-1" id="wrapper">
+		<style>
+        .input-mask {
+            font-family: monospace;
+            font-size: 1.5em;
+            letter-spacing: 0.5em;
+            width: 4ch;
+            text-align: center;
+        }
+		</style>
 		
 		<!--페이지 제목-->
 		<div class="row my-5 clearfix">
@@ -18,7 +27,7 @@
 		</div>
 		
 		<div class="row mb-3">
-			<div class="col">
+			<div class="col d-flex justify-content-between">
 				<a href="/order/admin/po/list" class="btn btn-success d-block" style="width: fit-content;">목록으로 돌아가기</a>
 				<input type="button" class="btn btn-outline-danger d-block" style="width: fit-content;" id="cancelBtn"
 				       value="주문취소">
@@ -51,12 +60,32 @@
 			<script th:inline="javascript">
 
           let poDetail = {};
+          let cancelInfo = {};
 
           /*주문 정보 로딩*/
           document.addEventListener("DOMContentLoaded", function () {
               const parentPath = "/order/admin/po/"
               const childPath = window.location.pathname;
               const orderId = childPath.slice(parentPath.length, childPath.length);
+              
+              // 고객 요청에 의한 취소인 경우, 쿼리 파라미터에서 reason 값을 추출
+              const urlParams = new URLSearchParams(window.location.search);
+              let reason = urlParams.get('reason'); // 'reason' 값 가져오기
+
+              // decodeURIComponent로 디코딩, poDetail 객체에 저장
+              if (reason) {
+                  console.log(reason);
+                  reason = decodeURIComponent(reason);
+                  console.log(reason);
+                  cancelInfo.cancelReason = reason;
+                  console.log(cancelInfo.cancelReason);
+              }
+
+              poDetail.orderId = orderId;  // orderId를 poDetail에 저장
+              cancelInfo.orderId = orderId;  // orderId를 cancelInfo에 저장
+
+              console.log(cancelInfo);  // poDetail 객체 확인용 로그
+		          
               viewOrderItems(orderId); // 페이지 로드 시 주문 목록 불러오기
           });
 
@@ -132,11 +161,18 @@
           //현재 상태 확인하여, 폼의 invoice 입력란 렌더링 또는 invoice 번호 출력 선택
           function isDeliveryStart(orderStatus, renderFormHtml, orderId, invoiceNum) {
               console.log(orderStatus);
-              if (orderStatus == 'PRODUCT_PREPARE') {
+              if (orderStatus == '상품준비중') {
                   renderFormHtml += `
 	                  <td>
-                      <input type="text" class="form-control" name="invoiceNum" id="invoiceNum"/><input type="button" value="출고처리" class="btn btn-outline-success" onclick="processShipment('${orderId}')"/>
+                      <input type="text" class="form-control w-75 d-inline-block me-2" name="invoiceNum" id="invoiceNum" /><input type="button" value="발송완료" class="btn btn-outline-success  d-inline-block ml-2" onclick="processShipment('${orderId}')" style="box-sizing: border-box;"/>
                     </td>
+                  `;
+              } else if (orderStatus == '배송중'){
+                  renderFormHtml += `
+	                  <td>
+		                  <span id="invoiceNum">${invoiceNum}</span>
+		                  <input type="button" value="배송완료" class="btn btn-outline-warning  d-inline-block ml-2" onclick="processDeliveryComplete('${orderId}')" style="box-sizing: border-box;"/>
+	                  </td>
                   `;
               } else {
                   renderFormHtml += `
@@ -147,6 +183,7 @@
               }
               return renderFormHtml;
           }
+          
 
           //출고처리
           async function processShipment(orderId) {
@@ -181,17 +218,52 @@
                   alert(error.message);
               }
           }
+          
+          //배송완료처리
+          async function processDeliveryComplete(orderId) {
+              console.log(orderId);
+              const invoiceNum = document.getElementById('invoiceNum').innerText;
+
+              if (!invoiceNum) {
+                  alert("배송완료 처리를 할 수 없습니다.");
+                  return;
+              }
+
+              try {
+                  const response = await fetch(`/api/orders/${orderId}/deliveryComplete`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          invoiceNum: invoiceNum
+                      }),
+                  });
+
+                  if (!response.ok) {
+                      throw new Error('배송완료 처리 중 오류가 발생했습니다.');
+                  }
+
+                  const result = await response.text();
+                  alert(result); // "배송 완료 처리" 메시지 출력
+
+                  location.reload();
+              } catch (error) {
+                  alert(error.message);
+              }
+          }
 
 
           //주문 상품 html
           function orderItemRender(poDetail) {
+              let sumQuantity = 0;
               let renderFormHtml = `
 	              <p class="subtle f18 c666 fw-bold">
 			            주문 상품
 			          </p>
 			          
 			          <div>
-			            <table class="table table-borderless">
+			            <table class="table table-borderless align-middle">
 			              <thead>
 			              <tr>
 			                <th scope="col">상품번호</th>
@@ -201,14 +273,15 @@
 			                
 			              </tr>
 			              </thead>
-			              <tbody>
+			              <tbody class="py-2">
               `;
 
               poDetail.orderItems.forEach(item => {
+                  sumQuantity += item.quantity;
                   renderFormHtml += `
 	                      <tr>
 					                <td><span>${item.prodId}</span></td>
-					                <td><div><img src="${item.prodThumb}" alt="${item.prodName}" style="width: 40px; height: 40px;"></div></td>
+					                <td><div><img src="${item.prodThumb}" alt="${item.prodName}" style="width: 40px; height: 40px;"  class="border"></div></td>
 					                <td><span>${item.prodName}</span></td>
 					                <td><span>${item.quantity}</span></td>
 					              </tr>
@@ -217,6 +290,14 @@
 
               renderFormHtml += `
 					          </tbody>
+					          <tfoot class="py-2">
+						          <tr>
+							          <th></th>
+							          <th></th>
+							          <th class="border-top">주문 수량 합계</th>
+							          <td class="border-top">${sumQuantity}</td>
+											</tr>
+										</tfoot>
 			            </table>
 			          </div>
 		          `;
@@ -240,7 +321,7 @@
 					          <tr>
 					            <th scope="row">주문자 연락처</th>
 					            <td>
-					              <span>${poDetail.memberPhone}</span>
+					              <span>${formatPhone(poDetail.memberPhone)}</span>
 					            </td>
 					          </tr>
 					        </table>
@@ -252,6 +333,8 @@
 
           //배송 정보
           function deliveryRender(poDetail) {
+              var deliveryMsg = "";
+              if (poDetail.deliveryMsg) deliveryMsg = poDetail.deliveryMsg;
               let renderFormHtml = `
 					      <p class="subtle f18 c666 fw-bold">
 									배송 정보
@@ -278,9 +361,11 @@
 												<span>${poDetail.deliveryPhone}</span>
 											</td>
 										</tr>
-										<tr class="align-middle">
+										<tr>
 											<th scope="row">배송 요청사항</th>
-											<span>${poDetail.deliveryMsg}</span>
+											<td>
+												<span>${deliveryMsg}</span>
+											</td>
 										</tr>
 									
 									</table>
@@ -292,7 +377,7 @@
 
           //주문 취소 버튼 클릭 시
           document.querySelector("#cancelBtn").addEventListener("click", function (e) {
-              orderCancel(poDetail);
+              orderCancel(poDetail, cancelInfo);
           })
 
           //Payment 정보
@@ -306,19 +391,19 @@
 									<table class="table table-borderless">
 										<tr>
 											<th scope="row">상품 금액</th>
-											<td class="text-end"><span>${poDetail.finalPrice.toLocaleString()}</span> <span>원</span></td>
+											<td class="text-end pe-md-5"><span>${poDetail.finalPrice.toLocaleString()}</span> <span>원</span></td>
 										</tr>
 										<tr>
 											<th scope="row">배송비</th>
-											<td class="text-end"> <span>${poDetail.deliveryFee.toLocaleString()}</span> <span>원</span></td>
+											<td class="text-end pe-md-5"> <span>${poDetail.deliveryFee.toLocaleString()}</span> <span>원</span></td>
 										</tr>
 										<tr>
 											<th scope="row">마일리지 사용금액</th>
-											<td class="text-end"> <span>${poDetail.milePay.toLocaleString()}</span> <span>원</span></td>
+											<td class="text-end pe-md-5"> <span>${poDetail.milePay.toLocaleString()}</span> <span>원</span></td>
 										</tr>
 										<tr>
 											<th scope="row">총 지불금액</th>
-											<td class="text-end"> <span>${poDetail.totalPay.toLocaleString()}</span> <span>원</span></td>
+											<td class="text-end pe-md-5"> <span>${poDetail.totalPay.toLocaleString()}</span> <span>원</span></td>
 										</tr>
 
 									
@@ -330,7 +415,7 @@
           }
 
           //주문 취소 프로세스 시작
-          function orderCancel(poDetail) {
+          function orderCancel(poDetail, cancelInfo) {
               console.log("===========orderCancel()============")
               console.log(poDetail);
               const impUid = poDetail.impUid;  // 실제 imp_uid 값
@@ -339,7 +424,12 @@
               console.log(orderId);
               const merchantUid = poDetail.merchantUid; // 실제 merchant_uid 값
               console.log(merchantUid);
-              const reason = prompt("결제 취소 사유를 입력해 주세요.");
+              console.log(cancelInfo.cancelReason);
+              var preText = "";
+              if (cancelInfo.cancelReason != null) {
+                  preText = "고객요청:"+cancelInfo.cancelReason;
+              }
+	              const reason = prompt("결제 취소 사유를 입력해 주세요.", preText);
               if (reason) {
                   cancelPayment(impUid, reason, orderId);
               }

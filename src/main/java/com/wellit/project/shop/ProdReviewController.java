@@ -1,30 +1,22 @@
 package com.wellit.project.shop;
 
 
-import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.order.*;
-import com.wellit.project.shop.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,10 +25,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ProdReviewController {
 
-    private final ShopService shopService;
-    private final MemberService memberService;
     private final OrderService orderService;
-    private final OrderItemRepository orderItemRepository;
     private final ProdReviewService reviewService;
 
     private static final String UPLOAD_DIR = "C:/uploads/";
@@ -71,7 +60,8 @@ public class ProdReviewController {
         ProdReviewLoadForm prodReviewLoadForm = new ProdReviewLoadForm();
         ProdReview prodReview = reviewService.getOneReview(orderItemId);
 
-        prodReviewLoadForm.setProdId(prodReview.getProduct().getProdId());
+        prodReviewLoadForm.setOrderItemId(orderItemId);
+        prodReviewLoadForm.setProdId(orderService.getProdIdByOrderItemId(orderItemId));
         prodReviewLoadForm.setRevText(prodReview.getRevText());
         prodReviewLoadForm.setRating(prodReview.getRevRating());
         prodReviewLoadForm.setProdRevImgList(prodReview.getProdReviewImgList().stream().map(prodReviewImg -> prodReviewImg.getImagePath()).collect(
@@ -92,29 +82,28 @@ public class ProdReviewController {
 
     /*Post : 상품 리뷰 저장*/
     @PostMapping("/save/{prodId}")
-    public String saveReview(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<String> saveReview(@AuthenticationPrincipal UserDetails userDetails,
                                              @PathVariable("prodId") Long prodId,
                                              @Valid @ModelAttribute ProdReviewForm prodReviewForm,
-                                             BindingResult bindingResult,
-                                             Model model,
-                                             @RequestParam("prodRevImgList") List<MultipartFile> images
+                                             @RequestParam(value = "prodRevImgList", required = false) List<MultipartFile> images,
+                                             @RequestParam(value = "existingImgUrls", required = false) List<String> existingImgUrls
     ) throws IOException {
 
         //로그인 상태가 아닐경우, 로그인 창으로 리다이렉트
         if (userDetails == null) {
-            return "redirect:/member/login";
+            throw new RuntimeException("로그인해주세요");
+        }
+
+        // 서비스로 전달하기 전에 null 처리
+        if (existingImgUrls == null) {
+            existingImgUrls = new ArrayList<>(); // 빈 리스트로 초기화
         }
 
         // 리뷰 내용을 전달
-        ProdReview savedReview = reviewService.saveReview(prodId, userDetails, prodReviewForm, images);
+        ProdReview savedReview = reviewService.saveReview(prodId, userDetails, prodReviewForm, images, existingImgUrls);
 
+        return ResponseEntity.ok("리뷰 저장 완료");
 
-
-        //ProdReview savedReview = shopService.createProdReview(review);
-
-
-
-        return "redirect:/shop/detail/" + prodId + "#prodReview"; //상세페이지 : 리뷰 위치로 리다이렉트
     }
 
 
