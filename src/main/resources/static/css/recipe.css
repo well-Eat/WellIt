@@ -177,7 +177,7 @@ ol {
     font-size: 14px;
     line-height: 25px;
     text-align: center;
-    display: none; /* 기본적으로는 숨김 */
+    display: block; /* 기본적으로는 숨김 */
 }
 
 /* .cookingDropArea에 파일이 있을 때만 삭제 버튼이 보이도록 */

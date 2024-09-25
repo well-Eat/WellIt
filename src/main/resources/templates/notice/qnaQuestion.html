@@ -5,16 +5,16 @@
 	<!--페이지 제목-->
 	<div class="row rowTitle">
 		<div class="pageTitle col text-center">
-			질문 작성
+			<h1 class="my-5">질문 작성</h1>
 		</div>
 	</div>
-	<div class="container my-5">
+	<div class="container">
 		<!-- 공지사항 작성 폼 -->
 		<div class="mb-4">
 			<form action="#" th:action="@{/notice/qnaQuestion}" method="post" enctype="multipart/form-data">
 				<div class="mb-3">
 					<label for="qAuthor" class="form-label">작성자</label>
-					<input type="text" class="form-control" id="qAuthor" name="qAuthor" th:value="${session.UserId}"
+					<input type="text" class="form-control" id="qAuthor" name="qAuthor" th:value="${memberAlias}"
 						readonly>
 				</div>
 				<div class="mb-3">
@@ -33,7 +33,7 @@
 				<div class="mb-3">
 					<label for="qCategory" class="form-label">카테고리</label><br>
 					<div>
-						<input type="radio" id="deliveryInquiry" name="qCategory" value="배송문의">
+						<input type="radio" id="deliveryInquiry" name="qCategory" value="배송문의" checked>
 						<label for="deliveryInquiry">배송문의</label>
 					</div>
 					<div>

@@ -3,52 +3,271 @@
 	<!-- shop style link -->
 	<link rel="stylesheet" th:href="@{/css/announcement.css}">
 	<!-- 페이지 제목 -->
-	<div class="row rowTitle">
-		<div th:if="${pageType.equals('announcement')}" class="pageTitle col text-center">
-			공지사항
+	<div class="rowTitle container my-5 text-center">
+		<div class="pageTitle mb-5">
+			Notice
 		</div>
-		<div th:if="${!pageType.equals('announcement')}" class="pageTitle col text-center">
-			Q & A
+		<div class="selectPage d-flex justify-content-center">
+			<a href="/notice/announcement" class="page-link">공지사항</a>
+			<a href="/notice/qna" class="page-link">Q & A</a>
 		</div>
 	</div>
 	<div class="container my-5">
 		<!-- 공지사항 목록 테이블 -->
-		<table class="table table-hover">
+		<table class="table table-hover" id="questionsTable">
 			<thead>
-				<tr class="table-success">
-					<th scope="col">#</th>
-					<th scope="col">제목</th>
-					<th scope="col">글쓴이</th>
-					<th scope="col">작성시간</th>
+				<tr>
+					<th scope="col" class="col-1">#</th>
+					<th scope="col" class="col-2">글쓴이</th>
+					<th scope="col" class="col-7">제목</th>
+					<th scope="col" class="col-2">작성시간</th>
 				</tr>
 			</thead>
-			<tbody class="table-group-divider">
-			    <tr th:each="question, stat : ${questions}"
-			        th:class="${question.qAuthor == 'admin'} ? 'table-light' : ''"
-			        th:if="${pageType.equals('announcement') ? question.qAuthor == 'admin' : true}">
-			        <th scope="row" th:text="${stat.index + 1}"></th>
-			        <td>
-			            <a th:if="${pageType.equals('announcement')}"
-			                th:href="@{/notice/announcement/detail(id=${question.qId})}"
-			                th:text="${question.qTitle}"></a>
-			            <a th:if="${pageType.equals('qna')}"
-			                th:href="@{/notice/qna/detail(id=${question.qId})}"
-			                th:text="${question.qTitle}"></a>
-			            <span th:if="${question.qAuthor != 'admin'}" th:text="${question.qCategory}"
-			                class="badge text-bg-primary mx-2"></span>
-			        </td>
-			        <td th:text="${question.qAuthor}"></td>
-			        <td th:text="${#temporals.format(question.qCreatedTime, 'yyyy.MM.dd.hh.mm.ss')}"></td>
-			    </tr>
+			<tbody class="table-group-divider border-top-success">
+				<tr th:each="question, stat : ${questions}"
+					th:class="${question.qAuthor == 'admin'} ? 'table-light question-row' : 'question-row'"
+					th:data-question-id="${question.qId}"
+					th:if="${pageType.equals('announcement') ? question.qAuthor == 'admin' : true}">
+					<th scope="row" th:text="${stat.index + 1}"></th>
+					<td th:text="${question.qAuthor}"></td>
+					<td>
+						<span class="question-title" onclick="toggleContent(this)" th:text="${question.qTitle}">
+						</span>
+						<span th:if="${question.qAuthor != 'admin'}" th:text="${question.qCategory}"
+							class="badge text-bg-primary mx-2"></span>
+						<div class="question-content" style="display: none;">
+							<p class="border-bottom">Q. <span th:text="${question.qContent}"></span></p>
+							<div class="answers mt-2">
+								<div class="deleteAnswers" th:if="${session.UserId == 'admin'}"></div>
+							</div>
+							<div class="answer-input" style="display: none;">
+								<textarea placeholder="답변을 입력하세요" rows="3" class="form-control mt-2"></textarea>
+								<button class="btn btn-primary mt-2" onclick="submitAnswer(this)">제출</button>
+							</div>
+
+							<div class="btn btn-success float-end" onclick="showAnswerInput(this)"
+								th:if="${session.UserId == 'admin'}">
+								답변 등록하기
+							</div>
+							<div th:if="${session.UserId == 'admin' || memberAlias == question.qAuthor}"
+								class="btn-group float-end">
+								<a th:href="@{/notice/qnaEdit(id=${question.qId})}" class="btn btn-warning">수정</a>
+								<a th:href="@{/notice/qnaDelete(questionId=${question.qId})}" class="btn btn-danger"
+									onclick="return confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
+									삭제
+								</a>
+							</div>
+						</div>
+
+					</td>
+					<td th:text="${#temporals.format(question.qCreatedTime, 'yyyy.MM.dd.hh.mm.ss')}"></td>
+				</tr>
 			</tbody>
 		</table>
-		<div th:if="${pageType.equals('announcement')}">
-			<a th:if="${session.UserId == 'admin'}" th:href="@{/notice/announcementQuestion(memberId=${session.UserId})}"
-				class="btn btn-info">공지사항 작성</a>
+
+		<div th:if="${pageType.equals('announcement')}" class="text-end">
+			<a th:if="${session.UserId == 'admin'}"
+				th:href="@{/notice/announcementQuestion(memberId=${session.UserId})}" class="btn btn-info">공지사항 작성</a>
 		</div>
-		<a th:if="${pageType.equals('qna')}" th:href="@{/notice/qnaQuestion(memberId=${session.UserId})}"
-			class="btn btn-success">질문 등록하기</a>
+
+		<div th:if="${pageType.equals('qna')}" class="text-center mb-3">
+			<form id="searchForm" class="d-inline-flex align-items-center" onsubmit="return false;">
+				<select id="searchType" class="form-select me-2" style="width: auto;">
+					<option value="all">전체</option>
+					<option value="title">제목</option>
+					<option value="author">글쓴이</option>
+				</select>
+				<input type="text" id="searchTerm" class="form-control me-2" placeholder="검색어를 입력하세요"
+					aria-label="Search">
+				<button class="btn btn-outline-success w-25" onclick="filterQuestions()">검색</button>
+			</form>
+			<a th:href="@{/notice/qnaQuestion(memberId=${session.UserId})}" class="btn btn-success float-end">질문
+				등록하기</a>
+		</div>
 	</div>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const questionIdElements = document.querySelectorAll("tr[data-question-id]");
+
+			questionIdElements.forEach(element => {
+				const questionId = element.getAttribute("data-question-id");
+
+				fetch(`/notice/answers/${questionId}`)
+					.then(response => response.json())
+					.then(answers => {
+						const answersDiv = element.querySelector(".answers");
+						const deleteAnswersDiv = element.querySelector(".deleteAnswers");
+
+						answers.forEach(answer => {
+							const answerDiv = document.createElement("div");
+							answerDiv.className = "answerBox mt-2";
+							answerDiv.innerHTML = `<p>A. <span>${answer.content}</span></p>`;
+
+							// session.UserId가 'admin'일 때만 삭제 버튼 추가
+							if (deleteAnswersDiv) {
+								const deleteButton = document.createElement("button");
+								deleteButton.className = "btn btn-danger btn-sm";
+								deleteButton.innerText = "삭제";
+								deleteButton.onclick = function () {
+									deleteAnswer(answer.id, answerDiv); // 삭제 함수 호출
+								};
+
+								// 삭제 버튼을 deleteAnswers div에 추가
+								deleteAnswersDiv.appendChild(deleteButton);
+							}
+
+							answersDiv.appendChild(answerDiv);
+						});
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			});
+		});
+
+
+		function filterQuestions() {
+			const searchType = document.getElementById("searchType").value;
+			const searchTerm = document.getElementById("searchTerm").value.toLowerCase();
+			const rows = document.querySelectorAll(".question-row");
+			rows.forEach(row => {
+				const author = row.children[1].innerText.toLowerCase();
+				const title = row.children[2].querySelector('.question-title').innerText.toLowerCase();
+
+				let shouldDisplay = false;
+
+				if (searchType === "all") {
+					shouldDisplay = author.includes(searchTerm) || title.includes(searchTerm);
+				} else if (searchType === "title") {
+					shouldDisplay = title.includes(searchTerm);
+				} else if (searchType === "author") {
+					shouldDisplay = author.includes(searchTerm);
+				}
+
+				row.style.display = shouldDisplay ? "" : "none"; // 조건에 따라 행을 표시하거나 숨깁니다.
+			});
+		}
+
+		function toggleContent(element) {
+			const contentDiv = element.closest("td").querySelector(".question-content"); // td 내의 .question-content 선택
+			if (contentDiv.style.display === "none" || contentDiv.style.display === "") {
+				contentDiv.style.display = "block"; // 내용을 보여줌
+			} else {
+				contentDiv.style.display = "none"; // 내용을 숨김
+			}
+		}
+
+		function showAnswerInput(button) {
+			const contentDiv = button.closest(".question-content");
+			const answerInput = contentDiv.querySelector(".answer-input");
+
+			// 답변 입력란 표시
+			answerInput.style.display = "block";
+		}
+
+		function submitAnswer(button) {
+			const contentDiv = button.closest(".question-content");
+			const textarea = contentDiv.querySelector("textarea");
+			const answerText = textarea.value.trim();
+
+			// 현재 질문의 ID를 가져옴
+			const questionId = button.closest("tr").getAttribute("data-question-id");
+
+			if (answerText) {
+				// AJAX 요청으로 답변 저장
+				fetch(`/notice/answers`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({questionId, content: answerText}),
+				})
+					.then(response => response.json())
+					.then(data => {
+						// 답변 표시 형식 설정
+						const answersDiv = contentDiv.querySelector(".answers");
+						const deleteAnswersDiv = contentDiv.querySelector(".deleteAnswers");
+						const answerDiv = document.createElement("div");
+						answerDiv.className = "answerBox mt-2"; // Bootstrap 스타일 사용
+
+						// 답변 내용을 <p>와 <span>으로 감싸기
+						answerDiv.innerHTML = `
+		                <p class='border-bottom'>A. <span>${data.content}</span></p>
+		            `; // 서버에서 받은 내용
+
+
+
+						// 답변 추가
+						answersDiv.appendChild(answerDiv);
+
+						// session.UserId가 'admin'일 때만 삭제 버튼 추가
+						if (deleteAnswersDiv) {
+							const deleteButton = document.createElement("button");
+							deleteButton.className = "btn btn-danger btn-sm";
+							deleteButton.innerText = "삭제";
+							deleteButton.onclick = function () {
+								deleteAnswer(data.id, answerDiv); // 삭제 함수 호출
+							};
+
+							// 삭제 버튼을 deleteAnswers div에 추가
+							deleteAnswersDiv.appendChild(deleteButton);
+						}
+
+						// 텍스트 영역 초기화
+						textarea.value = "";
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert("답변 제출 중 오류가 발생했습니다.");
+					});
+			} else {
+				alert("답변을 입력해 주세요.");
+			}
+		}
+
+
+
+
+		function deleteAnswer(answerId, answerDiv) {
+			// 서버에 삭제 요청
+			fetch(`/notice/answers/${answerId}`, {
+				method: 'DELETE'
+			})
+				.then(response => {
+					if (response.ok) {
+						answerDiv.remove(); // 삭제된 답변 요소 제거
+						alert("답변이 삭제되었습니다.");
+						// 로드가 필요 없다면 이 줄은 삭제
+						loadAnswers();
+					} else {
+						alert("답변 삭제 중 오류가 발생했습니다.");
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+
+		function loadAnswers() {
+			// 서버에서 답변 목록을 불러오는 코드
+			fetch('/notice/answers')
+				.then(response => response.json())
+				.then(data => {
+					// 기존 답변 목록 초기화
+					answersDiv.innerHTML = '';
+					// 새로운 답변 목록 렌더링
+					data.forEach(answer => {
+						const answerDiv = document.createElement('div');
+						answerDiv.textContent = answer.content; // 답변 내용 설정
+						answersDiv.appendChild(answerDiv);
+					});
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+
+	</script>
 </div>
 
 </html>

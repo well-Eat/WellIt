@@ -1,34 +1,125 @@
 <html layout:decorate="~{layout}">
+
 <head>
 </head>
-<div layout:fragment="content" >
+<div layout:fragment="content">
 	<link rel="stylesheet" href="/css/wellit.css">
-	<div class="row rowTitle">
-					<div class="pageTitle col text-center">
-						웨릿 레시피
-					</div>
-				</div>
+	<div class="rowTitle container mt-5 mb-2 text-center">
+		<div class="pageTitle mb-2">
+			웨릿 레시피
+		</div>
+	</div>
+
+	<!-- 필터링 섹션 시작 -->
+	<div class="container">
+		<form id="filterForm" method="get" action="/life/recipe/list" class="mb-4">
+			<table class="table table-bordered">
+				<tbody>
+					<tr>
+						<td class="text-center titleText"><label>인분별</label></td>
+						<td class="subText">
+							<input type="radio" id="servingsAll" name="servings" value="all" checked>
+							<label for="servingsAll">전체</label>
+							<input type="radio" id="servings1" name="servings" value="1">
+							<label for="servings1">1인분</label>
+							<input type="radio" id="servings2" name="servings" value="2">
+							<label for="servings2">2인분</label>
+							<input type="radio" id="servings3" name="servings" value="3">
+							<label for="servings3">3인분</label>
+							<input type="radio" id="servings4" name="servings" value="4">
+							<label for="servings4">4인분</label>
+							<input type="radio" id="servings5" name="servings" value="5">
+							<label for="servings5">5인분</label>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center titleText"><label>소요시간별</label></td>
+						<td class="subText">
+							<input type="radio" id="cookTimeAll" name="cookTime" value="all" checked>
+							<label for="cookTimeAll">전체</label>
+							<input type="radio" id="cookTime1" name="cookTime" value="0-5">
+							<label for="cookTime1">5분 미만</label>
+							<input type="radio" id="cookTime2" name="cookTime" value="5-10">
+							<label for="cookTime2">5~10분</label>
+							<input type="radio" id="cookTime3" name="cookTime" value="10-20">
+							<label for="cookTime3">10~20분</label>
+							<input type="radio" id="cookTime4" name="cookTime" value="20-30">
+							<label for="cookTime4">20~30분</label>
+							<input type="radio" id="cookTime5" name="cookTime" value="30+">
+							<label for="cookTime5">30분 이상</label>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center titleText"><label>난이도별</label></td>
+						<td class="subText">
+							<input type="radio" id="difficultyAll" name="difficulty" value="all" checked>
+							<label for="difficultyAll">전체</label>
+							<input type="radio" id="difficultyEasy" name="difficulty" value="diff_easy">
+							<label for="difficultyEasy">쉬움</label>
+							<input type="radio" id="difficultyMedium" name="difficulty" value="diff_normal">
+							<label for="difficultyMedium">보통</label>
+							<input type="radio" id="difficultyHard" name="difficulty" value="diff_hard">
+							<label for="difficultyHard">어려움</label>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center titleText"><label for="tags">태그별</label></td>
+						<td class="subText">
+							<input type="text" id="tags" name="tags" class="form-control" placeholder="#태그를 입력하세요">
+						</td>
+					</tr>
+				</tbody>
+				<button type="submit" class="btn btn-success mt-3 float-end">필터 적용</button>
+
+			</table>
+		</form>
+	</div>
+	<!-- 필터링 섹션 끝 -->
+
+
+
 	<div class="container my-5">
-		
-	        <div class="row">
-	            <th:block th:each="recipe : ${recipes}">
-	                <div class="col-md-3 mb-4">
-	                    <div class="card">
-	                        <img th:src="@{${recipe.recpmainImgList[0].imgSrc}}" class="card-img-top" alt="레시피 이미지" th:if="${recipe.recpmainImgList.size() > 0}" />
-	                        <div class="card-body">
-	                            <h5 class="card-title" th:text="${recipe.recpName}"></h5>
-	                            <p class="card-text" th:text="${recipe.recpIntroduce}"></p>
-	                            <p class="card-text"><small class="text-muted">작성자: <span th:text="${recipe.writer}"></span></small></p>
-	                            <p class="card-text"><strong>인분:</strong> <span th:text="${recipe.servings}"></span></p>
-	                            <p class="card-text"><strong>소요 시간:</strong> <span th:text="${recipe.cookTime} + ' 분'"></span></p>
-	                            <p class="card-text"><strong>난이도:</strong> <span th:text="${recipe.difficulty}"></span></p>
-	                            <a th:href="@{/life/recipe/detail(id=${recipe.id})}" class="btn btn-primary">상세 보기</a>
-	                        </div>
-	                    </div>
-	                </div>
-	            </th:block>
-	        </div>
-	        <a th:href="@{/life/recipe/create}" class="btn btn-success my-4">레시피 작성</a>
-	    </div>
+
+		<!-- 총 레시피 수 표시 -->
+		<p class="text-start">총 <span th:text="${#lists.size(recipes)}" class="recipesSize"></span>개의 레시피가 있습니다.</p>
+		<!-- 줄 추가 -->
+		<hr class="mb-5">
+		<div class="row">
+			<th:block th:each="recipe : ${recipes}">
+				<div class="col-md-3 mb-4">
+					<a th:href="@{/life/recipe/detail(id=${recipe.id})}">
+						<div class="card">
+							<img th:src="@{${recipe.recpmainImgList[0].imgSrc}}" class="card-img-top" alt="레시피 이미지"
+								th:if="${recipe.recpmainImgList.size() > 0}" />
+							<div class="card-body">
+								<h5 class="card-title" th:text="${recipe.recpName}"></h5>
+								<p class="card-text"><small class="text-muted"><span
+											th:text="${recipe.writer}"></span></small></p>
+								<div class="icons">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080"
+										class="bi bi-eye" viewBox="0 0 16 16">
+										<path
+											d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+										<path
+											d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+									</svg>
+									<span th:text="${recipe.viewCount}"></span>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080"
+										class="bi bi-heart" viewBox="0 0 16 16">
+										<path
+											d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+									</svg>
+									<span th:text="${recipe.favoriteRecipes.size}"></span>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+			</th:block>
+		</div>
+		<a th:href="@{/life/recipe/create}" class="btn btn-success my-4">레시피 작성</a>
+	</div>
+
 </div>
+
 </html>

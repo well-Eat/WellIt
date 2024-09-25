@@ -19,7 +19,7 @@ public class RecipeForm {
     private String recpName; //요리 이름
     private String recpIntroduce; //요리 간단 소개
     private String writer; //나중에 Member로 바꿀것!
-    private String servings; //몇 인분
+    private Integer servings; //몇 인분
     private Integer cookTime; //요리 소요시간(분)
     private String recpTags; //태그
     private String difficulty; //난이도

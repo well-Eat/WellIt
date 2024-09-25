@@ -40,7 +40,7 @@
 					<a th:href="@{/notice/qna}" class="btn btn-secondary">목록으로 돌아가기</a>
 				</div>
 			</div>
-			<div th:if="${session.UserId == 'admin' || session.UserId == question.qAuthor}" class="btn-group my-2">
+			<div th:if="${session.UserId == 'admin' || memberAlias == question.qAuthor}" class="btn-group my-2">
 				<a th:href="@{/notice/qnaEdit(id=${question.qId})}" class="btn btn-warning">수정</a>
 				<a th:href="@{/notice/qnaDelete(questionId=${question.qId})}" class="btn btn-danger"
 					onclick="return confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
