@@ -121,6 +121,8 @@ public class ProdReviewService {
         // 이미지가 없을 경우 대표 이미지 삭제
         if (prodReviewImgList.isEmpty()) {
             review.setRevImg(null);
+        } else { // 있는 경우 첫번째 이미지 저장
+            review.setRevImg(prodReviewImgList.get(0).getImagePath());
         }
 
         // 이미지 리스트 설정

@@ -36,12 +36,26 @@ public class ShopController {
         return "shop_popular";
     }
 
+
+    @GetMapping("/test/products")
+    public ResponseEntity<List<Product>> testGetAllProducts() {
+        List<Product> products = shopService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+
     /*상품 리스트 페이지 이동*/
     @GetMapping("/list")
-    public String getShopList(Model model) {
+    public String getShopList(Model model,
+                              @RequestParam(value = "category", required = false, defaultValue = "all") String category,
+                              @RequestParam(value = "order", required = false, defaultValue = "default") String itemSort,
+                              @RequestParam(value = "page", defaultValue = "1") int page,
+                              @RequestParam(value = "size", defaultValue = "20") int size) {
 
-        List<Product> prodList = shopService.getProdCateList();
-        List<ProdCnt> prodCnts = shopService.getProdCntList();
+        List<Product> prodList = shopService.getProductsByCriteria(category, itemSort, page, size);
+        //List<Product> prodList = shopService.getAllProducts();
+
+        List<ProdCnt> prodCnts = shopService.getProdCntList(prodList);
 
         // prodId를 키로, 리뷰, 찜 카운트 Map
         Map<Long, Integer> revCntMap = prodCnts.stream()
@@ -50,9 +64,14 @@ public class ShopController {
                                                     .collect(Collectors.toMap(ProdCnt::getProdId,
                                                                               ProdCnt::getFavoriteCnt));
 
-        model.addAttribute("prodlist", prodList);
         model.addAttribute("revCntMap", revCntMap);
         model.addAttribute("favoriteCntMap", favoriteCntMap);
+
+        model.addAttribute("prodlist", prodList); // 상품 리스트
+        model.addAttribute("currentPage", page);
+        //model.addAttribute("totalPages", prodList.getTotalPages());
+        //model.addAttribute("totalItems", prodList.getTotalElements());
+        model.addAttribute("pageSize", size);
 
         return "shop/shop_list";
     }
@@ -90,10 +109,11 @@ public class ShopController {
 
         List<ProdReview> imgReviewList = shopService.getImgReviews(prodId);
         CartItemRequest cartItemRequest = new CartItemRequest();
+        ReviewCnt reviewCnt = shopService.getCountProdReview(prodId);
 
         model.addAttribute("cartItemRequest", cartItemRequest);
 
-        model.addAttribute("reviewCnt", shopService.getCountProdReview(prodId));
+        model.addAttribute("reviewCnt", reviewCnt);
         model.addAttribute("sortedImages", sortedImages); // 정렬된 이미지 리스트
         model.addAttribute("product", product);
         model.addAttribute("imgReviewList", imgReviewList);
@@ -131,8 +151,8 @@ public class ShopController {
     }
 
 
-    //admin:상품 삭제 페이지
-    @DeleteMapping("/delete/{prodId}")
+    //admin:상품 삭제 페이지 : 미사용 -> ProdStatus로만 관리
+    /*@DeleteMapping("/delete/{prodId}")
     public String deleteProduct(@AuthenticationPrincipal UserDetails userDetails,
                                 @PathVariable(name="prodId") Long prodId) {
         // 현재 로그인한 사용자가 admin인지 확인
@@ -142,7 +162,7 @@ public class ShopController {
         shopService.deleteProduct(prodId);
 
         return "redirect:/shop/list";
-    }
+    }*/
 
 
     // admin:상품 생성 폼 열기
@@ -283,12 +303,13 @@ public class ShopController {
     public ResponseEntity<Map<String, Object>> getProducts(
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "category", required = false) String prodCate,
+            @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "page", defaultValue = "1") int page) {
 
         // 서비스 호출
-        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, startDate, endDate, page);
+        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page);
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();

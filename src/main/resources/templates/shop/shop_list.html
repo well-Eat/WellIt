@@ -30,30 +30,45 @@
 	<div class="prodCateLiRow row my-4 py-4 rounded-2">
 		<div class="col">
 			<ul class="row row-cols-1 row-cols-sm-2 row-cols-md-3 justify-content-start  pl-4">
-				<li class="prodCate col py-1 py-sm-2 active" id="all"><a href="javascript:void(0);" class="prodCateLink">모두보기</a></li><!-- all -->
-				<li class="prodCate col py-1 py-sm-2" id="mealkit"><a href="javascript:void(0);" class="prodCateLink">밀키트</a></li><!-- mealkit -->
-				<li class="prodCate col py-1 py-sm-2" id="sidedish"><a href="javascript:void(0);" class="prodCateLink">반찬배송</a></li><!-- sidedish -->
-				<li class="prodCate col py-1 py-sm-2" id="organicfood"><a href="javascript:void(0);" class="prodCateLink">유기농식재료</a></li><!-- organicfood -->
-				<li class="prodCate col py-1 py-sm-2" id="organicgoods"><a href="javascript:void(0);" class="prodCateLink">오가닉 제품</a></li><!-- organicgoods -->
-				<li class="prodCate col py-1 py-sm-2" id="babygoods"><a href="javascript:void(0);" class="prodCateLink">베이비</a></li><!-- babygoods -->
-				<li class="prodCate col py-1 py-sm-2" id="petgoods"><a href="javascript:void(0);" class="prodCateLink">펫</a></li><!-- petgoods -->
-				<li class="prodCate col py-1 py-sm-2" id="books"><a href="javascript:void(0);" class="prodCateLink">책</a></li><!-- books -->
-				<li class="prodCate col py-1 py-sm-2" id="wellitgoods"><a href="javascript:void(0);" class="prodCateLink">웨릿 굿즈</a></li><!-- wellitgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="all"><a href="#" class="prodCateLink" data-category="all">모두보기</a></li> <!-- all -->
+				<li class="prodCate col py-1 py-sm-2" id="mealkit"><a href="#" class="prodCateLink" data-category="mealkit">밀키트</a></li> <!-- mealkit -->
+				<li class="prodCate col py-1 py-sm-2" id="sidedish"><a href="#" class="prodCateLink" data-category="sidedish">반찬배송</a></li> <!-- sidedish -->
+				<li class="prodCate col py-1 py-sm-2" id="organicfood"><a href="#" class="prodCateLink" data-category="organicfood">유기농식재료</a></li> <!-- organicfood -->
+				<li class="prodCate col py-1 py-sm-2" id="organicgoods"><a href="#" class="prodCateLink" data-category="organicgoods">오가닉 제품</a></li> <!-- organicgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="babygoods"><a href="#" class="prodCateLink" data-category="babygoods">베이비</a></li> <!-- babygoods -->
+				<li class="prodCate col py-1 py-sm-2" id="petgoods"><a href="#" class="prodCateLink" data-category="petgoods">펫</a></li> <!-- petgoods -->
+				<li class="prodCate col py-1 py-sm-2" id="books"><a href="#" class="prodCateLink" data-category="books">책</a></li> <!-- books -->
+				<li class="prodCate col py-1 py-sm-2" id="wellitgoods"><a href="#" class="prodCateLink" data-category="wellitgoods">웨릿 굿즈</a></li> <!-- wellitgoods -->
 			</ul>
 		</div>
 	</div>
 	
 	<div class="row mb-3">
 		<div class="col">
+			<!-- 정렬 옵션 리스트-->
 			<ul class="sortBox d-flex justify-content-end">
-				<li><a href="javascript:void(0);" class="active">추천순</a></li>
-				<li><a href="javascript:void(0);">신상품순</a></li>
-				<li><a href="javascript:void(0);">판매량순</a></li>
-				<li><a href="javascript:void(0);">낮은 가격순</a></li>
-				<li><a href="javascript:void(0);">높은 가격순</a></li>
+				<li><a href="#" class="sortLink" data-order="default">기본순</a></li>
+				<li><a href="#" class="sortLink" data-order="latest">신상품순</a></li>
+				<li><a href="#" class="sortLink" data-order="reviewCount">리뷰수 순</a></li>
+				<li><a href="#" class="sortLink" data-order="salesCount">판매량 순</a></li>
+				<li><a href="#" class="sortLink" data-order="viewCount">조회수 순</a></li>
+				<li><a href="#" class="sortLink" data-order="reviewRating">평점 순</a></li>
+				<li><a href="#" class="sortLink" data-order="favoriteCount">추천 순</a></li>
+				<li><a href="#" class="sortLink" data-order="lowPrice">낮은 가격순</a></li>
+				<li><a href="#" class="sortLink" data-order="highPrice">높은 가격순</a></li>
+			</ul>
+			
+			<!-- 보기 개수 선택 -->
+			<ul class="pagination-size d-flex justify-content-end">
+				<li><a href="#" class="pageSizeLink" data-size="20">20개 보기</a></li>
+				<li><a href="#" class="pageSizeLink" data-size="50">50개 보기</a></li>
+				<li><a href="#" class="pageSizeLink" data-size="80">80개 보기</a></li>
 			</ul>
 		</div>
 	</div>
+	
+	<!-- 페이지네이션 -->
+	
 	
 	<!--판매 상품 리스트-->
 	<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">

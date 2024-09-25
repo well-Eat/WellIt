@@ -23,8 +23,8 @@
 			
 			<div class="col gap-3 g-3">
 				<!-- 검색 및 필터 기능 -->
-				<form class="mb-3 d-flex" id="searchForm">
-					<input type="text" id="searchInput" class="form-control me-2" placeholder="Search by Order ID" name="search">
+				<form class="mb-3 d-flex" id="searchForm" onsubmit="return false;">
+					<input type="text" id="searchInput" class="form-control me-2" placeholder="상품명검색" name="search">
 					<!-- 시작 날짜 선택 -->
 					<input type="date" id="startDate" class="form-control me-2" name="startDate">
 					
@@ -32,7 +32,7 @@
 					<input type="date" id="endDate" class="form-control me-2" name="endDate">
 					
 					<select class="form-select me-2" id="categorySelect" name="category">
-						<option value="">모두 보기</option>
+						<option value="">카테고리 : 모두 보기</option>
 						<option value="mealkit">밀키트</option>
 						<option value="sidedish">반찬배송</option>
 						<option value="organicfood">유기농식재료</option>
@@ -41,6 +41,14 @@
 						<option value="petgoods">펫</option>
 						<option value="books">책</option>
 						<option value="wellitgoods">웨릿 굿즈</option>
+					</select>
+					
+					<select class="form-select me-2" id="statusSelect" name="status">
+						<option value="">판매상태 : 모두 보기</option>
+						<option value="AVAILABLE">판매중</option>
+						<option value="UNAVAILABLE">일시판매중지</option>
+						<option value="OUT_OF_STOCK">일시품절</option>
+						<option value="DISCONTINUED">단종</option>
 					</select>
 					
 					<button type="button" class="btn btn-success" onclick="fetchProducts()">Search</button>
@@ -53,7 +61,7 @@
 						<th scope="col">No.</th>
 						<th scope="col">상품코드</th>
 						<th scope="col">상품명</th>
-						<th scope="col">상품 등록일자</th>
+						<th scope="col">판매상태</th>
 						<th scope="col">판매수량</th>
 						<th scope="col">매출금액</th>
 						<th scope="col">편집버튼</th>

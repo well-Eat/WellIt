@@ -1,7 +1,51 @@
 /********* shop_list : 상품 리스트 페이지 *************/
 /********* shop_list : 상품 리스트 페이지 *************/
 /********* shop_list : 상품 리스트 페이지 *************/
+
+$(function() {
+    // 카테고리, 정렬, 페이지, 아이템 보기 개수
+    let currentCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+    let currentOrder = new URLSearchParams(window.location.search).get('order') || 'default';
+    let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+    let currentSize = new URLSearchParams(window.location.search).get('size') || 20;
+
+    // 카테고리 링크 클릭 이벤트 처리
+    $('.prodCateLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedCategory = $(this).data('category');
+        const newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+
+    // 정렬 링크 클릭 이벤트 처리
+    $('.sortLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedOrder = $(this).data('order');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+
+    // 보기 개수 링크 클릭 이벤트 처리
+    $('.pageSizeLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedSize = $(this).data('size');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}`; // 새 사이즈 선택 시 1페이지로 이동
+        window.location.href = newUrl;
+    });
+
+    // 페이지 번호 링크 클릭 이벤트 처리
+    $('.pageLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedPage = $(this).data('page');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+});
+
 $(function(){
+
+
+
 
     /* 카테고리 아이템 리스트 get */
     $("a.prodCateLink").on("click", function(e) {
@@ -272,6 +316,16 @@ function updateButtons() {
 function renderReviews(reviews) {
     const reviewBlock = $('.reviewBlock');
     reviewBlock.empty();
+    console.log(reviews.length);
+    if (reviews.length==0 || reviews==null){
+        const reviewHtml = `
+            <div class="row border-bottom py-2">
+                <div class="col-md-12 mb-3 text-center">
+                    작성된 리뷰가 없습니다.
+                </div>
+            </div>`;
+        reviewBlock.append(reviewHtml);
+    }
 
     reviews.forEach(function (review) {
         let imgHtml = '';
@@ -692,8 +746,8 @@ function updateCardOrderNumbers() {
 }
 
 
-
-$(document).ready(function () {
+// admin : 상품 등록 & 수정
+$(function () {
     const currentUrl = window.location.href;
 
     // 수정 페이지 일때 -> 이미지 순서 처리
@@ -1001,21 +1055,30 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
-document.addEventListener("DOMContentLoaded", function () {
-    // #orderTable이 문서에 있는지 확인
-    if (document.querySelector('#prodTable')) {
+$(function() {
+    if ($('#prodTable').length) {
         // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-        // 날짜를 'YYYY-MM-DD' 형식으로 변환하는 함수
-        document.getElementById('startDate').value = formatDateForInput(firstDayOfMonth);
-        document.getElementById('endDate').value = formatDateForInput(today);
+        // 날짜 'YYYY-MM-DD' 형식으로 변환
+        $('#startDate').val(formatDateForInput(firstDayOfMonth));
+        $('#endDate').val(formatDateForInput(today));
 
-        // 페이지 로드 시 주문 목록 불러오기
+        // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();
+
+        // 상품명 검색 input에서 enter 입력 시 검색 실행
+        $('#searchInput').on('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                fetchProducts();
+            }
+        });
+
     }
 });
+
 
 
 
@@ -1023,12 +1086,11 @@ async function fetchProducts() {
     // 검색어와 상태 필터 값 가져오기
     const search = document.getElementById("searchInput").value;
     const category = document.getElementById("categorySelect").value;
+    const status = document.getElementById("statusSelect").value;
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
 
-    console.log()
-    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&startDate=${startDate}&endDate=${endDate}`);
-    //const response = await fetch(`/shop/api/products?search=${search}`);
+    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}`);
     const data = await response.json();
 
     console.log(data);
@@ -1040,42 +1102,37 @@ async function fetchProducts() {
     data.products.forEach((product,index) => {
         // 상태에 따라 배경색 클래스를 동적으로 설정
         let rowClass = '';
-        /*
-        switch (order.status) {
-            case '상품준비중':
-                rowClass = 'table-light';  // 파란색
+
+        switch (product.prodStatus) {
+            case 'AVAILABLE':
+                rowClass = 'table-info';  // 파란색
                 statClass = 'text-primary fw700';
                 break;
-            case '배송중':
-                rowClass = 'table-info';     // 밝은 파란색
-                statClass = 'c333 fw700';
-                break;
-            case '배송완료':
-                rowClass = 'table-success';  // 녹색
-                statClass = 'c333 fw700';
-                break;
-            case '주문취소':
+            case 'UNAVAILABLE':
                 rowClass = 'table-danger';   // 빨간색
                 statClass = 'text-danger fw700';
                 break;
-            case '취소승인대기중':
+            case 'DISCONTINUED':
+                rowClass = 'table-secondary';  // 회색
+                statClass = 'c333 fw700 text-secondary';
+                break;
+            case 'OUT_OF_STOCK':
                 rowClass = 'table-warning';  // 노란색
                 statClass = 'text-warning fw700';
                 break;
             default:
-                rowClass = ''; // 기본값 (특별한 배경색 없음)
+                rowClass = ''; // 기본값
         }
-        console.log(order.status);
-*/
+
         const row = `
-            <tr class="prodRow">
+            <tr class="prodRow ${rowClass}">
                 <td>${index + 1}</td>
                 <td>${product.prodId}</td>
-                <td>${product.prodName}</td>
-                <td>${product.createdAt}</td>
+                <td  class="${statClass}">${product.prodName}</td>
+                <td class="${statClass}">${toKoreanProdStatus(product.prodStatus)}</td>
                 <td>${product.sumQuantity || 0}</td>
                 <td>${product.totalFinalPrice || 0}</td>
-                <td><a href="/shop/admin/edit/${product.prodId}" tableLink">수정</a></td>
+                <td><a href="/shop/admin/edit/${product.prodId}" class="tableLink text-secondary">수정</a></td>
             </tr>
         `;
         prodTableBody.insertAdjacentHTML('beforeend', row);
@@ -1100,6 +1157,18 @@ async function fetchProducts() {
 
 
 /******* Common Util : END *********/
+//ProdStatus Enum 한글명 매핑 함수
+function toKoreanProdStatus(prodStatus) {
+    const statusMap = {
+        "AVAILABLE": "판매중",
+        "UNAVAILABLE": "판매일시중단",
+        "OUT_OF_STOCK": "일시품절",
+        "DISCONTINUED": "단종"
+    };
+
+    return statusMap[prodStatus] || prodStatus;
+}
+
 //오류 메시지 박스 초기화
 $(function (){
     const messageBox = $(".messageBox");
