@@ -26,8 +26,7 @@
 				</svg>
 			</div>
 			<div id="results"></div> <!-- 검색 결과를 표시할 영역 -->
-
-			<h5 class="selectRegionForm border-bottom p-3">
+			<h5 class="selectRegionForm border-bottom p-3 text-center">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#6a994e"
 					class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
 					<path
@@ -35,7 +34,8 @@
 					<path
 						d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z" />
 				</svg>
-				지역별 가게 보기
+				지역 가게 보기
+
 			</h5>
 			<form class="selectRegionForm border-bottom p-3">
 				<label for="city">시/도 선택:</label>
@@ -75,9 +75,6 @@
 			</svg>
 		</div>
 		<div id="restaurantList">
-			<p class="noSelect alert text-center">
-				<span>지역을 선택해주세요</span>
-			</p>
 		</div>
 		<div id="pagination" class="my-2"></div>
 
@@ -398,130 +395,7 @@
 				$(this).data("expanded", !isExpanded);
 			});
 
-			fetchStores();
-
-			//모든 가게 표시
-			function displayStoresOnMap(allStores) {
-				const mapContainer = document.getElementById('map');
-				const mapOption = {
-					center: new kakao.maps.LatLng(allStores[0].stoLatitude, allStores[0].stoLongitude), // 첫 번째 가게 위치로 중심 설정
-					level: 6 // 초기 확대 수준
-				};
-				const map = new kakao.maps.Map(mapContainer, mapOption);
-
-				let currentOverlay = null; // 현재 열려 있는 Custom Overlay를 저장할 변수
-
-				// 사용자 정의 확대/축소 버튼 이벤트 리스너
-				document.getElementById('zoomIn').addEventListener('click', function () {
-					map.setLevel(map.getLevel() - 1); // 확대
-				});
-
-				document.getElementById('zoomOut').addEventListener('click', function () {
-					map.setLevel(map.getLevel() + 1); // 축소
-				});
-				// 모든 가게에 대해 마커 추가
-				allStores.forEach(store => {
-					const markerPosition = new kakao.maps.LatLng(store.stoLatitude, store.stoLongitude);
-					const marker = new kakao.maps.Marker({
-						position: markerPosition
-					});
-					marker.setMap(map); // 마커를 지도에 표시
-
-					// Custom Overlay 추가
-					const customOverlay = new kakao.maps.CustomOverlay({
-						content: `
-					        <div class='infowindowBox'>
-					            <span class='closeBtn' onclick='this.parentElement.parentElement.style.display="none"'>✖</span>
-					            <div style='font-size: 16px; color: #333;'>${store.stoName}</div>
-					            <button id="viewDetailsButton" class='btn btn-success'>자세히 보기</button> <!-- 버튼 ID 추가 -->
-					        </div>`,
-						position: markerPosition // Overlay 위치 설정
-					});
-
-					// 마커 클릭 이벤트 추가
-					kakao.maps.event.addListener(marker, 'click', function () {
-						// 현재 열려 있는 Overlay가 있다면 닫기
-						if (currentOverlay) {
-							currentOverlay.setMap(null);
-						}
-						// 새 Custom Overlay 열기
-						customOverlay.setMap(map);
-						currentOverlay = customOverlay; // 현재 열려 있는 Overlay 업데이트
-
-						// 가게 이름을 검색 입력 필드에 설정
-						searchInput.value = store.stoName; // 클릭한 마커의 가게 이름
-
-						// '자세히 보기' 버튼 클릭 이벤트 추가
-						const viewDetailsButton = document.getElementById("viewDetailsButton");
-						viewDetailsButton.onclick = function () {
-							// 검색어에 맞는 결과 표시
-							const searchTerm = searchInput.value.toLowerCase(); // 입력된 검색어 소문자로 변환
-							resultsDiv.innerHTML = ""; // 이전 검색 결과 초기화
-
-							// allStores에서 검색어에 해당하는 가게 찾기
-							const filteredStores = allFindStores.filter(store =>
-								store.stoName.toLowerCase().includes(searchTerm)
-							);
-
-							displayAllRestaurants(filteredStores, 1); // 첫 페이지로 결과 표시
-
-							// 특정 위치로 스크롤 (예: restaurantList의 첫 항목)
-							const firstItem = $('.restaurant-item').first();
-							if (firstItem.length) {
-								firstItem.get(0).scrollIntoView({behavior: 'smooth', block: 'start'});
-							}
-
-							// 화면 너비가 768px 미만일 때만 높이를 80%로 설정
-							if (window.innerWidth < 768) {
-								$(".searchWrapper").css("height", "85%"); // 높이를 80%로 설정
-								$(".hideBtn").data("expanded", true); // 초기 상태 설정
-								$('.searchWrapper').animate({
-									scrollTop: $('#restaurantList').offset().top - 150
-								}, 500); // 500ms 동안 스크롤
-							}
-						};
-					});
-				});
-
-			}
-
-			async function fetchStores() {
-				const response = await fetch('/load/stores'); // API 호출
-				const allStores = await response.json(); // JSON 데이터로 변환
-				displayStoresOnMap(allStores); // 가져온 가게 정보를 지도에 표시하는 함수 호출
-			}
-
-			//검색기능
-			let allFindStores = []; // 전체 가게 데이터를 저장할 배열
-
-			// API 호출하여 데이터 가져오기
-			async function loadStores() {
-				try {
-					const response = await fetch('/load/stores'); // API 호출
-					allFindStores = await response.json(); // JSON 데이터로 변환
-				} catch (error) {
-					console.error("Error fetching stores: ", error);
-				}
-			}
-
-			// 검색 입력 필드와 결과를 표시할 요소 가져오기
-			const searchInput = document.getElementById("searchInput");
-			const resultsDiv = document.getElementById("restaurantList");
-
-			// 검색 이벤트 추가
-			searchInput.addEventListener("input", function () {
-				const searchTerm = searchInput.value.toLowerCase(); // 입력된 검색어 소문자로 변환
-				resultsDiv.innerHTML = ""; // 이전 검색 결과 초기화
-				// allStores에서 검색어에 해당하는 가게 찾기
-				const filteredStores = allFindStores.filter(store =>
-					store.stoName.toLowerCase().includes(searchTerm)
-				);
-
-				displayAllRestaurants(filteredStores, 1); // 첫 페이지로 결과 표시
-				// 결과 표시
-
-			});
-			loadStores()
+			loadAllStores()
 
 			let city, district;
 
@@ -560,6 +434,12 @@
 						const lat = position.coords.latitude;
 						const lng = position.coords.longitude;
 						fetchRestaurantsByLocation(lat, lng); // 사용자 위치로 식당 정보 요청
+						// 화면 너비가 768px 미만일 때만 높이를 80%로 설정
+						if (window.innerWidth < 768) {
+							$(".searchWrapper").css("height", "85%"); // 높이를 80%로 설정
+							$(".hideBtn").data("expanded", true); // 초기 상태 설정
+						}
+
 					}, function () {
 						alert("위치 정보를 가져오는 데 실패했습니다.");
 					});
@@ -594,7 +474,8 @@
 				});
 			}
 
-
+			// 페이지 로드 시 사용자의 위치를 가져옴
+			getUserLocation();
 
 			$(".getUserLocationBtn").on("click", function () {
 				if (confirm("현재 위치로 이동하시겠습니까?")) {
@@ -609,6 +490,7 @@
 		let currentPage = 1; // 현재 페이지
 
 		function fetchRestaurants(city, district) {
+
 			// 새로운 지역을 선택할 때 allRestaurants를 초기화
 			allRestaurants = []; // 배열 초기화
 			currentPage = 1; // 페이지 초기화
@@ -628,7 +510,6 @@
 					},
 					success: function (data) {
 						allRestaurants = allRestaurants.concat(data.documents); // 현재 페이지의 식당 정보를 추가
-
 						if (data.meta.is_end) {
 							displayRestaurants(allRestaurants, city, district);
 
@@ -757,10 +638,7 @@
 
 				// 고유 ID 존재 여부 체크
 				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
-				const exists = await checkIfExists(uniqueId);
-				if (exists) {
-					continue; // 중복된 경우 다음 레스토랑으로 넘어감
-				}
+				
 
 				// API를 통해 데이터 저장
 				await saveStoreData(storeData);
@@ -913,7 +791,7 @@
 						}
 
 						const storeItem = $(`
-                    <div class="restaurant-item" id='restaurant-item' data-lat="${stoLatitude}" data-lng="${stoLongitude}">
+                    <div class="restaurant-item" data-lat="${stoLatitude}" data-lng="${stoLongitude}">
                         <p class='solo'>${stoName} - ${stoTitle} </p>
 						<div class="cardIcons ">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#808080" class="bi bi-eye" viewBox="0 0 16 16">
@@ -942,8 +820,8 @@
 						<p><strong>추천 메뉴:</strong> ${stoRecommendedMenu}</p>
 						<p><strong>주차 정보:</strong> ${stoParkingInfo}</p>
 						<p><strong>채식 종류:</strong> ${stoVegetarianType}</p>
-						<small><strong>카테고리:</strong> ${stoCategory}</small> <br />
-                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btnGreen">자세히보기</a>
+						<small><strong>카테고리:</strong> ${stoCategory}</small>
+                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btn-info">자세히보기</a>
 						<span class='mx-2 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
 						<span class='btn btn-success w-100' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}', event)">예약🗓️</span>
 						<div id="reservationForm_${stoId}" style="display: none;" onclick="event.stopPropagation();">
@@ -981,10 +859,6 @@
 							} else {
 								$('.restaurant-item').removeClass('expanded'); // 모든 항목 클래스 제거
 								$(this).addClass('expanded'); // 클릭한 항목에 클래스 추가
-								// 클릭한 항목으로 스크롤
-								$('.searchWrapper').animate({
-									scrollTop: $(this).offset().top - 150
-								}, 500); // 500ms 동안 스크롤
 							}
 
 							initMap(stoLatitude, stoLongitude, stoName); // 지도 초기화
@@ -1000,18 +874,13 @@
 						initMap(firstItem.data('lat'), firstItem.data('lng'), firstItem.find('.solo').text()); // 초기 지도 설정
 					}
 
-					if (paginatedRestaurants.length == 1) {
-						const firstItem = $('.restaurant-item').first();
-						firstItem.addClass('expanded');
-
-
-					}
 					setupPagination(filteredStores.length, itemsPerPage, filteredStores); // 페이지네이션 설정
 				})
 				.catch(error => console.error('Error:', error));
 		}
 
 
+		//페이지네이션 설정 함수
 		//페이지네이션 함수
 		function setupPagination(totalItems, itemsPerPage, filteredStores) {
 			const pagination = $('#pagination');
@@ -1095,7 +964,10 @@
 			return R * c; // 거리 반환 (킬로미터)
 		}
 
-
+		// 페이지 로드 시 사용자의 위치 근처 가게 로드
+		$(document).ready(() => {
+			loadNearbyStores(); // 홈페이지 로드 시 사용자 위치 근처 가게 로드
+		});
 
 		function initMap(lat, lng, placeName) {
 			const mapContainer = document.getElementById('map');
@@ -1116,10 +988,10 @@
 			// Custom Overlay 추가
 			const customOverlay = new kakao.maps.CustomOverlay({
 				content: `
-					<div class='infowindowBox'>
-						<span class='closeBtn' onclick='this.parentElement.parentElement.style.display="none"'>✖</span>
-						<div style='font-size: 16px; color: #333;'>${placeName}</div>
-					</div>`,
+							<div class='infowindowBox'>
+								<span class='closeBtn' onclick='this.parentElement.parentElement.style.display="none"'>✖</span>
+								<div style='font-size: 16px; color: #333;'>${placeName}</div>
+							</div>`,
 				position: markerPosition // Overlay 위치 설정
 			});
 			customOverlay.setMap(map);

@@ -53,7 +53,7 @@
 								<th:block th:each="img, iterStat : ${recipe.recpmainImgList}">
 									<div class="mainImgFrame drop-area gallery">
 										<input type="hidden" th:name="'existingImgIds[' + ${iterStat.index} + ']'"
-										               th:value="${img.imgSrc}" /> <!-- 기존 이미지 ID를 저장 -->
+											th:value="${img.imgSrc}" /> <!-- 기존 이미지 ID를 저장 -->
 										<input type="file" class="form-control recpMainImg drop-area" accept="image/*"
 											style="display: none">
 										<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
@@ -64,24 +64,26 @@
 							</th:block>
 							<th:block th:if="${#lists.isEmpty(recipe.recpmainImgList)}">
 								<div class="mainImgFrame drop-area gallery">
+									<label for="recpMainImg1" class="btn btn-primary">이미지 선택</label>
 									<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg1"
-										accept="image/*" style="display: none" name="recpMainImgList[0]">
+										accept="image/*" style="display: none" name="recpMainImgList[">
 									<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 								</div>
 
-
 								<div class="mainImgFrame drop-area gallery">
+									<label for="recpMainImg2" class="btn btn-primary">이미지 선택</label>
 									<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg2"
-										accept="image/*" style="display: none" name="recpMainImgList[1]">
+										accept="image/*" style="display: none" name="recpMainImgList">
 									<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 								</div>
-
 
 								<div class="mainImgFrame drop-area gallery">
+									<label for="recpMainImg3" class="btn btn-primary">이미지 선택</label>
 									<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg3"
-										accept="image/*" style="display: none" name="recpMainImgList[2]">
+										accept="image/*" style="display: none" name="recpMainImgList">
 									<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 								</div>
+
 							</th:block>
 						</div> <!-- //drop-area -->
 
@@ -142,33 +144,39 @@
 								</tr>
 							</thead>
 							<tbody id="ingredientList">
-							    <th:block th:if="${#lists.isEmpty(recipe.recpIngredientList)}">
-							        <tr>
-							            <td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-							            <td>
-							                <input type="text" class="form-control form-control-sm ingrName" name="recpIngredientList[0].ingredientName" placeholder="재료">
-							            </td>
-							            <td>
-							                <input type="text" class="form-control form-control-sm ingrAmount" name="recpIngredientList[0].amount" placeholder="양">
-							            </td>
-							            <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-							        </tr>
-							    </th:block>
+								<th:block th:if="${#lists.isEmpty(recipe.recpIngredientList)}">
+									<tr>
+										<td><input type="button" class="form-control form-control-sm removeRow"
+												value="(-)"></td>
+										<td>
+											<input type="text" class="form-control form-control-sm ingrName"
+												name="recpIngredientList[0].ingredientName" placeholder="재료">
+										</td>
+										<td>
+											<input type="text" class="form-control form-control-sm ingrAmount"
+												name="recpIngredientList[0].amount" placeholder="양">
+										</td>
+										<td><input type="button" class="form-control form-control-sm addRow"
+												value="(+)"></td>
+									</tr>
+								</th:block>
 
-							    <th:block th:each="ingredient, iterStat : ${recipe.recpIngredientList}">
-							        <tr>
-							            <td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-							            <td>
-							                <input type="text" class="form-control form-control-sm ingrName"
-							                       th:value="${ingredient.ingredientName}" placeholder="재료">
-							            </td>
-							            <td>
-							                <input type="text" class="form-control form-control-sm ingrAmount"
-							                       th:value="${ingredient.amount}" placeholder="양">
-							            </td>
-							            <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-							        </tr>
-							    </th:block>
+								<th:block th:each="ingredient, iterStat : ${recipe.recpIngredientList}">
+									<tr>
+										<td><input type="button" class="form-control form-control-sm removeRow"
+												value="(-)"></td>
+										<td>
+											<input type="text" class="form-control form-control-sm ingrName"
+												th:value="${ingredient.ingredientName}" placeholder="재료">
+										</td>
+										<td>
+											<input type="text" class="form-control form-control-sm ingrAmount"
+												th:value="${ingredient.amount}" placeholder="양">
+										</td>
+										<td><input type="button" class="form-control form-control-sm addRow"
+												value="(+)"></td>
+									</tr>
+								</th:block>
 							</tbody>
 						</table>
 					</div> <!-- //infoGroup 재료 -->
@@ -180,88 +188,119 @@
 		<section class="cookingSec">
 			<ol id="cookOrderCardList">
 				<th:block th:if="${#lists.isEmpty(recipe.cookOrderCardList)}">
-				        <li class="card cookOrderCard my-3 border-3 border-success-subtle">
-				            <div class="card-header">
-				                <div class="row">
-				                    <div class="col-md-2">
-				                        <input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="step 제외 (-)"/>
-				                    </div>
-				                    <div class="col-md-8">
-				                        <p class="text-center mb-0">
-				                            <span class="textStep">Step</span>
-				                            <input type="text" readonly class="form-control-plaintext cookOrderNum text-left" value="1" name="cookOrderCardList[0].cookOrderNum" tabindex="-1">
-				                        </p>
-				                    </div>
-				                    <div class="col-md-2">
-				                        <input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="step 추가 (+)"/>
-				                    </div>
-				                </div>
-				            </div>
-				            <div class="card-body">
-				                <div class="row">
-				                    <div class="col-md-6">
-				                        <div class="drop-area cookingDropArea">
-				                            <input type="file" class="form-control cookingImgInput" accept="image/*" name="cookOrderCardList[0].cookOrderImg">
-				                            <div class="preview border" style="position: relative;">
-				                                <p>이미지를 여기에 드래그 앤 드롭하세요</p>
-				                            </div>
-				                        </div>
-				                    </div>
-				                    <div class="col-md-6">
-				                        <textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요" name="cookOrderCardList[0].cookOrderText"></textarea>
-				                    </div>
-				                </div>
-				            </div>
-				        </li>
-				    </th:block>
+					<li class="card cookOrderCard my-3 border-3 border-success-subtle">
+						<div class="card-header">
+							<div class="row">
+								<div class="col-md-2">
+									<input type="button"
+										class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
+										value="step 제외 (-)" />
+								</div>
+								<div class="col-md-8">
+									<p class="text-center mb-0">
+										<span class="textStep">Step</span>
+										<input type="text" readonly
+											class="form-control-plaintext cookOrderNum text-left" value="1"
+											name="cookOrderCardList[0].cookOrderNum" tabindex="-1">
+									</p>
+								</div>
+								<div class="col-md-2">
+									<input type="button"
+										class="btn border-1 border-success btn-sm btn-block addCard w-100"
+										value="step 추가 (+)" />
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="drop-area cookingDropArea">
+										<input type="file" class="form-control cookingImgInput" accept="image/*"
+											name="cookOrderCardList[0].cookOrderImg" />
+										<input type="hidden" name="cookOrderCardList[0].existingCookOrderImg"
+											value="" />
+										<div class="preview border" style="position: relative;">
+											<p>이미지를 여기에 드래그 앤 드롭하세요</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요"
+										name="cookOrderCardList[0].cookOrderText"></textarea>
+								</div>
+							</div>
+						</div>
+					</li>
+				</th:block>
 
-				    <th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
-				        <li class="card cookOrderCard my-3 border-3 border-success-subtle">
-				            <div class="card-header">
-				                <div class="row">
-				                    <div class="col-md-2">
-				                        <input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="step 제외 (-)" />
-				                    </div>
-				                    <div class="col-md-8">
-				                        <p class="text-center mb-0">
-				                            <span class="textStep">Step</span>
-				                            <input type="text" readonly class="form-control-plaintext cookOrderNum text-left" th:value="${iterStat.index + 1}" tabindex="-1">
-				                        </p>
-				                    </div>
-				                    <div class="col-md-2">
-				                        <input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="step 추가 (+)" />
-				                    </div>
-				                </div>
-				            </div>
-				            <div class="card-body">
-				                <div class="row">
-				                    <div class="col-md-6">
-				                        <div class="drop-area cookingDropArea">
-				                            <input type="file" class="form-control cookingImgInput" accept="image/*" th:name="'cookOrderCardList[' + ${iterStat.index} + '].cookOrderImg'" />
-											<input type="hidden" th:name="'cookOrderCardList[' + ${iterStat.index} + '].existingCookOrderImg'" th:value="${orderCard.cookOrderImg}" />
-											<div class="preview border" style="position: relative;">
-				                                <p>이미지를 여기에 드래그 앤 드롭하세요</p>
-				                                <img th:src="${orderCard.cookOrderImg}" alt="" />
-				                            </div>
-				                        </div>
-				                    </div>
-				                    <div class="col-md-6">
-				                        <textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요" th:name="'cookOrderCardList[' + ${iterStat.index} + '].cookOrderText'" th:text="${orderCard.cookOrderText}"></textarea>
-				                    </div>
-				                </div>
-				            </div>
-				        </li>
-				    </th:block>
-
+				<th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
+					<li class="card cookOrderCard my-3 border-3 border-success-subtle">
+						<div class="card-header">
+							<div class="row">
+								<div class="col-md-2">
+									<input type="button"
+										class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
+										value="step 제외 (-)" />
+								</div>
+								<div class="col-md-8">
+									<p class="text-center mb-0">
+										<span class="textStep">Step</span>
+										<input type="text" readonly
+											class="form-control-plaintext cookOrderNum text-left"
+											th:value="${iterStat.index + 1}" tabindex="-1">
+										<input type="hidden"
+											th:name="'cookOrderCardList[' + ${iterStat.index} + '].cookOrderNum'"
+											th:value="${iterStat.index + 1}" />
+									</p>
+								</div>
+								<div class="col-md-2">
+									<input type="button"
+										class="btn border-1 border-success btn-sm btn-block addCard w-100"
+										value="step 추가 (+)" />
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="drop-area cookingDropArea">
+										<input type="file" class="form-control cookingImgInput" accept="image/*"
+											th:name="'cookOrderCardList[' + ${iterStat.index} + '].cookOrderImg'" />
+										<input type="hidden"
+											th:name="'cookOrderCardList[' + ${iterStat.index} + '].existingCookOrderImg'"
+											th:value="${orderCard.cookOrderImg}" />
+										<div class="preview border" style="position: relative;">
+											<p>이미지를 여기에 드래그 앤 드롭하세요</p>
+											<img th:src="${orderCard.cookOrderImg}" alt="" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요"
+										th:name="'cookOrderCardList[' + ${iterStat.index} + '].cookOrderText'"
+										th:text="${orderCard.cookOrderText}"></textarea>
+								</div>
+							</div>
+						</div>
+					</li>
+				</th:block>
 			</ol>
 		</section>
+
 
 		<section class="mb-3">
 			<!-- 레시피 수정 버튼 -->
 			<input type="submit" class="form-control btn btn-lg btn-success" value="레시피 수정하기">
 		</section>
 	</form>
-
+	<script>
+		document.querySelectorAll('.mainImgFrame .btn-primary').forEach(button => {
+		    button.addEventListener('click', function() {
+		        const inputFile = this.nextElementSibling; // 다음 요소는 파일 입력 필드
+		        inputFile.click(); // 파일 선택 대화상자 열기
+		    });
+		});
+	</script>
 </div> <!--//layout::content-->
 
 </html>

@@ -247,7 +247,7 @@
 			<!--상품 등록 버튼 #2-->
 			<script th:inline="javascript">
           // 전역 변수를 통해 prodName을 외부 js에서 접근할 수 있게 설정
-          var prodName = [[${productForm.prodName}]];  // Thymeleaf로 서버에서 전달된 상품명
+          var prodName = '[[${productForm.prodName}]]';  // Thymeleaf로 서버에서 전달된 상품명
 			</script>
 			
 			<div class="col"><input type="submit" class="form-control btn btn-lg btn-success d-block"

@@ -41,6 +41,11 @@ public class StoreController {
 		return "load/map";
 	}
     
+    @GetMapping("/localmap")
+	public String getlocalMap() {
+		return "load/localmap";
+	}
+    
     @GetMapping("/favoriteStore")
     public String getFavoriteStore() {
     	return "load/favoriteStore";

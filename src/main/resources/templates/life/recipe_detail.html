@@ -8,7 +8,7 @@
 			width: 100%;
 			height: 300px;
 			object-fit: cover;
-			border-radius: 10px 10px 0 0;
+			border-radius: 10px;
 		}
 
 		.ingredient-list {
@@ -23,10 +23,16 @@
 		}
 
 		.step-image {
-			max-width: 100%;
-			height: auto;
+			width: 300px;
+			height: 200px;
 			border-radius: 5px;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			margin: 10px;
+		}
+
+		.card:hover {
+			transform: scale(1);
+			/* 호버 시 확대 효과 */
 		}
 	</style>
 </head>
@@ -35,17 +41,17 @@
 	<div layout:fragment="content" class="content">
 		<div class="container my-4">
 			<!-- 페이지 제목 -->
-			<div class="row my-5">
+			<div class="row mt-5">
 				<div class="col text-center">
-					<h1 th:text="${recipe.recpName}"></h1>
+					<h1 class='fw-bold fs-1' th:text="${recipe.recpName}"></h1>
 				</div>
 			</div>
 
 			<!-- 요리 정보 요약 -->
-			<section class="recipe-info my-4 py-4 rounded-2">
+			<section class="recipe-info mb-4 py-4 rounded-2">
 				<div class="card">
 					<div class="row no-gutters">
-						<div class="col-md-4">
+						<div class="col-md-4 p-4">
 							<div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel"
 								th:if="${recipe.recpmainImgList.size() > 0}">
 								<div class="carousel-inner">
@@ -72,13 +78,49 @@
 
 						<div class="col-md-8">
 							<div class="card-body">
-								<h5>요리 간단 소개</h5>
+								<h5 class="fw-bolder">요리 간단 소개
+									<span class="favorite-btn btn btn-success float-end"
+										th:data-userid="${session.UserId}" th:data-recipeid="${recipe.id}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											th:attr="fill=${isFavorite} ? 'red' : 'currentColor'" class="bi"
+											th:classappend="${isFavorite} ? 'bi-heart-fill' : 'bi-heart'"
+											viewBox="0 0 16 16">
+											<path th:if="${isFavorite}" fill-rule="evenodd"
+												d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
+											<path th:if="${!isFavorite}"
+												d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+										</svg>
+									</span>
+									<input type="hidden" id="userId" th:value="${session.UserId}"/>
+									<input type="hidden" id="recipeId" th:value="${recipe.id}"/>
+								</h5>
 								<p th:text="${recipe.recpIntroduce}" class="lead"></p>
 								<p><strong>작성자:</strong> <span th:text="${recipe.writer}"></span></p>
-								<p><strong>인분:</strong> <span th:text="${recipe.servings}"></span></p>
-								<p><strong>소요 시간:</strong> <span th:text="${recipe.cookTime} + ' 분'"></span></p>
-								<p><strong>난이도:</strong> <span th:text="${recipe.difficulty}"></span></p>
+								<p>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"
+										class="bi bi-people-fill" viewBox="0 0 16 16">
+										<path
+											d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+									</svg>
+									<span th:text="${recipe.servings}"></span>인분
+								</p>
+								<p>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"
+										class="bi bi-alarm" viewBox="0 0 16 16">
+										<path
+											d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z" />
+										<path
+											d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1" />
+									</svg>
+									<span th:text="${recipe.cookTime} + ' 분'"></span>
+								</p>
+								<p><strong>난이도:</strong>
+									<span th:if="${recipe.difficulty == 'diff_easy'}" th:text="'쉬움'"></span>
+									<span th:if="${recipe.difficulty == 'diff_normal'}" th:text="'보통'"></span>
+									<span th:if="${recipe.difficulty == 'diff_hard'}" th:text="'어려움'"></span>
+								</p>
 								<p><strong>태그:</strong> <span th:text="${recipe.recpTags}"></span></p>
+
 							</div>
 						</div>
 					</div>
@@ -88,36 +130,45 @@
 			<!-- 재료 목록 -->
 			<h2 class="mt-4">재료</h2>
 			<div class="ingredient-list">
-				<ul class="list-group">
-					<th:block th:each="ingredient : ${recipe.recpIngredientList}">
-						<li class="list-group-item"
-							th:text="${ingredient.ingredientName} + ' - ' + ${ingredient.amount}"></li>
-					</th:block>
-				</ul>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>재료 이름</th>
+							<th>수량</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:each="ingredient : ${recipe.recpIngredientList}">
+							<tr>
+								<td th:text="${ingredient.ingredientName}"></td>
+								<td th:text="${ingredient.amount}"></td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
 			</div>
 
 			<!-- 조리 순서 -->
 			<h2 class="mt-4">조리 순서</h2>
 			<ol class="mb-4">
-				<th:block th:each="orderCard : ${recipe.cookOrderCardList}">
-					<li class="step">
-						<div class="card mb-3">
-							<div class="row no-gutters">
-								<div class="col-4">
-									<img th:src="${orderCard.cookOrderImg}" alt="조리 이미지" class="step-image"
-										th:if="${orderCard.cookOrderImg != null}"
-										style="height: 100%; width: 100%; object-fit: cover;" />
-								</div>
-								<div class="col-8">
-									<div class="card-body">
-										<h5 class="mt-0">순서 <span th:text="${orderCard.cookOrderNum}"></span>:</h5>
-										<span th:text="${orderCard.cookOrderText}"></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</li>
-				</th:block>
+			    <th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
+			        <li class="step">
+			            <div class="card mb-3">
+			                <div class="row no-gutters">
+			                    <div class="col-4">
+			                        <img th:src="${orderCard.cookOrderImg}" alt="조리 이미지" class="step-image"
+			                             th:if="${orderCard.cookOrderImg != null}" style="object-fit: cover;" />
+			                    </div>
+			                    <div class="col-8">
+			                        <div class="card-body">
+			                            <span class="orderNum" th:text="${iterStat.index + 1}"></span> <!-- 순서 표시 -->
+			                            <span class="cookInstructions" th:text="${orderCard.cookOrderText}"></span> <!-- 조리 텍스트 표시 -->
+			                        </div>
+			                    </div>
+			                </div>
+			            </div>
+			        </li>
+			    </th:block>
 			</ol>
 			<!-- 수정 및 삭제 버튼 -->
 			<div class="btn-group" th:if="${session.UserId == recipe.writer} or ${session.UserId == 'admin'}">
@@ -127,7 +178,83 @@
 				</form>
 			</div>
 		</div>
+		<script>
+			$(document).ready(function () {
+			    var userId = $('#userId').val(); // 사용자 ID를 페이지에서 가져옵니다 (예: hidden input)
+			    var recipeId = $('#recipeId').val(); // 레시피 ID를 페이지에서 가져옵니다 (예: hidden input)
+			    // 페이지 로드 시 찜한 상태 확인
+			    $.ajax({
+			        url: '/favorite/check',  // 서버의 상태 확인 URL
+			        type: 'GET',
+			        data: {
+			            userId: userId,
+			            recipeId: recipeId
+			        },
+			        success: function (response) {
+			            if (response.isFavorite) {
+			                $('.favorite-btn').addClass('bi-heart-fill').removeClass('bi-heart');
+			            } else {
+			                $('.favorite-btn').addClass('bi-heart').removeClass('bi-heart-fill');
+			            }
+			        },
+			        error: function (error) {
+			            console.error('상태 확인 실패:', error);
+			        }
+			    });
 
+			    // 찜 버튼 클릭 이벤트
+			    $('.favorite-btn').click(function () {
+			        var isFavorite = $(this).hasClass('bi-heart-fill'); // 현재 아이콘 상태 확인
+
+			        if (isFavorite) {
+			            // 찜 취소 요청
+			            $.ajax({
+			                url: '/favorite/remove',  // 서버의 취소 URL
+			                type: 'POST',
+			                data: {
+			                    userId: userId,
+			                    recipeId: recipeId
+			                },
+			                success: function (response) {
+			                    alert('찜한 레시피에서 취소되었습니다!');
+			                    // 아이콘 상태 변경
+			                    $(this).removeClass('bi-heart-fill').addClass('bi-heart');
+			                    location.reload();
+			                }.bind(this), // this 바인딩
+			                error: function (error) {
+			                    alert('취소하는 데 실패했습니다.');
+			                }
+			            });
+			        } else {
+			            // 찜 추가 요청
+						$.ajax({
+						    url: '/favorite/add',
+						    type: 'POST',
+						    data: {
+						        userId: userId,
+						        recipeId: recipeId
+						    },
+						    success: function (response) {
+						        if (response === "success") {
+						            alert('찜한 레시피에 추가되었습니다!');
+						            // 추가된 아이콘 상태 변경 등
+									location.reload();
+
+						        } else if (response === "already_favorited") {
+						            alert('이미 찜한 레시피입니다.');
+						        } else {
+						            alert('찜하는 데 실패했습니다.');
+						        }
+								
+						    },
+						    error: function (error) {
+						        alert('찜하는 데 실패했습니다.');
+						    }
+						});
+			        }
+			    });
+			});
+		</script>
 	</div>
 
 </body>

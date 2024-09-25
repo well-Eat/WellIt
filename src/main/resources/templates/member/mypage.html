@@ -1,186 +1,178 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content">
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 	<link rel="stylesheet" href="/css/member.css" />
-	<section id="mypage" class="position-relative">
-		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
-		<div class="container-fluid">
-			<div class="row">
-				<!-- 사이드바? -->
-				<div class="col-xl-2 col-xs-12">
-					<nav class="sidebar card py-2 mb-4">
-						<ul class="nav nav-tabs flex-xs-row flex-xl-column tabnav" id="nav_accordion">
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#">프로필</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보
-											확인/수정</a></li>
-								</ul>
-							</li>
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cart">장바구니</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="#"
-											data-target="#order-info">주문내역</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cancel">환불/반품/취소
-											목록</a></li>
-								</ul>
-							</li>
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">예약관리</a>
-								<ul class="submenu">
-									<li th:if="${member.isBusiness == true}"><a class="nav-link link-dark fw-bold"
-											href="#" data-target="#store" th:linkyn="${member.memberId}"
-											th:onclick="fetchMyStoreReservations( this.getAttribute('linkyn'))">가게 예약내역
-											보기</a>
-									</li>
-									<li>
-										<a class="nav-link link-dark fw-bold" href="#" data-target="#reservation"
-											id="view-reservations" th:linkyn="${member.memberId}"
-											th:onclick="fetchReservations( this.getAttribute('linkyn'))">내 예약내역 보기</a>
-									</li>
-								</ul>
-							</li>
-							<li class="nav-item has-submenu mt-3" th:if="${member.memberId == 'admin'}">
-								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">관리자
-									메뉴</a>
-								<ul class="submenu">
-									<li>
-										<a class="nav-link link-dark fw-bold" th:href="@{/load/store/create}">가게 생성</a>
-									</li>
-								</ul>
-							</li>
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및
-											처리방침</a></li>
-								</ul>
-							</li>
-						</ul>
-					</nav>
-				</div>
-				<div class="col-xl-10 col-xs-12  tabcontent">
-					<!-- 사용자 정보 -->
-					<div id="user-profile" class="container border">
-						<h1 class="mb-5">사용자 정보</h1>
-						<div class="row">
-							<div class="col-4">
-								<div th:if="${member.ImageFile}">
+	<!--order style link-->
+	<link rel="stylesheet" href="/css/order.css" />
+	<link rel="stylesheet" href="/css/util.css" />
 
-									<img th:src="@{${member.ImageFile}}" alt="프로필 사진" class="rounded-circle"
+	<div class="bg-light">
+		<section id="mypage" class="position-relative">
+			<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
+			<div class="container-fluid">
+				<div class="row">
+					<!-- 사이드바? -->
+					<div class="col-xl-3 col-xs-12 p-xs-none p-sm-5">
+						<nav class="sidebar card py-2 mb-4 border-0 bg-body">
+							<div class="row">
+								<div class="col-md-4 col-xl-12">
+									<div class="container fw-bold border-bottom border-5 border-light">
+										<div class="row">
+											<div class="col-7">
+												<b class="fw-bolder"><span class="text-info">반가워요!</span>
+													[[${member.memberAlias}]] 님</b> <br />
+												<p class="border p-2 border-success-subtle">마일리지 : [[${member.mileage}]]
+													원
+												</p>
+											</div>
+											<div class="col-5">
+												<div th:if="${member.ImageFile}">
 
-										width="150px" height="150px" />
+													<img th:src="@{${member.ImageFile}}" alt="프로필 사진"
+														class="rounded-circle" width="100px" height="100px" />
+												</div>
+												<div th:unless="${member.ImageFile}">
+													<img src="/imgs/member/default-profile.png" alt="기본 프로필 사진"
+														class="rounded img-fluid" />
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div th:unless="${member.ImageFile}">
-									<img src="/imgs/member/default-profile.png" alt="기본 프로필 사진"
-										class="rounded img-fluid" width="150px" height="150px" />
+								<div class="col-md-8 col-xl-12 d-flex">
+									<ul class="nav nav-tabs flex-column flex-sm-row flex-xl-column tabnav container"
+										id="nav_accordion">
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">프로필</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/memberinfo"
+														data-target="#user-profile">회원정보 확인/수정</a></li>
+											</ul>
+										</li>
+										<li class="nav-item has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">찜 리스트</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/favorite/store">찜한 가게</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/member/mypage/favorite/product" onclick="">찜한 상품</a></li>
+											</ul>
+										</li>
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/member/mypage/orderhistory">주문내역</a></li>
+												<li><a class="nav-link link-dark fw-bold" href="#"
+														data-target="#cancel">환불/반품/취소 목록</a></li>
+											</ul>
+										</li>
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">고객센터</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold" href="#"
+														data-target="#qna">Q&A</a></li>
+												<li><a class="nav-link link-dark fw-bold" href="#"
+														data-target="#terms">이용약관 및 처리방침</a></li>
+											</ul>
+										</li>
+										<!-- Admin 전용 항목들 -->
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/po/list">주문확인</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
+											</ul>
+										</li>
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">Admin 전용 : 상품 관리</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
+												<li><a class="nav-link link-dark fw-bold" href="/shop/admin/form">신규상품등록</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">예약관리</a>
+											<ul class="submenu">
+												<li th:if="${member.isBusiness == true}"><a
+														class="nav-link link-dark fw-bold" href="#" data-target="#store"
+														th:linkyn="${member.memberId}"
+														th:onclick="fetchMyStoreReservations( this.getAttribute('linkyn'))">가게
+														예약내역
+														보기</a>
+												</li>
+												<li>
+													<a class="nav-link link-dark fw-bold" href="#"
+														data-target="#reservation" id="view-reservations"
+														th:linkyn="${member.memberId}"
+														th:onclick="fetchReservations( this.getAttribute('linkyn'))">내
+														예약내역 보기</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item has-submenu mt-3" th:if="${member.memberId == 'admin'}">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">관리자
+												메뉴</a>
+											<ul class="submenu">
+												<li>
+													<a class="nav-link link-dark fw-bold"
+														th:href="@{/load/store/create}">가게 생성</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</div>
+
+
 							</div>
-							<div class="col-8">
-								<div class="row align-middle">
-									<div th:if="${member.memberType != 'KAKAO'}" class="col">
-										<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>
-										<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
-										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
-										<p>비건 종류 :
-
-											<span th:if="${member.memberVeganType == null}">미정</span>
-											<span th:unless="${member.memberVeganType == null}"
-												th:text="${member.memberVeganType}"></span>
-										</p>
-									</div>
-									<div th:if="${member.memberType == 'KAKAO'}" class="col">
-										<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>								
-										<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
-										<p>비건 종류 :
-											<span th:if="${member.memberVeganType == null}">미정</span>
-
-											<span th:unless="${member.memberVeganType == null}"
-												th:text="${member.memberVeganType}"></span>
-										</p>
-									</div>
-									<div class="col">
-										<p>마일리지 : <span th:text="${member.mileage}"></span></p>
-
-									</div>
-								</div>
-								<div class="row mt-3 float-end">
-									<div class="col">
-										<a th:if="${member.memberType == 'KAKAO'}" th:href="@{/member/update_kakao}"
-											class="btn btn-warning">회원정보 수정</a>
-										<a th:if="${member.memberType != 'KAKAO'}" th:href="@{/member/enter_password}"
-											class="btn btn-warning">회원정보 수정</a>
-									</div>
-								</div>
-							</div>
-						</div>
+						</nav>
 					</div>
-					<!-- 장바구니 -->
-					<div id="cart" class="container border">
-						<h1>장바구니</h1>
+					<div class="col-xl-9 col-xs-12 tabcontent container mt-0 mt-xl-5 mb-5 mb-xl-0"
+						layout:fragment="tabcontent">
+						
+						
+					</div>
 
-					</div>
-					<!-- 주문내역 -->
-					<div id="order-info" class="container border">
-						<h1>주문내역</h1>
-
-					</div>
-					<!-- 취소목록 -->
-					<div id="cancel" class="container border">
-						<h1>환불/반품/취소 목록</h1>
-
-					</div>
-					<div id="reservation" class="container border" style="display: none;">
-						<h1 class="text-center">내 예약내역</h1>
-						<h2>수락된 예약</h2>
-						<div id="acceptedReservationsContainer"></div>
-
-						<h2>수락되지 않은 예약</h2>
-						<div id="rejectedReservationsContainer"></div>
-					</div>
-					<div id="store" class="container border" style="display: none;">
-						<h1 class="text-center">내 가게 예약내역</h1>
-						<div id="myStoreReservationsContainer">
-							<!-- 내 가게 예약 목록이 여기에 표시됩니다 -->
-						</div>
-					</div>
+					
 
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+	</div>
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			const links = document.querySelectorAll('.nav-link[data-target]');
-			const sections = document.querySelectorAll('.tabcontent > div.container');
+		//tabcontent로 이동
+//		document.addEventListener('DOMContentLoaded', function () {
+//			// 모든 a 태그에 대해 클릭 이벤트 리스너 추가
+//			document.querySelectorAll('.tabnav a').forEach(function (link) {
+//				link.addEventListener('click', function (event) {
 
-			// Hide all sections initially
-			sections.forEach(section => section.style.display = 'none');
+					// 이동할 대상 요소 설정 (탭 콘텐츠 영역)
+//					const targetElement = document.querySelector('.tabcontent');
 
-			// Show the first section by default
-			if (sections.length > 0) {
-				sections[0].style.display = 'block';
-			}
+					//해당 요소로 스크롤
+//					if (targetElement) {
+//						const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+//						const offsetPosition = elementPosition - 30; // 30px 위로 스크롤 조정
 
-			// Add click event to each link
-			links.forEach(link => {
-				link.addEventListener('click', function (e) {
-					e.preventDefault();
+//						window.scrollTo({
+//							top: offsetPosition,
+//							behavior: 'smooth'
+//						});
+//					}
+//				});
+//			});
 
-					// Hide all sections
-					sections.forEach(section => section.style.display = 'none');
-
-					// Show the selected section
-					const target = document.querySelector(this.getAttribute('data-target'));
-					if (target) {
-						target.style.display = 'block';
-
-					}
-				});
-			});
-		});
+//		});
 
 		let storeReservations = []; // 내 가게 예약 목록 전역 변수
 

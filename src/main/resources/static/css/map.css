@@ -2,29 +2,37 @@ header {
 	position: relative;
 	background-color: #386641;
 }
-.searchWrapper{
+
+.searchWrapper {
 	position: absolute;
-	width: 20%;
-	top: calc( 10% + 15px);
+	width: 30%;
+	top: calc(10% + 15px);
 	border: 1px solid lightgray;
 	left: 30px;
 	overflow-y: scroll;
 	z-index: 20;
-	height: calc( 90% - 60px);
+	height: calc(90% - 60px);
+	max-width: 500px;
 }
+
+.searchWrapper::-webkit-scrollbar {
+	width: 5px;
+}
+
 .selectRegion {
 	position: relative;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	width: 100%;
-	height: 180px;
-	margin-top: 10px;
+	height: 200px;
+	margin: 10px 0;
 	z-index: 21;
 }
-.container-fluid{
+
+.container-fluid {
 	padding-left: 0;
-	padding-right: 0;	
+	padding-right: 0;
 }
 
 .mapWrapper {
@@ -34,46 +42,70 @@ header {
 
 #map {
 	width: 100%;
-	height: 100vh;
+	height: calc( 100vh - 60px);
 	float: right;
 }
-.selectRegionForm{
+
+.selectRegionForm {
 	width: 90%;
 }
 
 #restaurantList {
 	position: relative;
 	width: 100%;
+	margin-top: 20px;
 }
 
 #restaurantList>div {
 	margin-bottom: 20px;
 	border: 1px solid #6a994e;
 	padding: 0 25px 25px;
-	border-radius: 45px;
+	border-radius: 10px;
 	cursor: pointer;
 	width: 90%;
 	margin-left: 5%;
 }
 
 .solo {
-	max-height: 50px;
-	line-height: 50px;
+	max-height: 40px;
+	/* 최대 높이 */
+	line-height: 40px;
+	/* 줄 높이 */
 	margin-bottom: 0;
+	/* 아래 여백 없음 */
+	text-align: center;
+	/* 중앙 정렬 */
+	font-weight: bold;
+	/* 글자 두께 */
+	font-size: large;
+	/* 글자 크기 */
+	overflow: hidden;
+	/* 넘치는 내용 숨기기 */
+	white-space: nowrap;
+	/* 텍스트를 한 줄로 강제 */
+	text-overflow: ellipsis;
+	/* 넘치는 텍스트에 ... 표시 */
+}
+
+.cardIcons {
+	color: #808080;
+	text-align: end;
+	margin-right: -10px;
+	max-height: 40px;
+	line-height: 40px;
 }
 
 #pagination {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 3;
-	position: absolute;
-	top: 550px;
+	position: relative;
+	width: 100%;
 }
 
 .restaurant-item {
 	overflow: hidden;
-	max-height: 50px;
+	max-height: 80px;
 	/* 기본 높이 */
 	transition: max-height 0.5s ease;
 	/* 부드러운 애니메이션 */
@@ -86,22 +118,37 @@ header {
 }
 
 #pagination button {
-	margin: 0 10px;
-	padding: 10px 15px;
+	flex: 1;
+	/* 버튼이 가능한 공간을 균등하게 나누게 함 */
+	margin: 0 5px;
+	/* 좌우 여백 */
+	padding: 5px;
+	/* 패딩 */
 	border: none;
-	background-color: #007bff;
+	background-color: #6a994e;
+	/* 배경색 */
 	color: white;
+	/* 글자색 */
 	cursor: pointer;
+	/* 커서 모양 */
 	border-radius: 5px;
+	/* 모서리 둥글게 */
+}
+
+#pagination button.active {
+	background-color: #386641;
+	/* 활성화된 버튼의 배경색 */
+	font-weight: bold;
+	/* 강조하기 위해 글자 두껍게 */
 }
 
 #pagination button:disabled {
-	background-color: #ccc;
 	cursor: not-allowed;
 }
 
 #zoomIn,
-#zoomOut, #location {
+#zoomOut,
+#location {
 	z-index: 10;
 	position: relative;
 	border: 1px solid black;
@@ -112,4 +159,131 @@ header {
 	top: 10px;
 	margin-right: 10px;
 	border-radius: 50%;
+}
+
+.noSelect {
+	font-size: 1.2rem;
+	/* 글자 크기 */
+	transition: background-color 0.3s;
+	/* 배경 색상 전환 효과 */
+	width: 90%;
+	position: relative;
+	left: 5%;
+	background-color: #f8f9fa;
+	/* 연한 회색 배경 */
+	border: 1px solid #dee2e6;
+	/* 연한 회색 경계선 */
+	color: #6c757d;
+	/* 텍스트 색상 */
+}
+
+.infowindowBox {
+	padding: 15px;
+	/* 내부 여백 */
+	background-color: #fff;
+	/* 배경 색상 */
+	border: 1px solid #386641;
+	/* 테두리 색상 */
+	border-radius: 8px;
+	/* 둥근 모서리 */
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	/* 그림자 효과 */
+	font-size: 14px;
+	/* 글자 크기 */
+	color: #333;
+	/* 글자 색상 */
+	text-align: center;
+	font-weight: bold;
+	position: relative;
+	bottom: 85px;
+}
+
+/* 닫기 버튼 스타일 (removable이 true일 경우) */
+.infowindowBox .closeBtn {
+	cursor: pointer;
+	/* 마우스 포인터 스타일 */
+	color: #6a994e;
+	/* 버튼 색상 */
+	font-weight: bold;
+	/* 버튼 텍스트 두껍게 */
+	position: absolute;
+	right: 5px;
+	top: 5px;
+
+}
+
+
+.search-input {
+	width: 40%;
+	padding: 5px 10px 5px 10px;
+	/* 왼쪽과 오른쪽 여백 */
+	border: 2px solid #6a994e;
+	/* 테두리 색상 */
+	border-radius: 25px;
+	/* 둥근 모서리 */
+	font-size: 16px;
+	/* 글자 크기 */
+	outline: none;
+	/* 포커스 시 외곽선 제거 */
+	transition: border-color 0.3s;
+	/* 테두리 색상 변화 애니메이션 */
+}
+
+.search-input:focus {
+	border-color: #386641;
+	/* 포커스 시 테두리 색상 변화 */
+}
+
+.search-icon {
+	position: relative;
+	top: 10px;
+	/* 아이콘 위치 조정 */
+	transform: translateY(-50%);
+	/* 수직 중앙 정렬 */
+	width: 25px;
+	/* 아이콘 크기 */
+	height: 25px;
+	/* 아이콘 크기 */
+	fill: #6a994e;
+	/* 아이콘 색상 */
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.searchBox {
+	width: 100%;
+	text-align: end;
+	position: relative;
+}
+.hideBtn{
+	display: none;
+}
+footer{
+	display: none;
+}
+.btnGreen{
+	background-color: #a7c957;
+}
+.btnGreen:hover{
+	background-color: #a7c957;
+}
+@media (max-width: 768px) {
+	.selectRegionForm {
+		font-size: 1rem;
+	}
+	.searchWrapper {
+		width: 90%;
+		left: 5%;
+		height: 20%;
+		transition: height 1s;
+		max-width: 768px;
+	}
+	.hideBtn{
+		display: block;
+		cursor: pointer;
+		position: absolute;
+		top: 150px;
+		right: 10px;
+		z-index: 21;
+	}
 }

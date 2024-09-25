@@ -13,6 +13,7 @@ body {
 	/*font-family: 'Noto Sans KR', sans-serif;*/
 	color: #333;
 }
+
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
@@ -28,26 +29,121 @@ nav {
 nav~.container {
 	position: relative;
 }
-.rowTitle{
-	background-color: #f2e8cf;
+
+.rowTitle {
 	height: 200px;
 	display: flex;
 	align-items: center;
+	flex-direction: column;
+	/* 세로 방향으로 배치 */
 }
+
 /*** 페이지 타이틀 ***/
 .pageTitle {
-	font-size: 3rem;
+	font-size: 5rem;
 	font-weight: bold;
-	color: #6a994e; /* 블루 색상 */
+	color: #6a994e;
+	/* 블루 색상 */
 }
-.questionImg{
+
+.questionImg {
 	max-height: 400px;
 	width: auto;
 }
 
-textarea{
+textarea {
 	resize: none;
 }
-.card{
+
+.card {
 	width: 60%;
+}
+.table-group-divider{
+ color:#6a994e;
+}
+
+    table {
+        width: 100%; /* 테이블이 전체 화면 너비를 차지하게 설정 */
+        table-layout: fixed; /* 셀 너비를 고정 */
+    }
+
+    th {
+        text-align: left; /* 제목은 좌측 정렬 */
+    }
+
+    /* 각 열의 비율을 설정 */
+    th:nth-child(1) { /* # (번호) */
+        width: 10%; /* 10% 정도로 짧게 */
+    }
+    th:nth-child(2) { /* 제목 */
+        width: 50%; /* 제목은 가장 넓게 */
+    }
+    th:nth-child(3), th:nth-child(4) { /* 글쓴이, 작성시간 */
+        width: 20%; /* 글쓴이와 작성시간은 동일한 너비 */
+    }
+
+.table-group-divider {
+	border-top: 2px solid #6a994e;
+	/* 상단 경계선 색깔을 초록색으로 지정 */
+}
+
+.selectPage {
+	display: flex;
+	/* 내부 요소들을 가로로 배치 */
+	gap: 20px;
+	/* 항목 간의 간격 */
+}
+
+.page-link {
+	text-decoration: none;
+	/* 기본 링크 스타일 제거 */
+	color: #a7c957;
+	/* 링크 색상 */
+	font-weight: bold;
+	/* 글씨 두껍게 */
+	padding: 10px 15px;
+	/* 패딩 추가하여 버튼처럼 보이게 */
+	border-radius: 5px;
+	/* 테두리 둥글게 */
+}
+
+.page-link:hover {
+	color: #6a994e;
+	/* 마우스 오버 시 배경색 변경 */
+	text-decoration: underline;
+	/* 마우스 오버 시 밑줄 추가 */
+
+}
+
+/* 추가된 스타일 */
+.question-title {
+	cursor: pointer;
+	/* 클릭할 수 있다는 것을 나타냄 */
+}
+
+.question-content {
+	
+	margin: 10px 0;
+	/* 아래쪽 여백 */
+	
+}
+.question-content p span{
+	color: #333;
+	font-weight: normal;
+		font-size: medium;
+}
+.question-content p{
+	color: #386641;
+	font-weight: bold;
+		font-size: large;
+	
+}
+.badge {
+	margin-top: 5px;
+	/* 뱃지와 제목 사이 간격 */
+}
+
+.answerBox p{
+	margin-left: 20px;
+	color: #a7c957;
 }

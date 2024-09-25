@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
+import com.wellit.project.life.FavoriteRecipe;
 import com.wellit.project.order.Cart;
 import com.wellit.project.shop.FavoriteProduct;
 import jakarta.persistence.*;
@@ -132,5 +133,8 @@ public class Member {
 	    @JsonManagedReference("member-reservations")
 	    private List<StoreReservation> reservations; // 회원이 가진 예약 목록
 
+	    @OneToMany(mappedBy = "member")
+	    @JsonManagedReference("favorite-recipe-member")
+	    private List<FavoriteRecipe> favoriteRecipes; // 찜한 레시피 리스트
 
 }
