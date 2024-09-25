@@ -37,7 +37,7 @@
 				<!-- 장바구니 -->
 				<li sec:authorize="isAuthenticated()" class="position-relative">
 					<!-- 장바구니 뱃지 -->
-					<span class="position-absolute top-1 start-100 translate-middle badge rounded-pill text-bg-success" style="display: none;">0</span>
+					<span class="position-absolute top-0 mt-1 start-65 translate-middle badge rounded-pill text-bg-success" style="display: none;">0</span>
 					<a th:href="@{/cart/list}"><span class="material-symbols-outlined">shopping_cart</span></a>
 				</li>
 				<li sec:authorize="isAuthenticated()">
@@ -58,18 +58,14 @@
 				<li><a th:href="@{|/load/map|}">지역별 장소</a></li>
 				<li><a th:href="@{|/load/localmap|}">내 주변 장소</a></li>
 				<li><a th:href="@{|/load/place|}">추천 장소</a></li>
-				<li><a th:href="@{|/load/favoriteStore|}">찜한 장소</a></li>
 			</ul>
 			<ul>
 				<li><a th:href="@{|/life/wellit|}">웨릿이란?</a></li>
 				<li><a th:href="@{|/life/recipe/list|}">레시피</a></li>
-				<li><a href="#">행사</a></li>
 			</ul>
 			<ul>
 				<li><a th:href="@{|/shop/list|}">푸드</a></li>
 				<li><a th:href="@{|/shop/detail|}">펫</a></li>
-				<li><a href="#">베이비</a></li>
-				<li><a href="#">굿즈</a></li>
 			</ul>
 			<ul>
 				<li><a th:href="@{|/notice/announcement|}">공지사항</a></li>

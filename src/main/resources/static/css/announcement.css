@@ -105,14 +105,14 @@ textarea {
 	/* 패딩 추가하여 버튼처럼 보이게 */
 	border-radius: 5px;
 	/* 테두리 둥글게 */
+	
 }
 
 .page-link:hover {
 	color: #6a994e;
 	/* 마우스 오버 시 배경색 변경 */
 	text-decoration: underline;
-	/* 마우스 오버 시 밑줄 추가 */
-
+	/* 마우스 오버 시 밑줄 추가 */	
 }
 
 /* 추가된 스타일 */

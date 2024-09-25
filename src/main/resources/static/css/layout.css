@@ -49,6 +49,7 @@ a {
 
 
 
+
 /* 네브바 */
 header {
 	width: 100%;
@@ -73,7 +74,7 @@ header .custom-logo {
 
 header .custom-logo img {
 	width: 100px;
-	height: 20px;
+	height: 32px;
 	margin-left: 30px;
 }
 
@@ -84,8 +85,8 @@ header .custom-menu {
 /* 상단 네브바 메뉴 */
 header .custom-menu ul.custom-main {
 	display: flex;
-	justify-content: space-around;
 	height: 60px;
+	padding-left: 0;
 }
 
 header .custom-menu ul.custom-main li {
@@ -108,7 +109,6 @@ header .custom-menu ul.custom-main li a {
 	top: 60px;
 	width: 100%;
 	display: flex;
-	justify-content: space-around;
 	position: fixed;
 	z-index: 29;
 }
@@ -123,15 +123,18 @@ header .custom-menu ul.custom-main li a {
 .custom-menu.custom-sub .custom-submenu2 {
 	display: flex;
 	width: 50%;
+	
 }
 
 .custom-menu.custom-sub .custom-submenu2 ul {
-	width: 100%;
+	width: 150px;
 	text-align: center;
+	padding-left: 0;
 }
 
 .custom-menu.custom-sub .custom-submenu2 ul li {
-	padding: 8px;
+	padding: 8px 0;
+	width: 150px;
 }
 
 .custom-menu.custom-sub .custom-submenu2 ul li a{
@@ -222,6 +225,7 @@ ul.small-main .small-bold {
 .material-symbols-outlined {
 	font-size: 2em;
 	color: white;
+	margin-right: 10px;
 }
 
 .small-search {
@@ -230,7 +234,9 @@ ul.small-main .small-bold {
 	top: 50%;
 	right: 5%;
 }
-
+.start-65{
+	left: 65% !important;
+}
 
 .green-navbar {
 	background-color: #386641;

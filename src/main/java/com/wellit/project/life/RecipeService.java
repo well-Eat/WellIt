@@ -25,15 +25,13 @@ import java.util.UUID;
 @Log4j2
 public class RecipeService {
 
-	@Value("${file.upload-dir}")
-    private String uploadDir;
 	
     private final RecipeRepository recipeRepository;
     private final RecpIngredientRepository recpIngredientRepository;
     private final RecpMainImgRepository recpMainImgRepository;
     private final CookOrderCardRepository cookOrderCardRepository;
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/imgs/life/recipe";
+	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
 
     //레시피 저장
     public Recipe createRecipe(Recipe recipe){
@@ -181,9 +179,10 @@ public class RecipeService {
 
     public String saveImage(MultipartFile stoImage, Long recipeId) {
         // 이미지 저장 경로 설정
-        String directory = "src/main/resources/static/imgs/life/recipe/" + recipeId;
+    	String directory = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\" + recipeId;
         String fileName = System.currentTimeMillis() + "_" + stoImage.getOriginalFilename();
         Path filePath = Paths.get(directory, fileName);
+        System.out.println("================================================파일 저장 경로: " + filePath.toString());
 
         try {
             // 디렉토리가 없으면 생성

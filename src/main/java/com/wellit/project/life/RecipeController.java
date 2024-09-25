@@ -41,8 +41,7 @@ public class RecipeController {
 	@Autowired
 	private final MemberService memberService;
 
-	@Value("${file.upload-dir}")
-	private String UPLOAD_DIR;
+	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
 
 	@GetMapping("/wellit")
 	public String getWellit() {
@@ -128,7 +127,6 @@ public class RecipeController {
 	@PostMapping("/recipe/create")
 	public String postRecipe(@Valid @ModelAttribute RecipeForm recipeForm, BindingResult bindingResult, Model model,
 			HttpSession session) throws IOException {
-
 		if (bindingResult.hasErrors()) {
 
 			// 필드 에러를 출력
@@ -325,10 +323,22 @@ public class RecipeController {
 	        System.out.println("mainImgMultiList에 " + mainImgMultiList.size() + "개의 파일이 있습니다."); // 파일 개수 출력
 	    }
 	    
-	 // 기존 이미지 URL 가져오기
-	    List<String> existingImgUrls = recipeForm.getExistingImgIds(); // imgSrc를 직접 가져옴
 	    
-	    if (mainImgMultiList != null && !mainImgMultiList.isEmpty()) {
+	 // mainImgMultiList 상태 확인
+	    if (mainImgMultiList == null || mainImgMultiList.isEmpty()) {
+	        // 기존 이미지 URL을 사용하여 처리
+	        List<String> existingImgUrls = recipeForm.getExistingImgIds(); // imgSrc를 직접 가져옴
+	        for (String imgUrl : existingImgUrls) {
+	            if (imgUrl != null && !imgUrl.isEmpty()) {
+	                RecpMainImg existingImage = new RecpMainImg();
+	                existingImage.setImgSrc(imgUrl); // URL 설정
+	                existingImages.add(existingImage); // 기존 이미지 리스트에 추가
+                    System.out.println("기존 이미지 저장됨: " + imgUrl); // 로그 추가
+
+	            }
+	        }
+	    } else {
+	        // 새로운 이미지 처리
 	        for (MultipartFile file : mainImgMultiList) {
 	            if (!file.isEmpty()) {
 	                String imageUrl = recipeService.saveImage(file, id); // 이미지 저장
@@ -344,14 +354,7 @@ public class RecipeController {
 	        }
 	    }
 
-	    // 기존 이미지 URL을 사용하여 처리
-	    for (String imgUrl : existingImgUrls) {
-	        if (imgUrl != null && !imgUrl.isEmpty()) {
-	            RecpMainImg existingImage = new RecpMainImg();
-	            existingImage.setImgSrc(imgUrl); // URL 설정
-	            existingImages.add(existingImage); // 기존 이미지 리스트에 추가
-	        }
-	    }
+	    
 
 	    // 모든 메인 이미지를 저장하는 로직
 	    recipeService.saveExistingImages(recipe, existingImages); 

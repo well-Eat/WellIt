@@ -49,14 +49,16 @@
 										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
 											<a class="nav-link disabled fw-bolder" href="#">프로필</a>
 											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/memberinfo"
+												<li><a class="nav-link link-dark fw-bold"
+														href="/member/mypage/memberinfo"
 														data-target="#user-profile">회원정보 확인/수정</a></li>
 											</ul>
 										</li>
 										<li class="nav-item has-submenu mt-3">
 											<a class="nav-link disabled fw-bolder" href="#">찜 리스트</a>
 											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/favorite/store">찜한 가게</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/member/mypage/favorite/store">찜한 가게</a></li>
 												<li><a class="nav-link link-dark fw-bold"
 														href="/member/mypage/favorite/product" onclick="">찜한 상품</a></li>
 											</ul>
@@ -68,35 +70,6 @@
 														href="/member/mypage/orderhistory">주문내역</a></li>
 												<li><a class="nav-link link-dark fw-bold" href="#"
 														data-target="#cancel">환불/반품/취소 목록</a></li>
-											</ul>
-										</li>
-										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-											<a class="nav-link disabled fw-bolder" href="#"
-												data-target="#customer-center">고객센터</a>
-											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="#"
-														data-target="#qna">Q&A</a></li>
-												<li><a class="nav-link link-dark fw-bold" href="#"
-														data-target="#terms">이용약관 및 처리방침</a></li>
-											</ul>
-										</li>
-										<!-- Admin 전용 항목들 -->
-										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
-											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold"
-														href="/order/admin/po/list">주문확인</a></li>
-												<li><a class="nav-link link-dark fw-bold"
-														href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
-											</ul>
-										</li>
-										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-											<a class="nav-link disabled fw-bolder" href="#"
-												data-target="#customer-center">Admin 전용 : 상품 관리</a>
-											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
-												<li><a class="nav-link link-dark fw-bold" href="/shop/admin/form">신규상품등록</a>
-												</li>
 											</ul>
 										</li>
 										<li class="nav-item has-submenu mt-3">
@@ -119,6 +92,27 @@
 												</li>
 											</ul>
 										</li>
+										<!-- Admin 전용 항목들 -->
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/po/list">주문확인</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
+											</ul>
+										</li>
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">Admin 전용 : 상품 관리</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/shop/admin/form">신규상품등록</a>
+												</li>
+											</ul>
+										</li>
+
 										<li class="nav-item has-submenu mt-3" th:if="${member.memberId == 'admin'}">
 											<a class="nav-link disabled fw-bolder" href="#"
 												data-target="#customer-center">관리자
@@ -139,11 +133,11 @@
 					</div>
 					<div class="col-xl-9 col-xs-12 tabcontent container mt-0 mt-xl-5 mb-5 mb-xl-0"
 						layout:fragment="tabcontent">
-						
-						
+
+
 					</div>
 
-					
+
 
 				</div>
 			</div>
@@ -151,28 +145,28 @@
 	</div>
 	<script>
 		//tabcontent로 이동
-//		document.addEventListener('DOMContentLoaded', function () {
-//			// 모든 a 태그에 대해 클릭 이벤트 리스너 추가
-//			document.querySelectorAll('.tabnav a').forEach(function (link) {
-//				link.addEventListener('click', function (event) {
+		//		document.addEventListener('DOMContentLoaded', function () {
+		//			// 모든 a 태그에 대해 클릭 이벤트 리스너 추가
+		//			document.querySelectorAll('.tabnav a').forEach(function (link) {
+		//				link.addEventListener('click', function (event) {
 
-					// 이동할 대상 요소 설정 (탭 콘텐츠 영역)
-//					const targetElement = document.querySelector('.tabcontent');
+		// 이동할 대상 요소 설정 (탭 콘텐츠 영역)
+		//					const targetElement = document.querySelector('.tabcontent');
 
-					//해당 요소로 스크롤
-//					if (targetElement) {
-//						const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-//						const offsetPosition = elementPosition - 30; // 30px 위로 스크롤 조정
+		//해당 요소로 스크롤
+		//					if (targetElement) {
+		//						const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+		//						const offsetPosition = elementPosition - 30; // 30px 위로 스크롤 조정
 
-//						window.scrollTo({
-//							top: offsetPosition,
-//							behavior: 'smooth'
-//						});
-//					}
-//				});
-//			});
+		//						window.scrollTo({
+		//							top: offsetPosition,
+		//							behavior: 'smooth'
+		//						});
+		//					}
+		//				});
+		//			});
 
-//		});
+		//		});
 
 		let storeReservations = []; // 내 가게 예약 목록 전역 변수
 
