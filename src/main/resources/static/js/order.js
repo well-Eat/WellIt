@@ -398,6 +398,7 @@ $(function () {
     })
 })
 
+/*마일리지 : 모두 사용 버튼*/
 function useAllMileage() {
     let finalPrice = $('#finalPrice').attr('data-nums');
     let mileage = $("#mileage").attr('data-nums');
