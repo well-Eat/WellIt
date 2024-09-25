@@ -37,7 +37,7 @@ public class OrderController {
             if (orderItemQuantity.getQuantity() > product.getProdStock()) {
                 bindingResult.rejectValue("orderItemQuantityList[" + orderForm.getOrderItemQuantityList().indexOf(orderItemQuantity) + "].quantity",
                                           "error.orderItemQuantity", "재고 수량이 부족합니다.");
-                return "order/order_cart"; // 재고 수량이 부족할 경우
+                return "redirect:/cart/list"; // 재고 수량이 부족할 경우
             }
         }
 

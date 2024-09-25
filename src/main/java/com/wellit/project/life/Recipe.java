@@ -18,10 +18,11 @@ public class Recipe {
 
     private String recpName; // 요리 이름
     private String recpIntroduce; // 요리 간단 소개
-    private String servings; // 몇 인분
+    private Integer servings; // 몇 인분
     private Integer cookTime; // 요리 소요시간(분)
     private String recpTags; // 태그
     private String difficulty; // 난이도
+    private Integer viewCount; // 조회수
 
     @OneToMany(mappedBy = "recipe", orphanRemoval = true)
     @JsonManagedReference("recipe-main-img") // 이름 지정
@@ -35,6 +36,9 @@ public class Recipe {
     @JsonManagedReference("recipe-cook-order") // 이름 지정
     private List<CookOrderCard> cookOrderCardList; // 조리 순서 카드 리스트
 
+    @OneToMany(mappedBy = "recipe")
+    @JsonManagedReference("favorite-recipe") // 이름 지정
+    private List<FavoriteRecipe> favoriteRecipes; // 찜한 레시피 리스트
+
     private String writer; // 나중에 Member로 바꿀 것!
 }
-

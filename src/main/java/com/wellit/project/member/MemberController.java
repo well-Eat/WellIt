@@ -216,6 +216,7 @@ public class MemberController {
 		}
 		return "member/mypage";
 	}
+
 	
     
 	@GetMapping("/enter_password")

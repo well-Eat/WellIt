@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,9 @@ import java.util.UUID;
 @Log4j2
 public class RecipeService {
 
+	@Value("${file.upload-dir}")
+    private String uploadDir;
+	
     private final RecipeRepository recipeRepository;
     private final RecpIngredientRepository recpIngredientRepository;
     private final RecpMainImgRepository recpMainImgRepository;
@@ -175,30 +179,26 @@ public class RecipeService {
         }
     }
 
-    public String saveImage(MultipartFile file, Recipe recipe) {
+    public String saveImage(MultipartFile stoImage, Long recipeId) {
         // 이미지 저장 경로 설정
-        String uploadDir = UPLOAD_DIR + "/" + recipe.getId(); // 레시피 ID에 따라 디렉토리 생성
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs(); // 디렉토리가 없으면 생성
-        }
-
-        // 파일 이름 설정 (중복 방지를 위해 UUID 사용)
-        String originalFilename = file.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString() + "_" + originalFilename;
+        String directory = "src/main/resources/static/imgs/life/recipe/" + recipeId;
+        String fileName = System.currentTimeMillis() + "_" + stoImage.getOriginalFilename();
+        Path filePath = Paths.get(directory, fileName);
 
         try {
+            // 디렉토리가 없으면 생성
+            Files.createDirectories(filePath.getParent());
             // 파일 저장
-            File serverFile = new File(dir, fileName);
-            file.transferTo(serverFile); // 실제 파일 저장
-
-            // 저장된 파일의 URL 반환 (예: 웹 서버의 접근 가능한 경로)
-            return "/imgs/life/recipe/" + recipe.getId() + "/" + fileName; // URL 형식으로 반환
+            stoImage.transferTo(filePath);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("이미지 저장 실패: " + e.getMessage());
+            return null;
         }
+
+        // 반환할 URL 형식
+        return "/imgs/life/recipe/" + recipeId + "/" + fileName;
     }
+
 
     public void saveExistingImages(Recipe recipe, List<RecpMainImg> existingImages) {
         for (RecpMainImg img : existingImages) {
