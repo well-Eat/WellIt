@@ -41,7 +41,9 @@
 		
 		<!-- 상품 정보 요약 & 주문 폼 -->
 		<section class="prodInfo row mb-4 pb-4 rounded-2 justify-content-start">
-			
+			<p class="subtle f18 c666 fw-bold">
+				상품 내역
+			</p>
 			<div class="prodImg col-md-6">
 				<!-- 상품이미지 -->
 				<div class="card-img-wrapper mb-3">
@@ -50,9 +52,6 @@
 			</div> <!--prodImg-->
 			<section class="main">
 				<div class="card mainProdCard">
-					<div class="card-header">
-						<p>상품 정보</p>
-					</div>
 					<div class="row card-body">
 						<div class="col-lg-3 col-md-5">
 							<div class="drop-area mt-2" id="mainDropArea" style="z-index: 999;">
@@ -62,7 +61,7 @@
 									<input type="file" class="form-control prodMainImg drop-area" id="prodMainImg1" accept="image/*"
 									       style="display: none" name="prodMainImg">
 									<button type="button" class="remove-btn" th:styleappend="${prodMainImg != null ? 'display:block':''}">
-										X
+										<i class="fa-solid fa-minus"></i>
 									</button> <!-- 이미지 삭제 버튼 -->
 									<img th:src="@{|${prodMainImg}|}" th:if="${prodMainImg != null}" alt="">
 								
@@ -87,7 +86,7 @@
 							<div class="row">
 								<div class="infoGroup col-md-6">
 									<label for="prodOrgPrice" class="form-label">기준판매가격</label>
-									<input type="number" class="form-control" id="prodOrgPrice" th:field="*{prodOrgPrice}"
+									<input type="number" class="form-control text-end" id="prodOrgPrice" th:field="*{prodOrgPrice}"
 									       th:value="${prodOrgPrice == null? 10000 : prodOrgPrice}" step="1000">
 								</div>
 								
@@ -202,7 +201,7 @@
 						<div class="row">
 							<div class="">
 								<div class="drop-area prodImageDropArea">
-									<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" data-image-num="1" />
+									<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" data-image-num="1" style="visibility: hidden"/>
 									<div class="preview border" style="position: relative;">
 										<p>이미지를 여기에 드래그 앤 드롭하세요</p>
 									</div>
