@@ -106,11 +106,12 @@ header .custom-menu ul.custom-main li a {
 /* 하단 서브메뉴 */
 .custom-menu.custom-sub {
 	background-color: #fff;
-	top: 60px;
+	top: 30px;
 	width: 100%;
 	display: flex;
 	position: fixed;
 	z-index: 29;
+	height: 200px;
 }
 
 
@@ -123,10 +124,12 @@ header .custom-menu ul.custom-main li a {
 .custom-menu.custom-sub .custom-submenu2 {
 	display: flex;
 	width: 50%;
-	
+	padding-top: 50px;
+
 }
 
 .custom-menu.custom-sub .custom-submenu2 ul {
+	
 	width: 150px;
 	text-align: center;
 	padding-left: 0;

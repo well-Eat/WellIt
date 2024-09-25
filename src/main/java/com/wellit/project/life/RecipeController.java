@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 public class RecipeController {
 
 	private final RecipeService recipeService;
-	
+
 	@Autowired
 	private final FavoriteRecipeService favoriteRecipeService;
-	
+
 	@Autowired
 	private final MemberService memberService;
 
@@ -49,72 +49,73 @@ public class RecipeController {
 	}
 
 	@GetMapping("/recipe/list")
-	public String getRecipeList(
-	        @RequestParam(value="servings",required = false) String servings,
-	        @RequestParam(value="cookTime",required = false) String cookTime,
-	        @RequestParam(value="difficulty",required = false) String difficulty,
-	        @RequestParam(value="tags",required = false) String tags,
-	        Model model) {
-	    
-	    List<Recipe> recipeList = recipeService.getAllRecipes(); // 모든 레시피를 가져오는 서비스 메서드
+	public String getRecipeList(@RequestParam(value = "servings", required = false) String servings,
+			@RequestParam(value = "cookTime", required = false) String cookTime,
+			@RequestParam(value = "difficulty", required = false) String difficulty,
+			@RequestParam(value = "tags", required = false) String tags,
+			@RequestParam(value = "userId", required = false) String userId, // userId 파라미터 추가
+			Model model) {
 
-	    // 필터링 로직
-	    if (servings != null && !servings.equals("all")) {
-	        Integer servingsValue = Integer.parseInt(servings); // String을 Integer로 변환
-	        recipeList = recipeList.stream()
-	            .filter(recipe -> recipe.getServings().equals(servingsValue)) // 비교
-	            .collect(Collectors.toList());
-	    }
+		List<Recipe> recipeList = recipeService.getAllRecipes(); // 모든 레시피를 가져오는 서비스 메서드
 
-	    // 소요 시간 필터링
-	    if (cookTime != null && !cookTime.equals("all")) {
-	        recipeList = recipeList.stream()
-	            .filter(recipe -> filterByCookTime(recipe.getCookTime(), cookTime))
-	            .collect(Collectors.toList());
-	    }
+		// 필터링 로직
+		if (servings != null && !servings.equals("all")) {
+			Integer servingsValue = Integer.parseInt(servings); // String을 Integer로 변환
+			recipeList = recipeList.stream().filter(recipe -> recipe.getServings().equals(servingsValue)) // 비교
+					.collect(Collectors.toList());
+		}
 
-	    // 난이도 필터링
-	    if (difficulty != null && !difficulty.equals("all")) {
-	        recipeList = recipeList.stream()
-	            .filter(recipe -> recipe.getDifficulty().equals(difficulty))
-	            .collect(Collectors.toList());
-	    }
+		// 소요 시간 필터링
+		if (cookTime != null && !cookTime.equals("all")) {
+			recipeList = recipeList.stream().filter(recipe -> filterByCookTime(recipe.getCookTime(), cookTime))
+					.collect(Collectors.toList());
+		}
 
-	 // 태그 필터링
-	    if (tags != null && !tags.isEmpty()) {
-	        // 입력된 태그를 '# ' 기준으로 나누고, 공백 제거
-	        List<String> tagList = Arrays.stream(tags.split(" "))
-	            .map(String::trim)
-	            .filter(tag -> !tag.isEmpty()) // 빈 태그 제거
-	            .collect(Collectors.toList());
+		// 난이도 필터링
+		if (difficulty != null && !difficulty.equals("all")) {
+			recipeList = recipeList.stream().filter(recipe -> recipe.getDifficulty().equals(difficulty))
+					.collect(Collectors.toList());
+		}
 
-	        recipeList = recipeList.stream()
-	            .filter(recipe -> tagList.stream().anyMatch(tag -> recipe.getRecpTags().contains(tag)))
-	            .collect(Collectors.toList());
-	    }
+		// 태그 필터링
+		if (tags != null && !tags.isEmpty()) {
+			// 입력된 태그를 '# ' 기준으로 나누고, 공백 제거
+			List<String> tagList = Arrays.stream(tags.split(" ")).map(String::trim).filter(tag -> !tag.isEmpty()) // 빈
+																													// 태그
+																													// 제거
+					.collect(Collectors.toList());
 
-	    model.addAttribute("recipes", recipeList); // 모델에 필터링된 레시피 리스트 추가
-	    return "life/recp_list"; // 레시피 목록을 보여줄 뷰 이름
+			recipeList = recipeList.stream()
+					.filter(recipe -> tagList.stream().anyMatch(tag -> recipe.getRecpTags().contains(tag)))
+					.collect(Collectors.toList());
+		}
+
+		// userId가 있을 경우, 해당 사용자 작성 레시피만 필터링
+		if (userId != null) {
+			recipeList = recipeList.stream().filter(recipe -> recipe.getWriter().equals(userId))
+					.collect(Collectors.toList());
+		}
+
+		model.addAttribute("recipes", recipeList); // 모델에 필터링된 레시피 리스트 추가
+		return "life/recp_list"; // 레시피 목록을 보여줄 뷰 이름
 	}
-
 
 	private boolean filterByCookTime(int cookTimeValue, String cookTime) {
-	    switch (cookTime) {
-	        case "0-5":
-	            return cookTimeValue < 5;
-	        case "5-10":
-	            return cookTimeValue >= 5 && cookTimeValue < 10;
-	        case "10-20":
-	            return cookTimeValue >= 10 && cookTimeValue < 20;
-	        case "20-30":
-	            return cookTimeValue >= 20 && cookTimeValue < 30;
-	        case "30+":
-	            return cookTimeValue >= 30;
-	        default:
-	            return false;
-	    }
+		switch (cookTime) {
+		case "0-5":
+			return cookTimeValue < 5;
+		case "5-10":
+			return cookTimeValue >= 5 && cookTimeValue < 10;
+		case "10-20":
+			return cookTimeValue >= 10 && cookTimeValue < 20;
+		case "20-30":
+			return cookTimeValue >= 20 && cookTimeValue < 30;
+		case "30+":
+			return cookTimeValue >= 30;
+		default:
+			return false;
+		}
 	}
-
 
 	/* 레시피 등록 폼 OPEN */
 	@GetMapping("/recipe/create")
@@ -222,182 +223,174 @@ public class RecipeController {
 
 	@GetMapping("/recipe/detail")
 	public String getRecipeDetail(@RequestParam("id") Long id, Model model, HttpSession session) {
-	    Recipe recipe = recipeService.getRecipeById(id); // ID로 레시피를 가져오는 서비스 메서드
-	    if (recipe == null) {
-	        // 레시피가 없을 경우 처리 (예: 에러 페이지로 리다이렉트)
-	        return "error/recipe_not_found"; // 에러 페이지로 리턴
-	    }
-	    
-	    // 조회수 증가
-	    if (recipe.getViewCount() == null) {
-	        recipe.setViewCount(1);
-	    } else {
-	        recipe.setViewCount(recipe.getViewCount() + 1);
-	    }
-	    recipeService.updateRecipe(recipe); // 변경된 레시피 저장
-	    
-	    // 세션에서 사용자 가져오기
-	    String userId = (String) session.getAttribute("UserId");
-	    Member member = memberService.getMember(userId); // 사용자 객체 가져오기
-	    
-	    // 사용자의 좋아요 목록에 현재 레시피가 있는지 확인
-	    boolean isFavorite = favoriteRecipeService.isFavoriteRecipe(member, recipe.getId());
-	    model.addAttribute("isFavorite", isFavorite); // 좋아요 여부 추가
-	    
-	    // 조리 카드 리스트 정렬
-	    List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
-	    orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum)); // 순서 번호로 정렬
-	    
-	    model.addAttribute("recipe", recipe); // 모델에 레시피 추가
-	    return "life/recipe_detail"; // 상세 정보를 보여줄 뷰 이름
-	}
+		Recipe recipe = recipeService.getRecipeById(id); // ID로 레시피를 가져오는 서비스 메서드
+		if (recipe == null) {
+			// 레시피가 없을 경우 처리 (예: 에러 페이지로 리다이렉트)
+			return "error/recipe_not_found"; // 에러 페이지로 리턴
+		}
 
+		// 조회수 증가
+		if (recipe.getViewCount() == null) {
+			recipe.setViewCount(1);
+		} else {
+			recipe.setViewCount(recipe.getViewCount() + 1);
+		}
+		recipeService.updateRecipe(recipe); // 변경된 레시피 저장
+
+		// 세션에서 사용자 가져오기
+		String userId = (String) session.getAttribute("UserId");
+		Member member = memberService.getMember(userId); // 사용자 객체 가져오기
+
+		// 사용자의 좋아요 목록에 현재 레시피가 있는지 확인
+		boolean isFavorite = favoriteRecipeService.isFavoriteRecipe(member, recipe.getId());
+		model.addAttribute("isFavorite", isFavorite); // 좋아요 여부 추가
+
+		// 조리 카드 리스트 정렬
+		List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
+		orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum)); // 순서 번호로 정렬
+
+		model.addAttribute("recipe", recipe); // 모델에 레시피 추가
+		return "life/recipe_detail"; // 상세 정보를 보여줄 뷰 이름
+	}
 
 	@PostMapping("/recipe/edit/{id}")
-	public String updateRecipe(@PathVariable("id") Long id,
-	                           @Valid @ModelAttribute RecipeForm recipeForm,
-	                           BindingResult bindingResult, Model model, HttpSession session) {
+	public String updateRecipe(@PathVariable("id") Long id, @Valid @ModelAttribute RecipeForm recipeForm,
+			BindingResult bindingResult, Model model, HttpSession session) {
 
-	    // 유효성 검사 및 에러 처리
-	    if (bindingResult.hasErrors()) {
-	        return "/life/recp_edit"; 
-	    }
+		// 유효성 검사 및 에러 처리
+		if (bindingResult.hasErrors()) {
+			return "/life/recp_edit";
+		}
 
-	    // 로그인한 사용자 ID 가져오기
-	    String userId = (String) session.getAttribute("UserId"); 
+		// 로그인한 사용자 ID 가져오기
+		String userId = (String) session.getAttribute("UserId");
 
-	    // 기존 레시피 가져오기
-	    Recipe recipe = recipeService.getRecipeById(id);
-	    if (recipe == null) {
-	        return "error/recipe_not_found"; 
-	    }
+		// 기존 레시피 가져오기
+		Recipe recipe = recipeService.getRecipeById(id);
+		if (recipe == null) {
+			return "error/recipe_not_found";
+		}
 
-	    // 수정된 데이터 설정
-	    recipe.setRecpName(recipeForm.getRecpName());
-	    recipe.setRecpIntroduce(recipeForm.getRecpIntroduce());
-	    recipe.setServings(recipeForm.getServings());
-	    recipe.setCookTime(recipeForm.getCookTime());
-	    recipe.setRecpTags(recipeForm.getRecpTags());
-	    recipe.setDifficulty(recipeForm.getDifficulty());
-	    recipe.setWriter(userId); 
+		// 수정된 데이터 설정
+		recipe.setRecpName(recipeForm.getRecpName());
+		recipe.setRecpIntroduce(recipeForm.getRecpIntroduce());
+		recipe.setServings(recipeForm.getServings());
+		recipe.setCookTime(recipeForm.getCookTime());
+		recipe.setRecpTags(recipeForm.getRecpTags());
+		recipe.setDifficulty(recipeForm.getDifficulty());
+		recipe.setWriter(userId);
 
-	    // 레시피 저장
-	    recipeService.updateRecipe(recipe);
+		// 레시피 저장
+		recipeService.updateRecipe(recipe);
 
-	 // 기존 재료 가져오기
-	    List<RecpIngredient> existingIngredients = recipeService.getIngredientsByRecipeId(recipe.getId());
-	    List<RecpIngredient> recpIngredientList = recipeForm.getRecpIngredientList();
-	    if (recpIngredientList != null && !recpIngredientList.isEmpty()) {
-	        // 수정된 재료가 있을 경우 업데이트
-	        recipeService.updateIngredients(recipe, recpIngredientList);
-	    } else {
-	        // 수정된 재료가 없을 경우 기존 재료를 사용
-	        recipeService.updateIngredients(recipe, existingIngredients);
-	    }
-	    
-	 // CookOrderCard 저장
-	    List<CookOrderCardForm> orderCardFormList = recipeForm.getCookOrderCardList();
-	    
-	 // 순서 정렬: 각 카드의 순서 번호를 기준으로 정렬
-	    orderCardFormList.sort(Comparator.comparingInt(CookOrderCardForm::getCookOrderNum));
-	    
+		// 기존 재료 가져오기
+		List<RecpIngredient> existingIngredients = recipeService.getIngredientsByRecipeId(recipe.getId());
+		List<RecpIngredient> recpIngredientList = recipeForm.getRecpIngredientList();
+		if (recpIngredientList != null && !recpIngredientList.isEmpty()) {
+			// 수정된 재료가 있을 경우 업데이트
+			recipeService.updateIngredients(recipe, recpIngredientList);
+		} else {
+			// 수정된 재료가 없을 경우 기존 재료를 사용
+			recipeService.updateIngredients(recipe, existingIngredients);
+		}
 
-	    List<String> existingCookOrderImgUrls = recipeForm.getExistingCookOrderImgUrls(); // 기존 요리 이미지 URL 가져오기
+		// CookOrderCard 저장
+		List<CookOrderCardForm> orderCardFormList = recipeForm.getCookOrderCardList();
 
-	    // 기존 음식 이미지 삭제 로직
-	    recipeService.deleteExistingCookOrderImgUrlsByRecipeId(recipe.getId()); // DB에서 기존 요리 이미지 삭제
-	    
-	    // 기존 메인 이미지 삭제 로직
-	    recipeService.deleteExistingImagesByRecipeId(recipe.getId()); // DB에서 기존 이미지 삭제
+		// 순서 정렬: 각 카드의 순서 번호를 기준으로 정렬
+		orderCardFormList.sort(Comparator.comparingInt(CookOrderCardForm::getCookOrderNum));
 
-	    // 메인 이미지 처리
-	    List<MultipartFile> mainImgMultiList = recipeForm.getRecpMainImgList();
-	    List<RecpMainImg> existingImages = new ArrayList<>(); // 리스트 초기화
+		List<String> existingCookOrderImgUrls = recipeForm.getExistingCookOrderImgUrls(); // 기존 요리 이미지 URL 가져오기
 
-	 // mainImgMultiList 상태 확인
-	    if (mainImgMultiList == null) {
-	        System.out.println("mainImgMultiList는 null입니다."); // 로그 추가
-	    } else if (mainImgMultiList.isEmpty()) {
-	        System.out.println("mainImgMultiList는 비어 있습니다."); // 로그 추가
-	    } else {
-	        System.out.println("mainImgMultiList에 " + mainImgMultiList.size() + "개의 파일이 있습니다."); // 파일 개수 출력
-	    }
-	    
-	    
-	 // mainImgMultiList 상태 확인
-	    if (mainImgMultiList == null || mainImgMultiList.isEmpty()) {
-	        // 기존 이미지 URL을 사용하여 처리
-	        List<String> existingImgUrls = recipeForm.getExistingImgIds(); // imgSrc를 직접 가져옴
-	        for (String imgUrl : existingImgUrls) {
-	            if (imgUrl != null && !imgUrl.isEmpty()) {
-	                RecpMainImg existingImage = new RecpMainImg();
-	                existingImage.setImgSrc(imgUrl); // URL 설정
-	                existingImages.add(existingImage); // 기존 이미지 리스트에 추가
-                    System.out.println("기존 이미지 저장됨: " + imgUrl); // 로그 추가
+		// 기존 음식 이미지 삭제 로직
+		recipeService.deleteExistingCookOrderImgUrlsByRecipeId(recipe.getId()); // DB에서 기존 요리 이미지 삭제
 
-	            }
-	        }
-	    } else {
-	        // 새로운 이미지 처리
-	        for (MultipartFile file : mainImgMultiList) {
-	            if (!file.isEmpty()) {
-	                String imageUrl = recipeService.saveImage(file, id); // 이미지 저장
-	                if (imageUrl != null) { // URL이 null이 아닌지 확인
-	                    RecpMainImg newImage = new RecpMainImg();
-	                    newImage.setImgSrc(imageUrl); // URL 설정
-	                    existingImages.add(newImage); // 리스트에 추가
-	                    System.out.println("새로운 이미지 저장됨: " + imageUrl); // 로그 추가
-	                } else {
-	                    System.out.println("이미지 저장 실패"); // 로그 추가
-	                }
-	            }
-	        }
-	    }
+		// 기존 메인 이미지 삭제 로직
+		recipeService.deleteExistingImagesByRecipeId(recipe.getId()); // DB에서 기존 이미지 삭제
 
-	    
+		// 메인 이미지 처리
+		List<MultipartFile> mainImgMultiList = recipeForm.getRecpMainImgList();
+		List<RecpMainImg> existingImages = new ArrayList<>(); // 리스트 초기화
 
-	    // 모든 메인 이미지를 저장하는 로직
-	    recipeService.saveExistingImages(recipe, existingImages); 
-	    
-	 // 요리 이미지 처리
-	    List<CookOrderCardForm> cookOrderCardForms = recipeForm.getCookOrderCardList();
-	    List<CookOrderCard> cookExistingImages = new ArrayList<>(); // 리스트 초기화
+		// mainImgMultiList 상태 확인
+		if (mainImgMultiList == null) {
+			System.out.println("mainImgMultiList는 null입니다."); // 로그 추가
+		} else if (mainImgMultiList.isEmpty()) {
+			System.out.println("mainImgMultiList는 비어 있습니다."); // 로그 추가
+		} else {
+			System.out.println("mainImgMultiList에 " + mainImgMultiList.size() + "개의 파일이 있습니다."); // 파일 개수 출력
+		}
 
-	 // 요리 카드 처리
-	    if (cookOrderCardForms != null && !cookOrderCardForms.isEmpty()) {
-	        for (int i = 0; i < cookOrderCardForms.size(); i++) {
-	            CookOrderCardForm orderCardForm = cookOrderCardForms.get(i);
-	            CookOrderCard cookOrderCard = new CookOrderCard(); // 새로운 요리 카드 객체 생성
-	            
-	            // 새로 업로드된 이미지가 있을 경우 처리
-	            if (orderCardForm.getCookOrderImg() != null && !orderCardForm.getCookOrderImg().isEmpty()) {
-	                String imageUrl = recipeService.saveImage(orderCardForm.getCookOrderImg(), id);
-	                cookOrderCard.setCookOrderImg(imageUrl); // 새 이미지 URL 설정
-	            } else {
-	                // 기존 이미지 URL을 사용하여 처리
-	                String existingImgUrl = orderCardForm.getExistingCookOrderImg(); // 기존 이미지 URL 가져오기
-	                if (existingImgUrl != null && !existingImgUrl.isEmpty()) {
-	                    cookOrderCard.setCookOrderImg(existingImgUrl); // 기존 이미지 URL 설정
-	                } else {
-	                    System.out.println("No existing imgSrc found for order card."); // 로그 추가
-	                }
-	            }
-	            
-	            // 요리 카드 세부 정보 설정
-	            cookOrderCard.setCookOrderNum(i + 1 - 2); // 순서 번호를 조정 (2를 빼기)
-	            cookOrderCard.setCookOrderText(orderCardForm.getCookOrderText());
-	            cookOrderCard.setRecipe(recipe); // 레시피 연결
-	            cookExistingImages.add(cookOrderCard); // 요리 카드 리스트에 추가
-	        }
-	    }
+		// mainImgMultiList 상태 확인
+		if (mainImgMultiList == null || mainImgMultiList.isEmpty()) {
+			// 기존 이미지 URL을 사용하여 처리
+			List<String> existingImgUrls = recipeForm.getExistingImgIds(); // imgSrc를 직접 가져옴
+			for (String imgUrl : existingImgUrls) {
+				if (imgUrl != null && !imgUrl.isEmpty()) {
+					RecpMainImg existingImage = new RecpMainImg();
+					existingImage.setImgSrc(imgUrl); // URL 설정
+					existingImages.add(existingImage); // 기존 이미지 리스트에 추가
+					System.out.println("기존 이미지 저장됨: " + imgUrl); // 로그 추가
 
-	    // 요리 카드 저장 로직
-	    recipeService.saveCookOrderCards(cookExistingImages);
-	    
-	
-	    return "redirect:/life/recipe/detail?id=" + recipe.getId(); 
+				}
+			}
+		} else {
+			// 새로운 이미지 처리
+			for (MultipartFile file : mainImgMultiList) {
+				if (!file.isEmpty()) {
+					String imageUrl = recipeService.saveImage(file, id); // 이미지 저장
+					if (imageUrl != null) { // URL이 null이 아닌지 확인
+						RecpMainImg newImage = new RecpMainImg();
+						newImage.setImgSrc(imageUrl); // URL 설정
+						existingImages.add(newImage); // 리스트에 추가
+						System.out.println("새로운 이미지 저장됨: " + imageUrl); // 로그 추가
+					} else {
+						System.out.println("이미지 저장 실패"); // 로그 추가
+					}
+				}
+			}
+		}
+
+		// 모든 메인 이미지를 저장하는 로직
+		recipeService.saveExistingImages(recipe, existingImages);
+
+		// 요리 이미지 처리
+		List<CookOrderCardForm> cookOrderCardForms = recipeForm.getCookOrderCardList();
+		List<CookOrderCard> cookExistingImages = new ArrayList<>(); // 리스트 초기화
+
+		// 요리 카드 처리
+		if (cookOrderCardForms != null && !cookOrderCardForms.isEmpty()) {
+			for (int i = 0; i < cookOrderCardForms.size(); i++) {
+				CookOrderCardForm orderCardForm = cookOrderCardForms.get(i);
+				CookOrderCard cookOrderCard = new CookOrderCard(); // 새로운 요리 카드 객체 생성
+
+				// 새로 업로드된 이미지가 있을 경우 처리
+				if (orderCardForm.getCookOrderImg() != null && !orderCardForm.getCookOrderImg().isEmpty()) {
+					String imageUrl = recipeService.saveImage(orderCardForm.getCookOrderImg(), id);
+					cookOrderCard.setCookOrderImg(imageUrl); // 새 이미지 URL 설정
+				} else {
+					// 기존 이미지 URL을 사용하여 처리
+					String existingImgUrl = orderCardForm.getExistingCookOrderImg(); // 기존 이미지 URL 가져오기
+					if (existingImgUrl != null && !existingImgUrl.isEmpty()) {
+						cookOrderCard.setCookOrderImg(existingImgUrl); // 기존 이미지 URL 설정
+					} else {
+						System.out.println("No existing imgSrc found for order card."); // 로그 추가
+					}
+				}
+
+				// 요리 카드 세부 정보 설정
+				cookOrderCard.setCookOrderNum(i + 1 - 2); // 순서 번호를 조정 (2를 빼기)
+				cookOrderCard.setCookOrderText(orderCardForm.getCookOrderText());
+				cookOrderCard.setRecipe(recipe); // 레시피 연결
+				cookExistingImages.add(cookOrderCard); // 요리 카드 리스트에 추가
+			}
+		}
+
+		// 요리 카드 저장 로직
+		recipeService.saveCookOrderCards(cookExistingImages);
+
+		return "redirect:/life/recipe/detail?id=" + recipe.getId();
 	}
-
 
 	@GetMapping("/recipe/edit/{id}")
 	public String editRecipe(@PathVariable("id") Long id, Model model) {
@@ -419,15 +412,15 @@ public class RecipeController {
 		recipeForm.setRecpIngredientList(ingredients);
 
 		// 조리 순서 카드 리스트 매핑 및 정렬
-	    List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
-	    // 정렬: cookOrderNum을 기준으로 정렬
-	    orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum));
+		List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
+		// 정렬: cookOrderNum을 기준으로 정렬
+		orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum));
 		List<CookOrderCardForm> orderCardForms = new ArrayList<>();
 		for (CookOrderCard orderCard : orderCards) {
-		    CookOrderCardForm orderCardForm = new CookOrderCardForm();
-		    orderCardForm.setCookOrderNum(orderCard.getCookOrderNum());
-		    orderCardForm.setCookOrderText(orderCard.getCookOrderText());
-		    orderCardForms.add(orderCardForm);
+			CookOrderCardForm orderCardForm = new CookOrderCardForm();
+			orderCardForm.setCookOrderNum(orderCard.getCookOrderNum());
+			orderCardForm.setCookOrderText(orderCard.getCookOrderText());
+			orderCardForms.add(orderCardForm);
 		}
 		recipeForm.setCookOrderCardList(orderCardForms);
 
@@ -445,10 +438,9 @@ public class RecipeController {
 		return "life/recp_update"; // 수정 폼을 보여줄 뷰 이름
 	}
 
-	
 	@PostMapping("/recipe/delete/{id}")
-    public String deleteRecipe(@PathVariable("id") Long id) {
-        recipeService.deleteRecipe(id); // 레시피 삭제 서비스 호출
-        return "redirect:/life/recipe/list"; // 삭제 후 목록 페이지로 리다이렉트
-    }
+	public String deleteRecipe(@PathVariable("id") Long id) {
+		recipeService.deleteRecipe(id); // 레시피 삭제 서비스 호출
+		return "redirect:/life/recipe/list"; // 삭제 후 목록 페이지로 리다이렉트
+	}
 }

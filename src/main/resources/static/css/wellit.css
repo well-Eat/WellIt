@@ -208,3 +208,9 @@ input[type="radio"]:checked+label {
     width: 100%; /* 이미지가 카드의 전체 너비를 차지하도록 설정 */
 
 }
+.recipeContent{
+	height: 150px;
+}
+.recipeCard img{
+	height: 200px;
+}
