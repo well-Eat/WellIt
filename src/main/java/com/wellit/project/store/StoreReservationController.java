@@ -226,7 +226,6 @@ public class StoreReservationController {
         // 수락 상태로 변경
         reservation.setAccepted(true);
         reservationRepository.save(reservation); // 데이터베이스에 저장
-        
      // 이메일 전송
         String subject = "예약 확정";
         String body = String.format(

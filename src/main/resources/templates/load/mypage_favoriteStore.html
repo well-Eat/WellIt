@@ -4,7 +4,7 @@
 
 	<head>
 		<link rel="stylesheet" th:href="@{/css/util.css}">
-			<link rel="stylesheet" th:href="@{/css/shop.css}">
+		<link rel="stylesheet" th:href="@{/css/shop.css}">
 	</head>
 
 	<div class="d-flex flex-column min-vh-100" id="wrapper">
@@ -18,7 +18,7 @@
 
 		<!--판매 상품 리스트-->
 		<div id="favoriteList"
-		class="favoriteList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 py-5">
+			class="favoriteList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 py-5">
 		</div>
 
 
@@ -57,7 +57,22 @@
 					favoriteList.innerHTML = ''; // 기존 내용 초기화
 
 					if (favoriteData.length === 0) {
-						favoriteList.innerHTML = '<div class="alert alert-info text-center">찜한 목록이 없습니다.</div>';
+						favoriteList.innerHTML = `<div class="container w-100">
+												                            <div class="row">
+												                                <div class="col-12">
+												                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+												                                        <div class="icon-heart my-5">
+												                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+												                                        </div>
+												                                        <div class="message mb-5">
+												                                            <p class="c333 f32 fw700 text-center mb-3">찜한 가게가 없습니다</p>
+												                                            <p class="c333 f20 text-center">가게 페이지에서 마음에 드는 상품을 골라 찜한 가게 리스트를 만들어보세요</p>
+												                                        </div>
+												                                        <a href="/load/place" class="btn-back btn btn-success btn-lg">가게 보러 가기</a>
+												                                    </div>
+												                                </div>
+												                            </div>
+												                    </div>`;
 					} else {
 						favoriteData.forEach(store => {
 							const card = document.createElement('div');

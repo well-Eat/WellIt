@@ -1,0 +1,205 @@
+<html layout:decorate="~{member/mypage}">
+<div layout:fragment="tabcontent">
+
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+
+
+	<!--페이지 제목-->
+	<div class="row my-5">
+		<div class="pageTitle col text-center favoriteProduct" th:attr="data-member-id=${memberId}">
+			내 가게 예약 내역
+		</div>
+	</div>
+
+	<div id="myStoreReservationsContainer"></div>
+
+	<script>
+		window.onload = function () {
+			// URL에서 쿼리 파라미터 가져오기
+			const urlParams = new URLSearchParams(window.location.search);
+			const memberId = urlParams.get('id');
+			if (memberId) {
+				fetchMyStoreReservations(memberId);
+			}
+		};
+
+		let storeReservations = []; // 내 가게 예약 목록 전역 변수
+
+		// 내 가게 예약 목록 가져오기
+		function fetchMyStoreReservations(memberId) {
+			let url = memberId === 'admin' ? '/store/allReservations' : `/store/myStoreReservation?memberId=${memberId}`; // admin일 경우 모든 예약 호출
+			fetch(url)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('가게 예약 내역을 불러오는 데 실패했습니다.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					storeReservations = data.reservations; // 내 가게 예약 목록 저장
+					displayMyStoreReservations(storeReservations); // 내 가게 예약 목록 표시
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+		function displayMyStoreReservations(storeReservations) {
+			const reservationsContainer = document.getElementById('myStoreReservationsContainer');
+			reservationsContainer.innerHTML = ''; // 기존 내용 지우기
+
+			// 예약 목록이 없을 때 메시지
+			if (storeReservations.length === 0) {
+				reservationsContainer.innerHTML = `
+				<div class="container w-100">
+				                            <div class="row">
+				                                <div class="col-12">
+				                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+				                                        <div class="icon-heart my-5">				                                        
+															<i class="fa-solid fa-calendar-days fa-10x" sytle="color:#bbbbbb;"></i>
+				                                        </div>
+				                                        <div class="message mb-5">
+				                                            <p class="c333 f32 fw700 text-center mb-3">아직 예약한 사용자가 없습니다.</p>				                                        
+				                                        </div>				                                  
+				                                    </div>
+				                                </div>
+				                            </div>
+				                    </div>
+			        `;
+				return;
+			}
+
+			// 현재 시간 구하기
+			const now = new Date();
+
+			// 테이블 생성
+			const reservationsTable = `
+			        <table class="table table-striped">
+			            <thead>
+			                <tr>
+			                    <th>가게 이름</th>
+			                    <th>예약 시간</th>
+			                    <th>수락 여부</th>
+			                    <th>예약자 성함</th>
+			                    <th>작업</th>
+			                </tr>
+			            </thead>
+			            <tbody>
+			                ${storeReservations.map((reservation, index) => {
+				const reserveTime = new Date(reservation.reserveTime);
+				const isPast = reserveTime < now;
+				return `
+			                        <tr>
+			                            <td style="vertical-align: middle;">${reservation.storeName}</td>
+			                            <td style="vertical-align: middle;">${reservation.reserveTime}</td>
+			                            <td style="vertical-align: middle;">${reservation.accepted ? '수락됨' : '대기 중'}</td>
+			                            <td style="vertical-align: middle;">${reservation.memberId}</td>
+			                            <td style="vertical-align: middle;">
+			                                ${!isPast && !reservation.accepted ?
+						`<button class="btn btn-success" onclick="checkReservation(${reservation.id}, '${reservation.memberId}')">수락</button>` :
+						''
+					}
+			                                ${isPast && reservation.accepted ?
+						'<span class="text-success" style="font-weight: bold;">식사 완료</span>' :
+						`<button class="btn btn-danger" onclick="cancelReservation(${index}, '${reservation.memberId}')">
+			                                        ${isPast ? '예약 가능 시간을 지났습니다.' : '취소'}
+			                                    </button>`
+					}
+			                            </td>
+			                        </tr>
+			                    `;
+			}).join('')}
+			            </tbody>
+			        </table>
+			    `;
+
+			// 테이블을 컨테이너에 추가
+			reservationsContainer.innerHTML = reservationsTable;
+		}
+
+		// 예약 취소 함수
+		function cancelReservation(index, memberId) {
+			// 수락 확인 메시지
+			if (!confirm("정말 예약을 취소하시겠습니까?")) {
+				return; // 사용자가 "취소"를 클릭하면 함수를 종료
+			}
+			const reservation = reservations[index]; // 취소할 예약 정보 가져오기
+			const reservationId = reservation.id; // 예약 ID를 가져옵니다.
+
+			// 서버에 취소 요청
+			fetch(`/store/cancelReservation`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					memberId: memberId,
+					reservationId: reservationId // 예약 ID를 서버에 전달
+				})
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('예약 취소에 실패했습니다.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					alert('예약이 성공적으로 취소되었습니다.');
+					fetchReservations(memberId); // 예약 목록을 다시 가져와서 갱신
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+
+
+		//예약 수락 함수
+		function checkReservation(reservationId, memberId) {
+			// 수락 확인 메시지
+			if (!confirm("정말 예약을 수락하시겠습니까?")) {
+				return; // 사용자가 "취소"를 클릭하면 함수를 종료
+			}
+
+
+			fetch(`/store/confirmReservation?reservationId=${reservationId}`, {
+				method: 'POST', // 또는 'PUT' 사용 가능
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({memberId: memberId})
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('예약 상태 업데이트에 실패했습니다.');
+					}
+					return response.json();
+				})
+				.then(data => {
+					// 예약 상태 업데이트 성공 시, 클라이언트에서 상태를 변경
+					if (data.success) {
+						// 예약 목록에서 해당 예약의 상태를 '수락됨'으로 변경
+						const updatedReservations = storeReservations.map(reservation => {
+							if (reservation.id === reservationId) {
+								return {...reservation, accepted: true}; // 수락됨으로 변경
+							}
+							alert("예약을 수락하셨습니다.")
+							return reservation;
+						});
+						displayMyStoreReservations(updatedReservations); // 업데이트된 예약 목록 표시
+					}
+				})
+				.catch(error => {
+					alert(error.message);
+				});
+		}
+	</script>
+
+</div>
+
+</html>
