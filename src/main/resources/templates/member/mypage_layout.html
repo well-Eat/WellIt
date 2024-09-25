@@ -10,65 +10,62 @@
 	<link rel="stylesheet" href="/css/order.css" />
 	<link rel="stylesheet" href="/css/util.css" />
 	
+	<div class="bg-light">
 	<section id="mypage" class="position-relative">
 		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
 		<div class="container-fluid">
 			<div class="row">
 				<!-- 사이드바? -->
-				<div class="col-xl-2 col-xs-12">
-					<nav class="sidebar card py-2 mb-4">
-						<ul class="nav nav-tabs flex-xs-row flex-xl-column tabnav" id="nav_accordion">
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#">프로필</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#user-profile">회원정보
-											확인/수정</a></li>
-								</ul>
-							</li>
-							
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#">주문 정보</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="/member/mypage/orderhistory">주문내역</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#cancel">환불/반품/취소
-											목록(미구현)</a></li>
-								</ul>
-							</li>
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center">고객센터</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#qna">Q&A</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="#" data-target="#terms">이용약관 및
-											처리방침</a></li>
-								</ul>
-							</li>
-							<!--로그인 계정이 'admin' 인 경우만 출력-->
-							<!--<li class="nav-item has-submenu mt-3" sec:authorize="principal.username == 'admin'">-->
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="/order/admin/po/list" >admin_주문확인</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="/order/admin/cancel/request/list">admin_주문취소승인대기</a></li>
-								</ul>
-							</li>
-							<!--로그인 계정이 'admin' 인 경우만 출력-->
-							<!--<li class="nav-item has-submenu mt-3" sec:authorize="principal.username == 'admin'">-->
-							<li class="nav-item has-submenu mt-3">
-								<a class="nav-link disabled fw-bolder" href="#" data-target="#customer-center"> Admin 전용 : 상품 관리</a>
-								<ul class="submenu">
-									<li><a class="nav-link link-dark fw-bold" href="#">admin_상품리스트(미구현)</a></li>
-									<li><a class="nav-link link-dark fw-bold" href="/shop/form">admin_신규상품등록</a></li>
-								</ul>
-							</li>
-						</ul>
-					</nav>
-				</div>
-				<div class="col-xl-10 col-xs-12 tabcontent container" layout:fragment="tabcontent">
+				<div class="col-xl-3 col-xs-12 p-xs-none p-sm-5">
+										<nav class="sidebar card py-2 mb-4 border-0 bg-body">
+											<div class="row">												
+												<div class="col d-flex">
+													<ul class="nav nav-tabs flex-column flex-sm-row flex-xl-column tabnav container"
+														id="nav_accordion">
+														<!-- Admin 전용 항목들 -->
+														<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+															<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
+															<ul class="submenu">
+																<li><a class="nav-link link-dark fw-bold"
+																		href="/order/admin/po/list">주문확인</a></li>
+																<li><a class="nav-link link-dark fw-bold"
+																		href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
+															</ul>
+														</li>
+														<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+															<a class="nav-link disabled fw-bolder" href="#"
+																data-target="#customer-center">Admin 전용 : 상품 관리</a>
+															<ul class="submenu">
+																<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
+																<li><a class="nav-link link-dark fw-bold" href="/shop/admin/form">신규상품등록</a>
+																</li>
+															</ul>
+														</li>
+														<li class="nav-item has-submenu mt-3">
+															<a class="nav-link disabled fw-bolder" href="#"
+																data-target="#customer-center">관리자
+																메뉴</a>
+															<ul class="submenu">
+																<li>
+																	<a class="nav-link link-dark fw-bold"
+																		th:href="@{/load/store/create}">가게 생성</a>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</div>
+
+
+											</div>
+										</nav>
+									</div>
+				<div class="col-xl-9 col-xs-12 tabcontent container" layout:fragment="tabcontent">
 				
 				</div>
 			</div>
 		</div>
 	</section>
+	</div>
 	<script>
 	
 	</script>

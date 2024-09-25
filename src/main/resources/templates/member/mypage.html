@@ -49,14 +49,14 @@
 										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
 											<a class="nav-link disabled fw-bolder" href="#">프로필</a>
 											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="#"
+												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/memberinfo"
 														data-target="#user-profile">회원정보 확인/수정</a></li>
 											</ul>
 										</li>
 										<li class="nav-item has-submenu mt-3">
 											<a class="nav-link disabled fw-bolder" href="#">찜 리스트</a>
 											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="#">찜한 가게</a></li>
+												<li><a class="nav-link link-dark fw-bold" href="/member/mypage/favorite/store">찜한 가게</a></li>
 												<li><a class="nav-link link-dark fw-bold"
 														href="/member/mypage/favorite/product" onclick="">찜한 상품</a></li>
 											</ul>
@@ -95,7 +95,7 @@
 												data-target="#customer-center">Admin 전용 : 상품 관리</a>
 											<ul class="submenu">
 												<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
-												<li><a class="nav-link link-dark fw-bold" href="/shop/form">신규상품등록</a>
+												<li><a class="nav-link link-dark fw-bold" href="/shop/admin/form">신규상품등록</a>
 												</li>
 											</ul>
 										</li>
@@ -139,103 +139,40 @@
 					</div>
 					<div class="col-xl-9 col-xs-12 tabcontent container mt-0 mt-xl-5 mb-5 mb-xl-0"
 						layout:fragment="tabcontent">
-						<!-- 사용자 정보 -->
-						<div id="user-profile" class="container round bg-body fw-bold">
-							<h1>[[${member.memberId}]] </h1>
-							<div class="row">
-								<div class="col-2">
-									<div th:if="${member.ImageFile}">
-										<img th:src="@{${member.ImageFile}}" alt="프로필 사진" class="img-thumbnail" />
-									</div>
-									<div th:unless="${member.ImageFile}">
-										<img src="/imgs/member/default-profile.png" alt="기본 프로필 사진"
-											class="img-thumbnail" />
-
-									</div>
-								</div>
-								<div class="col-10">
-									<div class="row align-middle">
-										<div class="col">
-											<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>
-											<p>닉네임 : <span th:text="${member.memberAlias}"></span></p>
-											<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
-											<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
-											<p>주소 : <span th:text="${member.roadAddress}"></span></p>
-											<p>비건 종류 :
-												<span th:if="${member.memberVeganType == null}">미정</span>
-												<span th:unless="${member.memberVeganType == null}"
-													th:text="${member.memberVeganType}"></span>
-											</p>
-										</div>
-									</div>
-									<div class="row mb-3 float-end">
-										<div class="col">
-											<a th:href="@{/member/enter_password}" class="btn btn-warning fw-bold"
-												data-target="#check-password">회원정보 수정</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+						
+						
 					</div>
 
-					<!-- 장바구니 -->
-					<div id="cart" class="container border">
-						<h1>장바구니</h1>
-
-					</div>
-					<!-- 주문내역 -->
-					<div id="order-info" class="container border">
-						<h1>주문내역</h1>
-
-					</div>
-					<!-- 취소목록 -->
-					<div id="cancel" class="container border">
-						<h1>환불/반품/취소 목록</h1>
-
-					</div>
-					<div id="reservation" class="container border" style="display: none;">
-						<h1 class="text-center">내 예약내역</h1>
-						<h2>수락된 예약</h2>
-						<div id="acceptedReservationsContainer"></div>
-
-						<h2>수락되지 않은 예약</h2>
-						<div id="rejectedReservationsContainer"></div>
-					</div>
-					<div id="store" class="container border" style="display: none;">
-						<h1 class="text-center">내 가게 예약내역</h1>
-						<div id="myStoreReservationsContainer">
-							<!-- 내 가게 예약 목록이 여기에 표시됩니다 -->
-						</div>
-					</div>
+					
 
 				</div>
 			</div>
 		</section>
 	</div>
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			// 모든 a 태그에 대해 클릭 이벤트 리스너 추가
-			document.querySelectorAll('.tabnav a').forEach(function (link) {
-				link.addEventListener('click', function (event) {
+		//tabcontent로 이동
+//		document.addEventListener('DOMContentLoaded', function () {
+//			// 모든 a 태그에 대해 클릭 이벤트 리스너 추가
+//			document.querySelectorAll('.tabnav a').forEach(function (link) {
+//				link.addEventListener('click', function (event) {
 
 					// 이동할 대상 요소 설정 (탭 콘텐츠 영역)
-					const targetElement = document.querySelector('.tabcontent');
+//					const targetElement = document.querySelector('.tabcontent');
 
-					// 해당 요소로 스크롤
-					if (targetElement) {
-						const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-						const offsetPosition = elementPosition - 30; // 30px 위로 스크롤 조정
+					//해당 요소로 스크롤
+//					if (targetElement) {
+//						const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+//						const offsetPosition = elementPosition - 30; // 30px 위로 스크롤 조정
 
-						window.scrollTo({
-							top: offsetPosition,
-							behavior: 'smooth'
-						});
-					}
-				});
-			});
+//						window.scrollTo({
+//							top: offsetPosition,
+//							behavior: 'smooth'
+//						});
+//					}
+//				});
+//			});
 
-		});
+//		});
 
 		let storeReservations = []; // 내 가게 예약 목록 전역 변수
 

@@ -1,0 +1,120 @@
+<html layout:decorate="~{member/mypage}">
+<div layout:fragment="tabcontent">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<head>
+		<link rel="stylesheet" th:href="@{/css/util.css}">
+			<link rel="stylesheet" th:href="@{/css/shop.css}">
+	</head>
+
+	<div class="d-flex flex-column min-vh-100" id="wrapper">
+
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center favoriteProduct" th:attr="data-member-id=${memberId}">
+				찜한 장소
+			</div>
+		</div>
+
+		<!--판매 상품 리스트-->
+		<div id="favoriteList"
+		class="favoriteList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 py-5">
+		</div>
+
+
+	</div><!-- // #wrapper -->
+	<script>
+		let memberId = ''; // 사용자 ID 초기화
+
+		// 사용자 ID를 가져오는 함수
+		function fetchUserId() {
+			fetch('/load/getUserId')
+				.then(response => response.json())
+				.then(data => {
+					memberId = data.userId; // 서버에서 받은 UserId
+					if (memberId == "로그인되지 않았습니다.") {
+						favoriteList.innerHTML = '<div class="alert alert-warning text-center">로그인 시 찜 목록이 보여집니다.</div>';
+
+					} else {
+						fetchFavoriteStores(); // 사용자 ID를 가져온 후 찜한 목록을 가져옴
+					}
+
+				})
+				.catch(error => console.error('Error fetching user ID:', error));
+		}
+
+		// 찜한 목록을 가져오는 함수
+		function fetchFavoriteStores() {
+			fetch(`/store/favorite/list?memberId=${memberId}`)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(favoriteData => {
+					const favoriteList = document.getElementById('favoriteList');
+					favoriteList.innerHTML = ''; // 기존 내용 초기화
+
+					if (favoriteData.length === 0) {
+						favoriteList.innerHTML = '<div class="alert alert-info text-center">찜한 목록이 없습니다.</div>';
+					} else {
+						favoriteData.forEach(store => {
+							const card = document.createElement('div');
+							card.className = 'card mb-3 mx-5 col-12'; // 카드 스타일 및 크기 설정
+							card.innerHTML = `
+								
+								<div class=" row  flex-column">
+								    <div class="col">
+								        <img src="${store.stoImage || 'default-image.jpg'}" class="card-img h-100" style="object-fit: cover;" alt="${store.stoName || '가게 이미지'}">
+								    </div>
+								    <div class="col">
+								        <div class="card-body d-flex flex-column">
+								            <h5 class="card-title text-success">${store.stoName || '이름 없음'}</h5>
+								            <p class="card-text"><strong>제목:</strong> ${store.stoTitle || '제목 없음'}</p>
+								            <p class="card-text"><strong>내용:</strong> ${store.stoContent || '내용 없음'}</p>
+								            <p class="card-text"><strong>위치:</strong> ${store.stoAddress || '위치 없음'}</p>
+								            <div class="d-flex justify-content-end btns">
+								                <a href="/load/place/${store.stoId}" class="btn btn-primary">자세히 보기</a>
+								                <button class="btn btn-danger mx-2" onclick="removeFromFavorites('${store.stoId}')">찜 취소</button>
+								            </div>
+								        </div>
+								    </div>
+								</div>
+								
+					                    `;
+							favoriteList.appendChild(card);
+						});
+					}
+				})
+				.catch(error => console.error('Error fetching favorites:', error));
+		}
+
+		function removeFromFavorites(stoId) {
+			// 사용자에게 확인 메시지 표시
+			const confirmDelete = confirm("정말로 찜을 취소하시겠습니까?");
+
+			if (confirmDelete) {
+				// 찜 취소 API 호출
+				fetch(`/store/favorite/remove?memberId=${memberId}&stoId=${stoId}`, {
+					method: 'DELETE',
+				})
+					.then(response => {
+						if (response.ok) {
+							fetchFavoriteStores(); // 목록 새로고침
+						} else {
+							throw new Error('찜 취소 실패');
+						}
+					})
+					.catch(error => console.error('찜 취소 중 오류 발생:', error));
+			} else {
+				console.log("찜 취소가 취소되었습니다.");
+			}
+		}
+
+		// 페이지 로드 시 찜한 목록을 가져옴
+		window.onload = fetchUserId;
+	</script>
+</div>
+
+</html>

@@ -638,10 +638,7 @@
 
 				// 고유 ID 존재 여부 체크
 				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
-				const exists = await checkIfExists(uniqueId);
-				if (exists) {
-					continue; // 중복된 경우 다음 레스토랑으로 넘어감
-				}
+				
 
 				// API를 통해 데이터 저장
 				await saveStoreData(storeData);
