@@ -14,9 +14,29 @@
 		</div>
 		
 		<section class="row vstack orderItem position-relative mb-5">
-			<p class="subtle f18 c666 fw-bold">
+			<p class="subtle f18 c666 fw-bold" th:if="${poHistoryList.size()>0}">
 				주문 내역
 			</p>
+			<div class="col gap-3 g-3" th:if="${poHistoryList==null || poHistoryList.size()==0}">
+				
+				<div class="container w-100">
+					<div class="row">
+						<div class="col-12">
+							<div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+								<div class="icon-heart my-5">
+									<i class="fa-regular fa-envelope-open fa-10x" style="color:#bbbbbb;"></i>
+								</div>
+								<div class="message mb-5">
+									<p class="c333 f32 fw700 text-center mb-3">주문 내역이 없습니다</p>
+									<p class="c333 f20 text-center">신선하고 다채로운 웨릿샵의 상품을 경험해보세요. 특별한 쇼핑의 시작이 기다리고 있습니다!</p>
+								
+								</div>
+								<a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+							</div> <!--no-favorites-->
+						</div>
+					</div>
+				</div> <!--container-->
+			</div>
 			
 			<div class="col gap-3 g-3" th:each="poHistory, iterStat : ${poHistoryList}">
 				<div class="card " style="max-width: 800px; ">

@@ -43,39 +43,43 @@ $(function(){
 /** shop_detail : section.prodInfo : 총 구매 금액 calculate : START **/
 /** shop_detail : section.prodInfo : 총 구매 금액 calculate : START **/
 $(function () {
-    const finalPrice = parseFloat(document.getElementById('finalPrice').value);
-    let totalPrice = finalPrice;
+    const $prodInfo = $("section.prodInfo");
+    if ($prodInfo.length) {
+        const finalPrice = parseFloat(document.getElementById('finalPrice').value);
+        let totalPrice = finalPrice;
 
-    // 구매수량 - 버튼
-    $(".minus").on("click", function (e) {
-        e.preventDefault();
-        let $input = $(this).next("input");
-        let minValue = parseInt($input.attr("min"));
-        if (parseInt($input.val()) > minValue) {
-            $input.val(parseInt($input.val()) - 1);
-        } else {
-            alert("최소 구매 수량은 1개 입니다.");
+        // 구매수량 - 버튼
+        $(".minus").on("click", function (e) {
+            e.preventDefault();
+            let $input = $(this).next("input");
+            let minValue = parseInt($input.attr("min"));
+            if (parseInt($input.val()) > minValue) {
+                $input.val(parseInt($input.val()) - 1);
+            } else {
+                showMessage("quantityMessage", "최소 구매 수량은 1개 입니다.");
+            }
+            updateTotalPrice(finalPrice, $input.val());
+            console.log(totalPrice);
+        });
+
+        // 구매수량 + 버튼
+        $(".plus").on("click", function (e) {
+            e.preventDefault();
+            let $input = $(this).prev("input");
+            let maxValue = parseInt($input.attr("max"));
+            if (parseInt($input.val()) < maxValue) {
+                $input.val(parseInt($input.val()) + 1);
+            } else {
+                showMessage("quantityMessage", "최대 구매 수량을 초과하였습니다.(재고수량 이내 & 최대 10개 구매)");
+            }
+            updateTotalPrice(finalPrice, $input.val());
+        });
+
+
+        function updateTotalPrice(finalPrice, quantity) {
+            totalPrice = finalPrice * quantity;
+            $(".prodTotalPrice").text(totalPrice.toLocaleString());
         }
-        updateTotalPrice(finalPrice, $input.val());
-        console.log(totalPrice);
-    });
-
-    // 구매수량 + 버튼
-    $(".plus").on("click", function (e) {
-        e.preventDefault();
-        let $input = $(this).prev("input");
-        let maxValue = parseInt($input.attr("max"));
-        if (parseInt($input.val()) < maxValue) {
-            $input.val(parseInt($input.val()) + 1);
-        } else {
-            alert("최대 구매 수량을 초과하였습니다.");
-        }
-        updateTotalPrice(finalPrice, $input.val());
-    });
-
-    function updateTotalPrice(finalPrice, quantity) {
-        totalPrice = finalPrice * quantity;
-        $(".prodTotalPrice").text(totalPrice.toLocaleString());
     }
 }); // $(function(){}); jQuery END
 /** shop_detail : section.prodInfo : 총 구매 금액 calculate : **/
@@ -85,6 +89,7 @@ $(function () {
 /** shop_detail > shop_imgReview : section.imgReviewList : 이미지 리뷰 라인 : START **/
 /** shop_detail > shop_imgReview : section.imgReviewList : 이미지 리뷰 라인 : START **/
 $(function () {
+    if ($(".imgRevSwiper").length) {
         // Swiper 초기화
         var swiper = new Swiper(".imgRevSwiper", {
             lazy: true,
@@ -110,8 +115,9 @@ $(function () {
         });
 
 
-    // 초기 이미지 리뷰 버튼 위치 설정
-    updateImgRevPos();
+        // 초기 이미지 리뷰 버튼 위치 설정
+        updateImgRevPos();
+    }
 
     // 윈도우 리사이즈 시 이미지 리뷰 버튼 위치 업데이트
     $(window).on("resize", function () {
@@ -182,36 +188,40 @@ function updateImgRevPos() {
 /** shop_detail : section.prodReview : 리뷰리스트 출력 : START **/
 $(function () {
 
-    const prodId = document.getElementById('prodId').value;
+    const $prodReview = $("section.prodReview");
 
-    loadReviews(prodId, curRevPage);
+    if ($prodReview.length) {
+        const prodId = document.getElementById('prodId').value;
 
-
-    // 리뷰 페이지 버튼 클릭 이벤트 핸들러
-    $('.pagePrev').click(function () {
-        if (curRevPage > 0) {
-            curRevPage--;
-            loadReviews(prodId, curRevPage);
-        }
-    });
-
-    $('.pageNext').click(function () {
-        if (curRevPage < totalRevPages - 1) {
-            curRevPage++;
-            loadReviews(prodId, curRevPage);
-        }
-    });
+        loadReviews(prodId, curRevPage);
 
 
-    $(document).on('click', '.modal-footer .revImgBox', function () {
-        const clickedRevImgBox = $(this);
-        clickedRevImgBox.closest('.modal-content').find('.modalColLeft').find('img').attr('src', clickedRevImgBox.data('rev-img'));
-        // 큰 이미지의 썸네일 이미지를 강조표시
+        // 리뷰 페이지 버튼 클릭 이벤트 핸들러
+        $('.pagePrev').click(function () {
+            if (curRevPage > 0) {
+                curRevPage--;
+                loadReviews(prodId, curRevPage);
+            }
+        });
 
-        $('.modal-footer .revImgBox').removeClass('highlight');
-        $(this).addClass('highlight');
-        //highlightThumb();
-    });
+        $('.pageNext').click(function () {
+            if (curRevPage < totalRevPages - 1) {
+                curRevPage++;
+                loadReviews(prodId, curRevPage);
+            }
+        });
+
+
+        $(document).on('click', '.modal-footer .revImgBox', function () {
+            const clickedRevImgBox = $(this);
+            clickedRevImgBox.closest('.modal-content').find('.modalColLeft').find('img').attr('src', clickedRevImgBox.data('rev-img'));
+            // 큰 이미지의 썸네일 이미지를 강조표시
+
+            $('.modal-footer .revImgBox').removeClass('highlight');
+            $(this).addClass('highlight');
+            //highlightThumb();
+        });
+    }
 
 }); // $(function(){}); jQuery END
 
@@ -399,8 +409,7 @@ function renderReviews(reviews) {
 
 /** shop_create : 상품 상세정보 입력 **/
 /** shop_create : 상품 상세정보 입력 **/
-
-/*재료 추가/제거*/
+/*상품정보 추가/제거*/
 $(function () {
 
 
@@ -411,13 +420,13 @@ $(function () {
 
 
     $(document).on('click', '.addRow', function () {
-        const curIndex = $(this).index();
+        const curIndex = $(this).closest('tr').index();
         const rowCount = $('#prodInfoList tr').length;
         const newRow = `
     <tr>
       <td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-      <td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[${rowCount}].infoKey" placeholder="재료"></td>
-      <td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[${rowCount}].infoValue" placeholder="양"></td>
+      <td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[${rowCount}].infoKey" placeholder="항목"></td>
+      <td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[${rowCount}].infoValue" placeholder="값"></td>
       <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
     </tr>`;
         // + 클릭 시 바로 다음에 행추가 & 키로 포커스 이동
@@ -445,8 +454,7 @@ function deleteProd() {
     if (prodName == null || prodName.length < 1) prodName = '해당';
     if (confirm(prodName + " 상품을 삭제하시겠습니까?")) {
         document.querySelector('#deleteForm').submit()
-    }
-    ;
+    };
 }
 
 
@@ -644,21 +652,16 @@ $(function () {
 
 // 새로운 상세이미지 카드 추가 함수
 function addCard(e) {
-    const index = $('#prodImageCardList .prodImageCard').length;
-    const newCard = $('.prodImageCard').first().clone();
+    const newCard = $('.prodImageCard').first().clone(); // 첫 번째 카드를 복사하여 새로운 카드 생성
 
-    newCard.find('.prodImageInput').val('');
-    newCard.find('.preview').empty();
+    newCard.find('.prodImageInput').val(''); // 입력 필드를 비움
+    newCard.find('.preview').empty(); // 미리보기 영역을 비움
 
-    newCard.find('.prodImageNum').val(index + 1);
-    newCard.find('.prodImageNum').attr('name', ``);
-    newCard.find('.prodImageInput').attr('name', `prodImages[]`);
-    newCard.find('.prodImageInput').attr('data-image-num', index + 1);
+    // 새로운 카드를 현재 위치 바로 다음에 추가
+    var pos = $(e.target.closest('li.prodImageCard'));
+    pos.after(newCard);
 
-    var pos = e.target.closest('li.prodImageCard')
-    $('#prodImageCardList').append(newCard);
-
-    updateCardOrderNumbers(); // 순서 번호 업데이트
+    updateCardOrderNumbers(); // 전체 카드를 DOM 순서대로 업데이트
 }
 
 // 상세이미지 카드 제거 함수
@@ -670,7 +673,7 @@ function removeCard(button) {
         const toBeDeletedInput = $('#toBeDeleted');
 
         // 기존 이미지 중 제거할 이미지 파일 목록을 hidden 으로 전송
-        if (imgSrc.startsWith('/imgs/shop/product/')) {
+        if (imgSrc != null && imgSrc.startsWith('/imgs/shop/product/')) {
             let toBeDeletedList = toBeDeletedInput.val() ? toBeDeletedInput.val().split(',') : [];
             toBeDeletedList.push(imgSrc);
             toBeDeletedInput.val(toBeDeletedList.join(','));
@@ -684,8 +687,99 @@ function removeCard(button) {
 function updateCardOrderNumbers() {
     $('li.prodImageCard').each(function (index, card) {
         $(card).find('.prodImageNum').val(index + 1);
+        $(card).find('.prodImageInput').attr('data-image-num', index + 1);
     });
 }
+
+
+
+$(document).ready(function () {
+    const currentUrl = window.location.href;
+
+    // 수정 페이지 일때 -> 이미지 순서 처리
+    if (currentUrl.includes('/admin/edit')) {
+        updateCardOrderNumbers();
+
+        $('form.productForm').on('submit', function (e) {
+            e.preventDefault();
+
+            updateCardOrderNumbers();
+
+            let formData = new FormData(this);
+
+            // 이미지 카드  -> 기존 이미지와 새 이미지를 구분 & 순서 부여
+            $('li.prodImageCard').each(function () {
+                const imgSrc = $(this).find('.preview img').attr('src');
+                const fileInput = $(this).find('.prodImageInput');
+                const imageOrder = fileInput.attr('data-image-num'); // 이미지 순서(카드순서)
+
+                if (imgSrc && imgSrc.startsWith('/imgs/shop/product/')) { //기존 이미지
+                    formData.append('existingImages[]', imgSrc);
+                    formData.append('existingImageOrders[]', imageOrder);
+                } else if (fileInput[0].files.length > 0) { // 새 이미지
+                    formData.append('newImages[]', fileInput[0].files[0]);
+                    formData.append('newImageOrders[]', imageOrder);
+                }
+            });
+
+            // 상품 상세 정보(prodInfoList) 리스트
+            $('#prodInfoList tr').each(function (index) {
+                const infoKey = $(this).find('.infoKey').val();
+                const infoValue = $(this).find('.infoValue').val();
+
+                if (infoKey && infoValue) {
+                    formData.append(`prodInfoList[${index}].infoKey`, infoKey);
+                    formData.append(`prodInfoList[${index}].infoValue`, infoValue);
+                }
+            });
+
+
+            // Fetch API로 폼 데이터 전송
+            fetch($(this).attr('action'), {
+                method: $(this).attr('method'),
+                body: formData,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.location.href = '/shop/list';
+                })
+                .catch(error => {
+                    console.error('Error submitting form:', error);
+                });
+        });
+    } else {
+        // 상품 신규 등록 : submit
+        $('form.productForm').off('submit');
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /** 장바구니 상품 추가 **/
@@ -760,8 +854,8 @@ function fetchFavoriteProductList(memberId){
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data); // 서버에서 받은 데이터를 출력하여 확인
-            renderFavoriteProducts(data); // 데이터 렌더링 함수 호출
+            console.log(data);
+            renderFavoriteProducts(data); // 데이터 렌더링
         })
         .catch(error => {
             console.error('Error fetching favorite products:', error);
@@ -809,7 +903,25 @@ function renderFavoriteProducts(products) {
         });
     } else {
         // 찜 목록이 없을 때 처리
-        favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+        favoriteList.html(`
+                     <div class="container w-100">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+                                        <div class="icon-heart my-5">
+                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                        </div>
+                                        <div class="message mb-5">
+                                            <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
+                                            <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
+                                        </div>
+                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                
+                `);
     }
 }
 
@@ -846,13 +958,31 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
             const message = await response.text();  // response body의 텍스트를 가져옴
             console.log(message);  // 응답 메시지를 사용자에게 보여줌
             prodItem.remove();
-            var cntFavorite = $(".prodItem").count();
+            var cntFavorite = $(".prodItem").length;
             console.log(cntFavorite);
 
             if (cntFavorite==0 || cntFavorite ==null){
                 const favoriteList = $(".favoriteList");
                 // 찜 목록이 없을 때 처리
-                favoriteList.html("<p>찜한 상품이 없습니다.</p>");
+                favoriteList.html(`
+                     <div class="container w-100">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
+                                        <div class="icon-heart my-5">
+                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                        </div>
+                                        <div class="message mb-5">
+                                            <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
+                                            <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
+                                        </div>
+                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                
+                `);
             }
         } else {
             const errorMessage = await response.text();  // 오류 메시지 표시
@@ -970,6 +1100,45 @@ async function fetchProducts() {
 
 
 /******* Common Util : END *********/
+//오류 메시지 박스 초기화
+$(function (){
+    const messageBox = $(".messageBox");
+    if (messageBox){
+        messageBox.css("visibility", "hidden")
+    }
+})
+
+//오류 메시지 박스 초기화
+$(function (){
+    const messageBox = $(".messageBox");
+    if (messageBox){
+        messageBox.css("visibility", "hidden")
+    }
+})
+
+//오류 메시지 박스 show
+function showMessage(id, message) {
+    let $messageBox = $("#" + id);  // 전달받은 id로 메시지 박스를 선택
+    $messageBox.text(message).css("visibility", "visible");  // 메시지 박스에 텍스트 추가 및 표시
+
+    let timeoutId = $messageBox.data("timeoutId");
+
+    // 기존 타이머가 있을 경우 취소
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+
+    // 새로운 타이머 시작
+    timeoutId = setTimeout(function() {
+        $messageBox.css("visibility", "hidden");  // 2초 후에 메시지 박스를 사라지게 함
+        $messageBox.removeData("timeoutId");  // 타이머 ID 삭제
+    }, 2000);  // 2초(2000밀리초)
+
+    // 타이머 ID를 메시지 박스에 저장
+    $messageBox.data("timeoutId", timeoutId);
+}
+
+
 // 날짜 포맷팅 함수 (YYYY-MM-DD 형식으로 변환)
 function formatDateForInput(date) {
     const year = date.getFullYear();

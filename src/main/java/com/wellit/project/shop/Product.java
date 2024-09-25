@@ -23,6 +23,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long prodId; //상품 idx
 
+    @Enumerated(EnumType.STRING)
+    private ProdStatus prodStatus; //상품 판매 여부
+
     private String prodMainImg; //상품썸네일이미지 url
     private String prodName; //상품명
     private String prodDesc; //상품 설명

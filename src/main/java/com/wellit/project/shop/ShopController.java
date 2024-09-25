@@ -4,6 +4,7 @@ import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -82,13 +83,18 @@ public class ShopController {
         }
         productRepository.save(product);
 
+        // 이미지 리스트를 prod_image_num 순서로 정렬
+        List<ProdImage> sortedImages = product.getProdImages().stream()
+                                              .sorted(Comparator.comparing(ProdImage::getProdImageNum)) // prod_image_num으로 정렬
+                                              .collect(Collectors.toList());
+
         List<ProdReview> imgReviewList = shopService.getImgReviews(prodId);
         CartItemRequest cartItemRequest = new CartItemRequest();
 
         model.addAttribute("cartItemRequest", cartItemRequest);
 
         model.addAttribute("reviewCnt", shopService.getCountProdReview(prodId));
-
+        model.addAttribute("sortedImages", sortedImages); // 정렬된 이미지 리스트
         model.addAttribute("product", product);
         model.addAttribute("imgReviewList", imgReviewList);
 
@@ -118,21 +124,6 @@ public class ShopController {
         if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
-
-
-        /*List<Product> prodList = shopService.getProdCateList();
-        List<ProdCnt> prodCnts = shopService.getProdCntList();
-
-        // prodId를 키로, 리뷰, 찜 카운트 Map
-        Map<Long, Integer> revCntMap = prodCnts.stream()
-                                               .collect(Collectors.toMap(ProdCnt::getProdId, ProdCnt::getRevCnt));
-        Map<Long, Integer> favoriteCntMap = prodCnts.stream()
-                                                    .collect(Collectors.toMap(ProdCnt::getProdId,
-                                                                              ProdCnt::getFavoriteCnt));
-
-        model.addAttribute("prodlist", prodList);
-        model.addAttribute("revCntMap", revCntMap);
-        model.addAttribute("favoriteCntMap", favoriteCntMap);*/
 
 
 
@@ -182,7 +173,7 @@ public class ShopController {
         return "redirect:/shop/list";
     }
 
-    //admin:상품수정 폼 열기
+
     @GetMapping("/admin/edit/{prodId}")
     public String editProduct(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("prodId") Long prodId,
                               Model model) {
@@ -193,13 +184,18 @@ public class ShopController {
 
         Product product = shopService.getOneProd(prodId);  // 기존 상품 조회
         ProductForm productForm = new ProductForm(product);  // ProductForm에 매핑
-        List<ProdImage> imageFiles = product.getProdImages();
+
+        // 이미지 리스트를 순서대로 정렬
+        List<ProdImage> imageFiles = product.getProdImages().stream()
+                                            .sorted(Comparator.comparingInt(ProdImage::getProdImageNum))  // 이미지 순서대로 정렬
+                                            .collect(Collectors.toList());
+
         List<String> toBeDeleted = new ArrayList<>();
 
         String prodMainImg = product.getProdMainImg();
 
         model.addAttribute("productForm", productForm);
-        model.addAttribute("imageFiles", imageFiles);
+        model.addAttribute("imageFiles", imageFiles);  // 순서대로 정렬된 이미지 리스트
         model.addAttribute("prodMainImg", prodMainImg);
         model.addAttribute("prodDiscount", (product.getProdDiscount() != null) ? product.getProdDiscount() : 0);
         model.addAttribute("toBeDeleted", toBeDeleted);
@@ -207,32 +203,34 @@ public class ShopController {
         return "/shop/shop_form";  // 수정 폼으로 이동
     }
 
+
     //admin:상품 수정내용 저장하기
     @PostMapping("/update/{prodId}")
-    public String updateProduct(@AuthenticationPrincipal UserDetails userDetails,
-                                @PathVariable Long prodId,
-                                @ModelAttribute ProductForm productForm,
-                                @RequestParam(required=false) List<String> toBeDeleted) throws IOException {
+    @ResponseBody
+    public ResponseEntity<String> updateProduct(@AuthenticationPrincipal UserDetails userDetails,
+                                                @PathVariable Long prodId,
+                                                @ModelAttribute ProductForm productForm,
+                                                @RequestParam(required=false) List<String> toBeDeleted,
+                                                @RequestParam(value = "existingImages[]",required=false) List<String> existingImages,
+                                                @RequestParam(value = "existingImageOrders[]",required=false) List<Integer> existingImageOrders,
+                                                @RequestParam(value = "newImages[]",required=false) List<MultipartFile> newImages,
+                                                @RequestParam(value = "newImageOrders[]",required=false) List<Integer> newImageOrders
+                                               ) throws IOException {
 
         // 현재 로그인한 사용자가 admin인지 확인
         if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
-            return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("{\"status\":\"fail\", \"message\":\"Unauthorized access\"}");
         }
 
-        List<MultipartFile> imageFiles = productForm.getProdImages();
+        // 상품 업데이트 처리
         MultipartFile thumbFile = productForm.getProdMainImg();
+        shopService.updateProduct(prodId, productForm, thumbFile, toBeDeleted, existingImages, existingImageOrders, newImages, newImageOrders);
 
-        // 삭제할 이미지 처리
-        if (toBeDeleted != null) {
-            for (String src : toBeDeleted) {
-                // 이미지 경로에 해당하는 이미지를 삭제하는 로직
-                shopService.deleteImageByPath(src);
-            }
-        }
-
-        shopService.updateProduct(prodId, productForm, thumbFile, imageFiles);
-        return "redirect:/shop/list"; // 상품 리스트로 리다이렉트
+        return ResponseEntity.ok("{\"status\":\"success\"}");
     }
+
+
 
     // 상품 상세페이지 : 찜하기 버튼
     @PostMapping("/favorite/change")

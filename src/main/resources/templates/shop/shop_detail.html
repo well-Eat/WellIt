@@ -91,6 +91,8 @@
 								<button class="plus"><i class="fa-solid fa-plus fa-2xs"></i></button>
 							</div>
 						</div>
+						<!-- quantity 오류 메시지 -->
+						<div class="messageBox" id="quantityMessage" style="color: orangered; margin-top: 10px; height: 50px;"></div>
 				
 				
 				
@@ -100,7 +102,7 @@
 						<!--총 구매 금액-->
 						<div class="text-end">
 							<span class="f12 c333">총 상품금액 : </span>
-							<h3 class="prodTotalPrice card-text my-5 text-end d-inline-block"
+							<h3 class="prodTotalPrice card-text mt-2 mb-5 text-end d-inline-block"
 							    th:text="|${#numbers.formatInteger(product.prodFinalPrice,3,'COMMA')}|"></h3>
 							<span class="f20">원</span>
 						</div>
@@ -123,10 +125,11 @@
 	
 	
 	<!--상품 상세 정보 출력-->
-	<section class="prodDetail container border border-success mb-3 text-center">
-		
-		<th:block th:each="prodImage : ${product.prodImages}">
-			<img th:src="${prodImage.getImagePath()}" class="img-fluid" style="object-fit: contain; max-width: 100%">
+	<section class="prodDetail container border border-success mb-3 d-flex flex-column justify-content-center align-items-center">
+		<th:block th:each="prodImage : ${sortedImages}">
+			<div class="d-inline-block w-100 text-center">
+				<img th:src="${prodImage.imagePath}" class="img-fluid" style="object-fit: contain;">
+			</div>
 		</th:block>
 	</section>
 	
