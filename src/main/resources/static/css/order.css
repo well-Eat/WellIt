@@ -21,6 +21,9 @@ ul {
 /********************** common *********************/
 /********************** common *********************/
 /********************** common *********************/
+input[type=number]{
+    text-align: right;
+}
 section {
     height: auto;
 }
@@ -317,7 +320,7 @@ section.row > p.subtle::after {
 }
 
 #gallery img {
-    width: 100px;
+    width: 100%;
     margin: 10px;
 }
 

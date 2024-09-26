@@ -1,7 +1,51 @@
 /********* shop_list : 상품 리스트 페이지 *************/
 /********* shop_list : 상품 리스트 페이지 *************/
 /********* shop_list : 상품 리스트 페이지 *************/
+
+$(function() {
+    // 카테고리, 정렬, 페이지, 아이템 보기 개수
+    let currentCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+    let currentOrder = new URLSearchParams(window.location.search).get('order') || 'default';
+    let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+    let currentSize = new URLSearchParams(window.location.search).get('size') || 20;
+
+    // 카테고리 링크 클릭 이벤트 처리
+    $('.prodCateLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedCategory = $(this).data('category');
+        const newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+
+    // 정렬 링크 클릭 이벤트 처리
+    $('.sortLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedOrder = $(this).data('order');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+
+    // 보기 개수 링크 클릭 이벤트 처리
+    $('.pageSizeLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedSize = $(this).data('size');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}`; // 새 사이즈 선택 시 1페이지로 이동
+        window.location.href = newUrl;
+    });
+
+    // 페이지 번호 링크 클릭 이벤트 처리
+    $('.pageLink').on('click', function(event) {
+        event.preventDefault();
+        const selectedPage = $(this).data('page');
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}`;
+        window.location.href = newUrl;
+    });
+});
+
 $(function(){
+
+
+
 
     /* 카테고리 아이템 리스트 get */
     $("a.prodCateLink").on("click", function(e) {
@@ -272,6 +316,16 @@ function updateButtons() {
 function renderReviews(reviews) {
     const reviewBlock = $('.reviewBlock');
     reviewBlock.empty();
+    console.log(reviews.length);
+    if (reviews.length==0 || reviews==null){
+        const reviewHtml = `
+            <div class="row border-bottom py-2">
+                <div class="col-md-12 mb-3 text-center">
+                    작성된 리뷰가 없습니다.
+                </div>
+            </div>`;
+        reviewBlock.append(reviewHtml);
+    }
 
     reviews.forEach(function (review) {
         let imgHtml = '';
@@ -419,27 +473,20 @@ $(function () {
     });
 
 
-    $(document).on('click', '.addRow', function () {
-        const curIndex = $(this).closest('tr').index();
-        const rowCount = $('#prodInfoList tr').length;
-        const newRow = `
-    <tr>
-      <td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
-      <td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[${rowCount}].infoKey" placeholder="항목"></td>
-      <td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[${rowCount}].infoValue" placeholder="값"></td>
-      <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-    </tr>`;
-        // + 클릭 시 바로 다음에 행추가 & 키로 포커스 이동
-        $('#prodInfoList tr').eq(curIndex).after(newRow);
-        $('.infoKey').eq(curIndex + 1).focus();
-        updateProdInfoIndices(); // 인덱스를 다시 업데이트
-    });
+    $(document).on('click', '.drop-area:not(.remove-btn)', function () {
+        const dropArea = $(this).closest(".drop-area").not(".remove-btn");
+        const fileInput = $(this).find(".prodImageInput");
 
+        fileInput.click();
+
+    });
 
 });
 
 
-// 재료 행 인덱스 업데이트 함수
+
+
+// 상품정보 행 인덱스 업데이트 함수
 function updateProdInfoIndices() {
     $('#prodInfoList tr').each(function (index) {
         $(this).find('.infoKey').attr('name', `prodInfoList[${index}].infoKey`);
@@ -450,12 +497,12 @@ function updateProdInfoIndices() {
 
 /** shop_form : 상품 delete **/
 /** shop_form : 상품 delete **/
-function deleteProd() {
+/*function deleteProd() {
     if (prodName == null || prodName.length < 1) prodName = '해당';
     if (confirm(prodName + " 상품을 삭제하시겠습니까?")) {
         document.querySelector('#deleteForm').submit()
     };
-}
+}*/
 
 
 // 상품 메인 이미지
@@ -692,8 +739,8 @@ function updateCardOrderNumbers() {
 }
 
 
-
-$(document).ready(function () {
+// admin : 상품 등록 & 수정
+$(function () {
     const currentUrl = window.location.href;
 
     // 수정 페이지 일때 -> 이미지 순서 처리
@@ -746,7 +793,7 @@ $(document).ready(function () {
                     return response.json();
                 })
                 .then(data => {
-                    window.location.href = '/shop/list';
+                    window.location.href = '/shop/admin/list';
                 })
                 .catch(error => {
                     console.error('Error submitting form:', error);
@@ -854,7 +901,6 @@ function fetchFavoriteProductList(memberId){
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             renderFavoriteProducts(data); // 데이터 렌더링
         })
         .catch(error => {
@@ -1001,21 +1047,30 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
-document.addEventListener("DOMContentLoaded", function () {
-    // #orderTable이 문서에 있는지 확인
-    if (document.querySelector('#prodTable')) {
+$(function() {
+    if ($('#prodTable').length) {
         // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-        // 날짜를 'YYYY-MM-DD' 형식으로 변환하는 함수
-        document.getElementById('startDate').value = formatDateForInput(firstDayOfMonth);
-        document.getElementById('endDate').value = formatDateForInput(today);
+        // 날짜 'YYYY-MM-DD' 형식으로 변환
+        $('#startDate').val(formatDateForInput(firstDayOfMonth));
+        $('#endDate').val(formatDateForInput(today));
 
-        // 페이지 로드 시 주문 목록 불러오기
+        // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();
+
+        // 상품명 검색 input에서 enter 입력 시 검색 실행
+        $('#searchInput').on('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                fetchProducts();
+            }
+        });
+
     }
 });
+
 
 
 
@@ -1023,12 +1078,11 @@ async function fetchProducts() {
     // 검색어와 상태 필터 값 가져오기
     const search = document.getElementById("searchInput").value;
     const category = document.getElementById("categorySelect").value;
+    const status = document.getElementById("statusSelect").value;
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
 
-    console.log()
-    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&startDate=${startDate}&endDate=${endDate}`);
-    //const response = await fetch(`/shop/api/products?search=${search}`);
+    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}`);
     const data = await response.json();
 
     console.log(data);
@@ -1036,50 +1090,63 @@ async function fetchProducts() {
     // 테이블에 주문 목록 렌더링
     const prodTableBody = document.getElementById("prodTableBody");
     prodTableBody.innerHTML = ""; // 기존 내용 제거
+    let sumStock = 0;
+    let sumSalesProd = 0;
+    let sumSalesAmount = 0;
 
     data.products.forEach((product,index) => {
         // 상태에 따라 배경색 클래스를 동적으로 설정
         let rowClass = '';
-        /*
-        switch (order.status) {
-            case '상품준비중':
-                rowClass = 'table-light';  // 파란색
+        if (product.prodStock !=null) sumStock += product.prodStock;
+        if (product.sumQuantity !=null) sumSalesProd += product.sumQuantity;
+        if (product.totalFinalPrice !=null) sumSalesAmount += product.totalFinalPrice;
+
+        switch (product.prodStatus) {
+            case 'AVAILABLE':
+                rowClass = 'table-info';  // 파란색
                 statClass = 'text-primary fw700';
                 break;
-            case '배송중':
-                rowClass = 'table-info';     // 밝은 파란색
-                statClass = 'c333 fw700';
-                break;
-            case '배송완료':
-                rowClass = 'table-success';  // 녹색
-                statClass = 'c333 fw700';
-                break;
-            case '주문취소':
+            case 'UNAVAILABLE':
                 rowClass = 'table-danger';   // 빨간색
                 statClass = 'text-danger fw700';
                 break;
-            case '취소승인대기중':
+            case 'DISCONTINUED':
+                rowClass = 'table-secondary';  // 회색
+                statClass = 'c333 fw700 text-secondary';
+                break;
+            case 'OUT_OF_STOCK':
                 rowClass = 'table-warning';  // 노란색
                 statClass = 'text-warning fw700';
                 break;
             default:
-                rowClass = ''; // 기본값 (특별한 배경색 없음)
+                rowClass = ''; // 기본값
         }
-        console.log(order.status);
-*/
+
         const row = `
-            <tr class="prodRow">
+            <tr class="prodRow ${rowClass}">
                 <td>${index + 1}</td>
                 <td>${product.prodId}</td>
-                <td>${product.prodName}</td>
-                <td>${product.createdAt}</td>
-                <td>${product.sumQuantity || 0}</td>
-                <td>${product.totalFinalPrice || 0}</td>
-                <td><a href="/shop/admin/edit/${product.prodId}" tableLink">수정</a></td>
+                <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a>  </td>
+                <td class="${statClass}">${toKoreanProdStatus(product.prodStatus)}</td>
+                <td class="text-end pe-2">${product.prodStock==null? 0 :product.prodStock.toLocaleString('ko-KR') || 0}</td>
+                <td class="text-end pe-2">${product.sumQuantity==null? 0 :product.sumQuantity.toLocaleString('ko-KR') || 0}</td>
+                <td class="text-end pe-2">${product.totalFinalPrice==null? 0 : product.totalFinalPrice.toLocaleString('ko-KR')}</td>
+                <td class="text-center"><a href="/shop/admin/edit/${product.prodId}" class="tableLink text-secondary text-center">수정</a></td>
             </tr>
         `;
         prodTableBody.insertAdjacentHTML('beforeend', row);
+
     });
+    const totalRow = `
+            <tr  class="table-light fw700">
+                <td class="text-center" colspan="4">소&nbsp;&nbsp;계</td>
+                <td class="text-end pe-2">${sumStock.toLocaleString('ko-KR') || 0}</td>
+                <td class="text-end pe-2">${sumSalesProd.toLocaleString('ko-KR') || 0}</td>
+                <td class="text-end pe-2">${sumSalesAmount.toLocaleString('ko-KR') || 0}</td>
+                <td></td>
+            </tr>
+        `;
+    prodTableBody.insertAdjacentHTML('afterbegin', totalRow);
 }
 
 
@@ -1100,6 +1167,23 @@ async function fetchProducts() {
 
 
 /******* Common Util : END *********/
+//통화 포맷팅 함수
+function formatCurrency(amount){
+    return `${amount.toLocaleString('ko-KR')}원`;
+}
+
+//ProdStatus Enum 한글명 매핑 함수
+function toKoreanProdStatus(prodStatus) {
+    const statusMap = {
+        "AVAILABLE": "판매중",
+        "UNAVAILABLE": "판매일시중단",
+        "OUT_OF_STOCK": "일시품절",
+        "DISCONTINUED": "단종"
+    };
+
+    return statusMap[prodStatus] || prodStatus;
+}
+
 //오류 메시지 박스 초기화
 $(function (){
     const messageBox = $(".messageBox");

@@ -2,7 +2,7 @@ package com.wellit.project.shop;
 
 public enum ProdStatus {
     AVAILABLE("판매중"),
-    UNAVAILABLE("일시판매중지"),
+    UNAVAILABLE("판매일시중단"),
     OUT_OF_STOCK("일시품절"),
     DISCONTINUED("단종");
 

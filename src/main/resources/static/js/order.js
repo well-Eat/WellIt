@@ -403,25 +403,14 @@ function useAllMileage() {
     let finalPrice = $('#finalPrice').attr('data-nums');
     let mileage = $("#mileage").attr('data-nums');
 
-    console.log("-====================")
-    console.log("finalPrice : ")
-    console.log(parseInt(finalPrice));
-    console.log("-====================")
-    console.log("mileage : ")
-    console.log(parseInt(mileage));
-    console.log("-====================")
-
-
     let milePay = $("#milePay");
 
     console.log(milePay);
     // 할인된 상품 가격 내에서 마일리지 사용가능
     if (parseInt(mileage) > parseInt(finalPrice)) {
-        console.log("트루다")
         milePay.val(parseInt(finalPrice));
     } else {
         milePay.val(parseInt(mileage));
-        console.log("트루아님")
     }
 
 
