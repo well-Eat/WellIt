@@ -70,77 +70,43 @@
 											<ul class="submenu">
 												<li><a class="nav-link link-dark fw-bold"
 														href="/member/mypage/orderhistory">주문내역</a></li>
-												<li><a class="nav-link link-dark fw-bold" href="#"
-														data-target="#cancel">환불/반품/취소 목록</a></li>
 											</ul>
 										</li>
 										<li class="nav-item has-submenu mt-3">
 											<a class="nav-link disabled fw-bolder" href="#"
 												data-target="#customer-center">예약관리</a>
 											<ul class="submenu">
-												<li th:if="${member.isBusiness == true}"><a
-														class="nav-link link-dark fw-bold" href="#" data-target="#store"
-														th:linkyn="${member.memberId}"
-														th:onclick="fetchMyStoreReservations( this.getAttribute('linkyn'))">가게
+												<li th:if="${member.isBusiness == true}"><a  class="nav-link link-dark fw-bold"
+														th:href="@{/member/mypage/myStoreReservations(id=${member.memberId})}">내 가게
 														예약내역
 														보기</a>
 												</li>
 												<li>
-													<a class="nav-link link-dark fw-bold" href="#"
-														data-target="#reservation" id="view-reservations"
-														th:linkyn="${member.memberId}"
-														th:onclick="fetchReservations( this.getAttribute('linkyn'))">내
-														예약내역 보기</a>
+													<a class="nav-link link-dark fw-bold" th:href="@{/member/mypage/myreservations(id=${member.memberId})}">내 예약내역 보기</a>
+
 												</li>
 											</ul>
 										</li>
 										<!-- Admin 전용 항목들 -->
 										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
+											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 메뉴</a>
 											<ul class="submenu">
 												<li><a class="nav-link link-dark fw-bold"
-														href="/order/admin/po/list">주문확인</a></li>
-												<li><a class="nav-link link-dark fw-bold"
-														href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
-											</ul>
-										</li>
-										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-											<a class="nav-link disabled fw-bolder" href="#"
-												data-target="#customer-center">Admin 전용 : 상품 관리</a>
-											<ul class="submenu">
-												<li><a class="nav-link link-dark fw-bold" href="#">상품리스트</a></li>
-												<li><a class="nav-link link-dark fw-bold"
-														href="/shop/admin/form">신규상품등록</a>
-												</li>
-											</ul>
-										</li>
-
-										<li class="nav-item has-submenu mt-3" th:if="${member.memberId == 'admin'}">
-											<a class="nav-link disabled fw-bolder" href="#"
-												data-target="#customer-center">관리자
-												메뉴</a>
-											<ul class="submenu">
-												<li>
-													<a class="nav-link link-dark fw-bold"
-														th:href="@{/load/store/create}">가게 생성</a>
-												</li>
+														href="/order/admin/po/list">관리자 메뉴</a></li>
 											</ul>
 										</li>
 									</ul>
 								</div>
-
-
 							</div>
 						</nav>
 					</div>
 					<div class="col-xl-9 col-xs-12 tabcontent container mt-0 mt-xl-5 mb-5 mb-xl-0"
 						layout:fragment="tabcontent">
 
-
-					</div>
-
-
-
+					</div>			
+					
+						
+									   
 				</div>
 			</div>
 		</section>
@@ -170,7 +136,7 @@
 
 		//		});
 
-		let storeReservations = []; // 내 가게 예약 목록 전역 변수
+	/*	let storeReservations = []; // 내 가게 예약 목록 전역 변수
 
 		// 내 가게 예약 목록 가져오기
 		function fetchMyStoreReservations(memberId) {
@@ -449,7 +415,7 @@
 				.catch(error => {
 					alert(error.message);
 				});
-		}
+		}	*/
 	</script>
 </div>
 
