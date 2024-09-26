@@ -40,12 +40,25 @@ public class ShopService {
     private static final String UPLOAD_DIR = "C:/uploads/";
 
 
+    @Transactional(readOnly = true)
+    public List<Product> getAllProducts() {
+        return productRepository.findAllProducts();
+    }
+
+
+
+    /*서비스 : 상품 리스트 리턴*/
+    @Transactional(readOnly = true)
+    public List<Product> getProductsByCriteria(String category, String itemSort, int page, int size) {
+        //return productRepository.findProductsByCriteria(category, itemSort);  // 매개변수 이름 확인
+        return productRepository.findProductsByCriteria(category, itemSort, page, size);  // 매개변수 이름 확인
+    }
 
     /*상품 리스트 리턴*/
     public List<Product> getProdCateList() {
         List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "prodId"));
         return products;
-    }
+    }*/
 
 
     /*상품DTO 1품목 리턴*/
@@ -56,16 +69,35 @@ public class ShopService {
     }
 
     //상품 리뷰 리스트 리턴
-    public int getCountProdReview(Long prodId) {
+    public ReviewCnt getCountProdReview(Long prodId) {
 
         // OrderItem을 통해 해당 Product의 리뷰를 조회
         List<OrderItem> orderItems = orderItemRepository.findAllByProduct_ProdId(prodId);
+        ReviewCnt reviewCnt = new ReviewCnt();
+
+        //주문 건수가 0인 경우 -> 리뷰0, 평점0.0
+        if(orderItems == null || orderItems.size()==0){
+            reviewCnt.setCnt(0);
+            reviewCnt.setAvg(0.0);
+            return reviewCnt;
+        }
 
         List<ProdReview> reviewList = orderItems.stream()
                                                 .map(OrderItem::getProdReview)  // OrderItem에서 ProdReview 가져오기
                                                 .filter(review -> review != null)
                                                 .collect(Collectors.toList());
-        return reviewList.size();
+
+        reviewCnt.setCnt(reviewList.size());
+
+        if(reviewList.size()>0){
+            reviewCnt.setAvg(reviewList.stream()
+                                       .mapToDouble(ProdReview::getRevRating)
+                                       .average()
+                                       .orElse(0.0));
+
+        } else reviewCnt.setAvg(0.0);
+
+        return reviewCnt;
     }
 
 
@@ -139,6 +171,7 @@ public class ShopService {
         Product product = new Product();
         product.setProdName(productForm.getProdName());
         product.setProdCate(productForm.getProdCate());
+        product.setProdStatus(productForm.getProdStatus());
         product.setProdDesc(productForm.getProdDesc());
         product.setProdStock(productForm.getProdStock());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
@@ -220,6 +253,7 @@ public class ShopService {
         // 상품 정보 업데이트
         product.setProdName(productForm.getProdName());
         product.setProdCate(productForm.getProdCate());
+        product.setProdStatus(productForm.getProdStatus());
         product.setProdDesc(productForm.getProdDesc());
         product.setProdStock(productForm.getProdStock());
         product.setProdDiscount(productForm.getProdDiscount());
@@ -286,6 +320,7 @@ public class ShopService {
         productRepository.save(product);
     }
 
+    //기존 이미지 순서
     public void updateExistingImageOrder(String imagePath, int order) {
         ProdImage existingImage = prodImageRepository.findByImagePath(imagePath);
         if (existingImage != null) {
@@ -295,8 +330,8 @@ public class ShopService {
     }
 
 
-    //상품 삭제
-    public void deleteProduct(Long prodId) {
+    //상품 삭제 -> 삭제 미사용. ProdStatus로 관리
+    /*public void deleteProduct(Long prodId) {
         Product product = productRepository.findById(prodId)
                                            .orElseThrow(() -> new IllegalArgumentException(
                                                    "해당 상품  id가 존재하지 않습니다. :" + prodId));
@@ -321,7 +356,7 @@ public class ShopService {
 
         // 데이터베이스에서 상품 삭제
         productRepository.deleteById(prodId);
-    }
+    }*/
 
 
     //찜목록 검색 - /shop/detail/{prodId} 상품 상세페이지 찜버튼 확인
@@ -383,9 +418,8 @@ public class ShopService {
 
 
     // 상품별 리뷰, 찜 개수 dto 리스트로 리턴
-    public List<ProdCnt> getProdCntList(){
+    public List<ProdCnt> getProdCntList(List<Product> productList){
 
-        List<Product> productList = productRepository.findAll();
         List<ProdCnt> prodCntList = new ArrayList<>();
 
         for (Product product : productList) {
@@ -402,7 +436,7 @@ public class ShopService {
 
 
     //admin : 상품 리스트 페이징 리턴
-    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String startDate, String endDate, int page) {
+    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page) {
         // 페이징 처리 및 정렬
         Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);
@@ -423,17 +457,30 @@ public class ShopService {
         // 상품 정보와 판매 수량 및 매출 금액을 조회
         Page<Product> productPage;
 
-        if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
-            // 상품 자체는 검색 기간과 상관없이 모두 조회
-            productPage = productRepository.findByProdNameContainingAndProdCate(search, prodCate, pageable);
-        } else if (search != null && !search.isEmpty()) {
-            productPage = productRepository.findByProdNameContaining(search, pageable);
-        } else if (prodCate != null && !prodCate.isEmpty()) {
-            productPage = productRepository.findByProdCate(prodCate, pageable);
+        // 조건에 맞는 상품 필터링
+        if(status == null || status.isEmpty()){
+            if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
+                productPage = productRepository.findByProdNameContainingAndProdCate(search, prodCate, pageable);
+            } else if (search != null && !search.isEmpty()) {
+                productPage = productRepository.findByProdNameContaining(search, pageable);
+            } else if (prodCate != null && !prodCate.isEmpty()) {
+                productPage = productRepository.findByProdCate(prodCate, pageable);
+            } else {
+                // 검색 조건이 없으면 모든 상품을 조회
+                productPage = productRepository.findAll(pageable);
+            }
         } else {
-            // 검색 조건이 없으면 모든 상품을 조회
-            productPage = productRepository.findAll(pageable);
+            if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
+                productPage = productRepository.findByProdNameContainingAndProdCateAndProdStatus(search, prodCate, ProdStatus.valueOf(status), pageable);
+            } else if (search != null && !search.isEmpty()) {
+                productPage = productRepository.findByProdNameContainingAndProdStatus(search, ProdStatus.valueOf(status), pageable);
+            } else if (prodCate != null && !prodCate.isEmpty()) {
+                productPage = productRepository.findByProdCateAndProdStatus(prodCate, ProdStatus.valueOf(status), pageable);
+            } else {
+                productPage = productRepository.findByProdStatus(ProdStatus.valueOf(status), pageable);
+            }
         }
+
 
         // 판매 수량 및 매출 집계 데이터 조회
         List<Object[]> salesData = orderItemRepository.findProductSalesByDateRange(startDateTime, endDateTime);
@@ -459,6 +506,7 @@ public class ShopService {
     private ProductAdminDTO convertToProductAdminDTO(Product product) {
         ProductAdminDTO dto = new ProductAdminDTO();
         dto.setProdId(product.getProdId());
+        dto.setProdStatus(product.getProdStatus());
         dto.setProdName(product.getProdName());
         dto.setProdOrgPrice(product.getProdOrgPrice());
         dto.setProdDiscount(product.getProdDiscount());
@@ -485,3 +533,5 @@ public class ShopService {
 
 
 }
+
+

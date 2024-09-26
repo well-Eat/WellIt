@@ -4,7 +4,9 @@ import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService; // 사용자 서비스
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -63,4 +65,23 @@ public class FavoriteRecipeController {
         
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/favorite/list")
+    public ResponseEntity<List<Recipe>> getFavoriteRecipes(@RequestParam("memberId") String memberId) {
+        Member member = memberService.getMember(memberId); // 사용자 가져오기
+
+        if (member == null) {
+            return ResponseEntity.notFound().build(); // 사용자 없을 경우 404 응답
+        }
+
+        List<FavoriteRecipe> favoriteRecipes = favoriteRecipeService.getFavoriteRecipesByMember(member); // 찜한 레시피 목록 가져오기
+
+        // 찜한 레시피에서 실제 레시피 정보를 추출
+        List<Recipe> recipes = favoriteRecipes.stream()
+                .map(FavoriteRecipe::getRecipe) // FavoriteRecipe에서 Recipe 객체 추출
+                .collect(Collectors.toList()); // Recipe 리스트로 변환
+
+        return ResponseEntity.ok(recipes); // 실제 레시피 목록 반환
+    }
+
 }

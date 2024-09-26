@@ -1,5 +1,7 @@
 package com.wellit.project.life;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,9 @@ public class FavoriteRecipeService {
     
     public boolean isRecipeFavorited(Member member, Long recipeId) {
         return favoriteRecipeRepository.existsByMemberAndRecipeId(member, recipeId);
+    }
+
+    public List<FavoriteRecipe> getFavoriteRecipesByMember(Member member) {
+        return favoriteRecipeRepository.findByMember(member); // 사용자에 따른 찜한 레시피 목록 반환
     }
 }

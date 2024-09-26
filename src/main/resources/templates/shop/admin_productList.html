@@ -1,12 +1,7 @@
-<html layout:decorate="~{member/mypage}">
+<html layout:decorate="~{member/mypage_layout}">
 <div layout:fragment="tabcontent">
 	
-	
-	<!--shop style link-->
-	<link rel="stylesheet" th:href="@{/css/shop.css}">
-	
-	
-	<div class="d-flex flex-column min-vh-100" id="wrapper">
+	<div class="d-flex flex-column container" id="wrapper">
 		
 		<!--페이지 제목-->
 		<div class="row my-5">
@@ -16,47 +11,89 @@
 		</div>
 		
 		<section class="row vstack prodItem position-relative mb-5">
-			
-			<p class="subtle f18 c666 fw-bold">
-				상품 내역
-			</p>
-			
 			<div class="col gap-3 g-3">
+				<p class="subtle f18 c666 fw-bold">
+					상품 검색 및 필터
+				</p>
+			
+			
 				<!-- 검색 및 필터 기능 -->
-				<form class="mb-3 d-flex" id="searchForm">
-					<input type="text" id="searchInput" class="form-control me-2" placeholder="Search by Order ID" name="search">
-					<!-- 시작 날짜 선택 -->
-					<input type="date" id="startDate" class="form-control me-2" name="startDate">
-					
-					<!-- 끝 날짜 선택 -->
-					<input type="date" id="endDate" class="form-control me-2" name="endDate">
-					
-					<select class="form-select me-2" id="categorySelect" name="category">
-						<option value="">모두 보기</option>
-						<option value="mealkit">밀키트</option>
-						<option value="sidedish">반찬배송</option>
-						<option value="organicfood">유기농식재료</option>
-						<option value="organicgoods">오가닉 제품</option>
-						<option value="babygoods">베이비</option>
-						<option value="petgoods">펫</option>
-						<option value="books">책</option>
-						<option value="wellitgoods">웨릿 굿즈</option>
-					</select>
-					
-					<button type="button" class="btn btn-success" onclick="fetchProducts()">Search</button>
+				<form class="mb-3" id="searchForm" onsubmit="return false;">
+					<div class="d-flex gap-3">
+						<div class="flex-grow-1">  <!-- 좌측 열 -->
+							<div class="d-flex mb-1"> <!-- 첫째줄 -->
+									<!--상품명 검색어 입력-->
+									<input type="text" id="searchInput" class="form-control me-2 w-50" placeholder="상품명검색" name="search">
+									
+									<!--카테고리 select-->
+									<select class="form-select me-2 w-25" id="categorySelect" name="category">
+										<option value="">카테고리 : 모두 보기</option>
+										<option value="mealkit">밀키트</option>
+										<option value="sidedish">반찬배송</option>
+										<option value="organicfood">유기농식재료</option>
+										<option value="organicgoods">오가닉 제품</option>
+										<option value="babygoods">베이비</option>
+										<option value="petgoods">펫</option>
+										<option value="books">책</option>
+										<option value="wellitgoods">웨릿 굿즈</option>
+									</select>
+									
+									<!--판매상태 select-->
+									<select class="form-select me-2 w-25" id="statusSelect" name="status">
+										<option value="">판매상태 : 모두 보기</option>
+										<option value="AVAILABLE">판매중</option>
+										<option value="UNAVAILABLE">일시판매중지</option>
+										<option value="OUT_OF_STOCK">일시품절</option>
+										<option value="DISCONTINUED">단종</option>
+									</select>
+							</div>
+							
+							
+							<div class="d-flex"> <!-- 둘째줄 -->
+								<label class="form-label d-block w-50 me-2 text-end align-self-center my-1">판매 실적 기준 기간 : </label>
+								<!-- 시작 날짜 선택 -->
+								<input type="date" id="startDate" class="form-control me-2 w-25" name="startDate">
+								
+								<!-- 끝 날짜 선택 -->
+								<input type="date" id="endDate" class="form-control me-2 w-25" name="endDate">
+							</div>
+						</div>
+						<div class="hidden">
+							<!--소팅 select-->
+							<select class="form-select me-2 w-25" id="sortSelect" name="itemSort">
+								<option value="prod_id">상품코드</option>
+								<option value="prod_name">상품명</option>
+								<option value="prod_status">판매상태</option>
+								<option value="prod_stock">재고수량</option>
+								<option value="sales_quantity">판매수량</option>
+								<option value="sales_amount">매출금액</option>
+							</select>
+							<input type="radio" name="sortDirection" id="desc" checked value="desc">
+							<input type="radio" name="sortDirection" id="asc" value="asc">
+
+						</div>
+						<div class="d-flex">
+							<button type="button" class="btn btn-success align-self-stretch" onclick="fetchProducts()">Search</button>
+						</div>
+					</div> <!--row-->
+
 				</form>
 				
+				<p class="subtle f18 c666 fw-bold">
+					상품 리스트
+				</p>
 				<!-- 상품 목록 테이블 -->
-				<table class="table table-hover" id="prodTable">
-					<thead>
+				<table class="table table-hover" id="prodTable" >
+					<thead class="prodTableHead">
 					<tr>
 						<th scope="col">No.</th>
-						<th scope="col">상품코드</th>
-						<th scope="col">상품명</th>
-						<th scope="col">상품 등록일자</th>
-						<th scope="col">판매수량</th>
-						<th scope="col">매출금액</th>
-						<th scope="col">편집버튼</th>
+						<th scope="col" data-item-sort="prod_id">상품코드</th>
+						<th scope="col" data-item-sort="prod_name">상품명</th>
+						<th scope="col" data-item-sort="prod_status">판매상태</th>
+						<th scope="col" data-item-sort="prod_stock">재고수량</th>
+						<th scope="col" data-item-sort="sales_quantity">판매수량</th>
+						<th scope="col" data-item-sort="sales_amount">매출금액</th>
+						<th scope="col">상품수정</th>
 					</tr>
 					</thead>
 					<tbody id="prodTableBody">
@@ -73,7 +110,8 @@
 		</section>
 	
 	</div><!-- // #wrapper -->
-	
+
+		
 	<!--shop js link-->
 	<script src="/js/shop.js"></script>
 
