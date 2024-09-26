@@ -58,7 +58,7 @@ public class ShopService {
     public List<Product> getProdCateList() {
         List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "prodId"));
         return products;
-    }*/
+    }
 
 
     /*상품DTO 1품목 리턴*/

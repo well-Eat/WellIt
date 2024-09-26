@@ -241,6 +241,21 @@ public class KakaoLoginController {
 			if (principal instanceof String) {
 				String memberId = (String) principal;
 				Member existingMember = memberService.getMember(memberId);
+				
+				// 년도 값이 null인 경우 기존 값을 유지
+	            if (kakaoUpdateForm.getBirth_year() == null || kakaoUpdateForm.getBirth_year().isEmpty()) {
+	            	kakaoUpdateForm.setBirth_year(kakaoUpdateForm.getBirth_year());
+	            }
+
+	            // 월 값이 null인 경우 기존 값을 유지
+	            if (kakaoUpdateForm.getBirth_month() == null || kakaoUpdateForm.getBirth_month().isEmpty()) {
+	            	kakaoUpdateForm.setBirth_month(kakaoUpdateForm.getBirth_month());
+	            }
+
+	            // 일 값이 null인 경우 기존 값을 유지
+	            if (kakaoUpdateForm.getBirth_day() == null || kakaoUpdateForm.getBirth_day().isEmpty()) {
+	            	kakaoUpdateForm.setBirth_day(kakaoUpdateForm.getBirth_day());
+	            }
 
 				try {
 					// 기존 이미지 경로를 폼에서 가져와서 전달
@@ -278,7 +293,9 @@ public class KakaoLoginController {
 				return "redirect:/member/login";
 			}
 
-			model.addAttribute("updateMessage", "회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+			session.invalidate();
+	        redirectAttributes.addFlashAttribute("updateMessage","카카오 회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+	        return "redirect:/member/login";
 
 		}
 		session.invalidate();

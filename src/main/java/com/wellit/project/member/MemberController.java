@@ -347,6 +347,15 @@ public class MemberController {
 
                 newPassword = memberUpdateForm.getMemberPassword();  // 새 비밀번호로 갱신
             }
+            // 이메일 변경 확인 및 이메일 인증 처리
+            if (!existingMember.getMemberEmail().equals(memberUpdateForm.getMemberEmail())) {
+                Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+                if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified == null) {
+                    model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+                    model.addAttribute("member", memberUpdateForm);  // 여기에 추가
+                    return "/member/update_profile";
+                }
+            }
             
          // 년도 값이 null인 경우 기존 값을 유지
             if (memberUpdateForm.getBirth_year() == null || memberUpdateForm.getBirth_year().isEmpty()) {
@@ -362,16 +371,7 @@ public class MemberController {
             if (memberUpdateForm.getBirth_day() == null || memberUpdateForm.getBirth_day().isEmpty()) {
             	memberUpdateForm.setBirth_day(memberUpdateForm.getBirth_day());
             }
-            
-            // 이메일 변경 확인 및 이메일 인증 처리
-            if (!existingMember.getMemberEmail().equals(memberUpdateForm.getMemberEmail())) {
-                Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-                if (Boolean.FALSE.equals(isEmailVerified) || isEmailVerified == null) {
-                    model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-                    model.addAttribute("member", memberUpdateForm);  // 여기에 추가
-                    return "/member/update_profile";
-                }
-            }
+
 
             try {
                 // 기존 이미지 경로를 폼에서 가져와서 전달
@@ -389,8 +389,7 @@ public class MemberController {
                 
                 session.removeAttribute("emailVerified");
                 session.removeAttribute("verificationCode");
-                redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
-
+     
             } catch (DataIntegrityViolationException e) {
                 e.printStackTrace();
                 bindingResult.reject("updateFailed", "이미 등록된 사용자 정보입니다.");
@@ -410,14 +409,8 @@ public class MemberController {
         } else {
             return "redirect:/member/login";
         }
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        // 인증된 사용자가 있을 경우 로그아웃 처리
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
-              
-        redirectAttributes.addFlashAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+        session.invalidate();
+        redirectAttributes.addFlashAttribute("updateMessage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
         return "redirect:/member/login";
     }
     
@@ -687,35 +680,6 @@ public class MemberController {
 			}
 		}
         return "/load/mypage_favoriteStore";
-    }
-    
-    @GetMapping("/mypage/favorite/recipe")
-    public String getFavoriteRecipe(Model model) {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null) {
-			Object principal = authentication.getPrincipal();
-			// Principal이 String 타입으로 가정
-			if (principal instanceof String) {
-				String memberId = (String) principal;
-				Member member = memberService.getMember(memberId);
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				String formattedRegDate = member.getMemberRegDate().format(formatter);
-				model.addAttribute("member", member);
-				model.addAttribute("formattedRegDate", formattedRegDate);
-			} else {
-				// UserDetails를 사용하는 경우
-				if (principal instanceof UserDetails) {
-					UserDetails userDetails = (UserDetails) principal;
-					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-					Member member = memberService.getMember(memberId);
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String formattedRegDate = member.getMemberRegDate().format(formatter);
-					model.addAttribute("member", member);
-					model.addAttribute("formattedRegDate", formattedRegDate);
-				}
-			}
-		}
-        return "/life/mypage_favoriteRecipe";
     }
 
 

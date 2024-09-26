@@ -25,7 +25,7 @@
 							<div class="col">
 								<label for="password1" class="form-label">비밀번호</label>
 								<input type="password" id="memberPassword1" name="memberPassword" class="form-control"
-									placeholder="비밀번호 규칙" th:field="*{memberPassword}">
+									placeholder="영문과 숫자를 포함해서 최소 6자" th:field="*{memberPassword}">
 								<div th:if="${#fields.hasErrors('memberPassword')}" th:errors="*{memberPassword}"
 									class="text-danger"></div>
 							</div>
@@ -41,16 +41,16 @@
 						<!-- 이름 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="name" class="form-label">이름</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberName" class="form-control" name="name"
-									th:value="${member.getMemberName}" th:field="*{memberName}">
+									th:value="${member.getMemberName}" th:field="*{memberName}" placeholder="숫자,특수문자 입력 불가, 최대 10자">
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" th:value="${member.getMemberAlias}">
+									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
 							</div>
 						</div>
 						<!-- 이메일 -->

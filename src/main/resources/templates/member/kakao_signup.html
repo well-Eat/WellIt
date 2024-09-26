@@ -12,7 +12,7 @@
 				<form th:action="@{/member/kakao_signup}" method="post" enctype="multipart/form-data"
 					th:object="${member}" id="kakaoForm">
 					<div class="row justify-content-center">
-						<div class="col-3">
+						<div class="col-5">
 							<img th:src="@{${member.imageFile}}" alt="프로필 이미지" class="rounded-circle mx-auto"
 								width="200px" height="200px">
 						</div>
@@ -23,17 +23,17 @@
 						<!-- 이름 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="member_name" class="form-label">이름</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberName" class="form-control" th:field="*{memberName}"
-									placeholder="숫자,특수문자 입력 불가">
+									placeholder="숫자,특수문자 입력 불가, 최대 10자">
 							</div>
 						</div>
 						<!-- 닉네임 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" th:value="${member.getMemberAlias}">
+									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
 							</div>
 						</div>
 						<!-- 전화번호 -->

@@ -56,6 +56,9 @@ public class Member {
 
 	 	@Column(unique = true)
 	    private String memberEmail;
+	 	
+	 	private String memberEmail1;
+	 	private String memberEmail2;
 	    
 	 	@Column
 	    private String memberPhone;

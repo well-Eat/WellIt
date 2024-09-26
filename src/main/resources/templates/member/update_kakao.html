@@ -24,16 +24,16 @@
 						<!-- 이름 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="name" class="form-label">이름</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberName" class="form-control" name="name"
-									th:value="${member.getMemberName}" th:field="*{memberName}">
+									th:value="${member.getMemberName}" th:field="*{memberName}" placeholder="숫자 / 특수문자 불가, 최대 10자">
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" th:value="${member.getMemberAlias}">
+									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
 							</div>
 						</div>
 						<!-- 전화번호 -->
@@ -70,26 +70,37 @@
 						</div>
 						<!-- 생일 -->
 						<div class="row mt-3">
-							<label for="birth" class="form-label">생년월일(선택)</label>
-							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth_year"
-									th:field="*{birth_year}">
-									<option value="" th:text="${member.getBirth_year}" selected></option>
-								</select>
-							</div>
-							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth_month"
-									th:field="*{birth_month}">
-									<option value="" th:text="${member.getBirth_month}" selected></option>
-								</select>
-							</div>
-							<div class="col-4">
-								<select class="form-select" aria-label="Default select example" id="birth_day"
-									th:field="*{birth_day}">
-									<option value="" th:text="${member.getBirth_day}" selected></option>
-								</select>
-							</div>
-							<input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
+						    <label for="birth" class="form-label">생년월일(선택)</label>
+
+						    <!-- 년도 선택 -->
+						    <div class="col-4">
+						        <select class="form-select" aria-label="Default select example" id="birth_year" name="birth_year" th:field="*{birth_year}">
+						            <option th:if="${member.birth_year != null}" th:value="${member.birth_year}" th:text="${member.birth_year}" selected></option>
+						            <option th:if="${member.birth_year == null}" value="" selected>년</option>
+						            <!-- Add actual year options here -->
+						        </select>
+						    </div>
+
+						    <!-- 월 선택 -->
+						    <div class="col-4">
+						        <select class="form-select" aria-label="Default select example" id="birth_month" name="birth_month" th:field="*{birth_month}">
+						            <option th:if="${member.birth_month != null}" th:value="${member.birth_month}" th:text="${member.birth_month}" selected></option>
+						            <option th:if="${member.birth_month == null}" value="" selected>월</option>
+						            <!-- Add actual month options here -->
+						        </select>
+						    </div>
+
+						    <!-- 일 선택 -->
+						    <div class="col-4">
+						        <select class="form-select" aria-label="Default select example" id="birth_day" name="birth_day" th:field="*{birth_day}">
+						            <option th:if="${member.birth_day != null}" th:value="${member.birth_day}" th:text="${member.birth_day}" selected></option>
+						            <option th:if="${member.birth_day == null}" value="" selected>일</option>
+						            <!-- Add actual day options here -->
+						        </select>
+						    </div>
+
+						    <!-- Hidden field to store full date -->
+						    <input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
 						</div>
 						<!-- 성별 -->
 						<div class="row mt-3">
