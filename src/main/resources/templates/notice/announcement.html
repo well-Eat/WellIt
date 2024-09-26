@@ -9,8 +9,8 @@
 			Notice
 		</div>
 		<div class="selectPage d-flex justify-content-center">
-			<a href="/notice/announcement" class="page-link">공지사항</a>
-			<a href="/notice/qna" class="page-link">Q & A</a>
+		    <a href="/notice/announcement" class="page-link" th:class="${pageType.equals('announcement')} ? 'font-weight-bold page-link' : 'page-link'">공지사항</a>
+		    <a href="/notice/qna" class="page-link" th:class="${pageType.equals('qna')} ? 'font-weight-bold page-link' : 'page-link'">Q & A</a>
 		</div>
 	</div>
 	<div class="container my-5">
@@ -19,8 +19,8 @@
 			<thead>
 				<tr>
 					<th scope="col" class="col-1">#</th>
-					<th scope="col" class="col-2">글쓴이</th>
 					<th scope="col" class="col-7">제목</th>
+					<th scope="col" class="col-2">글쓴이</th>
 					<th scope="col" class="col-2">작성시간</th>
 				</tr>
 			</thead>
@@ -30,13 +30,14 @@
 					th:data-question-id="${question.qId}"
 					th:if="${pageType.equals('announcement') ? question.qAuthor == 'admin' : true}">
 					<th scope="row" th:text="${stat.index + 1}"></th>
-					<td th:text="${question.qAuthor}"></td>
+					
 					<td>
 						<span class="question-title" onclick="toggleContent(this)" th:text="${question.qTitle}">
 						</span>
 						<span th:if="${question.qAuthor != 'admin'}" th:text="${question.qCategory}"
 							class="badge text-bg-primary mx-2"></span>
 						<div class="question-content" style="display: none;">
+							<img th:src="${question.qImageUrl}" alt="" />
 							<p class="border-bottom">Q. <span th:text="${question.qContent}"></span></p>
 							<div class="answers mt-2">
 								<div class="deleteAnswers" th:if="${session.UserId == 'admin'}"></div>
@@ -52,7 +53,8 @@
 							</div>
 							<div th:if="${session.UserId == 'admin' || memberAlias == question.qAuthor}"
 								class="btn-group float-end">
-								<a th:href="@{/notice/qnaEdit(id=${question.qId})}" class="btn btn-warning">수정</a>
+								<a th:if="${pageType.equals('qna')}" th:href="@{/notice/qnaEdit(id=${question.qId})}" class="btn btn-warning">수정</a>
+								<a th:if="${pageType.equals('announcement')}" th:href="@{/notice/announcementEdit(id=${question.qId})}" class="btn btn-warning">수정</a>
 								<a th:href="@{/notice/qnaDelete(questionId=${question.qId})}" class="btn btn-danger"
 									onclick="return confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.');">
 									삭제
@@ -61,6 +63,7 @@
 						</div>
 
 					</td>
+					<td th:text="${question.qAuthor}"></td>
 					<td th:text="${#temporals.format(question.qCreatedTime, 'yyyy.MM.dd.hh.mm.ss')}"></td>
 				</tr>
 			</tbody>
@@ -68,7 +71,7 @@
 
 		<div th:if="${pageType.equals('announcement')}" class="text-end">
 			<a th:if="${session.UserId == 'admin'}"
-				th:href="@{/notice/announcementQuestion(memberId=${session.UserId})}" class="btn btn-info">공지사항 작성</a>
+				th:href="@{/notice/announcementQuestion(memberId=${session.UserId})}" class="btn btn-success">공지사항 작성</a>
 		</div>
 
 		<div th:if="${pageType.equals('qna')}" class="text-center mb-3">
@@ -132,8 +135,8 @@
 			const searchTerm = document.getElementById("searchTerm").value.toLowerCase();
 			const rows = document.querySelectorAll(".question-row");
 			rows.forEach(row => {
-				const author = row.children[1].innerText.toLowerCase();
-				const title = row.children[2].querySelector('.question-title').innerText.toLowerCase();
+				const author = row.children[2].innerText.toLowerCase();
+				const title = row.querySelector('.question-title').innerText.toLowerCase(); // 제목 선택
 
 				let shouldDisplay = false;
 
