@@ -347,6 +347,22 @@ public class MemberController {
 
                 newPassword = memberUpdateForm.getMemberPassword();  // 새 비밀번호로 갱신
             }
+            
+         // 년도 값이 null인 경우 기존 값을 유지
+            if (memberUpdateForm.getBirth_year() == null || memberUpdateForm.getBirth_year().isEmpty()) {
+            	memberUpdateForm.setBirth_year(memberUpdateForm.getBirth_year());
+            }
+
+            // 월 값이 null인 경우 기존 값을 유지
+            if (memberUpdateForm.getBirth_month() == null || memberUpdateForm.getBirth_month().isEmpty()) {
+            	memberUpdateForm.setBirth_month(memberUpdateForm.getBirth_month());
+            }
+
+            // 일 값이 null인 경우 기존 값을 유지
+            if (memberUpdateForm.getBirth_day() == null || memberUpdateForm.getBirth_day().isEmpty()) {
+            	memberUpdateForm.setBirth_day(memberUpdateForm.getBirth_day());
+            }
+            
             // 이메일 변경 확인 및 이메일 인증 처리
             if (!existingMember.getMemberEmail().equals(memberUpdateForm.getMemberEmail())) {
                 Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
@@ -394,8 +410,15 @@ public class MemberController {
         } else {
             return "redirect:/member/login";
         }
-        model.addAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
-        return "/member/login";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증된 사용자가 있을 경우 로그아웃 처리
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+              
+        redirectAttributes.addFlashAttribute("updateMesssage","회원 수정이 완료되었습니다. 다시 로그인해주세요.");
+        return "redirect:/member/login";
     }
     
     @GetMapping("/delete_password")
