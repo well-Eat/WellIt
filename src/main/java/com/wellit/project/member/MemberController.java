@@ -62,6 +62,14 @@ public class MemberController {
         return "/member/login";
     }
     
+    @GetMapping("/login_trial")
+    public String getLoginTrial(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+        return "/member/login_trial";
+    }
+    
     @GetMapping("/register")
 	public String register(MemberRegisterForm memberRegisterForm, @AuthenticationPrincipal UserDetails userDetails, Model model) {
     	model.addAttribute("memberRegisterForm", new MemberRegisterForm());

@@ -23,7 +23,9 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 	
 	<link rel="icon" href="/imgs/assets/wi_fav04.ico" type="image/x-icon">
-	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 	<title>Well It</title>
 
 </head>
@@ -70,42 +72,39 @@
 			submenu.css({display: "none"});
 			small_header.css({display: "none"});
 
-			menu.mouseover(function () {
-				isMouseOverPlace = true;
-				submenu.stop().slideDown();
-				navbar.addClass("green-navbar");
-				//navbar.css({backgroundColor : "#386641"})
-				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
-			});
-			menu.mouseout(function () {
-				isMouseOverPlace = false;
-				submenu.stop().slideUp();
-				navbar.removeClass("green-navbar");				
-				//navbar.css({backgroundColor : "transparent"};
-				$(".custom-sub").css({display: "none"})
-				if ($(window).scrollTop() > height) {
-					navbar.addClass("green-navbar")
-				}
+			menu.mouseenter(function () {
+			    isMouseOverPlace = true;
+			    submenu.stop(true, true).slideDown();
+			    navbar.addClass("green-navbar");
+			    $(".custom-submenu").css({display: "flex", backgroundColor: "  rgb(153, 164, 60)"});
 			});
 
-			submenu.mouseover(function () {
-				isMouseOverPlace = true;
-				submenu.stop().slideDown();
-				//navbar.addClass("green-navbar");
-				navbar.css({backgroundColor : "#386641"})
-				$(".custom-submenu").css({display: "flex", backgroundColor: "#386641"})
+			menu.mouseleave(function () {
+			    if (!submenu.is(':hover')) {
+			        isMouseOverPlace = false;
+			        submenu.stop(true, true).slideUp();
+			        navbar.removeClass("green-navbar");
+			        $(".custom-sub").css({display: "none"});
+			    }
 			});
 
-			submenu.mouseout(function () {
-				isMouseOverPlace = false;
-				submenu.stop().slideUp();
-				navbar.removeClass("green-navbar");
-				//navbar.css({backgroundColor : "transparent"})
-				$(".custom-sub").css({display: "none"})
-				if ($(window).scrollTop() > height) {
-					navbar.addClass("green-navbar")
-				}
+			submenu.mouseenter(function () {
+			    isMouseOverPlace = true;
+			    submenu.stop(true, true).slideDown();
+			    navbar.css({backgroundColor: "  rgb(153, 164, 60)"});
+			    $(".custom-submenu").css({display: "flex", backgroundColor: "  rgb(153, 164, 60)"});
 			});
+
+			submenu.mouseleave(function () {
+			    isMouseOverPlace = false;
+			    submenu.stop(true, true).slideUp();
+			    navbar.removeClass("green-navbar");
+			    $(".custom-sub").css({display: "none"});
+			    if ($(window).scrollTop() > height) {
+			        navbar.addClass("green-navbar");
+			    }
+			});
+
 			
 			//작은 화면 메뉴 슬라이드
 			small_menu_btn.click(function () {

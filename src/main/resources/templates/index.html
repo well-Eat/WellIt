@@ -7,8 +7,16 @@
 		<link rel="stylesheet" href="/css/index.css" />
 		<div class="backBg"></div>
 		<div class="full-screen">
-			<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
-				loop></video>
+			<div class="ratio ratio-16x9">
+				<iframe src="https://www.youtube.com/embed/CJnlVZH2-O0?si=FP84Wiq8r9_G20L8"
+					title="YouTube video player" frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			</div>
+
+			<!--<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
+				loop></video-->
+
 			<form action="/load/recommend" method="post" class="videoBox">
 				<div class="row videoBoxText">
 					<div class="col">
@@ -406,11 +414,11 @@
 				})
 
 				menu.mouseout(function () {
-					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+					navbar.css({background: "linear-gradient(180deg, rgba(134, 143, 52, 1) 30%, rgba(255, 255, 255, 0) 100%)"})
 				})
 
 				submenu.mouseout(function () {
-					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+					navbar.css({background: "linear-gradient(180deg, rgba(134, 143, 52, 1) 30%, rgba(255, 255, 255, 0) 100%)"})
 				})
 				var height = $("#places").offset().top - 40;
 				var hasClass = false;
@@ -431,6 +439,7 @@
 
 			})
 		</script>
+		<script src="js/index.js"></script>
 	</div>
 </body>
 

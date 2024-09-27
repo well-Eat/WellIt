@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 .custom-bg {
-	background-color: #386641;
+	background-color: #a2de56;
 }
 
 * {
 	margin: 0;
 	padding: 0;
-	font-family: 'NanumGothic';
+	font-family: "Noto Sans KR", sans-serif;
+	/*font-family: 'NanumGothic';*/
 }
 
 ul li,
@@ -56,7 +58,7 @@ header {
 	height: 60px;
 	display: flex;
 	justify-content: space-between;
-	background-color: #386641;
+	background-color: #a2de56;
 	position: fixed;
 	z-index: 30;
 }
@@ -242,7 +244,7 @@ ul.small-main .small-bold {
 }
 
 .green-navbar {
-	background-color: #386641;
+	background-color: rgb(134, 143, 52) !important; 
 }
 
 /*.black-icons {
@@ -252,7 +254,7 @@ ul.small-main .small-bold {
 .small-search input {
 	width: 300px;
 	border: none;
-	background-color: #6A994E;
+	background-color: #a2de56;
 	border-radius: 45px;
 	padding: 10px 20px;
 	outline: none;
@@ -383,7 +385,7 @@ ul.small-main .small-bold {
 	z-index: 1000;
 	width: 70px;
 	height: 70px;
-	background-color: #6A994E;
+	background-color: rgb(134, 143, 52);
 	border: none;
 	border-radius: 50%;
 }
