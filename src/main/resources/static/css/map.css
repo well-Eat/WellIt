@@ -1,6 +1,6 @@
 header {
 	position: relative;
-	background-color: rgb(134, 143, 52);
+	background-color: var(--main-color);
 }
 
 .searchWrapper {
@@ -125,7 +125,7 @@ header {
 	padding: 5px;
 	/* 패딩 */
 	border: none;
-	background-color: #6a994e;
+	background-color: var(--sub-box);
 	/* 배경색 */
 	color: white;
 	/* 글자색 */
@@ -134,9 +134,11 @@ header {
 	border-radius: 5px;
 	/* 모서리 둥글게 */
 }
-
+.fa-chevron-left, .fa-chevron-right{
+	color: white;
+}
 #pagination button.active {
-	background-color: #386641;
+	background-color: var(--sub-box-hover);
 	/* 활성화된 버튼의 배경색 */
 	font-weight: bold;
 	/* 강조하기 위해 글자 두껍게 */
@@ -159,6 +161,12 @@ header {
 	top: 10px;
 	margin-right: 10px;
 	border-radius: 50%;
+	box-sizing: border-box;
+}
+#zoomIn,
+#zoomOut,
+#location span{
+	padding-bottom: 10px;
 }
 
 .noSelect {
@@ -217,7 +225,7 @@ header {
 	width: 40%;
 	padding: 5px 10px 5px 10px;
 	/* 왼쪽과 오른쪽 여백 */
-	border: 2px solid #6a994e;
+	border: 2px solid var(--sub-green);
 	/* 테두리 색상 */
 	border-radius: 25px;
 	/* 둥근 모서리 */
@@ -230,7 +238,7 @@ header {
 }
 
 .search-input:focus {
-	border-color: #386641;
+	border-color: var(--main-color);
 	/* 포커스 시 테두리 색상 변화 */
 }
 
@@ -244,7 +252,7 @@ header {
 	/* 아이콘 크기 */
 	height: 25px;
 	/* 아이콘 크기 */
-	fill: #6a994e;
+	fill: var(--sub-green);
 	/* 아이콘 색상 */
 	cursor: pointer;
 	margin-right: 10px;

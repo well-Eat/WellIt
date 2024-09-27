@@ -7,15 +7,15 @@
 		<link rel="stylesheet" href="/css/index.css" />
 		<div class="backBg"></div>
 		<div class="full-screen">
-			<div class="ratio ratio-16x9">
+			<!--<div class="ratio ratio-16x9">
 				<iframe src="https://www.youtube.com/embed/CJnlVZH2-O0?si=FP84Wiq8r9_G20L8"
 					title="YouTube video player" frameborder="0"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-			</div>
+			</div>-->
 
-			<!--<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
-				loop></video-->
+			<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
+				loop></video>
 
 			<form action="/load/recommend" method="post" class="videoBox">
 				<div class="row videoBoxText">
@@ -48,7 +48,7 @@
 						</div>
 					</div>
 					<div class="col-1 recommendButton">
-						<button type="submit" class="btn">확인</button>
+						<button type="submit" class="btn hm-btn-green">확인</button>
 					</div>
 				</div>
 
@@ -137,7 +137,7 @@
 								</tbody>
 							</table>
 
-							<a class="btn btn-success" th:href="@{'/load/place/' + ${store.stoId}}"
+							<a class="btn hm-btn-green" th:href="@{'/load/place/' + ${store.stoId}}"
 								th:text="'자세히 보기'"></a>
 
 						</div>

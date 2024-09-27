@@ -1,18 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
-.custom-bg {
-	background-color: #a2de56;
-}
-
 * {
 	margin: 0;
 	padding: 0;
 	font-family: "Noto Sans KR", sans-serif;
+	color: #333333;
 	/*font-family: 'NanumGothic';*/
 }
-
+:root {
+    --main-color: rgb(134, 143, 52);
+	--sub-box: rgb(88, 143, 52);
+	--sub-box-hover: rgb(68, 113, 40);
+	--sub-green: rgb(153, 164, 60);
+	--sub-light: rgb(196, 204, 115);
+}
 ul li,
 ol li {
 	list-style: none;
+}
+.hm-btn-border-green{
+	border: 1px solid var( --sub-box);
+	color: var(--sub-box);
+	background-color: white;
+	
+}
+.hm-btn-border-green:hover{
+	background-color: var( --sub-box);
+	color: white;
+}
+.hm-btn-green{
+	background-color: var( --sub-box);
+		color: white;
+}
+.hm-btn-green:hover{
+	background-color: var(--sub-box-hover );
+	color: white;
+}
+.hm-btn-light{
+	background-color: var( --sub-light);
+			color: white;
+}
+.hm-btn-light:hover{
+	background-color: var( --sub-green);
+			color: white;
 }
 
 html,
@@ -25,6 +54,7 @@ body {
 }
 
 footer {
+	background-color: var(--main-color);
 	position: relative;
 	bottom: 0;
 	width: 100%;
@@ -58,7 +88,7 @@ header {
 	height: 60px;
 	display: flex;
 	justify-content: space-between;
-	background-color: #a2de56;
+	background-color: var(--main-color);
 	position: fixed;
 	z-index: 30;
 }
@@ -179,6 +209,9 @@ header .custom-menu ul.custom-main li a {
 	color: white;
 		font-size: small;
 }
+.right span{
+	color: white;
+}
 /* 햄버거 버튼, 닫기 버튼 */
 .menu-btn,
 .close-btn {
@@ -199,7 +232,7 @@ header .custom-menu ul.custom-main li a {
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-color: #f2e8cf;
+	background-color: var(--sub-light);
 	overflow: hidden;
 	z-index: 31;
 }
@@ -244,7 +277,7 @@ ul.small-main .small-bold {
 }
 
 .green-navbar {
-	background-color: rgb(134, 143, 52) !important; 
+	background-color: var(--main-color) !important; 
 }
 
 /*.black-icons {
@@ -254,7 +287,7 @@ ul.small-main .small-bold {
 .small-search input {
 	width: 300px;
 	border: none;
-	background-color: #a2de56;
+	background-color: var(--sub-light);
 	border-radius: 45px;
 	padding: 10px 20px;
 	outline: none;
@@ -385,7 +418,7 @@ ul.small-main .small-bold {
 	z-index: 1000;
 	width: 70px;
 	height: 70px;
-	background-color: rgb(134, 143, 52);
+	background-color:var(--sub-green);
 	border: none;
 	border-radius: 50%;
 }

@@ -69,7 +69,7 @@
 						</td>
 					</tr>
 				</tbody>
-				<button type="submit" class="btn btn-outline-success my-3 float-end ">필터 적용</button>
+				<button type="submit" class="btn hm-btn-border-green my-3 float-end ">필터 적용</button>
 
 			</table>
 		</form>
@@ -83,7 +83,7 @@
 		<!-- 총 레시피 수 표시 -->
 		<p class="text-start">총 
 			<span th:text="${#lists.size(recipes)}" class="recipesSize"></span>개의 레시피가 있습니다. 
-			<a th:href="@{/life/recipe/list(userId=${session.UserId})}" class="btn btn-outline-success float-end">내가 쓴 레시피 보기</a>
+			<a th:href="@{/life/recipe/list(userId=${session.UserId})}" class="btn hm-btn-border-green float-end">내가 쓴 레시피 보기</a>
 		</p>
 		<!-- 줄 추가 -->
 		<hr class="mb-5">
@@ -120,7 +120,7 @@
 				</div>
 			</th:block>
 		</div>
-		<a th:href="@{/life/recipe/create}" class="btn btn-outline-success my-4">레시피 작성</a>
+		<a th:href="@{/life/recipe/create}" class="btn hm-btn-border-green my-4">레시피 작성</a>
 	</div>
 
 </div>
