@@ -19,9 +19,14 @@ ul {
 
 
 
+
+
 /********************** common *********************/
 /********************** common *********************/
 /********************** common *********************/
+input[type=number]{
+    text-align: right;
+}
 section {
     height: auto;
 }
@@ -424,9 +429,16 @@ ol {
 
 
 .gallery img {
-    width: 100px;
+    width: 100%;
+    max-height: 300px;
     margin: 10px;
     cursor: pointer;
+}
+
+.prodImageInput{
+    height: 1px;
+    visibility: hidden;
+    margin: 0;
 }
 
 .preview {
@@ -519,7 +531,7 @@ ol {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: red;
+    background-color: rgba(153, 153, 153, 0.61);
     color: white;
     border: none;
     border-radius: 50%;

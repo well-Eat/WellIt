@@ -50,7 +50,7 @@
 					
 					<!--리뷰 개수가 100개를 초과할 경우 인기상품 태그 표시-->
 					<span class="badge text-bg-success"
-					      th:if="${reviewCnt != null and reviewCnt > 100}">인기상품</span>
+					      th:if="${reviewCnt != null and reviewCnt.cnt > 100}">인기상품</span>
 				</div>
 				
 				<h5 class="prodName card-title f28" th:text="${product.prodName}"></h5> <!--상품명-->
@@ -68,18 +68,24 @@
 					<span>원</span>
 				</p>
 				
-				
-				<p class="card-text mb-5">
-				<p class="c999">* 상품 상세 정보</p>
-				<table class="table border-top border-light-subtle f14">
-					<tr th:each="info: ${product.getProdInfoList()}">
-						<th class="c333">[[${info.infoKey}]]</th>
-						<td>[[${info.infoValue}]]</td>
-					</tr>
-				</table>
+				<!--별점 평균-->
+				<p class="card-text mb-5 c999">
+						<i class="fa-regular fa-star"></i>
+						<span th:text="${#numbers.formatDecimal(reviewCnt.avg, 1, 'COMMA',1,'POINT')}"></span>
 				</p>
+				
+				
+				<div class="card-text mb-5">
+					<p class="c999">* 상품 상세 정보</p>
+					<table class="table border-top border-light-subtle f14">
+						<tr th:each="info: ${product.getProdInfoList()}">
+							<th class="c333">[[${info.infoKey}]]</th>
+							<td>[[${info.infoValue}]]</td>
+						</tr>
+					</table>
+				</div>
 
-				<p class="card-text mt-5">
+				<div class="card-text mt-5">
 					<form th:object="${cartItemRequest}">
 						<!--quantity : 구매수량 input, 버튼-->
 						
@@ -96,8 +102,8 @@
 				
 				
 				
-				<input type="hidden" id="finalPrice" th:value="${product.prodFinalPrice}" />
-				<input type="hidden" id="totalPrice" name="totalPrice">
+						<input type="hidden" id="finalPrice" th:value="${product.prodFinalPrice}" />
+						<input type="hidden" id="totalPrice" name="totalPrice">
 						
 						<!--총 구매 금액-->
 						<div class="text-end">
@@ -115,7 +121,7 @@
 
 						</div>
 					</form>
-				</p>
+				</div> <!-- //card-text(formWrap) -->
 			</div> <!-- //card-body -->
 		</div> <!--col-6 card-->
 	</section>  <!--prodInfo-->
@@ -135,10 +141,12 @@
 	
 	
 	
+	
+	
 	<!--상품 리뷰 -->
 	<section class="prodReview container" id="prodReview">
 		<h5>상품후기 &nbsp;
-			<span class="revCnt">(<small th:text="${reviewCnt}"></small>건)</span>
+			<span class="revCnt">(<small th:text="${reviewCnt.cnt}"></small>건)</span>
 		</h5>
 		<!--이미지 리뷰 라인-->
 				<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
@@ -156,7 +164,7 @@
 			<div class="reviewBlock"></div>
 			
 			<!-- 리뷰 페이지 버튼 -->
-			<div class="pagination justify-content-center my-3">
+			<div class="pagination justify-content-center my-3" th:if="${reviewCnt.cnt>5}">
 				<button class="pageBtn pagePrev btn btn-sm btn-outline-success mx-2">&laquo;</button>
 				<button class="pageBtn pageNext btn btn-sm btn-outline-success mx-2">&raquo;</button>
 			</div>

@@ -12,6 +12,8 @@ public class ProductAdminDTO {
 
     private Long prodId; //상품 idx
 
+    private ProdStatus prodStatus; //판매 상태
+
     private String prodMainImg; //상품썸네일이미지 url
     private String prodName; //상품명
     private Integer prodOrgPrice; //상품 원래 가격

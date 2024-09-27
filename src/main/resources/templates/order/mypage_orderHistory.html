@@ -14,7 +14,7 @@
 		</div>
 		
 		<section class="row vstack orderItem position-relative mb-5">
-			<p class="subtle f18 c666 fw-bold" th:if="${poHistoryList.size()>0}">
+			<p class="subtle f18 c666 fw-bold" th:if="${poHistoryList!=null && poHistoryList.size()>0}">
 				주문 내역
 			</p>
 			<div class="col gap-3 g-3" th:if="${poHistoryList==null || poHistoryList.size()==0}">
