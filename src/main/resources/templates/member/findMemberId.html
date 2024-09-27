@@ -1,17 +1,17 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<link rel="stylesheet" href="/css/member.css" />
-	<section id="findId" class="position-relative h-100">
-		<div class="row">
-			<div class="col-6 border border-secondary">
-				<div class="row text-center">
+	<section id="findId" class="position-relative">
+		<div class="row my-5">
+			<div class="col-12 col-lg-6 border rounded formStyle align-items-center my-4">
+				<div class="row text-center my-5">
 					<h1>아이디 찾기</h1>
 					<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
 					</div>
 				</div>
 				<div class="container">
 					<div class="row">
-						<form th:action="@{/member/findId}" method="post">
+						<form th:action="@{/member/findId}" method="post" class="mb-5">
 							<div class="row mb-3 justify-content-start">
 								<div class="col-4">
 									<label for="memberName" class="form-label">이름</label>
@@ -36,7 +36,7 @@
 										확인</button>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary" onclick="checkInputs()">확인</button>
+							<button type="submit" class="btn greenBtn float-end m-2" onclick="checkInputs()">확인</button>
 						</form>
 					</div>
 				</div>
