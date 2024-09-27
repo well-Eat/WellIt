@@ -72,12 +72,17 @@ public class CartService {
 
 
     /*카트 아이템 수 반환*/
-    public int getCartItemCountByUser(String username) {
-        // 사용자에 대한 장바구니를 조회하고, 없을 경우 새로운 Cart 객체 반환
-        Cart cart = cartRepository.findByMember_MemberId(username)
-            .orElseGet(() -> new Cart()); // orElseGet을 사용하여 기본 Cart 객체 생성
+    public int getCartItemCountByUser(String memberId) {
+        // 사용자에 대한 장바구니를 조회
+        Optional<Cart> optionalCart = cartRepository.findByMember_MemberId(memberId);
 
-        // 카트 아이템 수를 반환
+        // 카트가 없으면 0을 반환
+        if (optionalCart.isEmpty()) {
+            return 0;
+        }
+
+        // 카트가 있으면 해당 카트의 아이템 개수 반환
+        Cart cart = optionalCart.get();
         return cartItemRepository.countCartItemsByCart(cart);
     }
 

@@ -1,16 +1,12 @@
 package com.wellit.project.order;
 
-import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -24,12 +20,18 @@ public class CartController {
     private final MemberService memberService;
 
     @GetMapping("/list")
-    public String getCartPage(Model model, @AuthenticationPrincipal UserDetails userDetails){
-
-        List<CartItem> cartItemList = cartService.getCartItemList(userDetails.getUsername());
+    public String getCartPage(Model model){
 
 
-        String memberAddress = cartService.getMemberAddress(userDetails.getUsername());
+        //로그인 상태가 아닌 경우
+        if(memberService.getMemberId()==null){
+            return "redirect:/login?request";
+        }
+
+        List<CartItem> cartItemList = cartService.getCartItemList(memberService.getMemberId());
+
+
+        String memberAddress = cartService.getMemberAddress(memberService.getMemberId());
 
         OrderForm orderForm = new OrderForm();
 

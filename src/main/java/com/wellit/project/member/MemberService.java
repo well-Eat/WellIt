@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,9 @@ import java.util.UUID;
 import com.wellit.project.order.Cart;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -235,6 +239,26 @@ public class MemberService {
 	// 아이디 중복 체크
 	public boolean isIdExists(String memberId) {
 		return memberRepository.existsByMemberId(memberId);
+	}
+
+
+	// 로그인 중인 memberId 확인
+	public String getMemberId(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				return (String) principal;
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					return userDetails.getUsername();
+				}
+			}
+		}
+		return null;
 	}
 
 }

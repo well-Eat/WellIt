@@ -1,13 +1,12 @@
 package com.wellit.project.shop;
 
+import com.wellit.project.member.MemberService;
 import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +25,7 @@ public class ShopController {
     private final ShopService shopService;
     private final ProductRepository productRepository;
     private final ProdReviewService reviewService;
+    private final MemberService memberService;
 
     private static final String UPLOAD_DIR = "C:/uploads/";
 
@@ -79,12 +79,15 @@ public class ShopController {
 
     /*상품 상세페이지 이동*/
     @GetMapping("/detail/{prodId}")
-    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId,
-                                @AuthenticationPrincipal UserDetails userDetails) {
+    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId) {
         String memberId = null;
+        try{
+            memberId = memberService.getMemberId();
+        } catch (Error error){
+            memberId = null;
+        }
         //멤버아이디 확인
-        if (userDetails != null) {
-            memberId = userDetails.getUsername();
+        if (memberId != null) {
             boolean favorite = shopService.isFavoriteProduct(prodId, memberId);
             model.addAttribute("memberId", memberId);
             model.addAttribute("favorite", favorite);
@@ -139,13 +142,12 @@ public class ShopController {
 
     // admin:상품 리스트 이동
     @GetMapping("/admin/list")
-    public String getAdminProductList(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String getAdminProductList(Model model) {
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
-
-
 
         return "/shop/admin_productList";
     }
@@ -167,9 +169,10 @@ public class ShopController {
 
     // admin:상품 생성 폼 열기
     @GetMapping("/admin/form")
-    public String productForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String productForm(Model model) {
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
 
@@ -179,10 +182,11 @@ public class ShopController {
 
     //admin:상품 저장하기
     @PostMapping("/save")
-    public String saveProduct(@AuthenticationPrincipal UserDetails userDetails,
-                              @ModelAttribute ProductForm productForm) throws IOException {
+    public String saveProduct(@ModelAttribute ProductForm productForm) throws IOException {
+
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
         List<MultipartFile> imageFiles = productForm.getProdImages();
@@ -194,11 +198,12 @@ public class ShopController {
     }
 
 
+    //admin:상품 수정하기(진입)
     @GetMapping("/admin/edit/{prodId}")
-    public String editProduct(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("prodId") Long prodId,
+    public String editProduct(@PathVariable("prodId") Long prodId,
                               Model model) {
-        // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        String memberId = memberService.getMemberId();
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
 
@@ -227,8 +232,7 @@ public class ShopController {
     //admin:상품 수정내용 저장하기
     @PostMapping("/update/{prodId}")
     @ResponseBody
-    public ResponseEntity<String> updateProduct(@AuthenticationPrincipal UserDetails userDetails,
-                                                @PathVariable Long prodId,
+    public ResponseEntity<String> updateProduct(@PathVariable Long prodId,
                                                 @ModelAttribute ProductForm productForm,
                                                 @RequestParam(required=false) List<String> toBeDeleted,
                                                 @RequestParam(value = "existingImages[]",required=false) List<String> existingImages,
@@ -238,7 +242,9 @@ public class ShopController {
                                                ) throws IOException {
 
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        String memberId = memberService.getMemberId();
+
+        if (memberId == null || !"admin".equals(memberId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body("{\"status\":\"fail\", \"message\":\"Unauthorized access\"}");
         }
@@ -258,8 +264,6 @@ public class ShopController {
     public ResponseEntity<String> isFavoriteProduct(@RequestParam(value="prodId",required=true) Long prodId,
                                                     @RequestParam(value="memberId",required=true) String memberId) {
 
-        log.info(prodId);
-        log.info(memberId);
         try {
             if (memberId == null) {
                 throw new RuntimeException("로그인해주세요");

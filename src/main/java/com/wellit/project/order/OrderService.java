@@ -3,6 +3,7 @@ package com.wellit.project.order;
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.shop.ProdReview;
+import com.wellit.project.shop.ProdStatus;
 import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +64,9 @@ public class OrderService {
             //재고수량 차감
             product.setProdStock(product.getProdStock()-orderItemQuantity.getQuantity());
 
+            //재고수량이 0이 되는 경우, 일시품절 상태로 변경
+            if(product.getProdStock() == 0) product.setProdStatus(ProdStatus.OUT_OF_STOCK);
+
             orderItem.setSumOrgPrice(orderItemQuantity.getSumOrgPrice());
             orderItem.setSumDiscPrice(orderItemQuantity.getSumDiscPrice());
             orderItem.setPurchaseOrder(po);
@@ -97,6 +99,7 @@ public class OrderService {
 
     }
 
+    //유효하지 않은 주문서 삭제 메서드 : 주문서 생성 후 10분 이상 결제로 이어지지 않는 경우, 주문서를 삭제
     @Transactional
     @Scheduled(fixedRate = 300000) // 30분마다 실행
     public void removeExpiredOrders() {
@@ -116,6 +119,11 @@ public class OrderService {
 
                 // 재고 복구 (차감된 수량을 다시 복구)
                 product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+
+                // 상품 상태 업데이트
+                if(product.getProdStatus()== ProdStatus.OUT_OF_STOCK && product.getProdStock()>0){
+                    product.setProdStatus(ProdStatus.AVAILABLE); //일시품절 상태였을 경우 판매중으로 업데이트
+                }
 
                 // 재고 업데이트
                 productRepository.save(product);
@@ -187,7 +195,7 @@ public class OrderService {
 
     /*결제성공 후 주문서 변경내용 업데이트, 배송정보 설정*/
     @Transactional
-    public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm, @AuthenticationPrincipal UserDetails userDetails){
+    public boolean updatePurchaseOrderInfo(String orderId, PoForm poForm){
         Payment payment = paymentService.getPayment(orderId);
 
         if (payment == null) {
@@ -225,7 +233,7 @@ public class OrderService {
         // 금액 업데이트
         po.setMilePay(poForm.getMilePay());
         po.setTotalPay(poForm.getTotalPay());
-        memberService.updateMileage(userDetails.getUsername(), poForm.getMilePay()*(-1));
+        memberService.updateMileage(memberService.getMemberId(), poForm.getMilePay()*(-1));
         log.info("금액 업뎃 저장완료");
 
 
@@ -563,6 +571,9 @@ public class OrderService {
                 Product product = orderItem.getProduct();
                 log.info("복구 전 재고: {}:{}", product.getProdName(), product.getProdStock());
                 product.setProdStock(product.getProdStock() + orderItem.getQuantity());
+                if(product.getProdStatus()== ProdStatus.OUT_OF_STOCK && product.getProdStock()>0){
+                    product.setProdStatus(ProdStatus.AVAILABLE); //일시품절 상태였을 경우 판매중으로 업데이트
+                }
                 productRepository.save(product); // Product 재고 업데이트
             }
 
