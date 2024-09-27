@@ -439,8 +439,7 @@ public class KakaoLoginController {
 	    	memberService.deleteMember(memberId);	    	
 	    }
 
-	    // 세션을 무효화합니다.
-	    session.invalidate();
+	    
 
 	    return ResponseEntity.ok("Session and DB data cleared");
 	
