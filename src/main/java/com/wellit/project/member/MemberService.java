@@ -163,7 +163,7 @@ public class MemberService {
 		if (member == null) {
 			throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
 		}
-
+		
 		// 프로필 이미지 삭제 로직 추가
 		String imagePath = member.getImageFile();
 		if (imagePath != null && !imagePath.isEmpty()) {

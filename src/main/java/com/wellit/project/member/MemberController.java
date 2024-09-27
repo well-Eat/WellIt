@@ -405,7 +405,7 @@ public class MemberController {
 			Member member = memberService.getMember(memberId);
 			if (passwordEncoder.matches(password, member.getMemberPassword())) {
 				// 비밀번호가 일치하면 삭제 처리
-				redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 삭제되었습니다.");
+				redirectAttributes.addFlashAttribute("successMessage", "회원 탈퇴가 완료되었습니다.");
 				memberService.deleteMember(memberId);
 				session.invalidate(); // 세션 무효화
 				return "redirect:/";

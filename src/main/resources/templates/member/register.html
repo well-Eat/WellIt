@@ -480,8 +480,8 @@
 				phoneInput.focus();
 				isValid = false;
 			}
-			if (!/^[0-9]{10,11}$/.test(memberPhone)) {
-				alert("전화번호는 숫자만 가능합니다.");
+			if (!/^[0-9]{10,11}$/.test(memberPhone) && memberPhone) {
+				alert("유효한 전화번호를 입력해 주세요.");
 				phoneInput.focus();
 				isValid = false;
 			}

@@ -327,6 +327,20 @@
 				isValid = false;
 			}
 
+			// 전화번호 유효성 검사
+			const phoneInput = document.getElementById('memberPhone');
+			const memberPhone = document.getElementById('memberPhone').value;
+			if (!memberPhone) {
+				alert("전화번호를 입력해주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+			if (!/^[0-9]{10,11}$/.test(memberPhone) && memberPhone) {
+				alert("유효한 전화번호를 입력해 주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+
 			// 주소 유효성 검사
 			const addressInput = document.getElementById('sample4_postcode');
 			const postAddress = document.getElementById('sample4_postcode').value;
@@ -350,9 +364,41 @@
 		if (errorElement && errorElement.innerText.trim() !== "") {
 			alert(errorElement.innerText);
 		}
-		if(message && message.innerText.trim() !== ""){
+		if (message && message.innerText.trim() !== "") {
 			alert(message.innerText);
 		}
+
+
+
+		function beforeUnloadHandler(event) {
+		    clearSessionData();
+		}
+
+		// beforeunload 이벤트를 설정
+		window.addEventListener('beforeunload', beforeUnloadHandler);
+
+		// 폼 제출 시 beforeunload 이벤트를 제거
+		document.getElementById('kakaoForm').addEventListener('submit', function () {
+		    window.removeEventListener('beforeunload', beforeUnloadHandler);
+		});
+
+		// 세션 데이터 삭제 함수
+		function clearSessionData() {
+		    fetch('/clear-session', {
+		        method: 'POST',
+		        headers: {
+		            'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify({ action: 'clear' })
+		    }).then(response => {
+		        if (response.ok) {
+		            console.log("Session data cleared");
+		        } else {
+		            console.error("Failed to clear session data");
+		        }
+		    });
+		}
+
 	</script>
 </div>
 

@@ -205,6 +205,9 @@ public class KakaoService {
         member.setBirth_month(kakaoSignupForm.getBirth_month());
         member.setBirth_day(kakaoSignupForm.getBirth_day());
         member.setMemberVeganType(kakaoSignupForm.getMemberVeganType());
+        member.setMemberRegDate(LocalDateTime.now());
+        member.setMileage(0);
+        member.setMemberType("KAKAO");
 
         // 3. 업데이트된 회원 정보를 저장
         return memberRepository.save(member);
