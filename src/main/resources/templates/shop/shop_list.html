@@ -48,9 +48,12 @@
 			<!-- 정렬 옵션 리스트-->
 			<ul class="sortBox d-flex justify-content-end">
 				<li><a href="#" class="sortLink" data-order="default">기본순</a></li>
+				<li><a href="#" class="sortLink" data-order="prodName">이름순</a></li>
 				<li><a href="#" class="sortLink" data-order="latest">신상품순</a></li>
 				<li><a href="#" class="sortLink" data-order="reviewCount">리뷰수 순</a></li>
-				<li><a href="#" class="sortLink" data-order="salesCount">판매량 순</a></li>
+				<li><a href="#" class="sortLink" data-order="salesCount">판매 건수 순</a></li>
+				<li><a href="#" class="sortLink" data-order="salesQuantity">판매수량 순</a></li>
+				<li><a href="#" class="sortLink" data-order="salesAmount">매출금액 순</a></li>
 				<li><a href="#" class="sortLink" data-order="viewCount">조회수 순</a></li>
 				<li><a href="#" class="sortLink" data-order="reviewRating">평점 순</a></li>
 				<li><a href="#" class="sortLink" data-order="favoriteCount">추천 순</a></li>
@@ -65,6 +68,11 @@
 				<li><a href="#" class="pageSizeLink" data-size="80">80개 보기</a></li>
 			</ul>
 		</div>
+		
+	</div>
+	<div class="d-block">
+		<input type="text" id="search-input">
+		<input type="button" value="검색" id="searchBtn">
 	</div>
 	
 	<!-- 페이지네이션 -->
@@ -104,7 +112,7 @@
 						<p class="prodFinalPrice card-text c333" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
 						
 						<!--상품 카운트 뷰 라인-->
-						<p class="prodCount card-text d-flex ">
+						<div class="prodCount card-text d-flex ">
 							
 							<!--조회수-->
 							<p class="prodView d-inline-block me-2">
@@ -123,7 +131,7 @@
 								<i class="fa-regular fa-heart"></i>
 								<span th:text="${favoriteCntMap[item.prodId] ?: 0}"></span>
 							</p>
-						</p>
+						</div>
 						
 						
 						

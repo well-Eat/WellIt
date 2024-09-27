@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RequestMapping("/shop")
@@ -37,11 +39,12 @@ public class ShopController {
     }
 
 
-    @GetMapping("/test/products")
+    /* 삭제예정 */
+/*    @GetMapping("/test/products")
     public ResponseEntity<List<Product>> testGetAllProducts() {
         List<Product> products = shopService.getAllProducts();
         return ResponseEntity.ok(products);
-    }
+    }*/
 
 
     /*상품 리스트 페이지 이동*/
@@ -50,12 +53,15 @@ public class ShopController {
                               @RequestParam(value = "category", required = false, defaultValue = "all") String category,
                               @RequestParam(value = "order", required = false, defaultValue = "default") String itemSort,
                               @RequestParam(value = "page", defaultValue = "1") int page,
-                              @RequestParam(value = "size", defaultValue = "20") int size) {
+                              @RequestParam(value = "size", defaultValue = "20") int size,
+                              @RequestParam(value = "search", required = false) String search
+                             ) {
 
-        List<Product> prodList = shopService.getProductsByCriteria(category, itemSort, page, size);
+
+        Page<Product> prodList = shopService.getProductsByCriteria(category, itemSort, page, size, search);
         //List<Product> prodList = shopService.getAllProducts();
 
-        List<ProdCnt> prodCnts = shopService.getProdCntList(prodList);
+        List<ProdCnt> prodCnts = shopService.getProdCntList(prodList.getContent());
 
         // prodId를 키로, 리뷰, 찜 카운트 Map
         Map<Long, Integer> revCntMap = prodCnts.stream()
@@ -310,10 +316,11 @@ public class ShopController {
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
 
         // 서비스 호출
-        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page);
+        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page, pageSize);
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
@@ -323,6 +330,43 @@ public class ShopController {
         response.put("totalItems", productsPage.getTotalElements());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/best")
+    public String getBestList(Model model){
+
+        //베스트 리스트 호출
+        Page<Product> latestList = shopService.getProductsByCriteria(null, "latest", 1, 4, null);
+        Page<Product> salesList = shopService.getProductsByCriteria(null, "salesQuantity", 1, 4, null);
+        Page<Product> favoriteList = shopService.getProductsByCriteria(null, "favoriteCount", 1, 4, null);
+
+        // 세 리스트를 결합하여 중복을 처리하며, Map을 생성
+        Map<Long, Integer> revCntMap = Stream.of(latestList, salesList, favoriteList)
+                                             .flatMap(page -> shopService.getProdCntList(page.getContent()).stream())
+                                             .collect(Collectors.toMap(
+                                                     ProdCnt::getProdId,
+                                                     ProdCnt::getRevCnt,
+                                                     (existing, replacement) -> existing
+                                                                      ));
+
+        Map<Long, Integer> favoriteCntMap = Stream.of(latestList, salesList, favoriteList)
+                                                  .flatMap(page -> shopService.getProdCntList(page.getContent()).stream())
+                                                  .collect(Collectors.toMap(
+                                                          ProdCnt::getProdId,
+                                                          ProdCnt::getFavoriteCnt,
+                                                          (existing, replacement) -> existing
+                                                                           ));
+
+        //뷰 반환
+        model.addAttribute("revCntMap", revCntMap);
+        model.addAttribute("favoriteCntMap", favoriteCntMap);
+        model.addAttribute("latestList", latestList); //신상순
+
+        model.addAttribute("salesList", salesList); //판매량순
+        model.addAttribute("favoriteList", favoriteList); //찜순
+
+
+        return "/shop/shop_best";
     }
 
 

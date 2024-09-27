@@ -82,24 +82,29 @@
 				<p class="subtle f18 c666 fw-bold">
 					상품 리스트
 				</p>
+				
 				<!-- 상품 목록 테이블 -->
-				<table class="table table-hover" id="prodTable" >
-					<thead class="prodTableHead">
-					<tr>
-						<th scope="col">No.</th>
-						<th scope="col" data-item-sort="prod_id">상품코드</th>
-						<th scope="col" data-item-sort="prod_name">상품명</th>
-						<th scope="col" data-item-sort="prod_status">판매상태</th>
-						<th scope="col" data-item-sort="prod_stock">재고수량</th>
-						<th scope="col" data-item-sort="sales_quantity">판매수량</th>
-						<th scope="col" data-item-sort="sales_amount">매출금액</th>
-						<th scope="col">상품수정</th>
-					</tr>
-					</thead>
-					<tbody id="prodTableBody">
-					<!-- Fetch로 받은 데이터를 여기에 렌더링 -->
-					</tbody>
-				</table>
+				<div class="prodTableBox border">
+					<table class="table table-hover" id="prodTable" >
+						<thead class="prodTableHead">
+						<tr>
+							<th scope="col">No.</th>
+							<th scope="col" data-item-sort="prod_id">상품코드</th>
+							<th scope="col" data-item-sort="prod_name">상품명</th>
+							<th scope="col" data-item-sort="prod_status">판매상태</th>
+							<th scope="col" data-item-sort="prod_stock">재고수량</th>
+							<th scope="col" data-item-sort="sales_quantity">판매수량</th>
+							<th scope="col" data-item-sort="sales_amount">매출금액</th>
+							<th scope="col">상품수정</th>
+						</tr>
+						</thead>
+						<tbody id="prodTableBody">
+						<!-- Fetch로 받은 데이터를 여기에 렌더링 -->
+						</tbody>
+					</table>
+				</div>
+				
+				
 			
 			</div> <!-- //col -->
 			

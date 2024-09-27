@@ -8,6 +8,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableJpaRepositories
 public class WellItApplication {
 
 	public static void main(String[] args) {

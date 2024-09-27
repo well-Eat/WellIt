@@ -87,3 +87,43 @@ header {
 .tabnav{
 	flex: 1 1 45%;
 }
+
+
+
+
+
+
+
+
+
+
+/* ys : admin_상품리스트 페이지 */
+
+/* 테이블 헤더 고정 */
+.prodTableBox thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1; /* 헤더가 본문보다 위에 있도록 설정 */
+	background-color: white; /* 배경색을 추가해 스크롤 시 내용이 겹치지 않도록 */
+	box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* 스크롤 시 헤더 구분을 위한 그림자 */
+}
+
+/* tbody에 스크롤 기능 추가 */
+.prodTableBox tbody {
+	display: block;
+	max-height: 80vh; /* 높이를 고정해서 스크롤 발생 */
+	overflow-y: scroll; /* 세로 스크롤 */
+}
+
+/* tbody 내의 tr과 td가 잘 맞도록 설정 */
+.prodTableBox thead, .prodTableBox tbody tr {
+	display: table;
+	width: 100%;
+	table-layout: fixed; /* 열 너비를 테이블 전체 너비에 맞춤 */
+}
+
+/* tbody에서 테이블이 깨지지 않도록 */
+.prodTableBox tbody td {
+	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */
+}
+
