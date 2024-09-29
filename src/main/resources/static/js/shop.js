@@ -8,12 +8,17 @@ $(function() {
     let currentOrder = new URLSearchParams(window.location.search).get('order') || 'default';
     let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
     let currentSize = new URLSearchParams(window.location.search).get('size') || 20;
+    let currentSearch = new URLSearchParams(window.location.search).get('search') || ''; // 검색어 추가
+
+    if (currentSearch != null){
+        $("#search-input").val(currentSearch);
+    }
 
     // 카테고리 링크 클릭 이벤트 처리
     $('.prodCateLink').on('click', function(event) {
         event.preventDefault();
         const selectedCategory = $(this).data('category');
-        const newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}`;
+        const newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
         window.location.href = newUrl;
     });
 
@@ -21,7 +26,7 @@ $(function() {
     $('.sortLink').on('click', function(event) {
         event.preventDefault();
         const selectedOrder = $(this).data('order');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}`;
+        const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
         window.location.href = newUrl;
     });
 
@@ -29,7 +34,7 @@ $(function() {
     $('.pageSizeLink').on('click', function(event) {
         event.preventDefault();
         const selectedSize = $(this).data('size');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}`; // 새 사이즈 선택 시 1페이지로 이동
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}&search=${encodeURIComponent(currentSearch)}`; // 새 사이즈 선택 시 1페이지로 이동
         window.location.href = newUrl;
     });
 
@@ -37,9 +42,23 @@ $(function() {
     $('.pageLink').on('click', function(event) {
         event.preventDefault();
         const selectedPage = $(this).data('page');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}`;
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
         window.location.href = newUrl;
     });
+
+    // 검색 기능 추가
+    $('#search-input').on('keypress', function(event) {
+        if (event.which == 13) { // Enter 키가 눌렸을 때
+            event.preventDefault();
+            $('#searchBtn').trigger("click");
+        }
+    });
+    $('#searchBtn').on('click', function (event){
+        event.preventDefault();
+        const searchKeyword = $('#search-input').val().trim(); // 입력된 검색어
+        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${currentSize}&search=${encodeURIComponent(searchKeyword)}`;
+        window.location.href = newUrl;
+    })
 });
 
 $(function(){
@@ -1073,7 +1092,7 @@ $(function() {
 
 
 
-
+//admin 상품 리스트 렌더링
 async function fetchProducts() {
     // 검색어와 상태 필터 값 가져오기
     const search = document.getElementById("searchInput").value;
@@ -1085,6 +1104,7 @@ async function fetchProducts() {
     const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}`);
     const data = await response.json();
 
+    console.log(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}`)
     console.log(data);
 
     // 테이블에 주문 목록 렌더링

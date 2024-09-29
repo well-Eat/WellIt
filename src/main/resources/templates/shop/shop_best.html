@@ -1,0 +1,154 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}">
+<head>
+	<title>상품 리스트</title>
+	
+	<!-- font font-awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+	      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<div layout:fragment="content">
+	
+	<!--sweet alert2 cdn-->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	<!--shop style link-->
+	<link rel="stylesheet" th:href="@{/css/util.css}">
+	<link rel="stylesheet" th:href="@{/css/shop.css}">
+	
+	<!--페이지 제목-->
+	<div class="container">
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				베스트샵
+			</div>
+		</div>
+	</div>
+	
+	
+
+	<!--따끈따끈신상템 : latestList-->
+	<section class="bg-white py-4">
+		<div class="container">
+			<!--서브제목-->
+			<div class="subtle pt-3 pb-5">
+				<h3 class="text-center py-3">따끈따끈 신상템</h3>
+			</div>
+			<!--아이템 리스트-->
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+				<!-- 상품(prodItem) 템플릿 -->
+				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${latestList}">
+					<div class="card">
+						
+						<!-- 상품이미지 -->
+						<div class="card-img-wrapper rounded-2 mb-3">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|"></div>
+							</a>
+						</div>
+						
+						<!-- 담기버튼 -->
+						<!--<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary" th:onclick="addToCart([[${item.prodId}]], 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>-->
+						
+						<!-- 상품설명 -->
+						<div class="card-body">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+								<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
+							</a>
+						</div> <!-- //card-body -->
+					</div> <!-- //card -->
+				</div> <!-- ///////// prodItem -->
+			</div> <!--prodList-->
+		</div> <!--container-->
+	</section>
+	
+	<!--요즘핫해요 : salesList-->
+	<section class="bg-light bg-opacity-50 py-5">
+		<div class="container py-5">
+			<!--서브제목-->
+			<div class="subtle pt-3 pb-5">
+				<h3 class="text-center py-3">요즘 핫해요</h3>
+			</div>
+			<!--아이템 리스트-->
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 pt-3">
+				<!-- 상품(prodItem) 템플릿 -->
+				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${salesList}">
+					<div class="card">
+						
+						<!-- 상품이미지 -->
+						<div class="card-img-wrapper rounded-2 mb-3">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|"></div>
+							</a>
+						</div>
+						
+						<!-- 담기버튼 -->
+						<!--<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary" th:onclick="addToCart([[${item.prodId}]], 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>-->
+						
+						<!-- 상품설명 -->
+						<div class="card-body">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+								<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
+							</a>
+						</div> <!-- //card-body -->
+					</div> <!-- //card -->
+				</div> <!-- ///////// prodItem -->
+			</div> <!--prodList-->
+		</div> <!--container-->
+	</section>
+	
+	
+	
+	<!--MD강력추천 : favoriteList-->
+	<section class="bg-white bg-opacity-50 py-5">
+		<div class="container py-5">
+			<!--서브제목-->
+			<div class="subtle pt-3 pb-5">
+				<h3 class="text-center py-3">MD 강력추천</h3>
+			</div>
+			<!--아이템 리스트-->
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+				<!-- 상품(prodItem) 템플릿 -->
+				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${favoriteList}">
+					<div class="card">
+						
+						<!-- 상품이미지 -->
+						<div class="card-img-wrapper rounded-2 mb-3">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|"></div>
+							</a>
+						</div>
+						
+						<!-- 담기버튼 -->
+						<!--<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary" th:onclick="addToCart([[${item.prodId}]], 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>-->
+						
+						<!-- 상품설명 -->
+						<div class="card-body">
+							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
+								<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+								<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
+							</a>
+						</div> <!-- //card-body -->
+					</div> <!-- //card -->
+				</div> <!-- ///////// prodItem -->
+			</div> <!--prodList-->
+		</div> <!--container-->
+	</section>
+	
+	
+	<!--shop js link-->
+	<script src="/js/shop.js"></script>
+
+
+</div> <!--//layout::content-->
+
+<!-- <script layout:fragmsent="script"> -->
+
+
+</html>
+

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,29 +35,118 @@ public class ShopService {
     private final MemberService memberService;
     private final OrderItemRepository orderItemRepository;
     private final ProdReviewRepository reviewRepository;
+    private final ProductRepositoryCustom productRepositoryCustom;
 
 
     // 파일 업로드 위치 (서버 대신 업로드 할 임시 위치)
     private static final String UPLOAD_DIR = "C:/uploads/";
 
 
+/* 테스트용
     @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAllProducts();
     }
+*/
 
 
 
     /*서비스 : 상품 리스트 리턴*/
     @Transactional(readOnly = true)
-    public List<Product> getProductsByCriteria(String category, String itemSort, int page, int size) {
-        //return productRepository.findProductsByCriteria(category, itemSort);  // 매개변수 이름 확인
-        return productRepository.findProductsByCriteria(category, itemSort, page, size);  // 매개변수 이름 확인
+    public Page<Product> getProductsByCriteria(String category, String itemSort, int page, int size, String search) {
+
+        String sortDirection;
+        if(itemSort.equals("lowPrice")){
+            sortDirection = "ASC";
+            itemSort = "highPrice";
+        }
+        else sortDirection= "DESC";
+
+        // 현재 날짜 기준으로 1년 전부터 오늘까지의 기간을 산정
+        LocalDateTime startDateTime = LocalDateTime.now().minusYears(1);
+        LocalDateTime endDateTime = LocalDateTime.now();
+
+        // java.sql.Timestamp로 변환
+        Timestamp sqlStartDate = Timestamp.valueOf(startDateTime);
+        Timestamp sqlEndDate = Timestamp.valueOf(endDateTime);
+
+        log.info("sqlStartDate : {}", sqlStartDate);
+        log.info("sqlEndDate : {}", sqlEndDate);
+
+        String status = "AVAILABLE";
+
+        // 수정된 리포지토리 메서드 호출
+        return productRepositoryCustom.findProductsByCriteria(category, itemSort, sortDirection, page, size, sqlStartDate, sqlEndDate, status, search);
     }
 
-    /*상품 리스트 리턴*/
-    public List<Product> getProdCateList() {
-        List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "prodId"));
+
+
+
+
+    //jpql 실패
+    /*
+    public Page<Product> getProdCateList(String category, String itemSort, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size); // JPA에서 페이지는 0부터 시작
+
+        log.info("############## getProdCateList(String category, String itemSort, int page, int size)");
+        log.info("Category: {}, Sort: {}, Page: {}, Size: {}", category, itemSort, page, size);
+
+        if (category == null || category.equals("all")) {
+            // 카테고리 없이 전체 상품을 정렬 기준에 따라 반환
+            return getProductsBySort(itemSort, pageable);
+        } else {
+            // 카테고리가 있는 경우 해당 카테고리를 필터링하고 정렬 기준에 따라 반환
+            return getProductsByCategoryAndSort(category, itemSort, pageable);
+        }
+    }
+
+    private Page<Product> getProductsBySort(String itemSort, Pageable pageable) {
+        log.info(itemSort);
+        if (itemSort.equals("reviewRating")) {
+            return productRepository.findAllByRevRating(pageable); // 리뷰 평점 순
+        } else if (itemSort.equals("reviewCount")) {
+            return productRepository.findAllByReviewCount(pageable); // 리뷰 개수 순
+        } else if (itemSort.equals("salesCount")) {
+            return productRepository.findAllBySalesCount(pageable); // 판매량 순
+        } else if (itemSort.equals("favoriteProduct")) {
+            Page<Product> pageList = productRepository.findAllByFavoriteCount(pageable); // 찜 순
+            for (Product product: pageList) {
+                log.info("Product: {}", product);
+            }
+            return pageList; // 찜 순
+        } else {
+            return productRepository.findAllProducts(pageable); // 기본 정렬 (예: 최신순)
+        }
+    }
+
+    private Page<Product> getProductsByCategoryAndSort(String category, String itemSort, Pageable pageable) {
+        if (itemSort.equals("reviewRating")) {
+            return productRepository.findByCategoryAndRevRating(category, pageable); // 리뷰 평점 순
+        } else if (itemSort.equals("reviewCount")) {
+            return productRepository.findByCategoryAndReviewCount(category, pageable); // 리뷰 개수 순
+        } else if (itemSort.equals("salesCount")) {
+            return productRepository.findByCategoryAndSalesCount(category, pageable); // 판매량 순
+        } else if (itemSort.equals("favoriteCount")) {
+            return productRepository.findByCategoryAndFavoriteCount(category, pageable); // 찜 순
+        } else {
+            return productRepository.findByCategory(category, pageable); // 기본 정렬 (예: 최신순)
+        }
+    }
+*/
+
+/*    public List<Product> getProdCateList(String itemSort) {
+
+        List<Product> products = new ArrayList<>();
+
+        if(itemSort == null){   //id순
+            products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "prodId"));
+        } else if(itemSort.equals("latest")){
+            products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        } else if (itemSort.equals("lowprice")) {
+            products = productRepository.findAll(Sort.by(Sort.Direction.ASC, "prodFinalPrice"));
+        }else if (itemSort.equals("highprice")) {
+            products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "prodFinalPrice"));
+        }
         return products;
     }
 
@@ -436,24 +526,53 @@ public class ShopService {
 
 
     //admin : 상품 리스트 페이징 리턴
-    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page) {
-        // 페이징 처리 및 정렬
-        Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page - 1, 100, createdAtDesc);
+    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page, int pageSize) {
+
 
         LocalDateTime startDateTime = null;
         LocalDateTime endDateTime = null;
 
         // 날짜 필터링 처리
         if (startDate != null && !startDate.isEmpty()) {
-            LocalDate start = LocalDate.parse(startDate);
-            startDateTime = start.atStartOfDay();
+            LocalDate start = LocalDate.parse(startDate); // String을 LocalDate로 변환
+            startDateTime = start.atStartOfDay(); // LocalDateTime으로 변환
         }
         if (endDate != null && !endDate.isEmpty()) {
             LocalDate end = LocalDate.parse(endDate).plusDays(1);  // 종료일을 포함하기 위해 하루 더함
-            endDateTime = end.atStartOfDay();
+            endDateTime = end.atStartOfDay(); // LocalDateTime으로 변환
         }
 
+        // LocalDateTime을 java.sql.Timestamp로 변환
+        Timestamp sqlStartDate = (startDateTime != null) ? Timestamp.valueOf(startDateTime) : null;
+        Timestamp sqlEndDate = (endDateTime != null) ? Timestamp.valueOf(endDateTime) : null;
+
+
+        if(pageSize== 0) pageSize = 20;
+
+        // 페이징 처리 및 정렬
+        //Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
+        //Pageable pageable = PageRequest.of(page - 1, pageSize, createdAtDesc);
+
+
+        // 저장 프로시저 호출
+        Page<Product> products = productRepositoryCustom.findProductsByCriteria(
+                prodCate, // 카테고리
+                "reviewCount", // 정렬 기준 예시
+                "DESC",
+                page,
+                pageSize, // 페이지 크기
+                sqlStartDate, // 시작 날짜
+                sqlEndDate,   // 종료 날짜
+                status,        // 상품 상태
+                search // 검색어
+        );
+
+        // 반환된 Product 목록을 DTO로 변환하고 매출 데이터를 추가
+        return new PageImpl<>(products.stream()
+                                      .map(this::convertToProductAdminDTO)
+                                      .collect(Collectors.toList()), products.getPageable(), products.getTotalElements());
+
+        /* 기존 코드
         // 상품 정보와 판매 수량 및 매출 금액을 조회
         Page<Product> productPage;
 
@@ -499,7 +618,7 @@ public class ShopService {
                      });
 
             return dto;
-        });
+        }); */
     }
 
     // Product 엔티티를 ProductAdminDTO로 변환하는 메서드

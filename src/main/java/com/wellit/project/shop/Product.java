@@ -17,26 +17,6 @@ import java.util.List;
 @Table(name = "product")
 @Getter
 @Setter
-@NamedStoredProcedureQuery(
-        name = "Product.findAllProducts",
-        procedureName = "find_all_products",
-        resultClasses = Product.class,
-        parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cur", type = void.class)
-        }
-)
-@NamedStoredProcedureQuery(
-        name = "Product.findProductsByCriteria",
-        procedureName = "find_products_by_criteria",
-        resultClasses = Product.class,
-        parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_category", type = String.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_sort", type = String.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_page", type = Integer.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_size", type = Integer.class),
-                @StoredProcedureParameter(mode = ParameterMode.REF_CURSOR, name = "p_cur", type = void.class)
-        }
-)
 public class Product {
 
     @Id

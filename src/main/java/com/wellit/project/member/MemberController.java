@@ -581,51 +581,111 @@ public class MemberController {
 		if (!model.containsAttribute("member")) {
 			return "redirect:/member/login";
 		}
-		return "/shop/mypage_favoriteProduct";
-	}
+        return "/shop/mypage_favoriteProduct";
+    }
 
-	@GetMapping("/mypage/favorite/store")
-	public String getFavoriteStore(Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		memberService.getPrincipal(authentication, model);
-
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
+    @GetMapping("/mypage/favorite/store")
+    public String getFavoriteStore(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
 		}
-		return "/load/mypage_favoriteStore";
-	}
+        return "/load/mypage_favoriteStore";
+    }
 
-	@GetMapping("/mypage/orderhistory")
-	public String getOrderHistory(Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @GetMapping("/mypage/favorite/recipe")
+    public String getFavoriteRecipe(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
 
-		// 인증된 사용자의 정보를 모델에 추가
-		memberService.getPrincipal(authentication, model);
-
-		// 모델에서 member와 formattedRegDate를 가져옵니다.
-		Member member = (Member) model.getAttribute("member");
-		String formattedRegDate = (String) model.getAttribute("formattedRegDate");
-		// mypage : 주문 내역 확인
-		List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(member.getMemberId());
-		model.addAttribute("poHistoryList", poHistoryList);
-		model.addAttribute("member", member);
-		model.addAttribute("formattedRegDate", formattedRegDate);
-
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
-		}
-
-		return "/order/mypage_orderHistory";
-
-	}
 
 	@GetMapping("/mypage/memberinfo")
 	public String getMemberInfo(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		memberService.getPrincipal(authentication, model);
 
+    @GetMapping("/mypage/orderhistory")
+    public String getOrderHistory(Model model) {
+        String memberId = memberService.getMemberId();
+        Member member = memberService.getMember(memberId);
+
+
+        // mypage : 주문 내역 확인
+        List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
+
+        model.addAttribute("poHistoryList", poHistoryList);
+        model.addAttribute("member", member);
+
+        return "/order/mypage_orderHistory";
+
+    }
+
+    @GetMapping("/mypage/memberinfo")
+    public String getMemberInfo(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
 		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
 		if (!model.containsAttribute("member")) {
 			return "redirect:/member/login";

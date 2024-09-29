@@ -21,7 +21,7 @@ ol li {
 	border: 1px solid var( --sub-box);
 	color: var(--sub-box);
 	background-color: white;
-	
+
 }
 .hm-btn-border-green:hover{
 	background-color: var( --sub-box);
@@ -277,7 +277,7 @@ ul.small-main .small-bold {
 }
 
 .green-navbar {
-	background-color: var(--main-color) !important; 
+	background-color: var(--main-color) !important;
 }
 
 /*.black-icons {
@@ -430,4 +430,39 @@ ul.small-main .small-bold {
 	line-height: 1; /* 숫자가 뱃지 중앙에 정렬되도록 */
 	font-weight: 400;
 	margin-top: 10px;
+}
+
+
+/****** 스크롤바 스타일 ******/
+
+/* Chrome, Safari, Edge, Opera용 커스텀 스크롤바 */
+::-webkit-scrollbar {
+	width: 8px;  /* 스크롤바 너비 */
+	height: 8px; /* 수평 스크롤바 높이 */
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(136, 136, 136, 0.3); /* 반투명 연회색 스크롤바 */
+	border-radius: 10px;      /* 스크롤바 모서리를 둥글게 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(85, 85, 85, 0.5);   /* 호버 시 색상이 짙어지면서 시각적 피드백 제공 */
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgba(240, 240, 240, 0.8); /* 트랙도 살짝 투명한 밝은 회색으로 설정 */
+}
+
+/* Firefox 커스텀 스크롤바 */
+* {
+	scrollbar-width: thin;          /* 얇은 스크롤바 */
+	scrollbar-color: rgba(136, 136, 136, 0.3) rgba(240, 240, 240, 0.8);  /* 반투명한 연회색 스크롤바와 트랙 색상 */
+}
+
+/* 페이지 내용물과 맞추기 위한 스타일 */
+body {
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden; /* 수평 스크롤 방지 */
 }

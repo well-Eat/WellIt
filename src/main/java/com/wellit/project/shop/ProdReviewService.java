@@ -6,7 +6,6 @@ import com.wellit.project.order.OrderItem;
 import com.wellit.project.order.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,9 +39,9 @@ public class ProdReviewService {
     }
 
     //리뷰 저장
-    public ProdReview saveReview(Long prodId, UserDetails userDetails, ProdReviewForm prodReviewForm, List<MultipartFile> images, List<String> existingImgUrls) {
+    public ProdReview saveReview(Long prodId, ProdReviewForm prodReviewForm, List<MultipartFile> images, List<String> existingImgUrls) {
         log.info(prodId);
-        Member author = memberService.getMember(userDetails.getUsername());
+        Member author = memberService.getMember(memberService.getMemberId());
         log.info(prodReviewForm.getOrderItemId());
 
         // orderItemId로 리뷰 상태 설정

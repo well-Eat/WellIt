@@ -44,21 +44,29 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
 
+/*
+       240927 커서 오류로 EntityManager 사용방식으로 수정중
+    */
+/* shop : 상품 페이지 리스트 *//*
 
-    /* shop : 상품 페이지 리스트 */
     // Product : 카테고리, 정렬조건, 페이지 Storage Procedure
     @Procedure(name = "Product.findProductsByCriteria")
     List<Product> findProductsByCriteria(
             @Param("p_category") String category,
-            @Param("p_item_sort") String itemSort,  // p_item_sort로 수정
+            @Param("p_item_sort") String itemSort,
             @Param("p_page") int page,
-            @Param("p_size") int size
-    );
+            @Param("p_size") int size,
+            @Param("p_start_date") Date startDate,   // 시작 날짜 추가
+            @Param("p_end_date") Date endDate,       // 종료 날짜 추가
+            @Param("p_status") String status         // 상태 추가
+            //@Param("p_cur") OutParam<ResultSet> pCur // 커서 매개변수 추가
+                                        );
+*/
 
 
     // 프로시저 테스트용 코드 (모든 상품 리턴)
-    @Procedure(name = "Product.findAllProducts")
-    List<Product> findAllProducts();
+   /* @Procedure(name = "Product.findAllProducts")
+    List<Product> findAllProducts();*/
 
 
 }
