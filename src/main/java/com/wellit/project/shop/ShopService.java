@@ -526,7 +526,7 @@ public class ShopService {
 
 
     //admin : 상품 리스트 페이징 리턴
-    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page, int pageSize) {
+    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page, int pageSize, String itemSort, String direction) {
 
 
         LocalDateTime startDateTime = null;
@@ -549,16 +549,11 @@ public class ShopService {
 
         if(pageSize== 0) pageSize = 20;
 
-        // 페이징 처리 및 정렬
-        //Sort createdAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
-        //Pageable pageable = PageRequest.of(page - 1, pageSize, createdAtDesc);
-
-
         // 저장 프로시저 호출
         Page<Product> products = productRepositoryCustom.findProductsByCriteria(
                 prodCate, // 카테고리
-                "reviewCount", // 정렬 기준 예시
-                "DESC",
+                itemSort, // 정렬 기준
+                direction, //정렬 방향
                 page,
                 pageSize, // 페이지 크기
                 sqlStartDate, // 시작 날짜
@@ -566,59 +561,10 @@ public class ShopService {
                 status,        // 상품 상태
                 search // 검색어
         );
-
         // 반환된 Product 목록을 DTO로 변환하고 매출 데이터를 추가
         return new PageImpl<>(products.stream()
                                       .map(this::convertToProductAdminDTO)
                                       .collect(Collectors.toList()), products.getPageable(), products.getTotalElements());
-
-        /* 기존 코드
-        // 상품 정보와 판매 수량 및 매출 금액을 조회
-        Page<Product> productPage;
-
-        // 조건에 맞는 상품 필터링
-        if(status == null || status.isEmpty()){
-            if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
-                productPage = productRepository.findByProdNameContainingAndProdCate(search, prodCate, pageable);
-            } else if (search != null && !search.isEmpty()) {
-                productPage = productRepository.findByProdNameContaining(search, pageable);
-            } else if (prodCate != null && !prodCate.isEmpty()) {
-                productPage = productRepository.findByProdCate(prodCate, pageable);
-            } else {
-                // 검색 조건이 없으면 모든 상품을 조회
-                productPage = productRepository.findAll(pageable);
-            }
-        } else {
-            if (search != null && !search.isEmpty() && prodCate != null && !prodCate.isEmpty()) {
-                productPage = productRepository.findByProdNameContainingAndProdCateAndProdStatus(search, prodCate, ProdStatus.valueOf(status), pageable);
-            } else if (search != null && !search.isEmpty()) {
-                productPage = productRepository.findByProdNameContainingAndProdStatus(search, ProdStatus.valueOf(status), pageable);
-            } else if (prodCate != null && !prodCate.isEmpty()) {
-                productPage = productRepository.findByProdCateAndProdStatus(prodCate, ProdStatus.valueOf(status), pageable);
-            } else {
-                productPage = productRepository.findByProdStatus(ProdStatus.valueOf(status), pageable);
-            }
-        }
-
-
-        // 판매 수량 및 매출 집계 데이터 조회
-        List<Object[]> salesData = orderItemRepository.findProductSalesByDateRange(startDateTime, endDateTime);
-
-        // ProductAdminDTO 리스트로 변환 및 매출 데이터 추가
-        return productPage.map(product -> {
-            ProductAdminDTO dto = convertToProductAdminDTO(product);
-
-            // 매출 데이터 반영
-            salesData.stream()
-                     .filter(data -> data[0].equals(product.getProdId()))  // 상품 ID로 매칭
-                     .findFirst()
-                     .ifPresent(data -> {
-                         dto.setSumQuantity((data[1] != null) ? ((Number) data[1]).intValue() : 0);  // 판매 수량
-                         dto.setTotalFinalPrice((data[2] != null) ? ((Number) data[2]).intValue() : 0);  // 매출 금액
-                     });
-
-            return dto;
-        }); */
     }
 
     // Product 엔티티를 ProductAdminDTO로 변환하는 메서드

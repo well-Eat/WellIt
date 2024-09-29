@@ -618,30 +618,11 @@ public class MemberController {
 
     @GetMapping("/mypage/favorite/product")
     public String getFavoriteShop(Model model) {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null) {
-			Object principal = authentication.getPrincipal();
-			// Principal이 String 타입으로 가정
-			if (principal instanceof String) {
-				String memberId = (String) principal;
-				Member member = memberService.getMember(memberId);
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				String formattedRegDate = member.getMemberRegDate().format(formatter);
-				model.addAttribute("member", member);
-				model.addAttribute("formattedRegDate", formattedRegDate);
-			} else {
-				// UserDetails를 사용하는 경우
-				if (principal instanceof UserDetails) {
-					UserDetails userDetails = (UserDetails) principal;
-					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-					Member member = memberService.getMember(memberId);
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String formattedRegDate = member.getMemberRegDate().format(formatter);
-					model.addAttribute("member", member);
-					model.addAttribute("formattedRegDate", formattedRegDate);
-				}
-			}
-		}
+    	String memberId = memberService.getMemberId();
+        Member member = memberService.getMember(memberId);
+        model.addAttribute("member", member);
+        model.addAttribute("memberId", memberId);
+
         return "/shop/mypage_favoriteProduct";
     }
 

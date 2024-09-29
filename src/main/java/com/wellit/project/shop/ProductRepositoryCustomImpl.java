@@ -59,7 +59,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         // 파라미터 설정
         query.registerStoredProcedureParameter("p_category", String.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("p_item_sort", String.class, ParameterMode.IN);
-        query.registerStoredProcedureParameter("p_sort_direction", String.class, ParameterMode.IN);
+        //query.registerStoredProcedureParameter("p_sort_direction", String.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("p_page", Integer.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("p_size", Integer.class, ParameterMode.IN);
         query.registerStoredProcedureParameter("p_start_date", Timestamp.class, ParameterMode.IN);
@@ -71,8 +71,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
         // 파라미터 값 설정
         query.setParameter("p_category", category);
-        query.setParameter("p_item_sort", itemSort);
-        query.setParameter("p_sort_direction", sortDirection);
+        query.setParameter("p_item_sort", itemSort+sortDirection);
+        //query.setParameter("p_sort_direction", sortDirection);
         query.setParameter("p_page", page);
         query.setParameter("p_size", size);
         query.setParameter("p_start_date", startDate);
@@ -86,6 +86,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         List<Product> products = query.getResultList();
 
         //페이지 형태로 리턴
-        return new PageImpl<>(products, PageRequest.of(page, size), totalElements);
+        return new PageImpl<>(products, PageRequest.of(page-1, size), totalElements);
     }
+
+
 }

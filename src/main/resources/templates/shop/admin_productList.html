@@ -1,7 +1,9 @@
 <html layout:decorate="~{member/mypage_layout}">
 <div layout:fragment="tabcontent">
 	
-	<div class="d-flex flex-column container" id="wrapper">
+	<div class="d-flex flex-column container adminProdList" id="wrapper">
+		
+		<link rel="stylesheet" th:href="@{/css/shop.css}">
 		
 		<!--페이지 제목-->
 		<div class="row my-5">
@@ -58,29 +60,22 @@
 								<input type="date" id="endDate" class="form-control me-2 w-25" name="endDate">
 							</div>
 						</div>
-						<div class="hidden">
-							<!--소팅 select-->
-							<select class="form-select me-2 w-25" id="sortSelect" name="itemSort">
-								<option value="prod_id">상품코드</option>
-								<option value="prod_name">상품명</option>
-								<option value="prod_status">판매상태</option>
-								<option value="prod_stock">재고수량</option>
-								<option value="sales_quantity">판매수량</option>
-								<option value="sales_amount">매출금액</option>
-							</select>
-							<input type="radio" name="sortDirection" id="desc" checked value="desc">
-							<input type="radio" name="sortDirection" id="asc" value="asc">
-
-						</div>
 						<div class="d-flex">
 							<button type="button" class="btn btn-success align-self-stretch" onclick="fetchProducts()">Search</button>
 						</div>
+						
+						<div class="hiddenInputs">
+						</div>
+						
+						
 					</div> <!--row-->
 
 				</form>
 				
 				<p class="subtle f18 c666 fw-bold">
 					상품 리스트
+					<input type="text" id="sortSelect">
+					<input type="text" id="directionSelect">
 				</p>
 				
 				<!-- 상품 목록 테이블 -->
@@ -89,12 +84,12 @@
 						<thead class="prodTableHead">
 						<tr>
 							<th scope="col">No.</th>
-							<th scope="col" data-item-sort="prod_id">상품코드</th>
-							<th scope="col" data-item-sort="prod_name">상품명</th>
-							<th scope="col" data-item-sort="prod_status">판매상태</th>
-							<th scope="col" data-item-sort="prod_stock">재고수량</th>
-							<th scope="col" data-item-sort="sales_quantity">판매수량</th>
-							<th scope="col" data-item-sort="sales_amount">매출금액</th>
+							<th scope="col" class="tableSort" data-order="prodId" data-item-sort="prod_id">상품코드</th>
+							<th scope="col" class="tableSort" data-order="prodName" data-item-sort="prod_name">상품명</th>
+							<th scope="col" class="tableSort" data-order="prodStatus" data-item-sort="prod_status">판매상태</th>
+							<th scope="col" class="tableSort" data-order="prodStock" data-item-sort="prod_stock">재고수량</th>
+							<th scope="col" class="tableSort" data-order="salesQuantity" data-item-sort="sales_quantity">판매수량</th>
+							<th scope="col" class="tableSort" data-order="salesAmount" data-item-sort="sales_amount">매출금액</th>
 							<th scope="col">상품수정</th>
 						</tr>
 						</thead>
@@ -103,6 +98,23 @@
 						</tbody>
 					</table>
 				</div>
+				
+				<div class="adminProdList pageLine position-relative py-3">
+					<input type="hidden" id="pagenum">
+					<!--페이지네이션-->
+					<div class="paginationContainer d-flex justify-content-center position-absolute start-50 translate-middle-x gap-1"></div>
+					
+					<!--표시 아이템 개수 select-->
+					<select class="form-select form-select-sm position-absolute end-0 me-3" id="pageSizeSelect" name="pageSize" style="width: auto;">
+						<option value="20">20개</option>
+						<option value="50">50개</option>
+						<option value="80">80개</option>
+						<option value="100">100개</option>
+						<option value="300">300개</option>
+					</select>
+				</div>
+				
+				
 				
 				
 			

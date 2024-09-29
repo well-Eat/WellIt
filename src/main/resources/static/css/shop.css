@@ -37,7 +37,8 @@ section {
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 nav header {
-    background-color: #386641;
+    background-color:  #03c75a !important;
+    /* #70d68aff */
     position: relative;
 }
 
@@ -189,11 +190,13 @@ ul.sortBox li:not(:last-of-type)::after{
 .prodItem p.prodReview,
 .prodItem p.prodView,
 .prodItem p.prodFavorite,
-.prodItem .prodCount{
+div.prodCount.card-text p i.fa-regular,
+div.prodCount.card-text p span{
     font-size: 16px;
     color:#bbb;
 }
-
+/*,
+.prodItem .prodCount*/
 
 
 /******* shop_detail : 상품 상세페이지 *******/
@@ -627,8 +630,43 @@ ol#prodImageCardList{
 }
 
 
+/*페이지네이션 버튼 스타일*/
+.paginationContainer .pageLink{
+    font-size: 14px;
+    border-radius: 50%;
+    flex: 0 0 30px; /* 고정된 너비 설정 (40px로 고정) */
+    height: 30px;   /* 고정된 높이 */
+    line-height: 30px; /* 텍스트 수직 가운데 정렬 */
+    text-align: center; /* 텍스트 가로 가운데 정렬 */
+    font-weight: 600;
+}
+
+.paginationContainer .pageLink.active{
+    color: white;
+    background-color: #444444;
+}
 
 
+/*샵:상품리스트 소팅, 폼 스타일*/
+.prodSearchSort #searchBtn{
+    flex: 0 0 fit-content;
+}
+.prodSearchSort #pageSizeSelect{
+    flex: 0 0 fit-content;
+    height: 24px;
+    font-size: 12px;
+    color: #999999;
+    line-height: 1;
+}
+ul.sortBox{
+    letter-spacing: -1px;
+    font-stretch: condensed;
+}
+
+.prodSearchSort .searchForm,
+.prodSearchSort .sortForm{
+    height: 28px;
+}
 
 
 
