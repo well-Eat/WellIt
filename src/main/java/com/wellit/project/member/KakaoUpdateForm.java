@@ -50,4 +50,6 @@ public class KakaoUpdateForm {
     
     private MultipartFile imageFile;
     
+    private Integer mileage;
+    
 }

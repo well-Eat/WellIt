@@ -25,7 +25,7 @@
 							<div class="col">
 								<label for="password1" class="form-label">비밀번호</label>
 								<input type="password" id="memberPassword1" name="memberPassword" class="form-control"
-									placeholder="영문과 숫자를 포함해서 최소 6자" th:field="*{memberPassword}">
+									placeholder="영문과 숫자를 포함해서 최소 6자" th:field="*{memberPassword}" >
 								<div th:if="${#fields.hasErrors('memberPassword')}" th:errors="*{memberPassword}"
 									class="text-danger"></div>
 							</div>
@@ -573,7 +573,7 @@
 		}
 
 		function deleteMember() {
-			if (confirm("정말로 회원 정보를 삭제하시겠습니까?")) {
+			if (confirm("정말로 회원탈퇴 하시겠습니까?")) {
 				window.location.href = '/member/delete_password'; // 비밀번호 입력 페이지로 이동
 			}
 		}

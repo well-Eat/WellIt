@@ -56,6 +56,8 @@ public class MemberUpdateForm {
     
     private String memberVeganType;
     
+    private Integer mileage;
+    
     private MultipartFile imageFile;
     
 }

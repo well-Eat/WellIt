@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.wellit.project.order.Cart;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -114,7 +117,7 @@ public class MemberService {
 	public void updateMember(Member member, String newPassword, String newName, String newAlias, String newEmail,
 			String newPhone, String newAddress, String newBirth, String newGender, String newVeganType,
 			String newZipcode, String newRoadAddress, String newAddressDetail, String newBirthYear,
-			String newBirthMonth, String newBirthDay, MultipartFile imageFile, String existingImagePath)
+			String newBirthMonth, String newBirthDay, MultipartFile imageFile, String existingImagePath, Integer mileage)
 			throws IOException {
 
 		// 비밀번호 변경
@@ -138,6 +141,7 @@ public class MemberService {
 		member.setZipcode(newZipcode);
 		member.setRoadAddress(newRoadAddress);
 		member.setAddressDetail(newAddressDetail);
+		member.setMileage(mileage);
 
 		// 프로필 이미지 업데이트 처리
 		if (!imageFile.isEmpty()) {
@@ -255,11 +259,10 @@ public class MemberService {
 
             if (memberId != null) {
                 Member member = memberRepository.findByMemberId(memberId);
-                if (member != null) {
-                	                	                	          	
+                if (member != null) {    	                	          	
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     String formattedRegDate = member.getMemberRegDate().format(formatter);
-                    model.addAttribute("member", member);
+                    model.addAttribute("member", member);            
                     model.addAttribute("formattedRegDate", formattedRegDate);
                 } else {
                     model.addAttribute("error", "회원 정보를 찾을 수 없습니다.");
