@@ -1,5 +1,7 @@
 header {
 	position: relative;	
+	background-color: var(--main-color);
+
 }
 
 .formStyle {
@@ -132,10 +134,7 @@ header {
 
 /* tbody에서 테이블이 깨지지 않도록 */
 .prodTableBox tbody td {
-	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */
-
-#findId{
-	
+	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */	
 
 }
 

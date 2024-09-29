@@ -28,7 +28,7 @@
 		
 		<div class="row mb-3">
 			<div class="col d-flex justify-content-between">
-				<a href="/order/admin/po/list" class="btn btn-success d-block" style="width: fit-content;">목록으로 돌아가기</a>
+				<a href="/order/admin/po/list" class="btn hm-btn-green d-block" style="width: fit-content;">목록으로 돌아가기</a>
 				<input type="button" class="btn btn-outline-danger d-block" style="width: fit-content;" id="cancelBtn"
 				       value="주문취소">
 				<script src="/js/payment.js"></script>
@@ -164,7 +164,7 @@
               if (orderStatus == '상품준비중') {
                   renderFormHtml += `
 	                  <td>
-                      <input type="text" class="form-control w-75 d-inline-block me-2" name="invoiceNum" id="invoiceNum" /><input type="button" value="발송완료" class="btn btn-outline-success  d-inline-block ml-2" onclick="processShipment('${orderId}')" style="box-sizing: border-box;"/>
+                      <input type="text" class="form-control w-75 d-inline-block me-2" name="invoiceNum" id="invoiceNum" /><input type="button" value="발송완료" class="btn hm-btn-border-green  d-inline-block ml-2" onclick="processShipment('${orderId}')" style="box-sizing: border-box;"/>
                     </td>
                   `;
               } else if (orderStatus == '배송중'){

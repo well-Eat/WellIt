@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
+import com.wellit.project.shop.Product;
+import com.wellit.project.shop.ShopService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,6 +42,9 @@ public class RecipeController {
 
 	@Autowired
 	private final MemberService memberService;
+	
+	@Autowired
+	private final ShopService shopService;
 
 	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
 
@@ -248,8 +253,12 @@ public class RecipeController {
 		// 조리 카드 리스트 정렬
 		List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
 		orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum)); // 순서 번호로 정렬
+		
+	    List<Product> productList = shopService.findAll(); // 모든 상품 리스트 가져오기
 
 		model.addAttribute("recipe", recipe); // 모델에 레시피 추가
+	    model.addAttribute("productList", productList);
+
 		return "life/recipe_detail"; // 상세 정보를 보여줄 뷰 이름
 	}
 

@@ -1,0 +1,190 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+
+	<div class="d-flex flex-column container" id="wrapper">
+
+		<!--페이지 제목-->
+		<div class="row my-5">
+			<div class="pageTitle col text-center">
+				가게 리스트
+			</div>
+		</div>
+
+		<section class="row vstack stoItem position-relative mb-5">
+			<div class="col gap-3 g-3">
+				<p class="subtle f18 c666 fw-bold">
+					가게 검색 및 필터
+				</p>
+
+
+				<!-- 검색 및 필터 기능 -->
+				<form class="mb-3" id="searchForm" onsubmit="return false;">
+					<div class="d-flex gap-3">
+						<div class="flex-grow-1"> <!-- 좌측 열 -->
+							<div class="d-flex mb-1"> <!-- 첫째줄 -->
+								<!--상품명 검색어 입력-->
+								<input type="text" id="searchInput" class="form-control me-2 w-50" placeholder="가게명검색"
+									name="search">
+
+								<!--카테고리 select-->
+								<select class="form-select me-2 w-25" id="categorySelect" name="category">
+									<option value="">카테고리 : 모두 보기</option>
+									<option value="간식">간식</option>
+									<option value="양식">양식</option>
+									<option value="샐러드">샐러드</option>
+									<option value="패밀리레스토랑">패밀리레스토랑</option>
+									<option value="중식">중식</option>
+									<option value="패스트푸드">패스트푸드</option>
+									<option value="도시락">도시락</option>
+									<option value="술집">술집</option>
+									<option value="아시아음식">아시아음식</option>
+								</select>
+
+								<!--판매상태 select-->
+								<select class="form-select me-2 w-25" id="veganSelect" name="status">
+									<option value="">채식종류 : 모두 보기</option>
+									<option value="비건">비건</option>
+									<option value="프루테리언">프루테리언</option>
+									<option value="락토 베지테리언">락토 베지테리언</option>
+									<option value="오보 베지테리언">오보 베지테리언</option>
+									<option value="락토 오보 베지테리언">락토 오보 베지테리언</option>
+									<option value="페스코 베지테리언">페스코 베지테리언</option>
+									<option value="폴로 베지테리언">폴로 베지테리언</option>
+									<option value="플렉시테리언">플렉시테리언</option>
+								</select>
+							</div>
+
+						</div>
+						<div class="hidden">
+							<!--소팅 select-->
+							<select class="form-select me-2 w-25" id="sortSelect" name="itemSort">
+								<option value="sto_id">가게코드</option>
+								<option value="sto_name">가게명</option>
+								<option value="sto_viewCount">조회수</option>
+								<option value="sto_vegetarianType">채식종류</option>
+							</select>
+							<input type="radio" name="sortDirection" id="desc" checked value="desc">
+							<input type="radio" name="sortDirection" id="asc" value="asc">
+
+						</div>
+						<div class="d-flex">
+							<button type="button" class="btn hm-btn-green align-self-stretch"
+								onclick="fetchStores()">Search</button>
+						</div>
+					</div> <!--row-->
+
+				</form>
+
+				<p class="subtle f18 c666 fw-bold">
+					가게 리스트
+				</p>
+
+				<!-- 가게 목록 테이블 -->
+				<div class="stoTableBox border">
+					<table class="table table-hover" id="stoTable">
+						<thead class="stoTableHead">
+							<tr>
+								<th scope="col">No.</th>
+								<th scope="col" data-item-sort="sto_id">가게코드</th>
+								<th scope="col" data-item-sort="sto_name">가게명</th>
+								<th scope="col" data-item-sort="sto_category">카데고리</th>
+								<th scope="col" data-item-sort="sto_viewCount">조회수</th>
+								<th scope="col" data-item-sort="sto_vegetarianType">채식종류</th>
+								<th scope="col" data-item-sort="sto_isopen">오픈</th>
+								<th scope="col" data-item-sort="sto_edit">수정</th>
+
+							</tr>
+						</thead>
+						<tbody id="stoTableBody">
+							<!-- Fetch로 받은 데이터를 여기에 렌더링 -->
+						</tbody>
+					</table>
+				</div>
+
+
+
+			</div> <!-- //col -->
+			<div id="pagination">
+				<button id="prevPage" onclick="changePage(currentPage - 1)" class="btn hm-btn-green">이전</button>
+				<span id="pageInfo"></span>
+				<button id="nextPage" onclick="changePage(currentPage + 1)" class="btn hm-btn-green">다음</button>
+			</div>
+
+			<script th:inline="javascript">
+			</script>
+
+		</section>
+
+	</div><!-- // #wrapper -->
+
+
+	<!--shop js link-->
+	<script>
+		let currentPage = 1; // 현재 페이지
+		let totalPages = 0; // 전체 페이지 수
+
+
+		async function fetchStores(page = 1) {
+			currentPage = page; // 현재 페이지 업데이트
+
+			const search = document.getElementById("searchInput").value;
+			const category = document.getElementById("categorySelect").value;
+			const status = document.getElementById("veganSelect").value;
+
+			const response = await fetch(`/load/api/store?search=${search}&category=${category}&status=${status}&page=${currentPage}`);
+			const data = await response.json();
+
+			console.log(data);
+
+			// 전체 페이지 수 업데이트
+			totalPages = data.totalPages;
+
+			// 테이블에 주문 목록 렌더링
+			const stoTableBody = document.getElementById("stoTableBody");
+			stoTableBody.innerHTML = ""; // 기존 내용 제거
+
+			data.stores.forEach((store, index) => {
+				let rowClass = '';
+				let statClass = '';
+
+				if (!store.isOpen) {
+					rowClass = 'table-info';
+					statClass = 'text-primary fw700';
+				} else {
+					rowClass = 'table-danger';
+					statClass = 'text-danger fw700';
+				}
+
+				const row = `
+		            <tr class="prodRow ${rowClass}">
+		                <td>${(currentPage - 1) * 20 + index + 1}</td>
+		                <td>${store.stoId}</td>
+		                <td class="${statClass}"><a href="/load/place/${store.stoId}">${store.stoName}</a></td>
+						<td class="pe-2">${store.stoCategory}</td>
+		                <td class="pe-2">${store.viewCount.toLocaleString('ko-KR')}</td>
+		                <td class="pe-2">${store.stoVegetarianType}</td>
+						<td class="${statClass}">${store.isOpen ? '닫힘' : '열림'}</td>
+
+		                <td class="text-center"><a href="/load/store/update?id=${store.stoId}" class="tableLink text-secondary text-center">수정</a></td>
+		            </tr>
+		        `;
+				stoTableBody.insertAdjacentHTML('beforeend', row);
+			});
+
+			// 페이지 정보 업데이트
+			document.getElementById("pageInfo").innerText = `${currentPage} / ${data.totalPages}`;
+			document.getElementById("prevPage").disabled = currentPage === 1;
+			document.getElementById("nextPage").disabled = currentPage === data.totalPages;
+		}
+
+		function changePage(page) {
+			if (page < 1 || page > totalPages) return; // 페이지 범위 체크
+
+			fetchStores(page);
+		}
+
+	</script>
+
+</div>
+
+</html>

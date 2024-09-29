@@ -1,18 +1,42 @@
-/*.full-screen {*/
-/*	width: 100% !important;*/
-	/*height: 100vh !important;*/
-	/*overflow: hidden;*/
-	/*position: relative;*/
-	/*display: flex;*/
-	/*justify-content: center;*/
-	/*align-items: center;*/
-/*}*/
+/*나중에 삭제할 영상 css*/
+/*.full-screen {
+	width: 100% !important;
+	height: 100vh !important;
+	overflow: hidden;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}*/
 
+/*.full-screen video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}*/
+
+/* 나중에 수정할 영상 css*/
 .full-screen {
 	width: 100%;
 	position: relative;
 	overflow: hidden;
 }
+
+/*#player {
+	width: auto;
+	height: 100%;  높이를 브라우저 콘텐츠 높이에 맞춤 
+	min-width: 100vw;  브라우저의 너비보다 더 크게 설정 
+	min-height: 100%;  브라우저 높이에 맞춤 
+	object-fit: cover;  16:9 비율 유지 및 잘림 적용 
+
+
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);  가로 및 세로 중앙 정렬 
+}
+*/
 
 .mainMovieWrapper {
 	position: absolute;
@@ -24,34 +48,15 @@
 	overflow: hidden;
 }
 
-#player {
-	width: auto;
-	height: 100%; /* 높이를 브라우저 콘텐츠 높이에 맞춤 */
-	min-width: 100vw; /* 브라우저의 너비보다 더 크게 설정 */
-	min-height: 100%; /* 브라우저 높이에 맞춤 */
-	object-fit: cover; /* 16:9 비율 유지 및 잘림 적용 */
-
-
-
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%); /* 가로 및 세로 중앙 정렬 */
-}
 
 .full-screen iframe {
-/*	width: 100%;
-	height: 100%;
-	object-fit: contain;*/
-	filter: brightness(1.3);
+	width: 100% ; 
+	height: 100% ;
+	object-fit: contain;
+	filter: brightness(1.2);
 }
-/*
-.full-screen video {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-*/
+
+
 
 .videoBox {
 	width: 1000px;
@@ -257,7 +262,7 @@ section {
 
 header {
 	height: 100px;
-	background: linear-gradient(180deg, rgba(134, 143, 52, 1) 30%, rgba(255, 255, 255, 0) 100%);
+	background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 

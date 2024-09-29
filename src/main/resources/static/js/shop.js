@@ -947,7 +947,7 @@ function renderFavoriteProducts(products) {
                         
                         <div class="d-flex gap-1">
                             <!--찜하기버튼-->
-                            <a href="javascript:void(0);" class="btn btn-outline-success heart removeFavoriteProductBtn" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+                            <a href="javascript:void(0);" class="btn hm-btn-border-green heart removeFavoriteProductBtn" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
                             <!-- 담기버튼 -->
                             <a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary flex-grow-1" onclick="addToCart(${product.prodId}, 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
                         </div>
@@ -980,7 +980,7 @@ function renderFavoriteProducts(products) {
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
                                             <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
                                         </div>
-                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                        <a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">상품 보러 가기</a>
                                     </div>
                                 </div>
                             </div>

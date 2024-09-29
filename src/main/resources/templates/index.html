@@ -1,15 +1,24 @@
 <html layout:decorate="~{layout}">
-<body> 
+
+<body>
 
 	<div layout:fragment="content">
 		<link rel="stylesheet" href="/css/index.css" />
 		<link rel="stylesheet" href="/css/util.css" />
-		
-		
+
+
 		<div class="backBg"></div>
 		<div class="full-screen">
-			<div id="player"></div> <!--메인무비-->
-			
+			<!--<div id="player"></div> 메인무비-->
+			<div class="ratio ratio-16x9">
+				<iframe
+					src="https://www.youtube.com/embed/BczWUWfwGyE?si=FP84Wiq8r9_G20L8&autoplay=1&mute=1&controls=0&loop=1&playlist=BczWUWfwGyE&vq=hd1080&rel=0&modestbranding=1"
+					title="YouTube video player" frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			</div>
+			<!--<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
+				loop></video>-->
 			<form action="/load/recommend" method="post" class="videoBox">
 				<div class="row videoBoxText">
 					<div class="col">
@@ -220,9 +229,9 @@
 		</section>
 
 		<div id="deletemessage" th:if="${successMessage}" th:text="${successMessage}" style="display:none;"></div>
-		
+
 		<script src="https://www.youtube.com/iframe_api"></script>
-		
+
 		<script>
 			window.onload = function () {
 				// 'deletemessage' id를 가진 div 요소를 가져옵니다.
@@ -301,295 +310,234 @@
 
 
 
-      function updateClass() {
-          var $buttonDiv = $('.recommendButton');
-          if ($(window).outerWidth() < 1024) {
-              $buttonDiv.removeClass('col-1').addClass('col-12'); // 작은 화면에서는 전체 너비를 차지하도록 변경
-          } else {
-              $buttonDiv.removeClass('col-12').addClass('col-1'); // 큰 화면에서는 원래 클래스로 복원
-          }
-      }
-
-      
-      
-      
-      
-      
-      // 창 크기 변경 시 클래스 업데이트
-      $(window).on('resize', updateClass);
-
-      $(document).ready(() => {
+			function updateClass() {
+				var $buttonDiv = $('.recommendButton');
+				if ($(window).outerWidth() < 1024) {
+					$buttonDiv.removeClass('col-1').addClass('col-12'); // 작은 화면에서는 전체 너비를 차지하도록 변경
+				} else {
+					$buttonDiv.removeClass('col-12').addClass('col-1'); // 큰 화면에서는 원래 클래스로 복원
+				}
+			}
 
 
-          let recommendedPlace = $(".recommendedPlace")
-          recommendedPlace.mouseover(function () {
-              recommendedPlace.removeClass("active")
-              $(this).addClass("active")
-          })
-          var $carousel = $('.inforCarouselList');
-          var $carouselItems = $carousel.find('li');
-          var itemWidth = $carouselItems.outerWidth(true);
-          var itemCount = $carouselItems.length;
-          var carouselWidth = itemWidth * itemCount;
-          var isMouseOverMenu = false;
-          var carouselInterval;
-
-          $carousel.css('width', carouselWidth);
-
-          function moveCarousel() {
-              $carousel.stop(true, true).animate({
-                  left: '-=' + itemWidth
-              }, 3000, 'linear', function () {
-                  $carousel.css('left', 0);
-                  $carousel.append($carousel.find('li:first'));
-              });
-          }
-
-          function startCarousel() {
-              carouselInterval = setInterval(moveCarousel, 3000);
-          }
-
-          function stopCarousel() {
-              $carousel.stop(true, true);
-              clearInterval(carouselInterval);
-          }
-
-          startCarousel();
-
-          $carousel.hover(
-              function () {
-                  isMouseOverMenu = true;
-                  stopCarousel();
-              },
-              function () {
-                  isMouseOverMenu = false;
-                  startCarousel();
-              }
-          );
-
-          var $moCarousel = $('.mobileInforCarouselList');
-          var $moCarouselItems = $moCarousel.find('li');
-          var moItemWidth = $moCarouselItems.outerWidth(true);
-          var moItemCount = $moCarouselItems.length;
-          var moCarouselWidth = moItemWidth * moItemCount;
-          var isMouseOverMoMenu = false;
-          var carouselMoInterval;
-
-          $moCarousel.css('width', moCarouselWidth);
-
-          function moveMoCarousel() {
-              $moCarousel.stop(true, true).animate({
-                  left: '-=' + moItemWidth
-              }, 3000, 'linear', function () {
-                  $moCarousel.css('left', 0);
-                  $moCarousel.append($moCarousel.find('li:first'));
-              });
-          }
-
-          function startMOCarousel() {
-              carouselMoInterval = setInterval(moveMoCarousel, 3000);
-          }
-
-          function stopMoCarousel() {
-              $moCarousel.stop(true, true);
-              clearInterval(carouselMoInterval);
-          }
-
-          startMOCarousel();
-
-          $moCarousel.hover(
-              function () {
-                  isMouseOverMoMenu = true;
-                  stopMoCarousel();
-              },
-              function () {
-                  isMouseOverMoMenu = false;
-                  stopMoCarousel();
-              }
-          );
-
-          const navbar = $("header")
-          const menu = $(".custom-menu");
-          const submenu = $(".custom-menu.custom-sub");
-
-          menu.mouseover(function () {
-              navbar.css({background: "#386641"})
-          });
-
-          submenu.mouseover(function () {
-              navbar.css({background: "#386641"})
-          })
-
-          menu.mouseout(function () {
-              navbar.css({background: "linear-gradient(180deg, rgba(134, 143, 52, 1) 30%, rgba(255, 255, 255, 0) 100%)"})
-          })
-
-          submenu.mouseout(function () {
-              navbar.css({background: "linear-gradient(180deg, rgba(134, 143, 52, 1) 30%, rgba(255, 255, 255, 0) 100%)"})
-          })
-          var height = $("#places").offset().top - 40;
-          var hasClass = false;
-          var isMouseOverPlace = false;
-          $(window).on("scroll", () => {
-
-              if (isMouseOverPlace) return;
-
-              if ($(window).scrollTop() > height && !hasClass) {
-                  navbar.css({background: "#386641"})
-                  hasClass = true;
-              }
-              if ($(window).scrollTop() < height && hasClass) {
-                  navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
-                  hasClass = false;
-              }
-          })
 
 
-      })
-		
+
+
+			// 창 크기 변경 시 클래스 업데이트
+			$(window).on('resize', updateClass);
+
+			$(document).ready(() => {
+
+
+				let recommendedPlace = $(".recommendedPlace")
+				recommendedPlace.mouseover(function () {
+					recommendedPlace.removeClass("active")
+					$(this).addClass("active")
+				})
+				var $carousel = $('.inforCarouselList');
+				var $carouselItems = $carousel.find('li');
+				var itemWidth = $carouselItems.outerWidth(true);
+				var itemCount = $carouselItems.length;
+				var carouselWidth = itemWidth * itemCount;
+				var isMouseOverMenu = false;
+				var carouselInterval;
+
+				$carousel.css('width', carouselWidth);
+
+				function moveCarousel() {
+					$carousel.stop(true, true).animate({
+						left: '-=' + itemWidth
+					}, 3000, 'linear', function () {
+						$carousel.css('left', 0);
+						$carousel.append($carousel.find('li:first'));
+					});
+				}
+
+				function startCarousel() {
+					carouselInterval = setInterval(moveCarousel, 3000);
+				}
+
+				function stopCarousel() {
+					$carousel.stop(true, true);
+					clearInterval(carouselInterval);
+				}
+
+				startCarousel();
+
+				$carousel.hover(
+					function () {
+						isMouseOverMenu = true;
+						stopCarousel();
+					},
+					function () {
+						isMouseOverMenu = false;
+						startCarousel();
+					}
+				);
+
+				var $moCarousel = $('.mobileInforCarouselList');
+				var $moCarouselItems = $moCarousel.find('li');
+				var moItemWidth = $moCarouselItems.outerWidth(true);
+				var moItemCount = $moCarouselItems.length;
+				var moCarouselWidth = moItemWidth * moItemCount;
+				var isMouseOverMoMenu = false;
+				var carouselMoInterval;
+
+				$moCarousel.css('width', moCarouselWidth);
+
+				function moveMoCarousel() {
+					$moCarousel.stop(true, true).animate({
+						left: '-=' + moItemWidth
+					}, 3000, 'linear', function () {
+						$moCarousel.css('left', 0);
+						$moCarousel.append($moCarousel.find('li:first'));
+					});
+				}
+
+				function startMOCarousel() {
+					carouselMoInterval = setInterval(moveMoCarousel, 3000);
+				}
+
+				function stopMoCarousel() {
+					$moCarousel.stop(true, true);
+					clearInterval(carouselMoInterval);
+				}
+
+				startMOCarousel();
+
+				$moCarousel.hover(
+					function () {
+						isMouseOverMoMenu = true;
+						stopMoCarousel();
+					},
+					function () {
+						isMouseOverMoMenu = false;
+						stopMoCarousel();
+					}
+				);
+
+				const navbar = $("header")
+				const menu = $(".custom-menu");
+				const submenu = $(".custom-menu.custom-sub");
+
+				menu.mouseover(function () {
+					navbar.css({background: "#386641"})
+				});
+
+				submenu.mouseover(function () {
+					navbar.css({background: "#386641"})
+				})
+
+				menu.mouseout(function () {
+					navbar.css({background: "linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%)"})
+				})
+
+				submenu.mouseout(function () {
+					navbar.css({background: "linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%)"})
+				})
+				var height = $("#places").offset().top - 40;
+				var hasClass = false;
+				var isMouseOverPlace = false;
+				$(window).on("scroll", () => {
+
+					if (isMouseOverPlace) return;
+
+					if ($(window).scrollTop() > height && !hasClass) {
+						navbar.css({background: "#386641"})
+						hasClass = true;
+					}
+					if ($(window).scrollTop() < height && hasClass) {
+						navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+						hasClass = false;
+					}
+				})
+
+
+			})
+
 		</script>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 라이브러리 추가 -->
 		<script>
-        var player;
-        var isPlayerReady = false;
+			var player;
+			var isPlayerReady = false;
 
-        // YouTube API가 준비되었을 때 호출되는 함수
-        function onYouTubeIframeAPIReady() {
-            createPlayer(); // 플레이어 생성
-        }
+			// YouTube API가 준비되었을 때 호출되는 함수
+			function onYouTubeIframeAPIReady() {
+				createPlayer(); // 플레이어 생성
+			}
 
-        // YouTube Player 생성 함수
-        function createPlayer() {
-            var videoId = window.innerHeight > window.innerWidth ? 'FaFE8ymidb8' : 'BczWUWfwGyE'; // 세로형 또는 가로형 동영상 선택
-            player = new YT.Player('player', {
-                videoId: videoId,
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 0,
-                    'rel': 0,
-                    'modestbranding': 1,
-                    'loop': 1,
-                    'playlist': videoId
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
+			// YouTube Player 생성 함수
+			function createPlayer() {
+				var videoId = window.innerHeight > window.innerWidth ? 'FaFE8ymidb8' : 'BczWUWfwGyE'; // 세로형 또는 가로형 동영상 선택
+				player = new YT.Player('player', {
+					videoId: videoId,
+					playerVars: {
+						'autoplay': 1,
+						'controls': 0,
+						'rel': 0,
+						'modestbranding': 1,
+						'loop': 1,
+						'playlist': videoId
+					},
+					events: {
+						'onReady': onPlayerReady,
+						'onStateChange': onPlayerStateChange
+					}
+				});
+			}
 
-        // 플레이어가 준비되었을 때 호출되는 함수
-        function onPlayerReady(event) {
-            isPlayerReady = true;
-            event.target.playVideo(); // 자동 재생
-        }
+			// 플레이어가 준비되었을 때 호출되는 함수
+			function onPlayerReady(event) {
+				isPlayerReady = true;
+				event.target.playVideo(); // 자동 재생
+			}
 
-        // 화면 크기에 맞춰 full-screen의 높이를 설정하는 함수
-        function setFullScreenHeight() {
-            // 실제 브라우저 콘텐츠 영역의 높이를 계산 (도구창 및 주소창을 제외한 영역)
-            var contentHeight = window.innerHeight;
-            $('.full-screen').css('height', contentHeight + 'px'); // jQuery로 full-screen 높이 설정
+			// 화면 크기에 맞춰 full-screen의 높이를 설정하는 함수
+			function setFullScreenHeight() {
+				// 실제 브라우저 콘텐츠 영역의 높이를 계산 (도구창 및 주소창을 제외한 영역)
+				var contentHeight = window.innerHeight;
+				$('.full-screen').css('height', contentHeight + 'px'); // jQuery로 full-screen 높이 설정
 
-            // 동영상이 항상 16:9 비율을 유지하고, 높이에 맞추고 가로가 초과되도록 설정
-            var $playerElement = $('#player'); // jQuery로 요소 선택
-            var winAspectRatio = window.innerWidth / contentHeight;
-            var videoAspectRatio = 16 / 9; // 16:9 비율 유지
+				// 동영상이 항상 16:9 비율을 유지하고, 높이에 맞추고 가로가 초과되도록 설정
+				var $playerElement = $('#player'); // jQuery로 요소 선택
+				var winAspectRatio = window.innerWidth / contentHeight;
+				var videoAspectRatio = 16 / 9; // 16:9 비율 유지
 
-            if (winAspectRatio < videoAspectRatio) {
-                // 브라우저가 16:9보다 좁을 때: 높이를 맞추고 가로를 초과시킴
-                $playerElement.css('height', '100%');
-                var playerHeight = $playerElement.height(); // jQuery로 높이 가져오기
-                $playerElement.css('width', (playerHeight / 9) * 16 + 'px'); // 16:9 비율로 너비 설정
-            } else {
-                // 브라우저가 16:9보다 넓을 때
-                $playerElement.css('width', '100%');
-                var playerWidth = $playerElement.width(); // jQuery로 너비 가져오기
-                $playerElement.css('height', (playerWidth / 16) * 9 + 'px'); // 16:9 비율로 높이 설정
-            }
-        }
+				if (winAspectRatio < videoAspectRatio) {
+					// 브라우저가 16:9보다 좁을 때: 높이를 맞추고 가로를 초과시킴
+					$playerElement.css('height', '100%');
+					var playerHeight = $playerElement.height(); // jQuery로 높이 가져오기
+					$playerElement.css('width', (playerHeight / 9) * 16 + 'px'); // 16:9 비율로 너비 설정
+				} else {
+					// 브라우저가 16:9보다 넓을 때
+					$playerElement.css('width', '100%');
+					var playerWidth = $playerElement.width(); // jQuery로 너비 가져오기
+					$playerElement.css('height', (playerWidth / 16) * 9 + 'px'); // 16:9 비율로 높이 설정
+				}
+			}
 
-        // 플레이어 상태 변경 시 호출되는 함수
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                console.log('Video has ended.');
-            }
-        }
+			// 플레이어 상태 변경 시 호출되는 함수
+			function onPlayerStateChange(event) {
+				if (event.data === YT.PlayerState.ENDED) {
+					console.log('Video has ended.');
+				}
+			}
 
-        // 창 크기 변경 시 높이 업데이트 및 동영상 크기 업데이트
-        $(window).on('resize', setFullScreenHeight); // jQuery로 resize 이벤트 추가
+			// 창 크기 변경 시 높이 업데이트 및 동영상 크기 업데이트
+			$(window).on('resize', setFullScreenHeight); // jQuery로 resize 이벤트 추가
 
-        // 페이지 로드 시 초기 설정
-        $(document).ready(function() {
-            setFullScreenHeight(); // 초기 full-screen 크기 설정
-        });
+			// 페이지 로드 시 초기 설정
+			$(document).ready(function () {
+				setFullScreenHeight(); // 초기 full-screen 크기 설정
+			});
 		</script>
-	
-	
-	
-	
-	
+
+
+
+
+
 	</div>
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -22,7 +22,7 @@
 			margin-bottom: 20px;
 		}
 
-		
+
 
 		.card:hover {
 			transform: scale(1);
@@ -85,8 +85,8 @@
 												d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
 										</svg>
 									</span>
-									<input type="hidden" id="userId" th:value="${session.UserId}"/>
-									<input type="hidden" id="recipeId" th:value="${recipe.id}"/>
+									<input type="hidden" id="userId" th:value="${session.UserId}" />
+									<input type="hidden" id="recipeId" th:value="${recipe.id}" />
 								</h5>
 								<p th:text="${recipe.recpIntroduce}" class="lead"></p>
 								<p><strong>작성자:</strong> <span th:text="${recipe.writer}"></span></p>
@@ -142,27 +142,125 @@
 				</table>
 			</div>
 
+			<!-- 추천 제품 목록 -->
+			<h2 class="mt-4">이런 재료들은 어때요? 🥗 </h2>
+			<div class="product-container">
+				<div class="row" id="productRow">
+					<th:block th:each="ingredient : ${recipe.recpIngredientList}">
+						<th:block th:each="product : ${productList}">
+							<th:block th:if="${#lists.contains(product.prodName, ingredient.ingredientName)}">
+								<div class="col-md-3 mb-3 product-card"> <!-- 4개씩 배치하기 위해 col-md-3 사용 -->
+									<div class="card">
+										<div class="card-body">
+											<!-- 상품이미지 -->
+											<div class="card-img-wrapper rounded-2 mb-3">
+												<a th:href="@{|/shop/detail/${product.prodId}|}" class="d-block">
+													<div class="card-img-box">
+														<img th:src="${product.prodMainImg}" alt="" class="img-fluid" />
+													</div>
+												</a>
+											</div>
+
+											<!-- 담기버튼 -->
+											<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"
+												th:onclick="addToCart([[${product.prodId}]], 1);"><i
+													class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
+
+											<div class="card-body">
+												<a th:href="@{|/shop/detail/${product.prodId}|}" class="d-block">
+													<h5 class="prodName card-title c333" th:text="${product.prodName}">
+													</h5>
+													<p class="prodDesc card-text" th:text="${product.prodDesc}"></p>
+
+													<!--할인율 있는 경우 가격 표시 -->
+													<th:block
+														th:if="${product.prodDiscount != null and product.prodDiscount > 0}">
+														<p class="prodOrgPrice card-text"
+															th:text="|${#numbers.formatInteger(product.prodOrgPrice,3,'COMMA')}원|">
+														</p>
+														<p class="prodDiscount card-text mr-4"
+															th:text="${#numbers.formatPercent(product.prodDiscount,2,0)}">
+														</p>
+														<p class="prodFinalPrice card-text c333"
+															th:text="|${#numbers.formatInteger( product.prodOrgPrice - product.prodOrgPrice * product.prodDiscount ,3,'COMMA') }원|">
+														</p>
+													</th:block>
+
+													<!--할인율 없는 경우 가격 표시-->
+													<p class="prodFinalPrice card-text c333"
+														th:if="${product.prodDiscount == null or product.prodDiscount == 0}"
+														th:text="|${#numbers.formatInteger(product.prodOrgPrice,3,'COMMA')}원|">
+													</p>
+
+													<!--상품 카운트 뷰 라인-->
+													<div class="prodCount card-text d-flex ">
+
+														<!--조회수-->
+														<p class="prodView d-inline-block me-2">
+															<i class="fa-regular fa-eye"></i>
+															<span th:text="${product.viewCnt}"></span>
+														</p>
+
+														<!--리뷰수-->
+														<p class="prodReview d-inline-block me-2">
+															<i class="fa-regular fa-comment-dots"></i>
+															<span th:text="${product.prodId ?: 0}"></span>
+														</p>
+
+														<!--하트수-->
+														<p class="prodFavorite d-inline-block">
+															<i class="fa-regular fa-heart"></i>
+															<span
+																th:text="${product.favoriteProductList.size}"></span>
+														</p>
+													</div>
+
+
+
+													<div class="prodTags">
+														<!--할인율 있는 경우 세일상품 태그 표시-->
+														<span class="badge text-bg-success" th:text="️세일상품"
+															th:if="${product.prodDiscount != null and product.prodDiscount > 0}"></span>
+														
+													</div>
+												</a>
+											</div> <!-- //card-body -->
+										</div>
+									</div>
+								</div>
+							</th:block>
+						</th:block>
+					</th:block>
+				</div>
+			</div>
+			<!-- 페이지네이션 버튼 -->
+			<div class="pagination">
+				<button id="prevButton" class="btn btn-secondary" onclick="changePage(-1)">이전</button>
+				<button id="nextButton" class="btn btn-secondary" onclick="changePage(1)">다음</button>
+			</div>
+
 			<!-- 조리 순서 -->
 			<h2 class="mt-4">조리 순서</h2>
 			<ol class="mb-4">
-			    <th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
-			        <li class="step">
-			            <div class="card mb-3">
-			                <div class="row no-gutters">
-			                    <div class="col-4">
-			                        <img th:src="${orderCard.cookOrderImg}" alt="조리 이미지" class="step-image"
-			                             th:if="${orderCard.cookOrderImg != null}" style="object-fit: cover;" />
-			                    </div>
-			                    <div class="col-8">
-			                        <div class="card-body">
-			                            <span class="orderNum" th:text="${iterStat.index + 1}"></span> <!-- 순서 표시 -->
-			                            <span class="cookInstructions" th:text="${orderCard.cookOrderText}"></span> <!-- 조리 텍스트 표시 -->
-			                        </div>
-			                    </div>
-			                </div>
-			            </div>
-			        </li>
-			    </th:block>
+				<th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
+					<li class="step">
+						<div class="card mb-3">
+							<div class="row no-gutters">
+								<div class="col-4">
+									<img th:src="${orderCard.cookOrderImg}" alt="조리 이미지" class="step-image"
+										th:if="${orderCard.cookOrderImg != null}" style="object-fit: cover;" />
+								</div>
+								<div class="col-8">
+									<div class="card-body">
+										<span class="orderNum" th:text="${iterStat.index + 1}"></span> <!-- 순서 표시 -->
+										<span class="cookInstructions" th:text="${orderCard.cookOrderText}"></span>
+										<!-- 조리 텍스트 표시 -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</th:block>
 			</ol>
 			<!-- 수정 및 삭제 버튼 -->
 			<div class="btn-group" th:if="${session.UserId == recipe.writer} or ${session.UserId == 'admin'}">
@@ -173,80 +271,115 @@
 			</div>
 		</div>
 		<script>
+			let currentPage = 0;
+			const itemsPerPage = 4; // 한 페이지에 보여줄 상품 수
+			const productCards = document.querySelectorAll('.product-card');
+			const totalCards = productCards.length;
+			const totalPages = Math.ceil(totalCards - itemsPerPage + 1); // 마지막 페이지 계산
+
+			function showPage(page) {
+				// 시작 인덱스와 끝 인덱스를 계산
+				const startIndex = page;
+				const endIndex = startIndex + itemsPerPage;
+
+				productCards.forEach((card, index) => {
+					// 현재 페이지에 해당하는 카드만 보이도록 설정
+					card.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
+				});
+
+				// 이전 버튼과 다음 버튼의 표시 여부 설정
+				document.getElementById('prevButton').style.display = (page === 0) ? 'none' : 'inline-block';
+				document.getElementById('nextButton').style.display = (page === totalPages - 1) ? 'none' : 'inline-block';
+			}
+
+			function changePage(direction) {
+				currentPage += direction;
+
+				// 페이지 범위 체크
+				if (currentPage < 0) currentPage = 0;
+				if (currentPage > totalCards - itemsPerPage) currentPage = totalCards - itemsPerPage;
+
+				showPage(currentPage);
+			}
+
+			// 초기 페이지 로드
+			showPage(currentPage);
+
+
 			$(document).ready(function () {
-			    var userId = $('#userId').val(); // 사용자 ID를 페이지에서 가져옵니다 (예: hidden input)
-			    var recipeId = $('#recipeId').val(); // 레시피 ID를 페이지에서 가져옵니다 (예: hidden input)
-			    // 페이지 로드 시 찜한 상태 확인
-			    $.ajax({
-			        url: '/favorite/check',  // 서버의 상태 확인 URL
-			        type: 'GET',
-			        data: {
-			            userId: userId,
-			            recipeId: recipeId
-			        },
-			        success: function (response) {
-			            if (response.isFavorite) {
-			                $('.favorite-btn').addClass('bi-heart-fill').removeClass('bi-heart');
-			            } else {
-			                $('.favorite-btn').addClass('bi-heart').removeClass('bi-heart-fill');
-			            }
-			        },
-			        error: function (error) {
-			            console.error('상태 확인 실패:', error);
-			        }
-			    });
+				var userId = $('#userId').val(); // 사용자 ID를 페이지에서 가져옵니다 (예: hidden input)
+				var recipeId = $('#recipeId').val(); // 레시피 ID를 페이지에서 가져옵니다 (예: hidden input)
+				// 페이지 로드 시 찜한 상태 확인
+				$.ajax({
+					url: '/favorite/check',  // 서버의 상태 확인 URL
+					type: 'GET',
+					data: {
+						userId: userId,
+						recipeId: recipeId
+					},
+					success: function (response) {
+						if (response.isFavorite) {
+							$('.favorite-btn').addClass('bi-heart-fill').removeClass('bi-heart');
+						} else {
+							$('.favorite-btn').addClass('bi-heart').removeClass('bi-heart-fill');
+						}
+					},
+					error: function (error) {
+						console.error('상태 확인 실패:', error);
+					}
+				});
 
-			    // 찜 버튼 클릭 이벤트
-			    $('.favorite-btn').click(function () {
-			        var isFavorite = $(this).hasClass('bi-heart-fill'); // 현재 아이콘 상태 확인
+				// 찜 버튼 클릭 이벤트
+				$('.favorite-btn').click(function () {
+					var isFavorite = $(this).hasClass('bi-heart-fill'); // 현재 아이콘 상태 확인
 
-			        if (isFavorite) {
-			            // 찜 취소 요청
-			            $.ajax({
-			                url: '/favorite/remove',  // 서버의 취소 URL
-			                type: 'POST',
-			                data: {
-			                    userId: userId,
-			                    recipeId: recipeId
-			                },
-			                success: function (response) {
-			                    alert('찜한 레시피에서 취소되었습니다!');
-			                    // 아이콘 상태 변경
-			                    $(this).removeClass('bi-heart-fill').addClass('bi-heart');
-			                    location.reload();
-			                }.bind(this), // this 바인딩
-			                error: function (error) {
-			                    alert('취소하는 데 실패했습니다.');
-			                }
-			            });
-			        } else {
-			            // 찜 추가 요청
+					if (isFavorite) {
+						// 찜 취소 요청
 						$.ajax({
-						    url: '/favorite/add',
-						    type: 'POST',
-						    data: {
-						        userId: userId,
-						        recipeId: recipeId
-						    },
-						    success: function (response) {
-						        if (response === "success") {
-						            alert('찜한 레시피에 추가되었습니다!');
-						            // 추가된 아이콘 상태 변경 등
+							url: '/favorite/remove',  // 서버의 취소 URL
+							type: 'POST',
+							data: {
+								userId: userId,
+								recipeId: recipeId
+							},
+							success: function (response) {
+								alert('찜한 레시피에서 취소되었습니다!');
+								// 아이콘 상태 변경
+								$(this).removeClass('bi-heart-fill').addClass('bi-heart');
+								location.reload();
+							}.bind(this), // this 바인딩
+							error: function (error) {
+								alert('취소하는 데 실패했습니다.');
+							}
+						});
+					} else {
+						// 찜 추가 요청
+						$.ajax({
+							url: '/favorite/add',
+							type: 'POST',
+							data: {
+								userId: userId,
+								recipeId: recipeId
+							},
+							success: function (response) {
+								if (response === "success") {
+									alert('찜한 레시피에 추가되었습니다!');
+									// 추가된 아이콘 상태 변경 등
 									location.reload();
 
-						        } else if (response === "already_favorited") {
-						            alert('이미 찜한 레시피입니다.');
-						        } else {
-						            alert('찜하는 데 실패했습니다.');
-						        }
-								
-						    },
-						    error: function (error) {
-						        alert('찜하는 데 실패했습니다.');
-						    }
+								} else if (response === "already_favorited") {
+									alert('이미 찜한 레시피입니다.');
+								} else {
+									alert('찜하는 데 실패했습니다.');
+								}
+
+							},
+							error: function (error) {
+								alert('찜하는 데 실패했습니다.');
+							}
 						});
-			        }
-			    });
+					}
+				});
 			});
 		</script>
 	</div>
