@@ -131,7 +131,7 @@
 	
 	
 	<!--상품 상세 정보 출력-->
-	<section class="prodDetail container border border-success mb-3 d-flex flex-column justify-content-center align-items-center">
+	<section class="prodDetail container mb-3 d-flex flex-column justify-content-center align-items-center">
 		<th:block th:each="prodImage : ${sortedImages}">
 			<div class="d-inline-block w-100 text-center">
 				<img th:src="${prodImage.imagePath}" class="img-fluid" style="object-fit: contain;">
@@ -144,16 +144,14 @@
 	
 	
 	<!--상품 리뷰 -->
-	<section class="prodReview container" id="prodReview">
-		<h5>상품후기 &nbsp;
+	<section class="prodReview container mb-5" id="prodReview">
+		<h5 class="py-1">상품후기 &nbsp;
 			<span class="revCnt">(<small th:text="${reviewCnt.cnt}"></small>건)</span>
 		</h5>
 		<!--이미지 리뷰 라인-->
 				<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
 					shop_imgReview.html 파일 내용으로 대체
 				</section>
-
-		
 		
 		<!-- 리뷰 리스트 출력 -->
 		<div class="container">

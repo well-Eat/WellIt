@@ -317,6 +317,8 @@ public class ShopController {
         // 서비스 호출
         Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page, pageSize, itemSort, direction);
 
+
+
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
         response.put("products", productsPage.getContent());

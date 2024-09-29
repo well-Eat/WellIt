@@ -76,7 +76,12 @@ public class ShopService {
         String status = "AVAILABLE";
 
         // 수정된 리포지토리 메서드 호출
-        return productRepositoryCustom.findProductsByCriteria(category, itemSort, sortDirection, page, size, sqlStartDate, sqlEndDate, status, search);
+        Page<ProductAdminDTO> productAdminPages = productRepositoryCustom.findProductsByCriteria(category, itemSort, sortDirection, page, size, sqlStartDate, sqlEndDate, status, search);
+
+        return new PageImpl<>(productAdminPages.getContent().stream()
+                                               .map(productAdminDTO -> productRepository.findById(productAdminDTO.getProdId()).orElse(null))
+                                               .filter(Objects::nonNull)
+                                               .collect(Collectors.toList()), productAdminPages.getPageable(), productAdminPages.getTotalElements());
     }
 
 
@@ -550,7 +555,7 @@ public class ShopService {
         if(pageSize== 0) pageSize = 20;
 
         // 저장 프로시저 호출
-        Page<Product> products = productRepositoryCustom.findProductsByCriteria(
+        Page<ProductAdminDTO> products = productRepositoryCustom.findProductsByCriteria(
                 prodCate, // 카테고리
                 itemSort, // 정렬 기준
                 direction, //정렬 방향
@@ -561,10 +566,16 @@ public class ShopService {
                 status,        // 상품 상태
                 search // 검색어
         );
+
+        products.stream()
+                    .forEach(product -> log.info("sumQuantity: {}", product.getSumQuantity()));
+
         // 반환된 Product 목록을 DTO로 변환하고 매출 데이터를 추가
-        return new PageImpl<>(products.stream()
-                                      .map(this::convertToProductAdminDTO)
-                                      .collect(Collectors.toList()), products.getPageable(), products.getTotalElements());
+//        return new PageImpl<>(products.stream()
+//                                      .map(this::convertToProductAdminDTO)
+//                                      .collect(Collectors.toList()), products.getPageable(), products.getTotalElements());
+
+        return products;
     }
 
     // Product 엔티티를 ProductAdminDTO로 변환하는 메서드

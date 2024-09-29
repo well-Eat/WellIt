@@ -601,6 +601,14 @@ public class MemberController {
     }
 
 
+    //로그인 여부 확인
+    @GetMapping("/auth/status")
+    public ResponseEntity<Boolean> checkLoginStatus(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(true);  // 로그인 중일 경우 true 반환
+        }
+        return ResponseEntity.ok(false);  // 로그인 중이 아닐 경우 false 반환
+    }
 
 
 

@@ -924,7 +924,7 @@ function renderFavoriteProducts(products) {
         products.forEach(product => {
             const productHTML = `
                 <div class="prodItem col mb-4" data-prod-id="${product.prodId}">
-                    <div class="card">
+                    <div class="card bg-transparent">
                         
                         <!-- 상품이미지 -->
                         <div class="card-img-wrapper rounded-2 mb-3">
@@ -1145,7 +1145,7 @@ $(document).on("click", ".adminProdList .pageLink", function (event){
 
 
 
-//admin 상품 리스트 렌더링
+//admin : admin_productList.html 상품 리스트 렌더링
 async function fetchProducts() {
     // 검색어와 상태 필터 값 가져오기
     const search = $("#searchInput").val();
@@ -1157,6 +1157,16 @@ async function fetchProducts() {
     const page = Number($("#pagenum").val());
     const order = $("#sortSelect").val();
     const direction = $("#directionSelect").val();
+
+    $(".tableSort .sortDirectionBtn").text('');
+
+    var btnShape;
+    if (direction == 'ASC'){
+        btnShape = '▲';
+    } else if (direction == 'DESC') {
+        btnShape = '▼';
+    }
+    $(".tableSort[data-order='" + order + "'] .sortDirectionBtn").text(btnShape);
 
     const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&pageSize=${pageSize}&order=${order}&direction=${direction}`);
     const data = await response.json();
@@ -1214,6 +1224,7 @@ async function fetchProducts() {
             </tr>
         `;
         $prodTableBody.append(row);
+        console.log(product.prodName +":"+product.sumQuantity);
     });
 
     const totalRow = `
