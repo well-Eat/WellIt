@@ -820,10 +820,10 @@
 						<p><strong>추천 메뉴:</strong> ${stoRecommendedMenu}</p>
 						<p><strong>주차 정보:</strong> ${stoParkingInfo}</p>
 						<p><strong>채식 종류:</strong> ${stoVegetarianType}</p>
-						<small><strong>카테고리:</strong> ${stoCategory}</small>
-                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn btn-info">자세히보기</a>
-						<span class='mx-2 btn btn-warning' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
-						<span class='btn btn-success w-100' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}', event)">예약🗓️</span>
+						<small><strong>카테고리:</strong> ${stoCategory}</small><br />
+                        <a href="http://localhost:8080/load/place/${stoId}" class="my-2 btn hm-btn-green">자세히보기</a>
+						<span class='mx-2 btn hm-btn-green' onclick="addFavorite('${userId}', ${stoId})">찜👍</span>
+						<span class='btn hm-btn-green w-100' onclick="showReservationForm('${userId}', ${stoId}, '${stoOperatingHours}', event)">예약🗓️</span>
 						<div id="reservationForm_${stoId}" style="display: none;" onclick="event.stopPropagation();">
 						    <h5>예약 시간 선택</h5>
 							<div class="form-group">

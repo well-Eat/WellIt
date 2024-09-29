@@ -1,6 +1,9 @@
+body{
+	color:rgb(68, 68, 68)
+}
 header {
 	position: fixed;
-	background-color: #386641;
+	background-color: var( --main-color);
 }
 
 .content {
@@ -114,17 +117,16 @@ header {
 	z-index: 1;
 	top: 70%;
 	height: 20vh;
-	background-color: #F2E8CF;
 	border-radius: 45px;
 	display: block;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
 	/* 부드러운 그림자 */
 }
 
 .videoBox select {
 	width: 100%;
 	position: relative;
-	background-color: #F2E8CF;
+	background-color: white;
 	border: none;
 	margin-top: 10px;
 	font-weight: bold;
@@ -170,13 +172,15 @@ header {
 }
 
 .recommendButton {
-	background-color: #6a994e;
 	height: 60px;
 	line-height: 60px;
 	margin-left: -80px;
+	padding-right: 0;
+	padding-left: 0;
 }
 
 .recommendButton button {
+	height: 60px;
 	width: 100%;
 	font-size: 20px;
 	font-weight: bold;

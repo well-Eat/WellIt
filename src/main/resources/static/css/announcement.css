@@ -18,7 +18,7 @@ body {
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 nav header {
-	background-color: #386641;
+	background-color: var( --main-color);
 	position: relative;
 }
 
@@ -42,7 +42,7 @@ nav~.container {
 .pageTitle {
 	font-size: 5rem;
 	font-weight: bold;
-	color: #6a994e;
+	
 	/* 블루 색상 */
 }
 
@@ -59,7 +59,7 @@ textarea {
 	width: 60%;
 }
 .table-group-divider{
- color:#6a994e;
+ color:var( --sub-green);
 }
 
     table {
@@ -83,7 +83,7 @@ textarea {
     }
 
 .table-group-divider {
-	border-top: 2px solid #6a994e;
+	border-top: 2px solid var(--sub-green);
 	/* 상단 경계선 색깔을 초록색으로 지정 */
 }
 
@@ -97,7 +97,7 @@ textarea {
 .page-link {
 	text-decoration: none;
 	/* 기본 링크 스타일 제거 */
-	color: #a7c957;
+	color: var(--sub-light);
 	/* 링크 색상 */
 	font-weight: bold;
 	/* 글씨 두껍게 */
@@ -109,10 +109,10 @@ textarea {
 }
 .page-link.font-weight-bold {
     text-decoration: underline;
-	color: #6a994e;
+	color: var(--sub-green);
 }
 .page-link:hover {
-	color: #6a994e;
+	color: var(--sub-green);
 	/* 마우스 오버 시 배경색 변경 */
 	text-decoration: underline;
 	/* 마우스 오버 시 밑줄 추가 */	

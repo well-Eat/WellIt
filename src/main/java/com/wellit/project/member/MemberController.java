@@ -54,21 +54,29 @@ public class MemberController {
 	private final EmailService emailService;
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
-	private final OrderService orderService;
 
-	@GetMapping("/login")
-	public String getLogin(@RequestParam(value = "error", required = false) String error, Model model) {
-		if (error != null) {
-			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
-		}
-		return "/member/login";
-	}
+    private final OrderService orderService;
 
-	@GetMapping("/register")
-	public String register(MemberRegisterForm memberRegisterForm, @AuthenticationPrincipal UserDetails userDetails,
-			Model model) {
-		model.addAttribute("memberRegisterForm", new MemberRegisterForm());
-		if (userDetails != null) {
+    @GetMapping("/login")
+    public String getLogin(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+        return "/member/login";
+    }
+    
+    @GetMapping("/login_trial")
+    public String getLoginTrial(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+        return "/member/login_trial";
+    }
+    
+    @GetMapping("/register")
+	public String register(MemberRegisterForm memberRegisterForm, @AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("memberRegisterForm", new MemberRegisterForm());
+		if(userDetails != null) {
 			Member member = memberService.getMember(userDetails.getUsername());
 			model.addAttribute("profileImage", member.getImageFile());
 		}
