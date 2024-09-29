@@ -55,28 +55,29 @@ public class MemberController {
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
 
-    private final OrderService orderService;
+	private final OrderService orderService;
 
-    @GetMapping("/login")
-    public String getLogin(@RequestParam(value = "error", required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-        return "/member/login";
-    }
-    
-    @GetMapping("/login_trial")
-    public String getLoginTrial(@RequestParam(value = "error", required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-        return "/member/login_trial";
-    }
-    
-    @GetMapping("/register")
-	public String register(MemberRegisterForm memberRegisterForm, @AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("memberRegisterForm", new MemberRegisterForm());
-		if(userDetails != null) {
+	@GetMapping("/login")
+	public String getLogin(@RequestParam(value = "error", required = false) String error, Model model) {
+		if (error != null) {
+			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+		}
+		return "/member/login";
+	}
+
+	@GetMapping("/login_trial")
+	public String getLoginTrial(@RequestParam(value = "error", required = false) String error, Model model) {
+		if (error != null) {
+			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+		}
+		return "/member/login_trial";
+	}
+
+	@GetMapping("/register")
+	public String register(MemberRegisterForm memberRegisterForm, @AuthenticationPrincipal UserDetails userDetails,
+			Model model) {
+		model.addAttribute("memberRegisterForm", new MemberRegisterForm());
+		if (userDetails != null) {
 			Member member = memberService.getMember(userDetails.getUsername());
 			model.addAttribute("profileImage", member.getImageFile());
 		}
@@ -581,12 +582,12 @@ public class MemberController {
 		if (!model.containsAttribute("member")) {
 			return "redirect:/member/login";
 		}
-        return "/shop/mypage_favoriteProduct";
-    }
+		return "/shop/mypage_favoriteProduct";
+	}
 
-    @GetMapping("/mypage/favorite/store")
-    public String getFavoriteStore(Model model) {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	@GetMapping("/mypage/favorite/store")
+	public String getFavoriteStore(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			Object principal = authentication.getPrincipal();
 			// Principal이 String 타입으로 가정
@@ -610,10 +611,10 @@ public class MemberController {
 				}
 			}
 		}
-        return "/load/mypage_favoriteStore";
-    }
+		return "/load/mypage_favoriteStore";
+	}
 
-    @GetMapping("/mypage/favorite/recipe")
+	@GetMapping("/mypage/favorite/recipe")
     public String getFavoriteRecipe(Model model) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
@@ -638,32 +639,28 @@ public class MemberController {
 					model.addAttribute("formattedRegDate", formattedRegDate);
 				}
 			}
+		}
+		return "/life/mypage_favoriteRecipe";
+	}
 
+	@GetMapping("/mypage/orderhistory")
+	public String getOrderHistory(Model model) {
+		String memberId = memberService.getMemberId();
+		Member member = memberService.getMember(memberId);
+
+		// mypage : 주문 내역 확인
+		List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
+
+		model.addAttribute("poHistoryList", poHistoryList);
+		model.addAttribute("member", member);
+
+		return "/order/mypage_orderHistory";
+
+	}
 
 	@GetMapping("/mypage/memberinfo")
 	public String getMemberInfo(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		memberService.getPrincipal(authentication, model);
-
-    @GetMapping("/mypage/orderhistory")
-    public String getOrderHistory(Model model) {
-        String memberId = memberService.getMemberId();
-        Member member = memberService.getMember(memberId);
-
-
-        // mypage : 주문 내역 확인
-        List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
-
-        model.addAttribute("poHistoryList", poHistoryList);
-        model.addAttribute("member", member);
-
-        return "/order/mypage_orderHistory";
-
-    }
-
-    @GetMapping("/mypage/memberinfo")
-    public String getMemberInfo(Model model) {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			Object principal = authentication.getPrincipal();
 			// Principal이 String 타입으로 가정
@@ -686,11 +683,11 @@ public class MemberController {
 					model.addAttribute("formattedRegDate", formattedRegDate);
 				}
 			}
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
+			// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+			if (!model.containsAttribute("member")) {
+				return "redirect:/member/login";
+			}
 		}
-
 		return "/member/memberinfo";
 	}
 
@@ -731,7 +728,7 @@ public class MemberController {
 		}
 		return "/manager/mypage_storeForm";
 	}
-	
+
 	@GetMapping("/admin/memberList")
 	public String getMemberList(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -741,110 +738,93 @@ public class MemberController {
 		if (!model.containsAttribute("member")) {
 			return "redirect:/member/login";
 		}
-		
-		List<Member> members = memberService.findAllMembers();
-        model.addAttribute("members", members);
 
-        // 회원가입 일자 기준으로 정렬
-        members.sort(Comparator.comparing(Member::getMemberRegDate));
-		
+		List<Member> members = memberService.findAllMembers();
+		model.addAttribute("members", members);
+
+		// 회원가입 일자 기준으로 정렬
+		members.sort(Comparator.comparing(Member::getMemberRegDate));
+
 		return "/manager/memberList";
 	}
-	
+
 	@DeleteMapping("/admin/memberDelete/{memberId}")
 	public ResponseEntity<Void> deleteMember(@PathVariable("memberId") String memberId) {
 		try {
-	        if (memberService.getMember(memberId) != null) {
-	            memberService.deleteMember(memberId);
-	            return ResponseEntity.noContent().build(); // 성공적으로 삭제됨
-	        } else {
-	            return ResponseEntity.notFound().build(); // 회원을 찾을 수 없음
-	        }
-	    } catch (Exception e) {
-	        // 삭제 중 발생한 오류를 로그로 남김
-	        System.err.println("삭제 중 오류 발생: " + e.getMessage());
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 내부 서버 오류 응답
-	    }
+			if (memberService.getMember(memberId) != null) {
+				memberService.deleteMember(memberId);
+				return ResponseEntity.noContent().build(); // 성공적으로 삭제됨
+			} else {
+				return ResponseEntity.notFound().build(); // 회원을 찾을 수 없음
+			}
+		} catch (Exception e) {
+			// 삭제 중 발생한 오류를 로그로 남김
+			System.err.println("삭제 중 오류 발생: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 내부 서버 오류 응답
+		}
 	}
-	
+
 	// GET: 관리자의 회원 수정 페이지 로드
 	@GetMapping("/admin/member/{memberId}/update_profile")
 	public String getAdminUpdateProfile(@PathVariable("memberId") String memberId, Model model) {
-		 
+
 		// 회원 ID로 회원 정보 조회
-	    Member member = memberService.getMember(memberId);
-	    
-	    // 회원이 존재하지 않는 경우 예외 처리
-	    if (member == null) {
-	        throw new IllegalArgumentException("해당 회원이 존재하지 않습니다. ID: " + memberId);
-	    }
-	    
-	    // 회원의 memberType이 'KAKAO'라면 update_kakao 페이지로 이동
-	    if ("KAKAO".equals(member.getMemberType())) {
-	        return "member/update_kakao";
-	    }
-	    
-	    // 그 외의 경우 일반 회원 수정 페이지로 이동
-	    return "member/update_profile";
+		Member member = memberService.getMember(memberId);
+
+		// 회원이 존재하지 않는 경우 예외 처리
+		if (member == null) {
+			throw new IllegalArgumentException("해당 회원이 존재하지 않습니다. ID: " + memberId);
+		}
+
+		// 회원의 memberType이 'KAKAO'라면 update_kakao 페이지로 이동
+		if ("KAKAO".equals(member.getMemberType())) {
+			return "member/update_kakao";
+		}
+
+		// 그 외의 경우 일반 회원 수정 페이지로 이동
+		return "member/update_profile";
 	}
 
 	// POST: 관리자의 회원 정보 수정 처리
 	@PostMapping("/admin/member/{id}/update_profile")
-	public String adminUpdateProfile(
-	    @PathVariable("id") String memberId, 
-	    @Valid MemberUpdateForm memberUpdateForm, 
-	    BindingResult bindingResult, 
-	    @RequestParam("imageFile") MultipartFile imageFile, 
-	    HttpSession session, 
-	    Model model, 
-	    RedirectAttributes redirectAttributes) {
-	    
-	    if (bindingResult.hasErrors()) {
-	        // 유효성 검사 실패 시 에러 메시지 처리
-	        model.addAttribute("errorMessage", "유효성 검사에 실패했습니다.");
-	        return "/admin/member/update_profile"; // 다시 수정 페이지로 돌아감
-	    }
+	public String adminUpdateProfile(@PathVariable("id") String memberId, @Valid MemberUpdateForm memberUpdateForm,
+			BindingResult bindingResult, @RequestParam("imageFile") MultipartFile imageFile, HttpSession session,
+			Model model, RedirectAttributes redirectAttributes) {
 
-	    Member existingMember = memberService.getMember(memberId);
-	    if (existingMember == null) {
-	        return "redirect:/admin/member/list"; // 회원이 없으면 목록 페이지로 리다이렉트
-	    }
+		if (bindingResult.hasErrors()) {
+			// 유효성 검사 실패 시 에러 메시지 처리
+			model.addAttribute("errorMessage", "유효성 검사에 실패했습니다.");
+			return "/admin/member/update_profile"; // 다시 수정 페이지로 돌아감
+		}
 
-	    // 관리자 수정 로직 (기존과 유사)
-	    try {
-	        // 기존 이미지 경로를 폼에서 가져와서 전달
-	        String existingImagePath = existingMember.getImageFile();
+		Member existingMember = memberService.getMember(memberId);
+		if (existingMember == null) {
+			return "redirect:/admin/member/list"; // 회원이 없으면 목록 페이지로 리다이렉트
+		}
 
-	        // 회원 정보 업데이트 (필요한 서비스 메소드 호출)
-	        memberService.updateMember(
-	            existingMember, 
-	            memberUpdateForm.getMemberPassword(),
-	            memberUpdateForm.getMemberName(),
-	            memberUpdateForm.getMemberAlias(),
-	            memberUpdateForm.getMemberEmail(),
-	            memberUpdateForm.getMemberPhone(),
-	            memberUpdateForm.getMemberAddress(),
-	            memberUpdateForm.getMemberBirth(),
-	            memberUpdateForm.getMemberGender(),
-	            memberUpdateForm.getMemberVeganType(),
-	            memberUpdateForm.getZipcode(),
-	            memberUpdateForm.getRoadAddress(),
-	            memberUpdateForm.getAddressDetail(),
-	            memberUpdateForm.getBirth_year(),
-	            memberUpdateForm.getBirth_month(),
-	            memberUpdateForm.getBirth_day(),
-	            imageFile,
-	            existingImagePath
-	        );
+		// 관리자 수정 로직 (기존과 유사)
+		try {
+			// 기존 이미지 경로를 폼에서 가져와서 전달
+			String existingImagePath = existingMember.getImageFile();
 
-	        redirectAttributes.addFlashAttribute("updateMessage", "회원 정보가 성공적으로 수정되었습니다.");
-	    } catch (Exception e) {
-	        // 예외 처리
-	        e.printStackTrace();
-	        model.addAttribute("errorMessage", "회원 정보 수정 중 오류가 발생했습니다.");
-	        return "/admin/member/update_profile";
-	    }
+			// 회원 정보 업데이트 (필요한 서비스 메소드 호출)
+			memberService.updateMember(existingMember, memberUpdateForm.getMemberPassword(),
+					memberUpdateForm.getMemberName(), memberUpdateForm.getMemberAlias(),
+					memberUpdateForm.getMemberEmail(), memberUpdateForm.getMemberPhone(),
+					memberUpdateForm.getMemberAddress(), memberUpdateForm.getMemberBirth(),
+					memberUpdateForm.getMemberGender(), memberUpdateForm.getMemberVeganType(),
+					memberUpdateForm.getZipcode(), memberUpdateForm.getRoadAddress(),
+					memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
+					memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(), imageFile, existingImagePath);
 
-	    return "redirect:/admin/member/list"; // 수정 후 회원 목록 페이지로 리다이렉트
+			redirectAttributes.addFlashAttribute("updateMessage", "회원 정보가 성공적으로 수정되었습니다.");
+		} catch (Exception e) {
+			// 예외 처리
+			e.printStackTrace();
+			model.addAttribute("errorMessage", "회원 정보 수정 중 오류가 발생했습니다.");
+			return "/admin/member/update_profile";
+		}
+
+		return "redirect:/admin/member/list"; // 수정 후 회원 목록 페이지로 리다이렉트
 	}
 }
