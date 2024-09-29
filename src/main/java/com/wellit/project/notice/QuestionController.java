@@ -134,6 +134,7 @@ public class QuestionController {
 		} else {
 			// UserId가 없는 경우 처리 (예: 에러 메시지 추가)
 			model.addAttribute("errorMessage", "사용자 인증 정보가 없습니다.");
+			return "/member/login";
 		}
 
 		return "notice/qnaQuestion";

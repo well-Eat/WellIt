@@ -14,7 +14,7 @@
 					<div class="container">
 						<!-- 아이디 -->
 						<div class="row justify-content-center">
-							<div class="col-3">
+							<div class="col-5">
 								<img th:src="@{${member.imageFile}}" alt="프로필 이미지" class="rounded-circle mx-auto"
 									width="200px" height="200px">
 							</div>
@@ -24,16 +24,17 @@
 						<!-- 이름 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="name" class="form-label">이름</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberName" class="form-control" name="name"
-									th:value="${member.getMemberName}" th:field="*{memberName}">
+									th:value="${member.getMemberName}" th:field="*{memberName}"
+									placeholder="숫자 / 특수문자 불가, 최대 10자">
 							</div>
 						</div>
 						<div class="row mt-3 justify-content-start">
 							<label for="member_alias" class="form-label">닉네임</label>
-							<div class="col-5">
+							<div class="col-6">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
-									name="memberAlias" th:value="${member.getMemberAlias}">
+									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
 							</div>
 						</div>
 						<!-- 전화번호 -->
@@ -71,24 +72,41 @@
 						<!-- 생일 -->
 						<div class="row mt-3">
 							<label for="birth" class="form-label">생년월일(선택)</label>
+
+							<!-- 년도 선택 -->
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_year"
-									th:field="*{birth_year}">
-									<option value="" th:text="${member.getBirth_year}" selected></option>
+									name="birth_year" th:field="*{birth_year}">
+									<option th:if="${member.birth_year != null}" th:value="${member.birth_year}"
+										th:text="${member.birth_year}" selected></option>
+									<option th:if="${member.birth_year == null}" value="" selected>년</option>
+									<!-- Add actual year options here -->
 								</select>
 							</div>
+
+							<!-- 월 선택 -->
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_month"
-									th:field="*{birth_month}">
-									<option value="" th:text="${member.getBirth_month}" selected></option>
+									name="birth_month" th:field="*{birth_month}">
+									<option th:if="${member.birth_month != null}" th:value="${member.birth_month}"
+										th:text="${member.birth_month}" selected></option>
+									<option th:if="${member.birth_month == null}" value="" selected>월</option>
+									<!-- Add actual month options here -->
 								</select>
 							</div>
+
+							<!-- 일 선택 -->
 							<div class="col-4">
 								<select class="form-select" aria-label="Default select example" id="birth_day"
-									th:field="*{birth_day}">
-									<option value="" th:text="${member.getBirth_day}" selected></option>
+									name="birth_day" th:field="*{birth_day}">
+									<option th:if="${member.birth_day != null}" th:value="${member.birth_day}"
+										th:text="${member.birth_day}" selected></option>
+									<option th:if="${member.birth_day == null}" value="" selected>일</option>
+									<!-- Add actual day options here -->
 								</select>
 							</div>
+
+							<!-- Hidden field to store full date -->
 							<input type="hidden" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
 						</div>
 						<!-- 성별 -->
@@ -139,7 +157,8 @@
 					</div>
 					<div class="row mt-5">
 						<button type="submit" class="btn btn-block greenBtn">수정</button>
-						<button type="button" class="btn btn-block btn-danger my-2" onclick="deleteMember()">삭제</button>
+						<button type="button" class="btn btn-block btn-danger my-2"
+							onclick="deleteMember()">회원탈퇴</button>
 					</div>
 				</form>
 			</div>
@@ -315,83 +334,91 @@
 			event.preventDefault(); // 기본 폼 제출 동작 방지
 			let isValid = true; // 유효성 검사가 통과했는지 여부를 확인하는 변수
 
-
 			// 아이디 유효성 검사
 			const idInput = document.getElementById('memberId');
 			const memberId = idInput.value;
-			if (!memberId) {
-				alert("아이디를 입력해주세요.")
-				idInput.focus();
-				isValid = false;
-			}
-			if (memberId.length < 4 || memberId.length > 12) {
-				alert("아이디는 4자에서 12자 이내여야 합니다.");
-				idInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z0-9]*$/.test(memberId)) {
-				alert("아이디는 영문과 숫자만 가능합니다.");
-				idInput.focus();
-				isValid = false;
-			}
 
 			// 이름 유효성 검사
 			const nameInput = document.getElementById('memberName');
 			const memberName = nameInput.value;
-			if (!memberName) {
-				alert("이름을 입력해주세요.");
-				nameInput.focus();
-				isValid = false;
-			}
-			if (memberName.length > 10) {
-				alert("이름은 최대 10자 이내여야 합니다.");
-				nameInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z가-힣]*$/.test(memberName)) {
-				alert("이름은 특수기호 없이 입력해주세요.");
-				nameInput.focus();
-				isValid = false;
-			}
 
 			// 닉네임 유효성 검사
 			const aliasInput = document.getElementById('memberAlias');
 			const memberAlias = aliasInput.value;
-			if (!memberAlias) {
-				alert("닉네임을 입력해주세요.");
-				aliasInput.focus();
-				isValid = false;
-			}
-			if (memberAlias.length > 10) {
-				alert("닉네임은 최대 10자 이내여야 합니다.");
-				aliasInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
-				alert("닉네임은 특수기호 없이 입력해주세요.");
-				aliasInput.focus();
-				isValid = false;
-			}
 
 			// 전화번호 유효성 검사
 			const phoneInput = document.getElementById('memberPhone');
-			const memberPhone = phoneInput.value;
-			if (!memberPhone) {
-				alert("전화번호를 입력해주세요.");
-				phoneInput.focus();
-				isValid = false;
-			}
-			if (!/^[0-9]{10,11}$/.test(memberPhone)) {
-				alert("전화번호는 숫자만 가능합니다.");
-				phoneInput.focus();
-				isValid = false;
-			}
+			const memberPhone = document.getElementById('memberPhone').value;
 
 			// 주소 유효성 검사
 			const addressInput = document.getElementById('sample4_postcode');
 			const postAddress = addressInput.value;
 			const roadAddress = document.getElementById('sample4_roadAddress').value;
 			const detailAddress = document.getElementById('sample4_detailAddress').value;
+
+			if (!memberId) {
+				alert("아이디를 입력해주세요.")
+				idInput.focus();
+				isValid = false;
+			}
+			else if (memberId.length < 4 || memberId.length > 12) {
+				alert("아이디는 4자에서 12자 이내여야 합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z0-9]*$/.test(memberId)) {
+				alert("아이디는 영문과 숫자만 가능합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberName) {
+				alert("이름을 입력해주세요.");
+				nameInput.focus();
+				isValid = false;
+			}
+			else if (memberName.length > 10) {
+				alert("이름은 최대 10자 이내여야 합니다.");
+				nameInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z가-힣]*$/.test(memberName)) {
+				alert("이름은 특수기호 없이 입력해주세요.");
+				nameInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberAlias) {
+				alert("닉네임을 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (memberAlias.length > 10) {
+				alert("닉네임은 최대 10자 이내여야 합니다.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
+				alert("닉네임은 특수기호 없이 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberPhone) {
+				alert("전화번호를 입력해주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+			else if (!/^[0-9]{10,11}$/.test(memberPhone) && memberPhone) {
+				alert("유효한 전화번호를 입력해 주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+
+
 			if (!roadAddress || !detailAddress || !postAddress) {
 				alert("주소를 입력해주세요.");
 				addressInput.focus();
@@ -400,6 +427,7 @@
 
 			// 유효성 검사에 통과한 경우 폼 제출
 			if (isValid) {
+				alert("회원 수정이 완료되었습니다. 다시 로그인해 주세요.")
 				this.submit(); // 폼 제출
 			}
 		});
