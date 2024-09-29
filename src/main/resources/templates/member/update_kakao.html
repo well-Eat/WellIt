@@ -157,7 +157,8 @@
 					</div>
 					<div class="row mt-5">
 						<button type="submit" class="btn btn-block greenBtn">수정</button>
-						<button type="button" class="btn btn-block btn-danger my-2" onclick="deleteMember()">회원탈퇴</button>
+						<button type="button" class="btn btn-block btn-danger my-2"
+							onclick="deleteMember()">회원탈퇴</button>
 					</div>
 				</form>
 			</div>
@@ -333,83 +334,91 @@
 			event.preventDefault(); // 기본 폼 제출 동작 방지
 			let isValid = true; // 유효성 검사가 통과했는지 여부를 확인하는 변수
 
-
 			// 아이디 유효성 검사
 			const idInput = document.getElementById('memberId');
 			const memberId = idInput.value;
-			if (!memberId) {
-				alert("아이디를 입력해주세요.")
-				idInput.focus();
-				isValid = false;
-			}
-			if (memberId.length < 4 || memberId.length > 12) {
-				alert("아이디는 4자에서 12자 이내여야 합니다.");
-				idInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z0-9]*$/.test(memberId)) {
-				alert("아이디는 영문과 숫자만 가능합니다.");
-				idInput.focus();
-				isValid = false;
-			}
 
 			// 이름 유효성 검사
 			const nameInput = document.getElementById('memberName');
 			const memberName = nameInput.value;
-			if (!memberName) {
-				alert("이름을 입력해주세요.");
-				nameInput.focus();
-				isValid = false;
-			}
-			if (memberName.length > 10) {
-				alert("이름은 최대 10자 이내여야 합니다.");
-				nameInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z가-힣]*$/.test(memberName)) {
-				alert("이름은 특수기호 없이 입력해주세요.");
-				nameInput.focus();
-				isValid = false;
-			}
 
 			// 닉네임 유효성 검사
 			const aliasInput = document.getElementById('memberAlias');
 			const memberAlias = aliasInput.value;
-			if (!memberAlias) {
-				alert("닉네임을 입력해주세요.");
-				aliasInput.focus();
-				isValid = false;
-			}
-			if (memberAlias.length > 10) {
-				alert("닉네임은 최대 10자 이내여야 합니다.");
-				aliasInput.focus();
-				isValid = false;
-			}
-			if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
-				alert("닉네임은 특수기호 없이 입력해주세요.");
-				aliasInput.focus();
-				isValid = false;
-			}
 
 			// 전화번호 유효성 검사
 			const phoneInput = document.getElementById('memberPhone');
 			const memberPhone = document.getElementById('memberPhone').value;
-			if (!memberPhone) {
-				alert("전화번호를 입력해주세요.");
-				phoneInput.focus();
-				isValid = false;
-			}
-			if (!/^[0-9]{10,11}$/.test(memberPhone) && memberPhone) {
-				alert("유효한 전화번호를 입력해 주세요.");
-				phoneInput.focus();
-				isValid = false;
-			}
 
 			// 주소 유효성 검사
 			const addressInput = document.getElementById('sample4_postcode');
 			const postAddress = addressInput.value;
 			const roadAddress = document.getElementById('sample4_roadAddress').value;
 			const detailAddress = document.getElementById('sample4_detailAddress').value;
+
+			if (!memberId) {
+				alert("아이디를 입력해주세요.")
+				idInput.focus();
+				isValid = false;
+			}
+			else if (memberId.length < 4 || memberId.length > 12) {
+				alert("아이디는 4자에서 12자 이내여야 합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z0-9]*$/.test(memberId)) {
+				alert("아이디는 영문과 숫자만 가능합니다.");
+				idInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberName) {
+				alert("이름을 입력해주세요.");
+				nameInput.focus();
+				isValid = false;
+			}
+			else if (memberName.length > 10) {
+				alert("이름은 최대 10자 이내여야 합니다.");
+				nameInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z가-힣]*$/.test(memberName)) {
+				alert("이름은 특수기호 없이 입력해주세요.");
+				nameInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberAlias) {
+				alert("닉네임을 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (memberAlias.length > 10) {
+				alert("닉네임은 최대 10자 이내여야 합니다.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
+				alert("닉네임은 특수기호 없이 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+
+
+			else if (!memberPhone) {
+				alert("전화번호를 입력해주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+			else if (!/^[0-9]{10,11}$/.test(memberPhone) && memberPhone) {
+				alert("유효한 전화번호를 입력해 주세요.");
+				phoneInput.focus();
+				isValid = false;
+			}
+
+
 			if (!roadAddress || !detailAddress || !postAddress) {
 				alert("주소를 입력해주세요.");
 				addressInput.focus();
@@ -418,6 +427,7 @@
 
 			// 유효성 검사에 통과한 경우 폼 제출
 			if (isValid) {
+				alert("회원 수정이 완료되었습니다. 다시 로그인해 주세요.")
 				this.submit(); // 폼 제출
 			}
 		});

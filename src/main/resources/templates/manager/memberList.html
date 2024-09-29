@@ -1,0 +1,75 @@
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
+
+	<link rel="stylesheet" href="/css/member.css" />
+	<!--order style link-->
+	<link rel="stylesheet" href="/css/order.css" />
+	<link rel="stylesheet" href="/css/util.css" />
+
+	<div class="container mt-5">
+		<table class="table table-hover">
+			<thead class="table-dark">
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">이름</th>
+					<th scope="col">닉네임</th>
+					<th class="text-center" scope="col">가입일자</th>
+					<th scope="col">사업자여부</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="table-group-divider">
+				<!-- 회원 데이터 반복 출력 -->
+				<tr th:each="member : ${members}">
+					<th scope="row" th:text="${member.memberId}"></th>
+					<td th:text="${member.memberName}"></td>
+					<td th:text="${member.memberAlias}"></td>
+					<td class="text-center"
+						th:text="${#temporals.format(member.memberRegDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+					<td th:text="${member.isBusiness}"></td>
+					<td>
+						<button class="btn btn-primary" th:data-id="${member.memberId}" th:onclick="updateProfile(this.getAttribute('data-id'))">수정</button>
+						<button class="btn btn-danger" th:data-id="${member.memberId}" th:onclick="deleteMember(this.getAttribute('data-id'))">삭제</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	
+
+	<script>
+	    function deleteMember(memberId) {
+			alert(memberId)
+	        if (confirm('정말로 삭제하시겠습니까?')) {
+	            fetch(`/member/admin/memberDelete/${memberId}`, {
+	                method: 'DELETE',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                    // 필요 시 CSRF 토큰을 여기에 포함시킬 수 있습니다.
+	                }
+	            })
+	            .then(response => {
+	                if (response.ok) {
+						alert("회원이 성공적으로 삭제되었습니다.")
+	                    window.location.reload(); // 삭제 후 페이지 새로 고침
+	                } else if (response.status === 404) {
+	                    alert('회원이 존재하지 않습니다.');
+	                } else {
+	                    alert('삭제에 실패했습니다.');
+	                }
+	            })
+	            .catch(error => {
+	                console.error('삭제 중 오류 발생:', error);
+	                alert('삭제 중 오류가 발생했습니다.');
+	            });
+	        }
+	    }
+		
+		function goToEditPage(memberId) {
+		    window.location.href = `/member/admin/edit/${memberId}`;
+		}
+	</script>
+</div>
+
+</html>
