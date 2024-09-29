@@ -21,7 +21,7 @@ ol li {
 	border: 1px solid var( --sub-box);
 	color: var(--sub-box);
 	background-color: white;
-	
+
 }
 .hm-btn-border-green:hover{
 	background-color: var( --sub-box);
@@ -277,7 +277,7 @@ ul.small-main .small-bold {
 }
 
 .green-navbar {
-	background-color: var(--main-color) !important; 
+	background-color: var(--main-color) !important;
 }
 
 /*.black-icons {
