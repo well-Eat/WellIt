@@ -1,6 +1,7 @@
 package com.wellit.project.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,4 +16,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/imgs/shop/review/**")
                 .addResourceLocations("file:C:/uploads/");
     }
+    
 }

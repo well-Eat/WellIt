@@ -1,17 +1,17 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	<link rel="stylesheet" href="/css/member.css" />
-	<section id="findId" class="position-relative h-100">
-		<div class="row">
-			<div class="col-6 border border-secondary">
-				<div class="row text-center">
+	<section id="findId" class="position-relative">
+		<div class="row my-3">
+			<div class="col-12 col-lg-6 border rounded formStyle align-items-center my-5">
+				<div class="row text-center my-5">
 					<h1>아이디 찾기</h1>
 					<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
 					</div>
 				</div>
 				<div class="container">
 					<div class="row">
-						<form th:action="@{/member/findId}" method="post">
+						<form th:action="@{/member/findId}" method="post" class="my-5">
 							<div class="row mb-3 justify-content-start">
 								<div class="col-4">
 									<label for="memberName" class="form-label">이름</label>
@@ -27,16 +27,16 @@
 									<button type="button" class="btn btn-secondary" onclick="checkIdEmail()">이메일
 										인증</button>
 								</div>
-								<div class="col-7 mt-1">
+								<div class="col-3 mt-2">
 									<input type="text" id="verificationCode" class="form-control"
-										placeholder="이메일로 받은 인증번호">
+										placeholder="인증번호">
 								</div>
-								<div class="col-4 mt-1">
+								<div class="col-4 mt-2">
 									<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호
 										확인</button>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary" onclick="checkInputs()">확인</button>
+							<button type="submit" class="btn greenBtn float-end" onclick="checkInputs()">확인</button>
 						</form>
 					</div>
 				</div>
