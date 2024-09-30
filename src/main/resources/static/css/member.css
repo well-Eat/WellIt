@@ -98,6 +98,10 @@ header {
 	flex: 1 1 45%;
 }
 
+.listTable{
+	max-width: 100%;
+	max-height: 500px;
+	overflow-y: auto;
 
 
 

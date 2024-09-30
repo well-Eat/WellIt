@@ -6,7 +6,21 @@
 	<link rel="stylesheet" href="/css/order.css" />
 	<link rel="stylesheet" href="/css/util.css" />
 
+	<div th:if="${updateMessage}" th:text="${updateMessage}" id="updateMessage" style="display:none;">
+	</div>
+
+	<!--페이지 제목-->
+	<div class="row my-5">
+		<div class="pageTitle col text-center">
+			회원 리스트
+		</div>
+	</div>
+
 	<div class="container mt-5">
+		<div class="mb-3 col-4 col-md-2">
+			<input type="text" id="searchInput" class="form-control" placeholder="회원 검색..." onkeyup="filterMembers()">
+		</div>
+		<div class="listTable">
 		<table class="table table-hover">
 			<thead class="table-dark">
 				<tr>
@@ -18,7 +32,7 @@
 					<th scope="col"></th>
 				</tr>
 			</thead>
-			<tbody class="table-group-divider">
+			<tbody id="memberTableBody" class="table-group-divider">
 				<!-- 회원 데이터 반복 출력 -->
 				<tr th:each="member : ${members}">
 					<th scope="row" th:text="${member.memberId}"></th>
@@ -28,47 +42,115 @@
 						th:text="${#temporals.format(member.memberRegDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
 					<td th:text="${member.isBusiness}"></td>
 					<td>
+
 						<button class="btn hm-btn-green" th:data-id="${member.memberId}" th:onclick="updateProfile(this.getAttribute('data-id'))">수정</button>
 						<button class="btn btn-danger" th:data-id="${member.memberId}" th:onclick="deleteMember(this.getAttribute('data-id'))">삭제</button>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+		</div>
 	</div>
 
-	
+
 
 	<script>
-	    function deleteMember(memberId) {
+		function deleteMember(memberId) {
 			alert(memberId)
-	        if (confirm('정말로 삭제하시겠습니까?')) {
-	            fetch(`/member/admin/memberDelete/${memberId}`, {
-	                method: 'DELETE',
-	                headers: {
-	                    'Content-Type': 'application/json'
-	                    // 필요 시 CSRF 토큰을 여기에 포함시킬 수 있습니다.
-	                }
-	            })
-	            .then(response => {
-	                if (response.ok) {
-						alert("회원이 성공적으로 삭제되었습니다.")
-	                    window.location.reload(); // 삭제 후 페이지 새로 고침
-	                } else if (response.status === 404) {
-	                    alert('회원이 존재하지 않습니다.');
-	                } else {
-	                    alert('삭제에 실패했습니다.');
-	                }
-	            })
-	            .catch(error => {
-	                console.error('삭제 중 오류 발생:', error);
-	                alert('삭제 중 오류가 발생했습니다.');
-	            });
-	        }
-	    }
-		
-		function goToEditPage(memberId) {
-		    window.location.href = `/member/admin/edit/${memberId}`;
+			if (confirm('정말로 삭제하시겠습니까?')) {
+				fetch(`/member/admin/memberDelete/${memberId}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json'
+						// 필요 시 CSRF 토큰을 여기에 포함시킬 수 있습니다.
+					}
+				})
+					.then(response => {
+						if (response.ok) {
+							alert("회원이 성공적으로 삭제되었습니다.")
+							window.location.reload(); // 삭제 후 페이지 새로 고침
+						} else if (response.status === 404) {
+							alert('회원이 존재하지 않습니다.');
+						} else {
+							alert('삭제에 실패했습니다.');
+						}
+					})
+					.catch(error => {
+						console.error('삭제 중 오류 발생:', error);
+						alert('삭제 중 오류가 발생했습니다.');
+					});
+			}
 		}
+
+		function updateProfile(memberId) {
+			window.location.href = `/member/admin/edit/${memberId}`;
+		}
+
+		var updateMessage = document.getElementById("updateMessage");
+		// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+		if (updateMessage && updateMessage.innerText.trim() !== "") {
+			alert(updateMessage.innerText);
+		}
+
+		function filterMembers() {
+		    const input = document.getElementById("searchInput");
+		    const filter = input.value.toLowerCase();
+		    const table = document.getElementById("memberTableBody");
+		    const rows = table.getElementsByTagName("tr");
+
+		    // 입력란이 비어있으면 모든 행을 표시
+		    if (filter === "") {
+		        for (let i = 0; i < rows.length; i++) {
+		            rows[i].style.display = ""; // 모든 행 표시
+		        }
+		        return; // 빈 검색어 처리 후 함수 종료
+		    }
+
+		    // 각 행을 순회하며 필터링
+		    for (let i = 0; i < rows.length; i++) {
+		        const cells = rows[i].getElementsByTagName("td");
+		        const headerCells = rows[i].getElementsByTagName("th"); // 추가: th 태그를 검색에 포함
+
+		        let found = false;
+
+		        // 각 셀에서 검색어가 포함되어 있는지 확인 (td와 th 모두 검사)
+		        for (let j = 0; j < cells.length; j++) {
+		            if (cells[j]) {
+		                const txtValue = cells[j].textContent || cells[j].innerText;
+		                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+		                    found = true;
+		                    break;
+		                }
+		            }
+		        }
+
+		        // 추가: th 태그도 검색하도록 수정
+		        for (let j = 0; j < headerCells.length; j++) {
+		            if (headerCells[j]) {
+		                const txtValue = headerCells[j].textContent || headerCells[j].innerText;
+		                // 숫자 비교 처리 추가
+		                if (!isNaN(filter)) {
+		                    if (!isNaN(txtValue) && parseFloat(txtValue) === parseFloat(filter)) {
+		                        found = true;
+		                        break;
+		                    }
+		                } else {
+		                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+		                        found = true;
+		                        break;
+		                    }
+		                }
+		            }
+		        }
+
+		        // 행 표시 여부 결정
+		        rows[i].style.display = found ? "" : "none";
+		    }
+		}
+
+
+
+
 	</script>
 </div>
 

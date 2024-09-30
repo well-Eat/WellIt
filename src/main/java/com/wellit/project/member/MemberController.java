@@ -260,7 +260,14 @@ public class MemberController {
 
 		// 서비스 메소드 호출
 		memberService.getPrincipal(authentication, model);
-
+		
+		 Member member = (Member) model.getAttribute("member");
+		    if (member != null) {
+		        System.out.println("마일리지 in updateProfile: " + member.getMileage());
+		    } else {
+		        System.out.println("Model에 member가 없습니다.");
+		    }
+		
 		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
 		if (!model.containsAttribute("member")) {
 			return "redirect:/member/login";
@@ -301,8 +308,7 @@ public class MemberController {
 			String memberId = userDetails.getUsername();
 
 			Member existingMember = memberService.getMember(memberId);
-			model.addAttribute("member", memberUpdateForm); // 여기에 추가
-			// 비밀번호 일치 여부 확인
+			model.addAttribute("member", memberUpdateForm);
 
 			// 비밀번호 검사: 비밀번호가 입력된 경우에만 유효성 검사 진행
 			String newPassword = existingMember.getMemberPassword(); // 기존 비밀번호 유지
@@ -352,6 +358,7 @@ public class MemberController {
 			try {
 				// 기존 이미지 경로를 폼에서 가져와서 전달
 				String existingImagePath = existingMember.getImageFile();
+				 int mileage = existingMember.getMileage();
 
 				memberService.updateMember(existingMember, memberUpdateForm.getMemberPassword(),
 						memberUpdateForm.getMemberName(), memberUpdateForm.getMemberAlias(),
@@ -361,7 +368,8 @@ public class MemberController {
 						memberUpdateForm.getZipcode(), memberUpdateForm.getRoadAddress(),
 						memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
 						memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(), imageFile,
-						existingImagePath);
+						existingImagePath, mileage);
+				
 
 				session.removeAttribute("emailVerified");
 				session.removeAttribute("verificationCode");
@@ -752,7 +760,8 @@ public class MemberController {
 		}
 
 		List<Member> members = memberService.findAllMembers();
-		model.addAttribute("members", members);
+		model.addAttribute("members", members);		
+
 
 		// 회원가입 일자 기준으로 정렬
 		members.sort(Comparator.comparing(Member::getMemberRegDate));
@@ -777,7 +786,7 @@ public class MemberController {
 	}
 
 	// GET: 관리자의 회원 수정 페이지 로드
-	@GetMapping("/admin/member/{memberId}/update_profile")
+	@GetMapping("/admin/edit/{memberId}")
 	public String getAdminUpdateProfile(@PathVariable("memberId") String memberId, Model model) {
 
 		// 회원 ID로 회원 정보 조회
@@ -788,55 +797,189 @@ public class MemberController {
 			throw new IllegalArgumentException("해당 회원이 존재하지 않습니다. ID: " + memberId);
 		}
 
-		// 회원의 memberType이 'KAKAO'라면 update_kakao 페이지로 이동
+		// 회원의 타입이 KAKAO인 경우 KAKAO 수정 페이지로 리다이렉트
 		if ("KAKAO".equals(member.getMemberType())) {
-			return "member/update_kakao";
+			// KAKAO 회원 수정 시 필요한 데이터 추가
+			KakaoUpdateForm kakaoUpdateForm = new KakaoUpdateForm();
+			kakaoUpdateForm.setMemberId(member.getMemberId());
+			kakaoUpdateForm.setMemberName(member.getMemberName());
+			kakaoUpdateForm.setMemberAlias(member.getMemberAlias());
+			kakaoUpdateForm.setMemberEmail(member.getMemberEmail());
+			kakaoUpdateForm.setMemberPhone(member.getMemberPhone());
+			kakaoUpdateForm.setMemberAddress(member.getMemberAddress());
+			kakaoUpdateForm.setMemberBirth(member.getMemberBirth());
+			kakaoUpdateForm.setMemberGender(member.getMemberGender());
+			kakaoUpdateForm.setMemberVeganType(member.getMemberVeganType());
+			kakaoUpdateForm.setMileage(member.getMileage());
+
+			// 수정 페이지에서 사용할 모델에 회원 정보를 추가
+			model.addAttribute("member", member);
+			model.addAttribute("kakaoUpdateForm", kakaoUpdateForm);
+
+			// KAKAO 회원 수정 페이지로 리다이렉트
+			return "manager/admin_update_kakao"; // KAKAO 수정 페이지 경로
 		}
 
-		// 그 외의 경우 일반 회원 수정 페이지로 이동
-		return "member/update_profile";
+		// 수정할 회원 정보를 담은 폼 객체 생성 및 초기화
+		MemberUpdateForm memberUpdateForm = new MemberUpdateForm();
+		memberUpdateForm.setMemberId(member.getMemberId());
+		memberUpdateForm.setMemberName(member.getMemberName());
+		memberUpdateForm.setMemberAlias(member.getMemberAlias());
+		memberUpdateForm.setMemberEmail(member.getMemberEmail());
+		memberUpdateForm.setMemberPhone(member.getMemberPhone());
+		memberUpdateForm.setMemberAddress(member.getMemberAddress());
+		memberUpdateForm.setMemberBirth(member.getMemberBirth());
+		memberUpdateForm.setMemberGender(member.getMemberGender());
+		memberUpdateForm.setMemberVeganType(member.getMemberVeganType());
+		memberUpdateForm.setMileage(member.getMileage());
+		
+
+		// 수정 페이지에서 사용할 모델에 회원 정보를 추가	
+		model.addAttribute("member", member);
+		model.addAttribute("memberUpdateForm", memberUpdateForm);
+
+		// 회원 수정 페이지로 이동
+		return "manager/admin_update_profile";
 	}
 
-	// POST: 관리자의 회원 정보 수정 처리
-	@PostMapping("/admin/member/{id}/update_profile")
-	public String adminUpdateProfile(@PathVariable("id") String memberId, @Valid MemberUpdateForm memberUpdateForm,
-			BindingResult bindingResult, @RequestParam("imageFile") MultipartFile imageFile, HttpSession session,
-			Model model, RedirectAttributes redirectAttributes) {
-
+	@PostMapping("/admin/update/{memberId}")
+	public String updateAdminProfile(@PathVariable("memberId") String memberId,
+			@Valid MemberUpdateForm memberUpdateForm, BindingResult bindingResult,
+			@RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model,
+			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
-			// 유효성 검사 실패 시 에러 메시지 처리
-			model.addAttribute("errorMessage", "유효성 검사에 실패했습니다.");
-			return "/admin/member/update_profile"; // 다시 수정 페이지로 돌아감
-		}
+			// 에러 메시지를 추출하여 줄바꿈으로 구분된 문자열로 변환
+			String errorMessages = bindingResult.getAllErrors().stream().map(error -> {
+				if (error instanceof FieldError) {
+					FieldError fieldError = (FieldError) error;
+					return fieldError.getDefaultMessage();
+				}
+				return error.getDefaultMessage();
+			}).collect(Collectors.joining("\n"));
 
-		Member existingMember = memberService.getMember(memberId);
-		if (existingMember == null) {
-			return "redirect:/admin/member/list"; // 회원이 없으면 목록 페이지로 리다이렉트
+			model.addAttribute("errorMessage", errorMessages);
+			model.addAttribute("member", memberUpdateForm); // 현재 폼 객체를 모델에 추가
+			return "manager/admin_update_profile"; // 수정 페이지로 다시 이동
 		}
-
-		// 관리자 수정 로직 (기존과 유사)
+			
 		try {
-			// 기존 이미지 경로를 폼에서 가져와서 전달
+			// 관리자는 다른 사용자의 정보를 수정할 수 있음
+			Member existingMember = memberService.getMember(memberId);
+
+			if (existingMember == null) {
+				throw new IllegalArgumentException("해당 회원이 존재하지 않습니다. ID: " + memberId);
+			}
+
+			// 기존 비밀번호를 유지하고 비밀번호 변경 시 유효성 검사
+			String newPassword = existingMember.getMemberPassword(); // 기존 비밀번호 유지
+			if (memberUpdateForm.getMemberPassword() != null && !memberUpdateForm.getMemberPassword().isEmpty()) {
+				// 비밀번호 유효성 검사 (6자 이상, 영문과 숫자 포함)
+				if (!memberUpdateForm.getMemberPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) {
+					bindingResult.rejectValue("memberPassword", "error.memberPassword",
+							"비밀번호는 최소 6자 이상이어야 하며, 영문과 숫자를 포함해야 합니다.");
+					model.addAttribute("errorMessage", "비밀번호는 최소 6자 이상이어야 하며, 영문과 숫자를 포함해야 합니다.");
+					return "member/update_profile";
+				}
+
+				newPassword = memberUpdateForm.getMemberPassword(); // 새 비밀번호로 갱신
+			}
+
+			// 회원 정보를 업데이트
 			String existingImagePath = existingMember.getImageFile();
+			memberService.updateMember(existingMember, memberUpdateForm.getMemberPassword(), memberUpdateForm.getMemberName(),
+					memberUpdateForm.getMemberAlias(), memberUpdateForm.getMemberEmail(),
+					memberUpdateForm.getMemberPhone(), memberUpdateForm.getMemberAddress(),
+					memberUpdateForm.getMemberBirth(), memberUpdateForm.getMemberGender(),
+					memberUpdateForm.getMemberVeganType(), memberUpdateForm.getZipcode(),
+					memberUpdateForm.getRoadAddress(), memberUpdateForm.getAddressDetail(),
+					memberUpdateForm.getBirth_year(), memberUpdateForm.getBirth_month(),
+					memberUpdateForm.getBirth_day(), imageFile, existingImagePath, memberUpdateForm.getMileage());
 
-			// 회원 정보 업데이트 (필요한 서비스 메소드 호출)
-			memberService.updateMember(existingMember, memberUpdateForm.getMemberPassword(),
-					memberUpdateForm.getMemberName(), memberUpdateForm.getMemberAlias(),
-					memberUpdateForm.getMemberEmail(), memberUpdateForm.getMemberPhone(),
-					memberUpdateForm.getMemberAddress(), memberUpdateForm.getMemberBirth(),
-					memberUpdateForm.getMemberGender(), memberUpdateForm.getMemberVeganType(),
-					memberUpdateForm.getZipcode(), memberUpdateForm.getRoadAddress(),
-					memberUpdateForm.getAddressDetail(), memberUpdateForm.getBirth_year(),
-					memberUpdateForm.getBirth_month(), memberUpdateForm.getBirth_day(), imageFile, existingImagePath);
-
-			redirectAttributes.addFlashAttribute("updateMessage", "회원 정보가 성공적으로 수정되었습니다.");
-		} catch (Exception e) {
-			// 예외 처리
+		} catch (DataIntegrityViolationException e) {
 			e.printStackTrace();
-			model.addAttribute("errorMessage", "회원 정보 수정 중 오류가 발생했습니다.");
-			return "/admin/member/update_profile";
+			bindingResult.reject("updateFailed", "이미 등록된 사용자 정보입니다.");
+			model.addAttribute("memberUpdateForm", memberUpdateForm); // 여기에 추가
+			return "manager/admin_update_profile"; // 수정 페이지로 다시 이동
+		} catch (IOException e) {
+			e.printStackTrace();
+			bindingResult.reject("fileError", "파일 처리 중 오류가 발생했습니다.");
+			model.addAttribute("memberUpdateForm", memberUpdateForm); // 여기에 추가
+			return "manager/admin_update_profile"; // 수정 페이지로 다시 이동
+		} catch (Exception e) {
+			e.printStackTrace();
+			bindingResult.reject("updateFailed", e.getMessage());
+			model.addAttribute("memberUpdateForm", memberUpdateForm); // 여기에 추가
+			return "manager/admin_update_profile"; // 수정 페이지로 다시 이동
 		}
 
-		return "redirect:/admin/member/list"; // 수정 후 회원 목록 페이지로 리다이렉트
+		redirectAttributes.addFlashAttribute("updateMessage", "회원 수정이 완료되었습니다.");
+		return "redirect:/member/admin/memberList"; // 수정 완료 후 관리 페이지로 리다이렉트
+	}
+	
+	@PostMapping("/admin/update_kakao/{memberId}")
+	public String updateKakaoByAdmin(@PathVariable("memberId") String memberId, @Valid KakaoUpdateForm kakaoUpdateForm,
+	                                  BindingResult bindingResult, @RequestParam("imageFile") MultipartFile imageFile,
+	                                  Model model, RedirectAttributes redirectAttributes) {
+	    if (bindingResult.hasErrors()) {
+	        String errorMessages = bindingResult.getAllErrors().stream().map(error -> {
+	            if (error instanceof FieldError) {
+	                FieldError fieldError = (FieldError) error;
+	                return fieldError.getDefaultMessage();
+	            }
+	            return error.getDefaultMessage();
+	        }).collect(Collectors.joining("\n"));
+
+	        model.addAttribute("errorMessage", errorMessages);
+	        model.addAttribute("member", kakaoUpdateForm);
+
+	        return "manager/admin_update_kakao"; // 관리자 페이지 경로로 수정
+	    }
+
+	    // Null 체크 대신 폼에서 값을 가져오는 로직
+	    // 필요에 따라 각 필드를 수정
+	    String existingImagePath = null;
+
+	    try {
+	        // 회원 정보를 DB에서 가져오기
+	        Member existingMember = memberService.getMember(memberId);
+	        if (existingMember == null) {
+	            model.addAttribute("errorMessage", "해당 사용자가 존재하지 않습니다.");
+	            return "manager/memberList"; // 관리자 페이지 경로로 수정
+	        }
+
+	        // 기존 이미지 경로를 가져옵니다.
+	        existingImagePath = existingMember.getImageFile();
+
+	        // 회원 정보 업데이트
+	        memberService.updateMember(existingMember, kakaoUpdateForm.getMemberPassword(),
+	                kakaoUpdateForm.getMemberName(), kakaoUpdateForm.getMemberAlias(),
+	                kakaoUpdateForm.getMemberEmail(), kakaoUpdateForm.getMemberPhone(),
+	                kakaoUpdateForm.getMemberAddress(), kakaoUpdateForm.getMemberBirth(),
+	                kakaoUpdateForm.getMemberGender(), kakaoUpdateForm.getMemberVeganType(),
+	                kakaoUpdateForm.getZipcode(), kakaoUpdateForm.getRoadAddress(),
+	                kakaoUpdateForm.getAddressDetail(), kakaoUpdateForm.getBirth_year(),
+	                kakaoUpdateForm.getBirth_month(), kakaoUpdateForm.getBirth_day(), imageFile,
+	                existingImagePath , kakaoUpdateForm.getMileage());
+
+	        redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 성공적으로 수정되었습니다.");
+
+	    } catch (DataIntegrityViolationException e) {
+	        e.printStackTrace();
+	        bindingResult.reject("updateFailed", "이미 등록된 사용자 정보입니다.");
+	        model.addAttribute("member", kakaoUpdateForm);
+	        return "manager/admin_update_profile"; // 관리자 페이지 경로로 수정
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        bindingResult.reject("fileError", "파일 처리 중 오류가 발생했습니다.");
+	        model.addAttribute("member", kakaoUpdateForm);
+	        return "manager/admin_update_profile"; // 관리자 페이지 경로로 수정
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        bindingResult.reject("updateFailed", e.getMessage());
+	        model.addAttribute("member", kakaoUpdateForm);
+	        return "manager/admin_update_profile"; // 관리자 페이지 경로로 수정
+	    }
+
+	    return "redirect:/member/admin/memberList"; // 수정 후 관리자 페이지로 리다이렉트
 	}
 }

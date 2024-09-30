@@ -1,17 +1,20 @@
-<html layout:decorate="~{layout}">
-<div layout:fragment="content" class="container">
-	<link rel="stylesheet" href="/css/member.css" />
+<html layout:decorate="~{member/mypage_layout}">
+<div layout:fragment="tabcontent">
 
-	<!-- 회원수정 시작 -->
+	<link rel="stylesheet" href="/css/member.css" />
+	<!--order style link-->
+	<link rel="stylesheet" href="/css/order.css" />
+	<link rel="stylesheet" href="/css/util.css" />
+
 	<section class="position-relative h-100">
 		<div class="row py-5 justify-content-center">
 			<div class="col-xl-5 col-lg-6 col-xs-12 py-5 border rounded formStyle">
 				<h1 class="text-center mb-3">회원정보 수정</h1>
 				<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
 				</div>
-				<form th:action="@{/member/update_kakao}" th:object="${member}" method="post" id="memberForm"
-					enctype="multipart/form-data">
-					
+				<form th:action="@{/member/admin/update_kakao/{memberId}(memberId=${member.memberId})}"
+					th:object="${member}" method="post" id="memberForm" enctype="multipart/form-data">
+
 					<div class="container">
 						<!-- 아이디 -->
 						<div class="row justify-content-center">
@@ -155,11 +158,14 @@
 								</div>
 							</div>
 						</div>
+						<div class="row mt-3">
+							<label for="mileage" class="form-label">마일리지</label>
+							<input type="text" id="mileage" class="form-control" placeholder="마일리지"
+								th:field="*{mileage}" th:value="${getMileage}">
+						</div>
 					</div>
 					<div class="row mt-5">
-						<button type="submit" class="btn btn-block hm-btn-green">수정</button>
-						<button type="button" class="btn btn-block btn-danger my-2"
-							onclick="deleteMember()">회원탈퇴</button>
+						<button type="submit" class="btn btn-block greenBtn">수정</button>
 					</div>
 				</form>
 			</div>
@@ -428,7 +434,7 @@
 
 			// 유효성 검사에 통과한 경우 폼 제출
 			if (isValid) {
-				alert("회원 수정이 완료되었습니다. 다시 로그인해 주세요.")
+				alert("회원 수정이 완료되었습니다.")
 				this.submit(); // 폼 제출
 			}
 		});
@@ -450,6 +456,7 @@
 			alert(errorElement.innerText);
 		}
 	</script>
+
 </div>
 
 </html>
