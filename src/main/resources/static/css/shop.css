@@ -651,10 +651,27 @@ ol#prodImageCardList{
 }
 
 
+
+
+
+
+
+
+
+
 /*샵:상품리스트 소팅, 폼 스타일*/
 .prodSearchSort #searchBtn{
-    flex: 0 0 fit-content;
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-40%);
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--bs-border-color);
+    user-select: none;
+    line-height: 1.5;
 }
+
 .prodSearchSort #pageSizeSelect{
     flex: 0 0 fit-content;
     height: 24px;
@@ -721,4 +738,62 @@ ul.sortBox{
 
 .prodImageSec .addCard:active, .prodImageSec  .removeCard:active {
     opacity: 80%;
+}
+
+
+/* admin 상품리스트 테이블 스타일 */
+.prodTableBox tr:not(.aggregate) td:nth-child(1),
+.prodTableBox tr:not(.aggregate) th:nth-child(1){ /*No.*/
+    width: 50px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(2),
+.prodTableBox tr:not(.aggregate) th:nth-child(2){ /*상품코드*/
+    width: 110px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(3),
+.prodTableBox tr:not(.aggregate) th:nth-child(3){ /*상품명*/
+    width: auto;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(4),
+.prodTableBox tr:not(.aggregate) th:nth-child(4){ /*판매상태*/
+    width: 80px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(5),
+.prodTableBox tr:not(.aggregate) th:nth-child(5){ /*재고수량*/
+    width: 110px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(6),
+.prodTableBox tr:not(.aggregate) th:nth-child(6){ /*판매수량*/
+    width: 110px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(7),
+.prodTableBox tr:not(.aggregate) th:nth-child(7){ /*매출금액*/
+    width: 110px;
+}
+.prodTableBox tr:not(.aggregate) td:nth-child(8),
+.prodTableBox tr:not(.aggregate) th:nth-child(8){ /*상품수정*/
+    width: 80px;
+}
+
+
+/* admin_productList : 검색어 입력 x버튼*/
+.clear-btn {
+    position: absolute;
+    top: 50%;
+    right: 15px; /* X 버튼을 input 필드 안에 오른쪽에 위치 */
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #aaa;
+    text-align: center;
+    user-select: none;
+}
+
+.prodSearchSort #searchBtn:hover,
+.clear-btn:hover {
+    color: #333;
+}
+.prodSearchSort #searchBtn:active,
+.clear-btn:active {
+    font-weight: 700;
 }

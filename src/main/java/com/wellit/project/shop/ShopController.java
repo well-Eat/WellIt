@@ -43,7 +43,7 @@ public class ShopController {
     @GetMapping("/list")
     public String getShopList(Model model,
                               @RequestParam(value = "category", required = false, defaultValue = "all") String category,
-                              @RequestParam(value = "order", required = false, defaultValue = "lastest") String itemSort,
+                              @RequestParam(value = "order", required = false, defaultValue = "latest") String itemSort,
                               @RequestParam(value = "page", defaultValue = "1") int page,
                               @RequestParam(value = "size", defaultValue = "12") int size,
                               @RequestParam(value = "search", required = false) String search

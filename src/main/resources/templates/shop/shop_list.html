@@ -44,9 +44,11 @@
 	</div>
 	
 	<div class="row mb-3 justify-content-between prodSearchSort">
-		<div class="col-lg-5 d-flex gx-1 searchForm mb-3">
-			<input type="text" class="form-control form-control-sm flex-grow-1" id="search-input" placeholder="상품명 검색">
-			<input type="button" class="form-control form-control-sm px-2 ms-1" value="검색" id="searchBtn">
+		<div class="col-lg-5 position-relative gx-1 searchForm mb-3">
+			<input type="text" class="form-control form-control-sm flex-grow-1 rounded-pill px-5" id="search-input" placeholder="상품명 검색">
+			<!--<input type="button" class="form-control form-control-sm px-2 ms-1" value="검색" id="searchBtn">-->
+			<span  id="searchBtn"> <i class="fa-solid fa-magnifying-glass"></i></span>
+			<span class="clear-btn" id="clearBtn">&times;</span>
 		</div>
 		
 		<div class="col-lg-7 d-flex justify-content-end  gx-1 gap-2 sortForm">
