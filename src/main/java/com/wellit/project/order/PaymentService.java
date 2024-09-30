@@ -69,6 +69,9 @@ public class PaymentService {
 
         // 결제 검증
         if (paymentData != null && "paid".equals(paymentData.get("status"))) {
+        	log.info(paymentRequest.getImp_uid());
+        	log.info(paymentRequest.getPaid_amount());
+        	log.info(paymentRequest.isSuccess());
 
             // 결제 정보 저장
             Payment payment = new Payment();

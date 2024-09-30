@@ -1120,6 +1120,7 @@ async function fetchProducts() {
         if (product.prodStock !=null) sumStock += product.prodStock;
         if (product.sumQuantity !=null) sumSalesProd += product.sumQuantity;
         if (product.totalFinalPrice !=null) sumSalesAmount += product.totalFinalPrice;
+		if (product.prodStatus == null) return;
 
         switch (product.prodStatus) {
             case 'AVAILABLE':
@@ -1145,9 +1146,9 @@ async function fetchProducts() {
         const row = `
             <tr class="prodRow ${rowClass}">
                 <td>${index + 1}</td>
-                <td>${product.prodId}</td>
-                <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a>  </td>
-                <td class="${statClass}">${toKoreanProdStatus(product.prodStatus)}</td>
+                <td class=${statClass}>${product.prodId}</td>
+                <td class=${statClass}><a href="/shop/detail/${product.prodId}">${product.prodName}</a>  </td>
+                <td>${toKoreanProdStatus(product.prodStatus)}</td>
                 <td class="text-end pe-2">${product.prodStock==null? 0 :product.prodStock.toLocaleString('ko-KR') || 0}</td>
                 <td class="text-end pe-2">${product.sumQuantity==null? 0 :product.sumQuantity.toLocaleString('ko-KR') || 0}</td>
                 <td class="text-end pe-2">${product.totalFinalPrice==null? 0 : product.totalFinalPrice.toLocaleString('ko-KR')}</td>

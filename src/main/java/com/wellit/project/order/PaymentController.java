@@ -26,6 +26,7 @@ public class PaymentController {
     public ResponseEntity<String> savePayment(@RequestBody PaymentRequest paymentRequest, @PathVariable("orderId") String orderId) {
         try {
             PurchaseOrder po = orderService.getOnePO(orderId);
+            log.info(po.getOrderId(), po.getTotalPrice());
             paymentService.savePayment(paymentRequest, orderId, po);
             orderService.savePurchaseOrder(po);
             return ResponseEntity.ok("결제 정보 저장 성공");
