@@ -46,9 +46,8 @@
 				<li sec:authorize="isAuthenticated()">
 					<a th:href="@{/member/kakao-logout}"><span class="material-symbols-outlined">logout</span></a>
 				</li>
-			</div>
-			<!-- 햄버거 버튼 -->
-			<a href="#" class="menu-btn"><span class="material-symbols-outlined">menu</span></a>
+			</div>			
+			<a href="#" class="menu-btn"><span class="material-symbols-outlined mt-2">menu</span></a>
 		</div>
 	</header>
 	<!-- 서브메뉴 -->
@@ -120,7 +119,7 @@
 		<div class="small-menu">
 			<ul class="small-main">
 				<li>
-					<a th:href="@{|/load/map|}" class="small-bold small-category">채식로드</a>
+					<a href="#" class="small-bold small-category">채식로드</a>
 					<!-- 호버시 내려올 놈들 -->
 					<div class="small-submenu">
 						<ul>
@@ -131,7 +130,7 @@
 					</div>
 				</li>
 				<li>
-					<a th:href="@{|/life/wellit|}" class="small-bold small-category">라이프</a>
+					<a href="#" class="small-bold small-category">라이프</a>
 					<div class="small-submenu">
 						<ul>
 							<li><a th:href="@{|/life/wellit|}">웨릿이란?</a></li>
@@ -140,7 +139,7 @@
 					</div>
 				</li>
 				<li>
-					<a th:href="@{|/shop/list|}" class="small-bold small-category">오가닉 샵</a>
+					<a href="#" class="small-bold small-category">오가닉 샵</a>
 					<div class="small-submenu">
 						<ul>
 							<li><a th:href="@{|/shop/best|}">베스트샵</a></li>
@@ -149,7 +148,7 @@
 					</div>
 				</li>
 				<li>
-					<a th:href="@{|/notice/announcement|}" class="small-bold small-category">notice</a>
+					<a href="#" class="small-bold small-category">notice</a>
 					<div class="small-submenu">
 						<ul>
 							<li><a th:href="@{|/notice/announcement|}">공지사항</a></li>

@@ -42,6 +42,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.wellit.project.CustomUserAlreadyExistsException;
+import com.wellit.project.order.Cart;
+import com.wellit.project.order.CartRepository;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -62,55 +64,70 @@ public class KakaoLoginController {
 	private final MemberService memberService;
 	private final MemberRepository memberRepository;
 	private final AuthenticationManager authenticationManager; // 로그인 처리를 위한 AuthenticationManager
+	private final CartRepository cartRepository;
 
 	@GetMapping("/callback")
 	public String callback(@RequestParam("code") String code, RedirectAttributes redirectAttributes,
-	        HttpServletRequest request, HttpSession session) {
-	    try {
-	        // 1. 카카오에서 accessToken을 얻음
-	        String accessToken = kakaoService.getAccessTokenFromKakao(code);
-	        System.out.println("========================================" + accessToken);
+			HttpServletRequest request, HttpSession session) {
+		try {
+			// 1. 카카오에서 accessToken을 얻음
+			String accessToken = kakaoService.getAccessTokenFromKakao(code);
+			System.out.println("========================================" + accessToken);
 
-	        // 액세스 토큰 세션에 저장
-	        session.setAttribute("accessToken", accessToken);
+			// 액세스 토큰 세션에 저장
+			session.setAttribute("accessToken", accessToken);
 
-	        // 2. accessToken을 사용하여 사용자 정보를 DB에 저장 또는 가져오기
-	        Member member = kakaoService.registerKakaoUser(accessToken);
-	        session.setAttribute("UserId", member.getMemberId());
-
-	        // 3. 신규 회원의 경우, 추가 정보 입력 폼으로 리다이렉트
-	        if (member.getMemberPhone() == null || member.getMemberAddress() == null) {
-	            redirectAttributes.addFlashAttribute("message", "회원 가입이 완료되었습니다. 추가 정보를 입력해주세요.");
-	            redirectAttributes.addFlashAttribute("KakaoSignupForm", new KakaoSignupForm()); // 추가 정보 입력 폼 객체
-	            return "redirect:/member/kakao_signup"; // 나머지 정보 입력 폼 페이지로 이동
+			// 2. accessToken을 사용하여 사용자 정보를 DB에 저장 또는 가져오기
+			Member member = kakaoService.registerKakaoUser(accessToken);
+			session.setAttribute("UserId", member.getMemberId());
+			
+			// Cart 연동 생성
+	        if (member.getCart() == null) {
+	            Cart cart = new Cart(member);
+	            member.setCart(cart);
+	            cartRepository.save(cart); // 카트도 DB에 저장
 	        }
 
-	        // 사용자 인증 처리
-	        authenticateUser(member, request);
+			// 3. 신규 회원의 경우, 추가 정보 입력 폼으로 리다이렉트
+			if (member.getMemberPhone() == null || member.getMemberAddress() == null) {
+				redirectAttributes.addFlashAttribute("message", "회원 가입이 완료되었습니다. 추가 정보를 입력해주세요.");
+				redirectAttributes.addFlashAttribute("KakaoSignupForm", new KakaoSignupForm()); // 추가 정보 입력 폼 객체
+				return "redirect:/member/kakao_signup"; // 나머지 정보 입력 폼 페이지로 이동
+			}
 
-	        return "redirect:/member/mypage"; // 홈 페이지로 이동
-	    } catch (CustomUserAlreadyExistsException e) {
-	        // 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
-	        String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
-	        Member existingMember = memberRepository.findByMemberId(kakaoUserId);
-	        if (existingMember == null) {
-	            throw new NoSuchElementException("Member not found");
-	        }
-	        session.setAttribute("UserId", existingMember.getMemberId());
+			// 사용자 인증 처리
+			authenticateUser(member, request);
 
-	        if (existingMember.getMemberPhone() == null || existingMember.getMemberAddress() == null) {
-	        	
-	            redirectAttributes.addFlashAttribute("message", "추가 정보를 입력해주세요.");
-	            redirectAttributes.addFlashAttribute("memberId", existingMember.getMemberId());
-	            redirectAttributes.addFlashAttribute("KakaoSignupForm", new KakaoSignupForm()); // 추가 정보 입력 폼 객체
-	            return "redirect:/member/kakao_signup"; // 나머지 정보 입력 폼 페이지로 이동
-	        }else {
-	        	 // 사용자 인증 처리
-		        authenticateUser(existingMember, request);
-	        }       
+			return "redirect:/member/mypage"; // 홈 페이지로 이동
+		} catch (CustomUserAlreadyExistsException e) {
+			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
+			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
+			Member existingMember = memberRepository.findByMemberId(kakaoUserId);
+			if (existingMember == null) {
+				throw new NoSuchElementException("Member not found");
+			}
+			session.setAttribute("UserId", existingMember.getMemberId());
 
-	        return "redirect:/member/mypage"; // 홈 페이지로 이동
-	    }
+			// Cart 연동 생성 (기존 회원일 경우도 확인)
+			if (existingMember.getCart() == null) {
+				Cart cart = new Cart(existingMember);
+				existingMember.setCart(cart);
+				cartRepository.save(cart); // 카트도 DB에 저장
+			}
+
+			if (existingMember.getMemberPhone() == null || existingMember.getMemberAddress() == null) {
+
+				redirectAttributes.addFlashAttribute("message", "추가 정보를 입력해주세요.");
+				redirectAttributes.addFlashAttribute("memberId", existingMember.getMemberId());
+				redirectAttributes.addFlashAttribute("KakaoSignupForm", new KakaoSignupForm()); // 추가 정보 입력 폼 객체
+				return "redirect:/member/kakao_signup"; // 나머지 정보 입력 폼 페이지로 이동
+			} else {
+				// 사용자 인증 처리
+				authenticateUser(existingMember, request);
+			}
+
+			return "redirect:/member/mypage"; // 홈 페이지로 이동
+		}
 	}
 
 	private void authenticateUser(Member member, HttpServletRequest request) {
@@ -155,7 +172,7 @@ public class KakaoLoginController {
 			// 세션에 UserId가 없으면 새 폼을 제공
 			model.addAttribute("member", new KakaoSignupForm());
 		}
-		
+
 		return "member/kakao_signup";
 	}
 
@@ -289,7 +306,7 @@ public class KakaoLoginController {
 							kakaoUpdateForm.getZipcode(), kakaoUpdateForm.getRoadAddress(),
 							kakaoUpdateForm.getAddressDetail(), kakaoUpdateForm.getBirth_year(),
 							kakaoUpdateForm.getBirth_month(), kakaoUpdateForm.getBirth_day(), imageFile,
-							existingImagePath , mileage);
+							existingImagePath, mileage);
 
 					redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
 
@@ -428,24 +445,20 @@ public class KakaoLoginController {
 		// 카카오 계정 로그아웃 후 리다이렉션 처리
 		return null; // 리다이렉트가 이미 호출되었으므로 null을 반환합니다.
 	}
-	
-	
+
 	@PostMapping("/clear-session")
 	@ResponseBody
 	public ResponseEntity<String> clearSession(HttpSession session) {
-	 // 세션에서 사용자 ID를 먼저 가져옵니다.
-	    String memberId = (String) session.getAttribute("UserId");
-	    System.out.println("/clear-session 멤버아이디"+memberId);
-	    // 세션 무효화 전에 데이터베이스에서 삭제 작업을 수행합니다.
-	    if (memberId != null) {
-	    	memberService.deleteMember(memberId);	    	
-	    }
+		// 세션에서 사용자 ID를 먼저 가져옵니다.
+		String memberId = (String) session.getAttribute("UserId");
+		System.out.println("/clear-session 멤버아이디" + memberId);
+		// 세션 무효화 전에 데이터베이스에서 삭제 작업을 수행합니다.
+		if (memberId != null) {
+			memberService.deleteMember(memberId);
+		}
 
-	    
+		return ResponseEntity.ok("Session and DB data cleared");
 
-	    return ResponseEntity.ok("Session and DB data cleared");
-	
 	}
-	
-	
+
 }

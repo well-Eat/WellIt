@@ -90,7 +90,7 @@ public class CartService {
 
     /* 카트페이지로 카트 품목리스트 반환 */
     public List<CartItem> getCartItemList(String memberId){
-
+    	
         Cart cart = cartRepository.findByMember_MemberId(memberId).orElseThrow();
 
         return cartItemRepository.findCartItemsByCart(cart);
