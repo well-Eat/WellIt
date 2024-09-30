@@ -36,17 +36,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
 
 
 
-    //원래 버전 -> 리뷰 쓰기 폼
-    //$(".reviewWrap").remove(); // 기존에 열린 폼이 있으면 닫고,
-    //$('.itemBtnLine').show(); // 다른 버튼라인들은 모두 나타나도록
-    //$(this).parents('.itemBtnLine').hide(); // 현재 열린 버튼라인만 hide
-
-    //  동적으로 생성된 폼을 DOM에 추가
-    //$(this).parent().after(prodReviewForm);
-
     const sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
-    //$("#revText").val($(this).attr('data-review-text'));
-    //$('#paid').val(sumFinalPrice);
 
 
     // 리뷰 내용 불러오기 함수
@@ -150,8 +140,8 @@ $(document).on("click", ".openReviewFormBtn", function () {
                         <div class="col-6 modalColLeft border">
                             <div id="drop-area">
                                 <p class="c666 fw700">리뷰 이미지 등록</p>
-                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple>
-                                <label class="button hidden" for="prodRevImg">또는 파일 선택</label>
+                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple><span>드래그앤드롭 또는 </span>
+                                <label class="button inputFileBtn rounded-pill bg-light border ms-1" for="prodRevImg">파일 선택</label>
                                 <div id="gallery"></div>
                             </div>
                         </div>
@@ -282,15 +272,9 @@ $(document).on("click", ".openReviewFormBtn", function () {
                 img.style.margin = '10px';
 
                 const removeBtn = document.createElement('button');
-                removeBtn.innerText = 'X';
+                removeBtn.innerText = 'ㅡ';
                 removeBtn.className = 'remove-btn';
-                removeBtn.style.position = 'absolute';
-                removeBtn.style.top = '5px';
-                removeBtn.style.right = '5px';
-                removeBtn.style.background = 'red';
-                removeBtn.style.color = 'white';
-                removeBtn.style.border = 'none';
-                removeBtn.style.cursor = 'pointer';
+
 
                 removeBtn.addEventListener('click', function () {
                     imgWrap.remove();
@@ -340,15 +324,9 @@ $(document).on("click", ".openReviewFormBtn", function () {
         img.style.margin = '10px';
 
         const removeBtn = document.createElement('button');
-        removeBtn.innerText = 'X';
+        removeBtn.innerText = 'ㅡ';
         removeBtn.className = 'remove-btn';
-        removeBtn.style.position = 'absolute';
-        removeBtn.style.top = '5px';
-        removeBtn.style.right = '5px';
-        removeBtn.style.background = 'red';
-        removeBtn.style.color = 'white';
-        removeBtn.style.border = 'none';
-        removeBtn.style.cursor = 'pointer';
+
 
         removeBtn.addEventListener('click', function () {
             imgWrap.remove();

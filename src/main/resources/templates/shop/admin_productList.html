@@ -23,7 +23,7 @@
 							<div class="d-flex mb-1"> <!-- 첫째줄 -->
 									<!--상품명 검색어 입력-->
 								<div class="position-relative w-50 me-2">
-									<input type="text" id="searchInput" class="form-control" placeholder="상품명검색" name="search">
+									<input type="text" id="searchInput" class="form-control" placeholder="상품번호 또는 상품명 검색" name="search">
 									<span class="clear-btn" id="clearBtn">&times;</span> <!-- X 버튼 -->
 								</div>
 									
@@ -61,7 +61,7 @@
 							</div>
 						</div>
 						<div class="d-flex">
-							<button type="button" class="btn btn-success align-self-stretch" onclick="fetchProducts()"><i class="fa-solid fa-magnifying-glass text-white px-3 fa-2x" ></i></button>
+							<button type="button" class="btn btn-success align-self-stretch" onclick="goToPageFirstAndFetchProducts();"><i class="fa-solid fa-magnifying-glass text-white px-3 fa-2x" ></i></button>
 						</div>
 						
 					</div> <!--row-->

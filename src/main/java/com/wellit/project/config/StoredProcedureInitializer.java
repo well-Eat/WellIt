@@ -50,7 +50,8 @@ public class StoredProcedureInitializer {
                         "LEFT JOIN prod_review r ON oi.id = r.order_item_id " +
                         "WHERE (p_category = 'all' OR p_category IS NULL OR p.prod_cate = p_category) " +
                         "AND (p_status IS NULL OR p.prod_status = p_status) " +
-                        "AND (p_search IS NULL OR LOWER(p.prod_name) LIKE '%' || LOWER(p_search) || '%') " +
+                        "AND (p_search IS NULL OR LOWER(p.prod_name) LIKE '%' || LOWER(p_search) || '%' " +
+                        "        OR TO_CHAR(p.prod_id) = p_search) " +
                         "GROUP BY p.prod_id, p.prod_status, p.prod_main_img, p.prod_name, p.prod_desc, " +
                         "        p.prod_org_price, p.prod_discount, p.prod_cate, p.prod_final_price, " +
                         "        p.prod_stock, p.view_cnt, p.created_at, p.updated_at " +

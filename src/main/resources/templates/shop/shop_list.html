@@ -2,7 +2,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <html layout:decorate="~{layout}">
 <head>
-	<title>상품 리스트</title>
+	<!--<title>상품 리스트</title>-->
 	
 	<!-- font font-awesome CDN -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -22,7 +22,7 @@
 	<!--페이지 제목-->
 	<div class="row my-5">
 		<div class="pageTitle col text-center">
-			Shop
+			오가닉샵
 		</div>
 	</div>
 	
@@ -80,7 +80,10 @@
 				<!-- 상품이미지 -->
 				<div class="card-img-wrapper rounded-2 mb-3">
 					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
-						<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|"></div>
+						<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|" th:if="${item.prodMainImg!=null}"></div>
+						<div class="card-img-box thumbNull d-flex justify-content-center align-items-center" th:if="${item.prodMainImg==null}">
+							<div th:text="${item.prodName}" class="thumbNullText"></div>
+						</div>
 					</a>
 				</div>
 				

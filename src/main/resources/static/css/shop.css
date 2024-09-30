@@ -125,6 +125,12 @@ ul.sortBox li:not(:last-of-type)::after{
 .prodItem .card-img-box:hover{
     transform: scale(1.05);
 }
+.prodItem .card-img-box.thumbNull{
+    background-color: rgba(232, 230, 230, 0.66);
+}
+.prodItem .card-img-box.thumbNull .thumbNullText{
+    font-size: 32px;
+}
 
 
 /*담기 버튼*/
@@ -349,6 +355,7 @@ div.prodCount.card-text p span{
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    cursor: pointer;
 }
 
 /*이미지리뷰 스와이퍼 버튼*/
@@ -797,3 +804,42 @@ ul.sortBox{
 .clear-btn:active {
     font-weight: 700;
 }
+
+
+/*베스트샵 스타일*/
+/*카드 이미지 뱃지*/
+section.latestlist .bestBadge{
+    width: 30%;
+    aspect-ratio: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    background: url("/imgs/shop/bestshop/best_badge_new.png") 0px 0px no-repeat;
+    background-size: 100% 100%;
+}
+
+section.hotlist .bestBadge{
+    width: 40%;
+    aspect-ratio: 1;
+    position: absolute;
+    top: 0;
+
+    background: url("/imgs/shop/bestshop/best_badge_hot.png") 0px 0px no-repeat;
+    background-size: 100% 100%;
+}
+
+section.mdlist .bestBadge{
+    width: 30%;
+    aspect-ratio: 1;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+
+    background: url("/imgs/shop/bestshop/best_badge_md.png") 0px 0px no-repeat;
+    background-size: 100% 100%;
+}
+
+
+
+

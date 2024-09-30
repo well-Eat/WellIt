@@ -971,7 +971,7 @@ function renderFavoriteProducts(products) {
                                 <div class="col-12">
                                     <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
                                         <div class="icon-heart my-5">
-                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                            <i class="fa-solid fa-carrot fa-10x" style="color:#bbbbbb;"></i>
                                         </div>
                                         <div class="message mb-5">
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
@@ -1032,7 +1032,7 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
                                 <div class="col-12">
                                     <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
                                         <div class="icon-heart my-5">
-                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                            <i class="fa-solid fa-carrot fa-10x" style="color:#bbbbbb;"></i>
                                         </div>
                                         <div class="message mb-5">
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
@@ -1063,6 +1063,7 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
+
 $(function() {
     if ($('#prodTable').length) {
         // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
@@ -1091,23 +1092,47 @@ $(function() {
         // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();
 
+
         // 상품명 검색 input에서 enter 입력 시 검색 실행
         $('#searchInput').on('keydown', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                fetchProducts();
+                goToPageFirstAndFetchProducts();
             }
         });
 
-        //상품 보기 개수 바꾸는 경우, 1페이지부터 다시 로딩
+        //input 내용 바꾸는 경우, 1페이지부터 다시 로딩(보기개수, select, 보기개수, 검색어)
         $("#pageSizeSelect").on("change", function (event){
             event.preventDefault();
-            $("#pagenum").val(1);
+            goToPageFirstAndFetchProducts();
+        })
+        $("#categorySelect").on("change", function (event){
+            goToPageFirstAndFetchProducts();
+        })
+        $("#statusSelect").on("change", function (event){
+            goToPageFirstAndFetchProducts();
+        })
+
+        //날짜 바꿀 시 집계조건만 변경되므로
+        $("#startDate").on("change", function (event){
+            fetchProducts();
+        })
+        $("#endDate").on("change", function (event){
             fetchProducts();
         })
 
+
+
     }
 });
+
+//admin 상품 리스트 검색 결과를 반환 -> 1페이지를 로딩
+function goToPageFirstAndFetchProducts(){
+    $("#pagenum").val(1);
+    fetchProducts();
+}
+
+
 
 //admin:productList 소팅 : 테이블 헤더 클릭 시
 $(".tableSort").on("click", function (){
@@ -1223,7 +1248,7 @@ async function fetchProducts() {
 
         const row = `
             <tr class="prodRow ${rowClass}">
-                <td>${index + 1}</td>
+                <td>${((page-1)*pageSize) + index + 1}</td>
                 <td>${product.prodId}</td>
                 <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a></td>
                 <td class="${statClass} text-center">${toKoreanProdStatus(product.prodStatus)}</td>
@@ -1277,15 +1302,16 @@ async function fetchProducts() {
 
 /*admin_productList, shop_list : 기존 검색어 제거*/
 $(function() {
-    if ($("#searchForm")){
+    if ($("#searchForm")){ //admin
         $('#clearBtn').on('click', function() {
             $('#searchInput').val('');  // 입력 필드 내용 삭제
+            goToPageFirstAndFetchProducts(); // 검색어 없이 1페이지 다시 로딩(나머지 조건 유지)
             $('#searchInput').focus();
         });
     }
 });
 $(function() {
-if ($(".prodSearchSort")){
+if ($(".prodSearchSort")){ //shop
         $('#clearBtn').on('click', function() {
             $('#search-input').val('');  // 입력 필드 내용 삭제
             $('#search-input').focus();
