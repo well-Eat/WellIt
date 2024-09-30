@@ -146,7 +146,7 @@
 			</div>
 
 			<!-- 추천 제품 목록 -->
-			<h2 class="mt-4">이런 재료들은 어때요? 🥗 </h2>
+			<h2 class="mt-4" id="productTitle">이런 재료들은 어때요? 🥗 </h2>
 			<div class="product-container">
 				<div class="row" id="productRow">
 					<th:block th:each="ingredient : ${recipe.recpIngredientList}">
@@ -165,7 +165,8 @@
 											</div>
 
 											<!-- 담기버튼 -->
-											<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary w-100"
+											<a href="javascript:void(0);"
+												class="addCartBtn btn btn-outline-secondary w-100"
 												th:onclick="addToCart([[${product.prodId}]], 1);"><i
 													class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
 
@@ -232,10 +233,14 @@
 
 					<!-- 페이지네이션 버튼 -->
 					<th:block th:if="${#lists.size(productList) > 4}">
-						<div class="pagination">
-							<button id="prevButton" class="" onclick="changePage(-1)"><</button>
-							<button id="nextButton" class="" onclick="changePage(1)">></button>
-						</div>
+					    <div class="pagination">
+					        <button id="prevButton" class="" onclick="changeItems(-1)">
+					            &lt; <!-- 이전 버튼 -->
+					        </button>
+					        <button id="nextButton" class="" onclick="changeItems(1)">
+					            &gt; <!-- 다음 버튼 -->
+					        </button>
+					    </div>
 					</th:block>
 				</div>
 			</div>
@@ -267,47 +272,13 @@
 			<!-- 수정 및 삭제 버튼 -->
 			<div class="btn-group" th:if="${session.UserId == recipe.writer} or ${session.UserId == 'admin'}">
 				<a th:href="@{/life/recipe/edit/{id}(id=${recipe.id})}" class="btn btn-primary">수정</a>
-				<form th:action="@{/life/recipe/delete/{id}(id=${recipe.id})}" method="post" style="display:inline;">
+				<form th:action="@{/life/recipe/delete/{id}(id=${recipe.id})}" method="post" style="display:inline;"
+					onsubmit="return confirmDelete();">
 					<button type="submit" class="btn btn-danger">삭제</button>
 				</form>
 			</div>
 		</div>
 		<script>
-			let currentPage = 0;
-			const itemsPerPage = 4; // 한 페이지에 보여줄 상품 수
-			const productCards = document.querySelectorAll('.product-card');
-			const totalCards = productCards.length;
-			const totalPages = Math.ceil(totalCards - itemsPerPage + 1); // 마지막 페이지 계산
-
-			function showPage(page) {
-				// 시작 인덱스와 끝 인덱스를 계산
-				const startIndex = page;
-				const endIndex = startIndex + itemsPerPage;
-
-				productCards.forEach((card, index) => {
-					// 현재 페이지에 해당하는 카드만 보이도록 설정
-					card.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
-				});
-
-				// 버튼 활성화/비활성화 설정
-				    document.getElementById('prevButton').disabled = (page === 0);
-				    document.getElementById('nextButton').disabled = (page === totalPages - 1);
-			}
-
-			function changePage(direction) {
-				currentPage += direction;
-
-				// 페이지 범위 체크
-				if (currentPage < 0) currentPage = 0;
-				if (currentPage > totalCards - itemsPerPage) currentPage = totalCards - itemsPerPage;
-
-				showPage(currentPage);
-			}
-
-			// 초기 페이지 로드
-			showPage(currentPage);
-
-
 			$(document).ready(function () {
 				var userId = $('#userId').val(); // 사용자 ID를 페이지에서 가져옵니다 (예: hidden input)
 				var recipeId = $('#recipeId').val(); // 레시피 ID를 페이지에서 가져옵니다 (예: hidden input)
@@ -383,6 +354,60 @@
 					}
 				});
 			});
+
+			function confirmDelete() {
+				return confirm("정말로 이 레시피를 삭제하시겠습니까?");
+			}
+
+
+			// 추천 상품
+			let currentStartIndex = 0; // 시작 인덱스
+			const itemsPerPage = 4; // 한 페이지에 보여줄 상품 수
+			const productCards = document.querySelectorAll('.product-card');
+			const totalCards = productCards.length;
+
+			function showItems(startIndex) {
+			    // 끝 인덱스를 계산
+			    const endIndex = startIndex + itemsPerPage;
+
+			    productCards.forEach((card, index) => {
+			        // 현재 페이지에 해당하는 카드만 보이도록 설정
+			        card.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
+			    });
+
+			    // 버튼 활성화/비활성화 설정
+			    document.getElementById('prevButton').disabled = (startIndex === 0);
+			    document.getElementById('nextButton').disabled = (endIndex >= totalCards);
+			}
+
+			function checkButtonsVisibility() {
+			    if (totalCards === 0) {
+			        document.getElementById('prevButton').style.display = 'none';
+			        document.getElementById('nextButton').style.display = 'none';
+			        document.getElementById('productTitle').style.display = 'none';
+			    } else {
+			        document.getElementById('prevButton').style.display = 'inline-block';
+			        document.getElementById('nextButton').style.display = 'inline-block';
+			        document.getElementById('productTitle').style.display = 'block';
+			    }
+			}
+
+			function changeItems(direction) {
+			    // 방향에 따라 시작 인덱스 변경
+			    currentStartIndex += direction;
+
+			    // 범위 체크
+			    if (currentStartIndex < 0) currentStartIndex = 0;
+			    if (currentStartIndex > totalCards - itemsPerPage) currentStartIndex = totalCards - itemsPerPage;
+
+			    showItems(currentStartIndex);
+			}
+
+			// 초기 페이지 로드
+			showItems(currentStartIndex);
+			checkButtonsVisibility(); // 버튼 보이기/숨기기 체크
+
+
 		</script>
 	</div>
 

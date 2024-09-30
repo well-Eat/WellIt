@@ -39,14 +39,16 @@
 
 			<div class="form-group">
 				<label for="sido">주:</label>
-				<select class="form-control" id="sido" name="stoRegionProvince" required>
+				<select class="form-control" id="sido" name="stoRegionProvince" th:value="${store.stoRegionProvince}"
+					required>
 					<option value="">선택하세요</option>
 				</select>
 			</div>
 
 			<div class="form-group">
 				<label for="sigungu">시/구:</label>
-				<select class="form-control" id="sigungu" name="stoRegionCity" required>
+				<select class="form-control" id="sigungu" name="stoRegionCity" th:value="${store.stoRegionCity}"
+					required>
 					<option value="">선택하세요</option>
 				</select>
 			</div>
@@ -64,8 +66,8 @@
 			</div>
 
 			<div class="form-group">
-			    <label for="stoImage">이미지 파일:</label>
-			    <input type="file" class="form-control" id="stoImage" name="stoImage" accept="image/*" required>
+				<label for="stoImage">이미지 파일:</label>
+				<input type="file" class="form-control" id="stoImage" name="stoImage" accept="image/*" required>
 			</div>
 
 			<div class="form-group">
@@ -194,6 +196,8 @@
 			const stoLatitude = document.getElementById("stoLatitude").value.trim();
 			const stoLongitude = document.getElementById("stoLongitude").value.trim();
 			const kakaoStoreId = document.getElementById("stoKakaoId").value.trim(); // 카카오 스토어 ID 추가
+			const stoImage = document.getElementById("stoImage").files.length; // 이미지 파일 선택 여부
+			const stoRegionProvince = document.getElementById("sido").value.trim(); // 지역 선택
 
 			if (stoName.length > 20) {
 				alert("가게 이름은 20자 이내로 입력해야 합니다.");
@@ -207,12 +211,20 @@
 				alert("가게 내용은 200자 이내로 입력해야 합니다.");
 				return;
 			}
-			if (!/^010-\d{4}-\d{4}$/.test(stoContact)) {
-				alert("연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)");
+			if (!/^(01[01]-\d{4}-\d{4}|0[2-9]-\d{3,4}-\d{4})$/.test(stoContact)) {
+				alert("연락처 형식이 올바르지 않습니다. (예: 010-1234-5678 또는 02-752-3042)");
 				return;
 			}
 			if (!/^\d{2}:\d{2} - \d{2}:\d{2}$/.test(stoOperatingHours)) {
 				alert("운영시간 형식이 올바르지 않습니다. (예: 10:00 - 23:00)");
+				return;
+			}
+			if (stoImage === 0) {
+				alert("이미지를 업로드해야 합니다.");
+				return;
+			}
+			if (stoRegionProvince === "") {
+				alert("지역을 선택해야 합니다.");
 				return;
 			}
 

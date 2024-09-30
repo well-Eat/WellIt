@@ -267,7 +267,8 @@ header {
 
 
 header .custom-logo img {
-	height: 50px;
+	width: 125px;
+	height: 48px;
 }
 
 /* 상단 네브바 메뉴 */
