@@ -76,7 +76,7 @@
 			    isMouseOverPlace = true;
 			    submenu.stop(true, true).slideDown();
 			    navbar.addClass("green-navbar");
-			    $(".custom-submenu").css({display: "flex", backgroundColor: "var( --sub-green)"});
+			    $(".custom-submenu").css({display: "flex", backgroundColor: "var( --sub-light)"});
 			});
 
 			menu.mouseleave(function () {
@@ -91,8 +91,8 @@
 			submenu.mouseenter(function () {
 			    isMouseOverPlace = true;
 			    submenu.stop(true, true).slideDown();
-			    navbar.css({backgroundColor: "var( --sub-green)"});
-			    $(".custom-submenu").css({display: "flex", backgroundColor: "var( --sub-green)"});
+			    navbar.css({backgroundColor: "var( --main-color)"});
+			    $(".custom-submenu").css({display: "flex", backgroundColor: "var( --sub-light)"});
 			});
 
 			submenu.mouseleave(function () {
@@ -117,17 +117,16 @@
 			});
 
 			$(".small-submenu").hide();
-			// small-category 또는 small-submenu에 마우스를 올렸을 때
-			$(".small-category, .small-submenu").hover(
-				function () {
-					// 해당 small-category의 다음 형제인 small-submenu를 슬라이드다운
-					$(this).closest("li").find(".small-submenu").stop().slideDown();
-				},
-				function () {
-					// 마우스가 small-category와 small-submenu를 모두 벗어났을 때 슬라이드업
-					$(this).closest("li").find(".small-submenu").stop().slideUp();
-				}
-			);
+			// small-category 클릭 시 슬라이드
+			$(".small-category").click(function () {
+			    var $submenu = $(this).closest("li").find(".small-submenu");
+			    
+			    // 다른 모든 small-submenu를 슬라이드업
+			    $(".small-submenu").not($submenu).stop().slideUp();
+
+			    // 클릭한 small-category의 small-submenu를 슬라이드다운
+			    $submenu.stop().slideToggle();
+			});
 			var height = $("#places").offset().top - 40;
 			$(window).on("scroll", () => {
 

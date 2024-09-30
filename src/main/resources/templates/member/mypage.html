@@ -88,7 +88,7 @@
 											</ul>
 										</li>
 										<!-- Admin 전용 항목들 -->
-										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3" th:if="${member.memberId == 'admin'}">
 											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 메뉴</a>
 											<ul class="submenu">
 												<li><a class="nav-link link-dark fw-bold"
