@@ -2,13 +2,23 @@
 
 <body>
 
-
 	<div layout:fragment="content">
 		<link rel="stylesheet" href="/css/index.css" />
+		<link rel="stylesheet" href="/css/util.css" />
+
+
 		<div class="backBg"></div>
 		<div class="full-screen">
-			<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
-				loop></video>
+			<!--<div id="player"></div> 메인무비-->
+			<div class="ratio ratio-16x9">
+				<iframe
+					src="https://www.youtube.com/embed/BczWUWfwGyE?si=FP84Wiq8r9_G20L8&autoplay=1&mute=1&controls=0&loop=1&playlist=BczWUWfwGyE&vq=hd1080&rel=0&modestbranding=1"
+					title="YouTube video player" frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			</div>
+			<!--<video id="background-video" src="/KakaoTalk_20240823_175248487.mp4" autoplay muted playsinline
+				loop></video>-->
 			<form action="/load/recommend" method="post" class="videoBox">
 				<div class="row videoBoxText">
 					<div class="col">
@@ -40,7 +50,7 @@
 						</div>
 					</div>
 					<div class="col-1 recommendButton">
-						<button type="submit" class="btn">확인</button>
+						<button type="submit" class="btn hm-btn-green">확인</button>
 					</div>
 				</div>
 
@@ -129,7 +139,7 @@
 								</tbody>
 							</table>
 
-							<a class="btn btn-success" th:href="@{'/load/place/' + ${store.stoId}}"
+							<a class="btn hm-btn-green" th:href="@{'/load/place/' + ${store.stoId}}"
 								th:text="'자세히 보기'"></a>
 
 						</div>
@@ -219,6 +229,9 @@
 		</section>
 
 		<div id="deletemessage" th:if="${successMessage}" th:text="${successMessage}" style="display:none;"></div>
+
+		<script src="https://www.youtube.com/iframe_api"></script>
+
 		<script>
 			window.onload = function () {
 				// 'deletemessage' id를 가진 div 요소를 가져옵니다.
@@ -290,6 +303,13 @@
 				});
 			}
 
+
+
+
+
+
+
+
 			function updateClass() {
 				var $buttonDiv = $('.recommendButton');
 				if ($(window).outerWidth() < 1024) {
@@ -299,13 +319,17 @@
 				}
 			}
 
-			// 초기 클래스 설정
-			updateClass();
+
+
+
+
 
 			// 창 크기 변경 시 클래스 업데이트
 			$(window).on('resize', updateClass);
 
 			$(document).ready(() => {
+
+
 				let recommendedPlace = $(".recommendedPlace")
 				recommendedPlace.mouseover(function () {
 					recommendedPlace.removeClass("active")
@@ -406,11 +430,11 @@
 				})
 
 				menu.mouseout(function () {
-					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+					navbar.css({background: "linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%)"})
 				})
 
 				submenu.mouseout(function () {
-					navbar.css({background: "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%)"})
+					navbar.css({background: "linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 0) 100%)"})
 				})
 				var height = $("#places").offset().top - 40;
 				var hasClass = false;
@@ -429,8 +453,90 @@
 					}
 				})
 
+
 			})
+
 		</script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 라이브러리 추가 -->
+		<script>
+			var player;
+			var isPlayerReady = false;
+
+			// YouTube API가 준비되었을 때 호출되는 함수
+			function onYouTubeIframeAPIReady() {
+				createPlayer(); // 플레이어 생성
+			}
+
+			// YouTube Player 생성 함수
+			function createPlayer() {
+				var videoId = window.innerHeight > window.innerWidth ? 'FaFE8ymidb8' : 'BczWUWfwGyE'; // 세로형 또는 가로형 동영상 선택
+				player = new YT.Player('player', {
+					videoId: videoId,
+					playerVars: {
+						'autoplay': 1,
+						'controls': 0,
+						'rel': 0,
+						'modestbranding': 1,
+						'loop': 1,
+						'playlist': videoId
+					},
+					events: {
+						'onReady': onPlayerReady,
+						'onStateChange': onPlayerStateChange
+					}
+				});
+			}
+
+			// 플레이어가 준비되었을 때 호출되는 함수
+			function onPlayerReady(event) {
+				isPlayerReady = true;
+				event.target.playVideo(); // 자동 재생
+			}
+
+			// 화면 크기에 맞춰 full-screen의 높이를 설정하는 함수
+			function setFullScreenHeight() {
+				// 실제 브라우저 콘텐츠 영역의 높이를 계산 (도구창 및 주소창을 제외한 영역)
+				var contentHeight = window.innerHeight;
+				$('.full-screen').css('height', contentHeight + 'px'); // jQuery로 full-screen 높이 설정
+
+				// 동영상이 항상 16:9 비율을 유지하고, 높이에 맞추고 가로가 초과되도록 설정
+				var $playerElement = $('#player'); // jQuery로 요소 선택
+				var winAspectRatio = window.innerWidth / contentHeight;
+				var videoAspectRatio = 16 / 9; // 16:9 비율 유지
+
+				if (winAspectRatio < videoAspectRatio) {
+					// 브라우저가 16:9보다 좁을 때: 높이를 맞추고 가로를 초과시킴
+					$playerElement.css('height', '100%');
+					var playerHeight = $playerElement.height(); // jQuery로 높이 가져오기
+					$playerElement.css('width', (playerHeight / 9) * 16 + 'px'); // 16:9 비율로 너비 설정
+				} else {
+					// 브라우저가 16:9보다 넓을 때
+					$playerElement.css('width', '100%');
+					var playerWidth = $playerElement.width(); // jQuery로 너비 가져오기
+					$playerElement.css('height', (playerWidth / 16) * 9 + 'px'); // 16:9 비율로 높이 설정
+				}
+			}
+
+			// 플레이어 상태 변경 시 호출되는 함수
+			function onPlayerStateChange(event) {
+				if (event.data === YT.PlayerState.ENDED) {
+					console.log('Video has ended.');
+				}
+			}
+
+			// 창 크기 변경 시 높이 업데이트 및 동영상 크기 업데이트
+			$(window).on('resize', setFullScreenHeight); // jQuery로 resize 이벤트 추가
+
+			// 페이지 로드 시 초기 설정
+			$(document).ready(function () {
+				setFullScreenHeight(); // 초기 full-screen 크기 설정
+			});
+		</script>
+
+
+
+
+
 	</div>
 </body>
 

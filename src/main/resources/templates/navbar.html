@@ -38,7 +38,7 @@
 				<li sec:authorize="isAuthenticated()" class="position-relative">
 					<!-- 장바구니 뱃지 -->
 					<span class="position-absolute top-0 mt-1 start-65 translate-middle badge rounded-pill text-bg-success" style="display: none;">0</span>
-					<a th:href="@{/cart/list}"><span class="material-symbols-outlined">shopping_cart</span></a>
+					<a th:href="@{/cart/list}"><span class="material-symbols-outlined cartIcon">shopping_cart</span></a>
 				</li>
 				<li sec:authorize="isAuthenticated()">
 					<a th:href="@{/member/kakao-logout}"><span class="material-symbols-outlined">logout</span></a>
@@ -64,8 +64,8 @@
 				<li><a th:href="@{|/life/recipe/list|}">레시피</a></li>
 			</ul>
 			<ul>
-				<li><a th:href="@{|/shop/list|}">푸드</a></li>
-				<li><a th:href="@{|/shop/detail|}">펫</a></li>
+				<li><a th:href="@{|/shop/best|}">베스트샵</a></li>
+				<li><a th:href="@{|/shop/list|}">오가닉샵</a></li>
 			</ul>
 			<ul>
 				<li><a th:href="@{|/notice/announcement|}">공지사항</a></li>
@@ -91,7 +91,7 @@
 				</li>
 				<!--회원가입-->
 				<li>
-					<a href=""><span class="material-symbols-outlined">shopping_cart</span></a>
+					<a href="#"><span class="material-symbols-outlined cartIcon">shopping_cart</span></a>
 				</li>
 				<!--장바구니-->
 			</div>
@@ -152,28 +152,51 @@
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
-			//common javascript code : by yoonseo
-			//장바구니 아이템 개수 뱃지
-      async function updateCartBadge() {
-          try {
-              const response = await fetch('/cart/data/item-count');
-              if (response.ok) {
-                  const data = await response.json();
-                  const cartItemCount = data.cartItemCount;
-                  const badge = document.querySelector('.badge');
 
-                  // 장바구니에 아이템이 있으면 표시, 없으면 숨김 처리
-                  if (cartItemCount > 0) {
-                      badge.textContent = cartItemCount;
-                      badge.style.display = 'inline-block';
-                  } else {
-                      badge.style.display = 'none';
-                  }
+      // 로그인 상태 확인
+      async function checkLoginStatus() {
+          try {
+              const response = await fetch('/member/auth/status');  // 로그인 상태 확인 API 호출
+              if (response.ok) {
+                  const isLoggedIn = await response.json();
+                  return isLoggedIn;  // 로그인 상태 반환 (true 또는 false)
               } else {
-                  console.error('Failed to fetch cart item count');
+                  console.error('Failed to fetch login status');
+                  return false;
               }
           } catch (error) {
-              console.error('Error fetching cart item count:', error);
+              console.error('Error fetching login status:', error);
+              return false;
+          }
+      }
+
+
+      //장바구니 아이템 개수 뱃지
+      async function updateCartBadge() {
+        
+		      const isLoggedIn = await checkLoginStatus();  // 로그인 상태 확인
+
+          if (isLoggedIn) {
+              try {
+                  const response = await fetch('/cart/data/item-count');
+                  if (response.ok) {
+                      const data = await response.json();
+                      const cartItemCount = data.cartItemCount;
+                      const badge = document.querySelector('.badge');
+
+                      // 장바구니에 아이템이 있으면 표시, 없으면 숨김 처리
+                      if (cartItemCount > 0) {
+                          badge.textContent = cartItemCount;
+                          badge.style.display = 'inline-block';
+                      } else {
+                          badge.style.display = 'none';
+                      }
+                  } else {
+                      console.error('Failed to fetch cart item count');
+                  }
+              } catch (error) {
+                  console.error('Error fetching cart item count:', error);
+              }
           }
       }
       // 페이지 로드 시 실행하여 장바구니 개수를 업데이트

@@ -1,14 +1,12 @@
 package com.wellit.project.order;
 
-import com.wellit.project.member.MemberRepository;
+import com.wellit.project.member.MemberService;
 import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,12 +22,13 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final MemberService memberService;
+
 
     //카트 -> 주문서 생성
     @PostMapping("/create")
-    public String  createOrder(@Valid @ModelAttribute OrderForm orderForm, BindingResult bindingResult, @AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String  createOrder(@Valid @ModelAttribute OrderForm orderForm, BindingResult bindingResult, Model model){
 
         // 재고 수량 확인 (백엔드에서 재고 체크)
         for (OrderItemQuantity orderItemQuantity : orderForm.getOrderItemQuantityList()) {
@@ -42,7 +41,7 @@ public class OrderController {
         }
 
 
-            PurchaseOrder savedPo = orderService.addOrder(orderForm, userDetails.getUsername());
+            PurchaseOrder savedPo = orderService.addOrder(orderForm, memberService.getMemberId());
             String oi = savedPo.getOrderId();
 
         return "redirect:/order/po/"+oi;
@@ -53,11 +52,13 @@ public class OrderController {
 
     //카트 -> 주문서 생성 -> 생성된 주문서 뷰페이지
     @GetMapping("/po/{orderId}")
-    public String getPoForm(Model model, @PathVariable("orderId") String orderId, @AuthenticationPrincipal UserDetails userDetails){
+    public String getPoForm(Model model, @PathVariable("orderId") String orderId){
 
         // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
-        if (userDetails == null) {
-            return "redirect:/error/login-alert";
+        String memberId = memberService.getMemberId();
+
+        if(memberId==null){
+            return "redirect:/login?request";
         }
 
         //해당 주문서 가져오기
@@ -65,7 +66,7 @@ public class OrderController {
         log.info(po.getOrderId());
 
         // 로그인한 사용자의 정보와 주문서의 회원 정보가 일치하는지 확인
-        if (!po.getMember().getMemberId().equals(userDetails.getUsername())) {
+        if (!po.getMember().getMemberId().equals(memberId)) {
             // 사용자가 일치하지 않으면 403 Forbidden 오류를 던짐
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
         }
@@ -87,11 +88,10 @@ public class OrderController {
 
     // 결제 성공 후 프로세스
     @PostMapping("/po/{orderId}")
-    public String afterPaymentSuccess(@PathVariable("orderId")  String orderId, @ModelAttribute PoForm poForm,@AuthenticationPrincipal
-    UserDetails userDetails){
+    public String afterPaymentSuccess(@PathVariable("orderId")  String orderId, @ModelAttribute PoForm poForm){
 
         //po 내용 업데이트
-        boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm, userDetails);
+        boolean success = orderService.updatePurchaseOrderInfo(orderId, poForm);
 
         if(success) {  //성공 시 주문 화면 출력
             return "redirect:/order/po/detail/"+orderId+"?success";
@@ -111,13 +111,11 @@ public class OrderController {
             boolean isUpdated = orderService.updateOrderStatusToCanceled(orderId, impUid, reason);
 
             if (isUpdated) {
-                // 취소 성공 시 주문 상세 화면으로 리다이렉트 (또는 원하는 화면으로 변경 가능)
-                //return "redirect:/order/po/" + orderId + "?cancelSuccess";
+                // 취소 성공 시 주문 상세 화면으로 리다이렉트
                 return "redirect:/order/admin/po/" + orderId;
             } else {
                 // DB 업데이트 실패 시 처리
-                //return "redirect:/order/po/" + orderId + "?cancelFailure";
-                return "redirect:/order/admin/po/" + orderId;
+                return "redirect:/order/admin/po/" + orderId+ "?cancelError";
             }
 
         } catch (Exception e) {
@@ -131,22 +129,18 @@ public class OrderController {
 
     // mypage : 주문 내용 상세 (주문 결과 상세 확인)
     @GetMapping("/po/detail/{orderId}")
-    public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, @AuthenticationPrincipal
-    UserDetails userDetails, @RequestParam(value = "success", required = false) String success){
+    public String getOrderDetailPage(Model model, @PathVariable("orderId") String orderId, @RequestParam(value = "success", required = false) String success){
 
-        if (success != null) {
+        if (success != null) { //결제 직후 출력 페이지
             model.addAttribute("orderSuccess", true);
-        } else {
+        } else { //history 접근 시 페이지
             model.addAttribute("orderSuccess", false);
         }
 
         PurchaseOrder po = orderService.getOnePO(orderId);
-        log.info(po.getOrderId());
         PoDetailForm poDetail =orderService.getOnePoDetail(orderId);
 
         List<OrderItemProcessDTO> orderItemList = orderService.getOrderItemProcessDtoList(po);
-
-        //List<OrderItem> orderItemList = orderService.getOrderItemList(orderId);
 
         model.addAttribute("orderItemList", orderItemList);
         model.addAttribute("poDetail", poDetail);

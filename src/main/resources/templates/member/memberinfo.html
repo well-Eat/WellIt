@@ -41,9 +41,9 @@
 				<div class="row mb-3 float-end">
 					<div class="col">
 						<a th:if="${member.memberType == 'KAKAO'}" th:href="@{/member/update_kakao}"
-							class="btn mpBtn">회원정보 수정</a>
+							class="btn hm-btn-green">회원정보 수정</a>
 						<a th:if="${member.memberType != 'KAKAO'}" th:href="@{/member/enter_password}"
-							class="btn mpBtn">회원정보 수정</a>
+							class="btn hm-btn-green">회원정보 수정</a>
 					</div>
 				</div>
 			</div>

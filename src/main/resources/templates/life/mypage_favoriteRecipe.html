@@ -70,7 +70,7 @@
 																<p class="c333 f32 fw700 text-center mb-3">찜한 레시피가 없습니다</p>
 																<p class="c333 f20 text-center">레시피 페이지에서 마음에 드는 레시피를 골라 찜한 레시피 리스트를 만들어보세요</p>
 															</div>
-															<a href="/recipe/list" class="btn-back btn btn-success btn-lg">레시피 보러 가기</a>
+															<a href="/recipe/list" class="btn-back btn hm-btn-green btn-lg">레시피 보러 가기</a>
 														</div>
 													</div>
 												</div>
@@ -90,7 +90,7 @@
 													            <h5 class="card-title text-success">${recipe.recpName || '이름 없음'}</h5>
 													            <p class="card-text"><strong>설명:</strong> ${recipe.recpIntroduce || '설명 없음'}</p>
 													            <div class="d-flex justify-content-end btns">
-													                <a href="/recipe/detail/${recipe.id}" class="btn btn-primary">자세히 보기</a>
+													                <a href="/recipe/detail/${recipe.id}" class="btn hm-btn-green">자세히 보기</a>
 													                <button class="btn btn-danger mx-2" onclick="removeFromFavorites('${recipe.id}')">찜 취소</button>
 													            </div>
 													        </div>

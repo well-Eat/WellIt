@@ -42,10 +42,9 @@
 						th:text="${#temporals.format(member.memberRegDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
 					<td th:text="${member.isBusiness}"></td>
 					<td>
-						<button class="btn btn-primary" th:data-id="${member.memberId}"
-							th:onclick="updateProfile(this.getAttribute('data-id'))">수정</button>
-						<button class="btn btn-danger" th:data-id="${member.memberId}"
-							th:onclick="deleteMember(this.getAttribute('data-id'))">삭제</button>
+
+						<button class="btn hm-btn-green" th:data-id="${member.memberId}" th:onclick="updateProfile(this.getAttribute('data-id'))">수정</button>
+						<button class="btn btn-danger" th:data-id="${member.memberId}" th:onclick="deleteMember(this.getAttribute('data-id'))">삭제</button>
 					</td>
 				</tr>
 			</tbody>

@@ -1,13 +1,13 @@
 package com.wellit.project.shop;
 
+import com.wellit.project.member.MemberService;
 import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RequestMapping("/shop")
@@ -26,6 +27,7 @@ public class ShopController {
     private final ShopService shopService;
     private final ProductRepository productRepository;
     private final ProdReviewService reviewService;
+    private final MemberService memberService;
 
     private static final String UPLOAD_DIR = "C:/uploads/";
 
@@ -37,25 +39,21 @@ public class ShopController {
     }
 
 
-    @GetMapping("/test/products")
-    public ResponseEntity<List<Product>> testGetAllProducts() {
-        List<Product> products = shopService.getAllProducts();
-        return ResponseEntity.ok(products);
-    }
-
-
     /*상품 리스트 페이지 이동*/
     @GetMapping("/list")
     public String getShopList(Model model,
                               @RequestParam(value = "category", required = false, defaultValue = "all") String category,
-                              @RequestParam(value = "order", required = false, defaultValue = "default") String itemSort,
+                              @RequestParam(value = "order", required = false, defaultValue = "lastest") String itemSort,
                               @RequestParam(value = "page", defaultValue = "1") int page,
-                              @RequestParam(value = "size", defaultValue = "20") int size) {
+                              @RequestParam(value = "size", defaultValue = "12") int size,
+                              @RequestParam(value = "search", required = false) String search
+                             ) {
 
-        List<Product> prodList = shopService.getProductsByCriteria(category, itemSort, page, size);
+
+        Page<Product> prodList = shopService.getProductsByCriteria(category, itemSort, page, size, search);
         //List<Product> prodList = shopService.getAllProducts();
 
-        List<ProdCnt> prodCnts = shopService.getProdCntList(prodList);
+        List<ProdCnt> prodCnts = shopService.getProdCntList(prodList.getContent());
 
         // prodId를 키로, 리뷰, 찜 카운트 Map
         Map<Long, Integer> revCntMap = prodCnts.stream()
@@ -68,8 +66,8 @@ public class ShopController {
         model.addAttribute("favoriteCntMap", favoriteCntMap);
 
         model.addAttribute("prodlist", prodList); // 상품 리스트
-        model.addAttribute("currentPage", page);
-        //model.addAttribute("totalPages", prodList.getTotalPages());
+        model.addAttribute("currentPage",  page); //눈에보이는페이지번호
+        model.addAttribute("totalPages", prodList.getTotalPages());
         //model.addAttribute("totalItems", prodList.getTotalElements());
         model.addAttribute("pageSize", size);
 
@@ -79,12 +77,15 @@ public class ShopController {
 
     /*상품 상세페이지 이동*/
     @GetMapping("/detail/{prodId}")
-    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId,
-                                @AuthenticationPrincipal UserDetails userDetails) {
+    public String getShopDetail(Model model, @PathVariable("prodId") Long prodId) {
         String memberId = null;
+        try{
+            memberId = memberService.getMemberId();
+        } catch (Error error){
+            memberId = null;
+        }
         //멤버아이디 확인
-        if (userDetails != null) {
-            memberId = userDetails.getUsername();
+        if (memberId != null) {
             boolean favorite = shopService.isFavoriteProduct(prodId, memberId);
             model.addAttribute("memberId", memberId);
             model.addAttribute("favorite", favorite);
@@ -139,13 +140,12 @@ public class ShopController {
 
     // admin:상품 리스트 이동
     @GetMapping("/admin/list")
-    public String getAdminProductList(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String getAdminProductList(Model model) {
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
-
-
 
         return "/shop/admin_productList";
     }
@@ -167,9 +167,10 @@ public class ShopController {
 
     // admin:상품 생성 폼 열기
     @GetMapping("/admin/form")
-    public String productForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String productForm(Model model) {
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
 
@@ -179,10 +180,11 @@ public class ShopController {
 
     //admin:상품 저장하기
     @PostMapping("/save")
-    public String saveProduct(@AuthenticationPrincipal UserDetails userDetails,
-                              @ModelAttribute ProductForm productForm) throws IOException {
+    public String saveProduct(@ModelAttribute ProductForm productForm) throws IOException {
+
+        String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
         List<MultipartFile> imageFiles = productForm.getProdImages();
@@ -194,11 +196,12 @@ public class ShopController {
     }
 
 
+    //admin:상품 수정하기(진입)
     @GetMapping("/admin/edit/{prodId}")
-    public String editProduct(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("prodId") Long prodId,
+    public String editProduct(@PathVariable("prodId") Long prodId,
                               Model model) {
-        // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        String memberId = memberService.getMemberId();
+        if (memberId == null || !"admin".equals(memberId)) {
             return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
         }
 
@@ -227,8 +230,7 @@ public class ShopController {
     //admin:상품 수정내용 저장하기
     @PostMapping("/update/{prodId}")
     @ResponseBody
-    public ResponseEntity<String> updateProduct(@AuthenticationPrincipal UserDetails userDetails,
-                                                @PathVariable Long prodId,
+    public ResponseEntity<String> updateProduct(@PathVariable Long prodId,
                                                 @ModelAttribute ProductForm productForm,
                                                 @RequestParam(required=false) List<String> toBeDeleted,
                                                 @RequestParam(value = "existingImages[]",required=false) List<String> existingImages,
@@ -238,7 +240,9 @@ public class ShopController {
                                                ) throws IOException {
 
         // 현재 로그인한 사용자가 admin인지 확인
-        if (userDetails == null || !"admin".equals(userDetails.getUsername())) {
+        String memberId = memberService.getMemberId();
+
+        if (memberId == null || !"admin".equals(memberId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body("{\"status\":\"fail\", \"message\":\"Unauthorized access\"}");
         }
@@ -258,8 +262,6 @@ public class ShopController {
     public ResponseEntity<String> isFavoriteProduct(@RequestParam(value="prodId",required=true) Long prodId,
                                                     @RequestParam(value="memberId",required=true) String memberId) {
 
-        log.info(prodId);
-        log.info(memberId);
         try {
             if (memberId == null) {
                 throw new RuntimeException("로그인해주세요");
@@ -306,19 +308,62 @@ public class ShopController {
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+            @RequestParam(value = "order", defaultValue = "prodId") String itemSort,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction
+            ) {
 
         // 서비스 호출
-        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page);
+        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page, pageSize, itemSort, direction);
+
+
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
         response.put("products", productsPage.getContent());
         response.put("totalPages", productsPage.getTotalPages());
-        response.put("currentPage", productsPage.getNumber() + 1);
+        response.put("currentPage", productsPage.getNumber()); /*-1된상태*/
         response.put("totalItems", productsPage.getTotalElements());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/best")
+    public String getBestList(Model model){
+
+        //베스트 리스트 호출
+        Page<Product> latestList = shopService.getProductsByCriteria(null, "latest", 1, 4, null);
+        Page<Product> salesList = shopService.getProductsByCriteria(null, "salesQuantity", 1, 4, null);
+        Page<Product> favoriteList = shopService.getProductsByCriteria(null, "favoriteCount", 1, 4, null);
+
+        // 세 리스트를 결합하여 중복을 처리하며, Map을 생성
+        Map<Long, Integer> revCntMap = Stream.of(latestList, salesList, favoriteList)
+                                             .flatMap(page -> shopService.getProdCntList(page.getContent()).stream())
+                                             .collect(Collectors.toMap(
+                                                     ProdCnt::getProdId,
+                                                     ProdCnt::getRevCnt,
+                                                     (existing, replacement) -> existing
+                                                                      ));
+
+        Map<Long, Integer> favoriteCntMap = Stream.of(latestList, salesList, favoriteList)
+                                                  .flatMap(page -> shopService.getProdCntList(page.getContent()).stream())
+                                                  .collect(Collectors.toMap(
+                                                          ProdCnt::getProdId,
+                                                          ProdCnt::getFavoriteCnt,
+                                                          (existing, replacement) -> existing
+                                                                           ));
+
+        //뷰 반환
+        model.addAttribute("revCntMap", revCntMap);
+        model.addAttribute("favoriteCntMap", favoriteCntMap);
+        model.addAttribute("latestList", latestList); //신상순
+
+        model.addAttribute("salesList", salesList); //판매량순
+        model.addAttribute("favoriteList", favoriteList); //찜순
+
+
+        return "/shop/shop_best";
     }
 
 

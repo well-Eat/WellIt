@@ -1,12 +1,15 @@
 package com.wellit.project.store;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.wellit.project.shop.ProductAdminDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -152,5 +155,35 @@ public class AllStoreController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
 		}
 	}
+	
+	// admin페이지 상품 리스트 데이터 받아오기
+    @GetMapping("/api/store")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getStores(
+            @RequestParam(value = "search", required = false) String stoName,
+            @RequestParam(value = "category", required = false) String stoCategory,
+            @RequestParam(value = "status", required = false) String stoVegetarianType,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
+    	if(stoName==null) {System.out.println(stoName+stoCategory+stoVegetarianType+"123");}
+        // 서비스 호출
+    	Page<AllStore> storesPage;
+
+        // 모든 가게를 보여주기 위한 조건 추가
+        if (stoName.isEmpty() && stoCategory.isEmpty() && stoVegetarianType.isEmpty()) {
+            storesPage = allStoreService.findAllStores(page, pageSize); // 모든 가게를 조회하는 메서드 호출
+        } else {
+            // 서비스 호출
+            storesPage = allStoreService.findStores(stoName, stoCategory, stoVegetarianType, page, pageSize);
+        }
+        // 반환할 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("stores", storesPage.getContent());
+        response.put("totalPages", storesPage.getTotalPages());
+        response.put("currentPage", storesPage.getNumber() + 1);
+        response.put("totalItems", storesPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
 
 }

@@ -121,9 +121,9 @@
 						</tbody>
 					</table>
 
-					<span class="favorite-btn btn btn-warning w-25" th:data-userid="${session.UserId}"
+					<span class="favorite-btn btn hm-btn-green w-25" th:data-userid="${session.UserId}"
 						th:data-storeid="${store.stoId}">찜👍</span>
-					<span class='btn btn-success reservation-btn w-25' th:data-userid="${session.UserId}"
+					<span class='btn hm-btn-green reservation-btn w-25' th:data-userid="${session.UserId}"
 						th:data-storeid="${store.stoId}" th:data-openhours="${store.stoOperatingHours}">예약🗓️</span>
 					<div th:id="'reservationForm_' + ${store.stoId}" class="reservationBox p-3" style="display: none;">
 						<h5>예약 시간 선택</h5>
@@ -264,7 +264,7 @@
 			<button id="loadMoreButton" class="btn btn-primary my-3" style="display: none;">리뷰 더보기</button>
 		</div>
 		
-		<div class="btn btn-outline-success reviewFormBtn my-2 w-25">
+		<div class="btn hm-btn-border-green reviewFormBtn my-2 w-25">
 			후기 작성하기
 		</div>
 		<!-- 모달 구조 -->
@@ -311,7 +311,7 @@
 				<h5>사진 올리기</h5>
 				<input type="file" id="revImg" accept="image/*" />
 			</div>
-			<button type="submit" class="btn btn-success">리뷰 추가</button>
+			<button type="submit" class="btn hm-btn-green">리뷰 추가</button>
 		</form>
 
 

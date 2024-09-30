@@ -18,7 +18,7 @@ body {
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 nav header {
-	background-color: #386641;
+	background-color: var(--main-color);
 	position: relative;
 }
 
@@ -42,7 +42,7 @@ nav~.container {
 .pageTitle {
 	font-size: 3rem;
 	font-weight: bold;
-	color: #6a994e;
+
 	/* 블루 색상 */
 }
 
@@ -102,7 +102,7 @@ h4 {
 }
 
 .titleText label {
-	color: #a7c957;
+	color: var(--sub-light);
 	font-weight: bold;
 	padding: 5px;
 
@@ -125,29 +125,33 @@ input[type="radio"]:checked+label {
 	/* 선택된 상태의 글자 굵기 */
 	color: white;
 	/* 선택된 상태의 글자 색상 */
-	background-color: #a7c957;
+	background-color: var(--sub-light);
 	border-radius: 45px;
 }
 
 .recipesSize {
-	color: #a7c957;
+	color: var(--sub-light);
 	font-weight: bold;
 	font-size: 1.5em;
 }
-.icons{
+
+.icons {
 	display: flex;
 	justify-content: end;
 	align-items: center;
 }
-.icons svg{
+
+.icons svg {
 	margin-left: 10px;
 }
-.icons span{
+
+.icons span {
 	color: #808080;
 	font-size: 16px;
 	margin-left: 5px;
 }
-.orderNum{
+
+.orderNum {
 	background-color: #a7c957;
 	color: white;
 	border-radius: 50%;
@@ -156,13 +160,12 @@ input[type="radio"]:checked+label {
 	padding: 5px 10px;
 	margin-right: 5px;
 }
-.cookInstructions{
+
+.cookInstructions {
 	font-size: 1.3em;
 	font-weight: 600;
 }
-.favorite-btn{
-	
-}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
 	.pageTitle {
@@ -177,40 +180,58 @@ input[type="radio"]:checked+label {
 		font-size: 1rem;
 	}
 
-    .card-title {
-        font-size: 1.3rem;
-    }
-	
-	.greentext{
+	.card-title {
+		font-size: 1.3rem;
+	}
+
+	.greentext {
 		font-size: 1.5rem;
 	}
 }
 
 /* wellit 페이지 스타일 */
-.greentext{
-	color: #386641;
+.greentext {
+	color: var(--sub-box-hover);
 }
 
 
-.weltitle{
-	color: #6a994e;
+.weltitle {
+	color: var(--sub-box);
 	font-weight: 900;
 }
 
-.bold{
+.bold {
 	font-weight: 600;
 	color: #6c757d;
 }
 
 .custom-img {
-    height: 250px; /* 원하는 고정 높이 설정 */
-    object-fit: cover; /* 이미지 비율을 유지하며 고정 크기에 맞게 자릅니다 */
-    width: 100%; /* 이미지가 카드의 전체 너비를 차지하도록 설정 */
+	height: 250px;
+	/* 원하는 고정 높이 설정 */
+	object-fit: cover;
+	/* 이미지 비율을 유지하며 고정 크기에 맞게 자릅니다 */
+	width: 100%;
+	/* 이미지가 카드의 전체 너비를 차지하도록 설정 */
 
 }
-.recipeContent{
+
+.recipeContent {
 	height: 150px;
 }
-.recipeCard img{
+
+.recipeCard img {
 	height: 200px;
+}
+.step-image {
+			width: 300px;
+			height: 200px;
+			border-radius: 5px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			margin: 10px;
+		}
+@media (max-width:992px) {
+	.step-image {
+		width: 100%;
+
+	}
 }

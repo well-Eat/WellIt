@@ -34,7 +34,7 @@ section {
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 nav header {
-    background-color: #386641;
+	background-color: var(--main-color);
     position: relative;
 }
 
@@ -348,11 +348,11 @@ section.row > p.subtle::after {
 }
 .view-star-rating > i.check,
 .view-star-rating > i.check ~ i{
-    color: #ffc107;
+    color: #ffc107 !important;
 }
 
 .star-rating input[type="radio"]:checked ~ label {
-    color: #ffc107;
+    color: #ffc107 !important;
 }
 
 
@@ -364,5 +364,10 @@ section.row > p.subtle::after {
 }
 
 .star-rating.check{
-    color: #ffc107;
+    color: #ffc107 !important;
+}
+
+/*테이블스타일*/
+#cancelTable thead th{
+    background-color: var(--sub-light);
 }

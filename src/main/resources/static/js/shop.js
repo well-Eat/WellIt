@@ -3,81 +3,88 @@
 /********* shop_list : 상품 리스트 페이지 *************/
 
 $(function() {
-    // 카테고리, 정렬, 페이지, 아이템 보기 개수
-    let currentCategory = new URLSearchParams(window.location.search).get('category') || 'all';
-    let currentOrder = new URLSearchParams(window.location.search).get('order') || 'default';
-    let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
-    let currentSize = new URLSearchParams(window.location.search).get('size') || 20;
+    const $shopList = $(".shopList");
+    if ($shopList) {
+        // 카테고리, 정렬, 페이지, 아이템 보기 개수
+        let currentCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+        let currentOrder = new URLSearchParams(window.location.search).get('order') || 'default';
+        let currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+        let currentSize = new URLSearchParams(window.location.search).get('size') || 12;
+        let currentSearch = new URLSearchParams(window.location.search).get('search') || ''; // 검색어 추가
 
-    // 카테고리 링크 클릭 이벤트 처리
-    $('.prodCateLink').on('click', function(event) {
-        event.preventDefault();
-        const selectedCategory = $(this).data('category');
-        const newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}`;
-        window.location.href = newUrl;
-    });
-
-    // 정렬 링크 클릭 이벤트 처리
-    $('.sortLink').on('click', function(event) {
-        event.preventDefault();
-        const selectedOrder = $(this).data('order');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}`;
-        window.location.href = newUrl;
-    });
-
-    // 보기 개수 링크 클릭 이벤트 처리
-    $('.pageSizeLink').on('click', function(event) {
-        event.preventDefault();
-        const selectedSize = $(this).data('size');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}`; // 새 사이즈 선택 시 1페이지로 이동
-        window.location.href = newUrl;
-    });
-
-    // 페이지 번호 링크 클릭 이벤트 처리
-    $('.pageLink').on('click', function(event) {
-        event.preventDefault();
-        const selectedPage = $(this).data('page');
-        const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}`;
-        window.location.href = newUrl;
-    });
-});
-
-$(function(){
-
-
-
-
-    /* 카테고리 아이템 리스트 get */
-    $("a.prodCateLink").on("click", function(e) {
-        e.preventDefault();
-
-        //카테고리 선택상자의 id와 아이템카드의 data-prodcate의 값이
-        //같은 경우 display:block;
-        let clickedCate = $(this).parent().attr('id');
-        let allList = $(".prodItem");
-
-        if (clickedCate === 'all') {
-            // 모든 항목을 표시
-            allList.removeClass('d-none');
-        } else {
-            // 선택된 카테고리만 표시하고, 나머지는 숨김
-            allList.each(function() {
-                let prod = $(this);
-                let prodCate = prod.attr('data-prodcate');
-
-                if (prodCate === clickedCate) {
-                    prod.removeClass('d-none');
-                } else {
-                    prod.addClass('d-none');
-                }
-            });
+        if (currentSearch != null) { //검색어 유지
+            $("#search-input").val(currentSearch);
+        }
+        if (currentSize != null) { //아이템 개수 유지
+            $("#pageSizeSelect").val(currentSize);
         }
 
-        // 모든 카테고리의 active 클래스 제거하고 클릭된 항목의 부모 li 요소에만 추가
-        $(".prodCate").removeClass('active');
-        $(this).parent().addClass('active');
-    });
+        // 카테고리 링크 클릭 이벤트 처리
+        $('.shopList .prodCateLink').on('click', function (event) {
+            event.preventDefault();
+            const selectedCategory = $(this).data('category');
+            let newUrl;
+            if (selectedCategory == 'all') { //모두보기 클릭 시 검색어 리셋
+                newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}&search=`;
+            } else {
+                newUrl = `/shop/list?category=${selectedCategory}&order=${currentOrder}&page=${currentPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
+            }
+            window.location.href = newUrl;
+        });
+
+        // 정렬 링크 클릭 이벤트 처리
+        $('.shopList .sortLink').on('click', function (event) {
+            event.preventDefault();
+            const selectedOrder = $(this).data('order');
+            const newUrl = `/shop/list?category=${currentCategory}&order=${selectedOrder}&page=${currentPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
+            window.location.href = newUrl;
+        });
+
+        // 보기 개수 링크 클릭 이벤트 처리
+        $('.shopList #pageSizeSelect').on('change', function () {
+            const selectedSize = $(this).val(); // 선택한 값
+            const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${selectedSize}&search=${encodeURIComponent(currentSearch)}`; // 새 사이즈 선택 시 1페이지로 이동
+            window.location.href = newUrl;
+        });
+
+        // 페이지 번호 링크 클릭 이벤트 처리
+        $('.shopList .pageLink').on('click', function (event) {
+            event.preventDefault();
+            let selectedPage;
+            let totalPages = Number($(".pageLink.next").attr("data-last-page"));
+            let clicked = $(this);
+            let curPage = Number($('.shopList .pageLink.active').text());
+            if (clicked.hasClass("prev")) {
+                if (curPage > 5) selectedPage = curPage - 5;
+                else selectedPage = 1;
+            } else if (clicked.hasClass("next")) {
+                if (curPage + 5 > totalPages) selectedPage = totalPages;
+                else selectedPage = curPage + 5;
+            } else {
+                selectedPage = $(this).data('page-link');
+            }
+
+            const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=${selectedPage}&size=${currentSize}&search=${encodeURIComponent(currentSearch)}`;
+            window.location.href = newUrl;
+        });
+
+
+        // shop_list : 상품명 검색
+        $('#search-input').on('keypress', function (event) {
+            if (event.which == 13) { // Enter 키가 눌렸을 때
+                event.preventDefault();
+                $('#searchBtn').trigger("click");
+            }
+        });
+        $('#searchBtn').on('click', function (event) {
+            event.preventDefault();
+            const searchKeyword = $('#search-input').val().trim(); // 입력된 검색어
+            const newUrl = `/shop/list?category=${currentCategory}&order=${currentOrder}&page=1&size=${currentSize}&search=${encodeURIComponent(searchKeyword)}`;
+            window.location.href = newUrl;
+        })
+    }
 });
+
 
 /***************** shop_detail : 상품 상세페이지 *****************/
 /***************** shop_detail : 상품 상세페이지 *****************/
@@ -917,7 +924,7 @@ function renderFavoriteProducts(products) {
         products.forEach(product => {
             const productHTML = `
                 <div class="prodItem col mb-4" data-prod-id="${product.prodId}">
-                    <div class="card">
+                    <div class="card bg-transparent">
                         
                         <!-- 상품이미지 -->
                         <div class="card-img-wrapper rounded-2 mb-3">
@@ -928,7 +935,7 @@ function renderFavoriteProducts(products) {
                         
                         <div class="d-flex gap-1">
                             <!--찜하기버튼-->
-                            <a href="javascript:void(0);" class="btn btn-outline-success heart removeFavoriteProductBtn" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+                            <a href="javascript:void(0);" class="btn hm-btn-border-green heart removeFavoriteProductBtn" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
                             <!-- 담기버튼 -->
                             <a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary flex-grow-1" onclick="addToCart(${product.prodId}, 1);"><i class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
                         </div>
@@ -961,7 +968,7 @@ function renderFavoriteProducts(products) {
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
                                             <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
                                         </div>
-                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                        <a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">상품 보러 가기</a>
                                     </div>
                                 </div>
                             </div>
@@ -1057,6 +1064,21 @@ $(function() {
         $('#startDate').val(formatDateForInput(firstDayOfMonth));
         $('#endDate').val(formatDateForInput(today));
 
+        //페이지, 아이템 개수 초기값 설정
+        if ($("#pagenum").val()==null ||$("#pagenum").val()==''){
+            $("#pagenum").val(1);
+        }
+        if ($("#pageSizeSelect").val()==null ||$("#pageSizeSelect").val()==''){
+            $("#pageSizeSelect").val(20);
+        }
+        if ($("#sortSelect").val()==null ||$("#sortSelect").val()==''){
+            $("#sortSelect").val("prodId");
+        }
+        if ($("#directionSelect").val()==null ||$("#directionSelect").val()==''){
+            $("#directionSelect").val("ASC");
+        }
+
+
         // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();
 
@@ -1068,38 +1090,105 @@ $(function() {
             }
         });
 
+        //상품 보기 개수 바꾸는 경우, 1페이지부터 다시 로딩
+        $("#pageSizeSelect").on("change", function (event){
+            event.preventDefault();
+            $("#pagenum").val(1);
+            fetchProducts();
+        })
+
     }
 });
 
+//admin:productList 소팅 : 테이블 헤더 클릭 시
+$(".tableSort").on("click", function (){
+    const clicked = $(this);
+    const curSortSelect = $("#sortSelect").val();
+    const curDirectionSelect = $("#directionSelect").val();
+
+
+    //같은 기준 클릭 시 -> 방향 토글, 다른 기준 클릭 시 맞는 방향으로
+    if (clicked.attr("data-order")  == curSortSelect){
+        if (curDirectionSelect =="DESC"){
+            $("#directionSelect").val("ASC");
+        } else {
+            $("#directionSelect").val("DESC");
+        }
+    } else {
+        const nextSortSelect = $("#sortSelect").val(clicked.attr("data-order"));
+        const ascFirst = ['prodId', 'prodName', 'prodStatus']; // ASC 방향 우선 정렬
+        if (ascFirst.includes(nextSortSelect)) $("#directionSelect").val("ASC");
+        else $("#directionSelect").val("DESC");
+    }
+    fetchProducts();
+})
+
+
+//admin:po_list 페이지 번호 클릭 시 상품 리스트
+$(document).on("click", ".adminProdList .pageLink", function (event){
+    const clicked = $(this);
+    const pagenum = Number( $("#pagenum").val());
+    //prev, next 버튼 클릭 시
+    if ($(this).hasClass("prev")){
+        if (pagenum==1) return false;
+        $("#pagenum").val((pagenum-1));
+    } else if ($(this).hasClass("next")){
+        if ((pagenum)==clicked.attr("data-last-page")) return false;
+        $("#pagenum").val((pagenum+1));
+    } else {
+        $("#pagenum").val(clicked.attr("data-page-link"));
+    }
+
+    fetchProducts();
+})
 
 
 
+
+//admin : admin_productList.html 상품 리스트 렌더링
 async function fetchProducts() {
     // 검색어와 상태 필터 값 가져오기
-    const search = document.getElementById("searchInput").value;
-    const category = document.getElementById("categorySelect").value;
-    const status = document.getElementById("statusSelect").value;
-    const startDate = document.getElementById("startDate").value;
-    const endDate = document.getElementById("endDate").value;
+    const search = $("#searchInput").val();
+    const category = $("#categorySelect").val();
+    const status = $("#statusSelect").val();
+    const startDate = $("#startDate").val();
+    const endDate = $("#endDate").val();
+    const pageSize = $("#pageSizeSelect").val();
+    const page = Number($("#pagenum").val());
+    const order = $("#sortSelect").val();
+    const direction = $("#directionSelect").val();
 
-    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}`);
+    $(".tableSort .sortDirectionBtn").text('');
+
+    var btnShape;
+    if (direction == 'ASC'){
+        btnShape = '▲';
+    } else if (direction == 'DESC') {
+        btnShape = '▼';
+    }
+    $(".tableSort[data-order='" + order + "'] .sortDirectionBtn").text(btnShape);
+
+    const response = await fetch(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&pageSize=${pageSize}&order=${order}&direction=${direction}`);
     const data = await response.json();
 
+    console.log(`/shop/api/products?search=${search}&category=${category}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&pageSize=${pageSize}&order=${order}&direction=${direction}`);
     console.log(data);
 
     // 테이블에 주문 목록 렌더링
-    const prodTableBody = document.getElementById("prodTableBody");
-    prodTableBody.innerHTML = ""; // 기존 내용 제거
+    const $prodTableBody = $("#prodTableBody");
+    $prodTableBody.empty(); // 기존 내용 제거
     let sumStock = 0;
     let sumSalesProd = 0;
     let sumSalesAmount = 0;
 
-    data.products.forEach((product,index) => {
+    $.each(data.products, function(index, product) {
+        console.log(product.prodName, product.sumQuantity);
         // 상태에 따라 배경색 클래스를 동적으로 설정
         let rowClass = '';
-        if (product.prodStock !=null) sumStock += product.prodStock;
-        if (product.sumQuantity !=null) sumSalesProd += product.sumQuantity;
-        if (product.totalFinalPrice !=null) sumSalesAmount += product.totalFinalPrice;
+        let statClass = '';
+        if (product.prodStock != null) sumStock += product.prodStock;
+        if (product.sumQuantity != null) sumSalesProd += product.sumQuantity;
+        if (product.totalFinalPrice != null) sumSalesAmount += product.totalFinalPrice;
 
         switch (product.prodStatus) {
             case 'AVAILABLE':
@@ -1126,36 +1215,70 @@ async function fetchProducts() {
             <tr class="prodRow ${rowClass}">
                 <td>${index + 1}</td>
                 <td>${product.prodId}</td>
-                <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a>  </td>
+                <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a></td>
                 <td class="${statClass}">${toKoreanProdStatus(product.prodStatus)}</td>
-                <td class="text-end pe-2">${product.prodStock==null? 0 :product.prodStock.toLocaleString('ko-KR') || 0}</td>
-                <td class="text-end pe-2">${product.sumQuantity==null? 0 :product.sumQuantity.toLocaleString('ko-KR') || 0}</td>
-                <td class="text-end pe-2">${product.totalFinalPrice==null? 0 : product.totalFinalPrice.toLocaleString('ko-KR')}</td>
+                <td class="text-end pe-2">${product.prodStock == null ? 0 : product.prodStock.toLocaleString('ko-KR')}</td>
+                <td class="text-end pe-2">${product.sumQuantity == null ? 0 : product.sumQuantity.toLocaleString('ko-KR')}</td>
+                <td class="text-end pe-2">${product.totalFinalPrice == null ? 0 : product.totalFinalPrice.toLocaleString('ko-KR')}</td>
                 <td class="text-center"><a href="/shop/admin/edit/${product.prodId}" class="tableLink text-secondary text-center">수정</a></td>
             </tr>
         `;
-        prodTableBody.insertAdjacentHTML('beforeend', row);
-
+        $prodTableBody.append(row);
+        console.log(product.prodName +":"+product.sumQuantity);
     });
+
     const totalRow = `
-            <tr  class="table-light fw700">
-                <td class="text-center" colspan="4">소&nbsp;&nbsp;계</td>
-                <td class="text-end pe-2">${sumStock.toLocaleString('ko-KR') || 0}</td>
-                <td class="text-end pe-2">${sumSalesProd.toLocaleString('ko-KR') || 0}</td>
-                <td class="text-end pe-2">${sumSalesAmount.toLocaleString('ko-KR') || 0}</td>
-                <td></td>
-            </tr>
-        `;
-    prodTableBody.insertAdjacentHTML('afterbegin', totalRow);
+        <tr class="table-light fw700">
+            <td class="text-center" colspan="4">소&nbsp;&nbsp;계</td>
+            <td class="text-end pe-2">${sumStock.toLocaleString('ko-KR')}</td>
+            <td class="text-end pe-2">${sumSalesProd.toLocaleString('ko-KR')}</td>
+            <td class="text-end pe-2">${sumSalesAmount.toLocaleString('ko-KR')}</td>
+            <td></td>
+        </tr>
+    `;
+    $prodTableBody.prepend(totalRow);
+
+
+    /*페이지네이션 생성*/
+    const $paginationContainer = $(".paginationContainer");
+    let pageBtns = `
+    <a href="javascript:void(0);" class="pageLink prev" data-page-link="prev">&laquo;</a>
+`;
+
+    for (let i = 1; i <= data.totalPages; i++) {
+        pageBtns += `
+        <a href="javascript:void(0);" class="pageLink" data-page-link="${i}">${i}</a>
+    `;
+    }
+
+    pageBtns += `
+    <a href="javascript:void(0);" class="pageLink next" data-last-page="${data.totalPages}">&raquo;</a>
+`;
+
+    $paginationContainer.empty();
+    $paginationContainer.append(pageBtns);
+
+    console.log( $("#pagenum").val());
+
+    // 페이지 번호에 css 효과 적용
+    $(".pageLink").removeClass("active");
+    $(`.pageLink[data-page-link='${page}']`).addClass("active");
 }
 
 
 
-/*<td>${formatDateTime(order.createdAt)}</td>
-<td><a href="/order/admin/po/${order.orderId}" className="${statClass} tableLink">${order.orderId}</a></td>
-<td>${order.memberId}</td>
-<td className="${statClass}">${order.status}</td>
-<td className="text-end me-5">${formatCurrency(order.totalPay)}</td>*/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -37,12 +37,17 @@ $(function () {
     $(".plus").on("click", function (e) {
         e.preventDefault();
         let $input = $(this).prev("input");
+
+        //+버튼과 같은 상위요소를 가진 메시지 박스를 선택
+        let $messageBox = $(this).closest(".calcItem").find(".messageBox");
+
         let maxValue = parseInt($input.attr("max"));
         if (parseInt($input.val()) < maxValue) {
             $input.val(parseInt($input.val()) + 1);
         } else {
-            showMessage("quantityMessage", "최대 구매 수량을 초과하였습니다.(재고수량 이내 & 최대 10개 구매)");
+            showMessage($messageBox.attr("id"), "최대 구매 수량을 초과하였습니다.(재고수량 이내 & 최대 10개 구매)");
         }
+
         let $orgPrice = $(this).parents('.calcItem').find('.orgPrice').val();
         let $finalPrice = $(this).parents('.calcItem').find('.finalPrice').val();
         let $sumOrgPrice = $(this).parents('.calcItem').find('.sumOrgPrice');
@@ -490,6 +495,8 @@ async function fetchOrders() {
     orderTableBody.innerHTML = ""; // 기존 내용 제거
 
     data.orders.forEach((order,index) => {
+        if (order.status == '결제대기') return;
+
         // 상태에 따라 배경색 클래스를 동적으로 설정
         let rowClass = '';
         switch (order.status) {

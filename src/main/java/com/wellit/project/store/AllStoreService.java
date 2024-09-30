@@ -1,14 +1,23 @@
 package com.wellit.project.store;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.wellit.project.shop.Product;
+import com.wellit.project.shop.ProductAdminDTO;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -198,4 +207,25 @@ public class AllStoreService {
         Collections.shuffle(allStores); // 리스트를 랜덤하게 섞음
         return allStores.stream().limit(20).collect(Collectors.toList()); // 상위 20개 선택
     }
+
+	public Page<AllStore> findStores(String stoName, String stoCategory, String stoVegetarianType, int page, int pageSize) {
+	    Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지 요청 생성
+
+        // 검색 조건에 따라 가게 정보를 조회
+        if (stoName != null && !stoName.isEmpty()) {
+            return allStoreRepository.findByStoNameContainingAndStoCategoryContainingAndStoVegetarianType(stoName, stoCategory, stoVegetarianType, pageable);
+        } else {
+            return allStoreRepository.findByStoCategoryContainingAndStoVegetarianType(stoCategory, stoVegetarianType, pageable);
+        }
+    }
+
+	public Page<AllStore> findAllStores(int page, int pageSize) {
+        // Pageable 객체 생성
+        Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지는 0부터 시작하므로 -1
+
+        // 모든 가게를 페이지네이션하여 반환
+        return allStoreRepository.findAll(pageable);
+    }
+	
+	
 }

@@ -19,7 +19,7 @@
 		.goodsSwiper {
 			width: 100%;
 			/*병합 후 높이 수정할 것!!!*/
-			height: 60vh;
+			height: 500px;
 		}
 
 		#products {
@@ -28,31 +28,58 @@
 
 		.goodsSwiper .swiper-slide {
 			background-position: center;
-			background-size: cover;
+			background-size: 100% 100%;
 			width: 100%;
 			height: 100%;
 		}
-
+		.btnBox {
+				opacity: 0;
+				transition: opacity 0.3s ease-in-out;
+		}
+    .goodsSwiper:hover .btnBox{
+        opacity: 0.6;
+    }
 		/*goods 이미지 스타일*/
 		.goodsSwiper .imgBox {
 			width: 100%;
 			height: 100%;
-			background: aquamarine center no-repeat;
-			background-size: cover;
+			background: center no-repeat;
+			background-size: auto;
 		}
 
+    .goodsSwiper .swiper-slide.goods01{
+        background-image: url("/imgs/shop/product/main/event_products/hanlabong_bg.png");
+    }
+		
 		.goodsSwiper .imgBox#goods01 {
-			background-image: url("/imgs/main/goods01.jpg");
+			background-image: url("/imgs/shop/product/main/event_products/hanlabong_content.png");
 		}
 
-		.goodsSwiper .imgBox#goods02 {
-			background-image: url("/imgs/main/goods02.jpg");
-		}
+    .goodsSwiper .swiper-slide.goods02{
+        background-image: url("/imgs/shop/product/main/event_products/dduck_bg.png");
+    }
 
-		.goodsSwiper .imgBox#goods03 {
-			background-image: url("/imgs/main/goods03_v2.jpg");
-		}
+    .goodsSwiper .imgBox#goods02 {
+        background-image: url("/imgs/shop/product/main/event_products/dduck_content.png");
+    }
 
+    .goodsSwiper .swiper-slide.goods03{
+        background-image: url("/imgs/shop/product/main/event_products/bokbunja_bg.png");
+    }
+
+    .goodsSwiper .imgBox#goods03 {
+        background-image: url("/imgs/shop/product/main/event_products/bokbunja_content.png");
+    }
+
+
+
+
+
+
+
+
+
+/*
 		.goodsSwiper .imgBox#goods04 {
 			background-image: url("/imgs/main/goods04_v2.jpg");
 		}
@@ -67,7 +94,7 @@
 
 		.goodsSwiper .imgBox#goods07 {
 			background-image: url("/imgs/main/goods07.jpg");
-		}
+		}*/
 
 		/*goods 텍스트 스타일*/
 		.goodsSwiper .descBox {
@@ -121,7 +148,7 @@
 
 		/*goods 네비게이션 버튼*/
 		.goodsSwiper .swiper-btn {
-			width: 60px;
+			width: 30px;
 			height: 100%;
 			position: absolute;
 			background-color: transparent;
@@ -130,22 +157,25 @@
 		}
 
 		.goodsSwiper .swiper-btn.swiper-prev {
-			left: calc(25% - 75px);
+			left: 50px;
+			
 		}
 
 		.goodsSwiper .swiper-btn.swiper-next {
-			left: calc(75% + 5px);
+			right: 50px;
 		}
 
 		.goodsSwiper .swiper-btn .btnBox {
-			width: 60px;
-			height: 60px;
+			width: 40px;
+			height: 40px;
 			position: relative;
-			top: calc(50% - 60px);
+			top: calc(50% - 20px);
+				/*opacity: 60%;*/
+        filter: drop-shadow(0 3px 2px rgba(167, 201, 87, 0.50));
 		}
 
 		.goodsSwiper .swiper-prev .btnBox {
-			background: url("/imgs/main/prev-btn.png") no-repeat;
+			background: url("/imgs/main/icon/prev-btn.png") no-repeat;
 			background-size: contain;
 			background-position-y: 50%;
 			background-position-x: 50%;
@@ -153,7 +183,7 @@
 
 
 		.goodsSwiper .swiper-next .btnBox {
-			background: #fff url("/imgs/main/next-btn.png") center no-repeat;
+			background: url("/imgs/main/icon/next-btn.png") center no-repeat;
 			background-size: contain;
 		}
 
@@ -198,19 +228,47 @@
 		.goodsSwiper .swiper-next:active .btnBox {
 			filter: drop-shadow(0 3px 2px rgba(167, 201, 87, 0.50));
 			animation: none;
+				transform: translateY(2px);
 		}
 
 		/*페이지네이션 버튼*/
-		.goodsSwiper .pagination {
+/*		.goodsSwiper .pagination {
 			height: 20px;
 			z-index: 9;
 			bottom: 0px;
 			position: absolute;
 			width: 100%;
 			justify-content: center;
-		}
+		}*/
 
-		/*goods Swiper style End*/
+    .swiper-pagination-bullet {
+        background: #eeeeee;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        margin: 0 6px;
+        transition: background 0.3s, width 0.3s;
+		    opacity: 80%;
+		    
+    }
+
+    .swiper-pagination-bullet-active {
+        background: #FF6347; /* 활성화된 페이지네이션 버튼 색상 */
+        /*transform: scale(2.0);*/ /* 선택된 페이지네이션 점을 조금 키움 */
+        /*transform: scaleX(2.0);*/ /* 선택된 페이지네이션 점을 조금 키움 */
+		    width: 30px;
+		    opacity: 1;
+    }
+
+    /* 페이지네이션의 위치 */
+    .goodsSwiper .swiper-pagination {
+        bottom: 50px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+		    width: fit-content;
+    }
+
 
 		@media (max-width: 768px) {
 
@@ -220,13 +278,13 @@
 			}
 
 			.goodsSwiper .swiper-prev .btnBox {
-				background: url("/imgs/main/prev-btn_v2.png") no-repeat;
+				background: url("/imgs/main/icon/prev-btn.png") no-repeat;
 				background-size: 100px;
 				background-position-y: 50%;
 				background-position-x: 50%;
 				border-radius: 50%;
-				/*padding: 10px;*/
-				opacity: 0.8;
+				padding: 10px;
+				/*opacity: 0.8;*/
 			}
 
 			.goodsSwiper .swiper-btn.swiper-next {
@@ -235,26 +293,28 @@
 			}
 
 			.goodsSwiper .swiper-next .btnBox {
-				background: url("/imgs/main/next-btn_v2.png") no-repeat;
+				background: url("/imgs/main/icon/next-btn.png") no-repeat;
 				background-size: 100px;
 				background-position-y: 50%;
 				background-position-x: 50%;
 				border-radius: 50%;
-				/*padding: 10px;*/
-				opacity: 0.6;
+				padding: 10px;
+				/*opacity: 0.6;*/
 			}
 
 			.goodsSwiper .swiper-btn .btnBox {
-				top: calc(50% + 60px);
+				top: calc(50% + 15px);
 			}
+			
+
 		}
 
 		@media (min-width: 768px) {
 
 			/*goods pc사이즈에서 pagination 숨김*/
-			.pagination {
+			/*.pagination {
 				visibility: hidden;
-			}
+			}*/
 		}
 	</style>
 
@@ -277,99 +337,49 @@
 
 		<!--goods 슬라이드-->
 		<div class="swiper-wrapper">
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods01">
+			<div class="swiper-slide goods01">
+				<div class="imgBox" id="goods01"> <!--한라봉-->
 					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
 						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
 							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
 						</div>
 					</div>
 				</div>
 			</div> <!--//goods01-->
 
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods02">
+			<div class="swiper-slide goods02">
+				<div class="imgBox" id="goods02"> <!--방앗간-->
 					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
 						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
 							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
 						</div>
 					</div>
 				</div>
 			</div> <!--//goods02-->
 
-			<div class="swiper-slide">
+			<div class="swiper-slide goods03">
 				<div class="imgBox" id="goods03">
 					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
 						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
 							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
 						</div>
 					</div>
 				</div>
 			</div> <!--//goods03-->
 
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods04">
-					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
-						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
-				</div>
-			</div> <!--//goods04-->
+			
 
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods05">
-					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
-						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
-				</div>
-			</div> <!--//goods05-->
-
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods06">
-					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
-						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
-				</div>
-			</div> <!--//goods06-->
-
-			<div class="swiper-slide">
-				<div class="imgBox" id="goods07">
-					<div class="descBox">
-						<h2 class="goodsTitle">몸에 좋은데 <br> 맛도 좋다고??</h2>
-						<h4 class="goodsName">유기농 케일 키위주스 30일분</h4>
-						<div class="goodsBottomLine">
-							<h5 class="goodsPrice">₩129,800</h5>
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
-				</div>
-			</div> <!--//goods06-->
-
+			
+			
+			
+			
+			
+			
 		</div> <!--//wrapper-->
-		<div class="pagination" style=""></div>
+		<!--<div class="pagination" style=""></div>-->
+		<div class="swiper-pagination"></div>
+		<!--<div class="swiper-button-prev"></div>
+		<div class="swiper-button-next"></div>-->
 	</div>
 
 	<!-- Swiper JS -->
@@ -383,25 +393,12 @@
 				prevEl: '.swiper-prev',
 			},
 			pagination: {
-				el: ".pagination",
+          el: '.swiper-pagination',
+          clickable: true,
 			},
 			// 기본 설정
 			slidesPerView: "1",
-			// effect: "slide",
-			effect: "coverflow",
-			coverflowEffect: {
-				rotate: 20,
-				stretch: -50,
-				depth: 50,
-				modifier: 1,
-				slideShadows: true,
-				scale: 0.8,
-			},
-			breakpoints: {
-				768: {
-					slidesPerView: 2,
-				},
-			},
+			 effect: "slide",
 		});
 
 		// prev,next slide 클릭 시 슬라이드
@@ -411,6 +408,27 @@
 				goods_swiper.slideToLoop(realIndex);
 			});
 		});
+        
+        function positionOfPagination(){
+            var winWidth = $(window).width();
+            
+            if (winWidth<1200){
+                $(".goodsSwiper .swiper-pagination").css({"left":"50px"});
+            } else {
+                var posX = ((winWidth - 1200 )/2)+100
+		            console.log(posX);
+                $(".goodsSwiper .swiper-pagination").css({"left":posX});
+            }
+        }
+        
+        
+		
+        $(function (){
+            positionOfPagination();
+        })
 
+		$(window).on("resize",function (){
+        positionOfPagination();
+		})
 	</script>
 </section>

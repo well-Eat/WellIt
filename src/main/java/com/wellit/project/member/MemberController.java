@@ -54,6 +54,7 @@ public class MemberController {
 	private final EmailService emailService;
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
+
 	private final OrderService orderService;
 
 	@GetMapping("/login")
@@ -62,6 +63,14 @@ public class MemberController {
 			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
 		return "/member/login";
+	}
+
+	@GetMapping("/login_trial")
+	public String getLoginTrial(@RequestParam(value = "error", required = false) String error, Model model) {
+		if (error != null) {
+			model.addAttribute("errorMessage", "아이디 또는 비밀번호가 일치하지 않습니다.");
+		}
+		return "/member/login_trial";
 	}
 
 	@GetMapping("/register")
@@ -508,6 +517,14 @@ public class MemberController {
 	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session,
 			Model model) {
 
+    //로그인 여부 확인
+    @GetMapping("/auth/status")
+    public ResponseEntity<Boolean> checkLoginStatus(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(true);  // 로그인 중일 경우 true 반환
+        }
+        return ResponseEntity.ok(false);  // 로그인 중이 아닐 경우 false 반환
+    }
 		Optional<Member> thisMember = memberService.findByMemberEmail(email);
 
 		if (!thisMember.isPresent()) {
@@ -577,45 +594,85 @@ public class MemberController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		memberService.getPrincipal(authentication, model);
 
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
-		}
-		return "/shop/mypage_favoriteProduct";
-	}
+    @GetMapping("/mypage/favorite/product")
+    public String getFavoriteShop(Model model) {
+    	String memberId = memberService.getMemberId();
+        Member member = memberService.getMember(memberId);
+        model.addAttribute("member", member);
+        model.addAttribute("memberId", memberId);
+
+        return "/shop/mypage_favoriteProduct";
+    }
+
 
 	@GetMapping("/mypage/favorite/store")
 	public String getFavoriteStore(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		memberService.getPrincipal(authentication, model);
-
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
 		}
 		return "/load/mypage_favoriteStore";
 	}
 
+	@GetMapping("/mypage/favorite/recipe")
+    public String getFavoriteRecipe(Model model) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+		}
+		return "/life/mypage_favoriteRecipe";
+	}
+
 	@GetMapping("/mypage/orderhistory")
 	public String getOrderHistory(Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String memberId = memberService.getMemberId();
+		Member member = memberService.getMember(memberId);
 
-		// 인증된 사용자의 정보를 모델에 추가
-		memberService.getPrincipal(authentication, model);
-
-		// 모델에서 member와 formattedRegDate를 가져옵니다.
-		Member member = (Member) model.getAttribute("member");
-		String formattedRegDate = (String) model.getAttribute("formattedRegDate");
 		// mypage : 주문 내역 확인
-		List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(member.getMemberId());
+		List<PoHistoryForm> poHistoryList = orderService.getPoHistoryList(memberId);
+
 		model.addAttribute("poHistoryList", poHistoryList);
 		model.addAttribute("member", member);
-		model.addAttribute("formattedRegDate", formattedRegDate);
-
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
-		}
 
 		return "/order/mypage_orderHistory";
 
@@ -624,13 +681,33 @@ public class MemberController {
 	@GetMapping("/mypage/memberinfo")
 	public String getMemberInfo(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		memberService.getPrincipal(authentication, model);
-
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			// Principal이 String 타입으로 가정
+			if (principal instanceof String) {
+				String memberId = (String) principal;
+				Member member = memberService.getMember(memberId);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedRegDate = member.getMemberRegDate().format(formatter);
+				model.addAttribute("member", member);
+				model.addAttribute("formattedRegDate", formattedRegDate);
+			} else {
+				// UserDetails를 사용하는 경우
+				if (principal instanceof UserDetails) {
+					UserDetails userDetails = (UserDetails) principal;
+					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
+					Member member = memberService.getMember(memberId);
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String formattedRegDate = member.getMemberRegDate().format(formatter);
+					model.addAttribute("member", member);
+					model.addAttribute("formattedRegDate", formattedRegDate);
+				}
+			}
+			// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+			if (!model.containsAttribute("member")) {
+				return "redirect:/member/login";
+			}
 		}
-
 		return "/member/memberinfo";
 	}
 
@@ -684,6 +761,7 @@ public class MemberController {
 
 		List<Member> members = memberService.findAllMembers();
 		model.addAttribute("members", members);		
+
 
 		// 회원가입 일자 기준으로 정렬
 		members.sort(Comparator.comparing(Member::getMemberRegDate));

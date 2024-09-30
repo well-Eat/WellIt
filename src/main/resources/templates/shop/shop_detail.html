@@ -116,8 +116,8 @@
 						<!--버튼 라인-->
 						<div class="mb-3 btns gx-1 d-flex align-items-stretch justify-content-between">
 							
-							<a href="javascript:void(0);" class="btn btn-outline-success heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
-							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-success goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
+							<a href="javascript:void(0);" class="btn hm-btn-border-green heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn hm-btn-green goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
 
 						</div>
 					</form>
@@ -131,7 +131,7 @@
 	
 	
 	<!--상품 상세 정보 출력-->
-	<section class="prodDetail container border border-success mb-3 d-flex flex-column justify-content-center align-items-center">
+	<section class="prodDetail container mb-3 d-flex flex-column justify-content-center align-items-center">
 		<th:block th:each="prodImage : ${sortedImages}">
 			<div class="d-inline-block w-100 text-center">
 				<img th:src="${prodImage.imagePath}" class="img-fluid" style="object-fit: contain;">
@@ -144,16 +144,14 @@
 	
 	
 	<!--상품 리뷰 -->
-	<section class="prodReview container" id="prodReview">
-		<h5>상품후기 &nbsp;
+	<section class="prodReview container mb-5" id="prodReview">
+		<h5 class="py-1">상품후기 &nbsp;
 			<span class="revCnt">(<small th:text="${reviewCnt.cnt}"></small>건)</span>
 		</h5>
 		<!--이미지 리뷰 라인-->
 				<section class="imgReviewList" th:insert="shop/shop_imgReview::imgReviewContainer">
 					shop_imgReview.html 파일 내용으로 대체
 				</section>
-
-		
 		
 		<!-- 리뷰 리스트 출력 -->
 		<div class="container">
@@ -165,8 +163,8 @@
 			
 			<!-- 리뷰 페이지 버튼 -->
 			<div class="pagination justify-content-center my-3" th:if="${reviewCnt.cnt>5}">
-				<button class="pageBtn pagePrev btn btn-sm btn-outline-success mx-2">&laquo;</button>
-				<button class="pageBtn pageNext btn btn-sm btn-outline-success mx-2">&raquo;</button>
+				<button class="pageBtn pagePrev btn btn-sm hm-btn-border-green mx-2">&laquo;</button>
+				<button class="pageBtn pageNext btn btn-sm hm-btn-border-green mx-2">&raquo;</button>
 			</div>
 		</div>
 		

@@ -10,7 +10,7 @@
 	      crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
-<div layout:fragment="content" class="container">
+<div layout:fragment="content" class="container shopList">
 	
 	<!--sweet alert2 cdn-->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -43,33 +43,31 @@
 		</div>
 	</div>
 	
-	<div class="row mb-3">
-		<div class="col">
+	<div class="row mb-3 justify-content-between prodSearchSort">
+		<div class="col-lg-5 d-flex gx-1 searchForm mb-3">
+			<input type="text" class="form-control form-control-sm flex-grow-1" id="search-input" placeholder="상품명 검색">
+			<input type="button" class="form-control form-control-sm px-2 ms-1" value="검색" id="searchBtn">
+		</div>
+		
+		<div class="col-lg-7 d-flex justify-content-end  gx-1 gap-2 sortForm">
 			<!-- 정렬 옵션 리스트-->
 			<ul class="sortBox d-flex justify-content-end">
-				<li><a href="#" class="sortLink" data-order="default">기본순</a></li>
-				<li><a href="#" class="sortLink" data-order="latest">신상품순</a></li>
-				<li><a href="#" class="sortLink" data-order="reviewCount">리뷰수 순</a></li>
-				<li><a href="#" class="sortLink" data-order="salesCount">판매량 순</a></li>
-				<li><a href="#" class="sortLink" data-order="viewCount">조회수 순</a></li>
+				<li><a href="#" class="sortLink" data-order="latest">신상품 순</a></li>
 				<li><a href="#" class="sortLink" data-order="reviewRating">평점 순</a></li>
 				<li><a href="#" class="sortLink" data-order="favoriteCount">추천 순</a></li>
-				<li><a href="#" class="sortLink" data-order="lowPrice">낮은 가격순</a></li>
-				<li><a href="#" class="sortLink" data-order="highPrice">높은 가격순</a></li>
+				<li><a href="#" class="sortLink" data-order="lowPrice">낮은 가격 순</a></li>
+				<li><a href="#" class="sortLink" data-order="highPrice">높은 가격 순</a></li>
 			</ul>
 			
 			<!-- 보기 개수 선택 -->
-			<ul class="pagination-size d-flex justify-content-end">
-				<li><a href="#" class="pageSizeLink" data-size="20">20개 보기</a></li>
-				<li><a href="#" class="pageSizeLink" data-size="50">50개 보기</a></li>
-				<li><a href="#" class="pageSizeLink" data-size="80">80개 보기</a></li>
-			</ul>
+			<select class="form-select form-select-sm pagination-size ml-2 d-none d-md-block" id="pageSizeSelect" name="pageSize" >
+				<option value="12" class="pageSizeLink" data-size="12">12개씩 보기</option>
+				<option value="20" class="pageSizeLink" data-size="20">20개씩 보기</option>
+			</select>
 		</div>
 	</div>
 	
-	<!-- 페이지네이션 -->
-	
-	
+
 	<!--판매 상품 리스트-->
 	<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
 		
@@ -104,7 +102,7 @@
 						<p class="prodFinalPrice card-text c333" th:if="${item.prodDiscount == null or item.prodDiscount == 0}" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
 						
 						<!--상품 카운트 뷰 라인-->
-						<p class="prodCount card-text d-flex ">
+						<div class="prodCount card-text d-flex ">
 							
 							<!--조회수-->
 							<p class="prodView d-inline-block me-2">
@@ -123,7 +121,7 @@
 								<i class="fa-regular fa-heart"></i>
 								<span th:text="${favoriteCntMap[item.prodId] ?: 0}"></span>
 							</p>
-						</p>
+						</div>
 						
 						
 						
@@ -137,8 +135,23 @@
 			</div> <!-- //card -->
 		</div> <!-- ///////// prodItem -->
 	
+	</div> <!--//prodList 상품리스트 그리드-->
 	
-	
+	<!--페이지네이션-->
+	<div class="shopList pageLine position-relative py-3 mb-5">
+		
+		<div class="paginationContainer d-flex justify-content-center position-absolute start-50 translate-middle-x gap-2">
+			<a href="javascript:void(0);" class="pageLink prev" data-page-link="prev" th:if="${currentPage>5}">&laquo;</a>
+			
+			<th:block th:each="i: ${#numbers.sequence(currentPage-4, currentPage+4)}">
+				<a href="javascript:void(0);" th:if="${i>0 && i<=totalPages}" class="pageLink" th:attr="data-page-link=${i}" th:classappend="${i} == ${currentPage} ? 'active' : ''">
+					[[${i}]]
+				</a>
+			</th:block>
+			
+			<a href="javascript:void(0);" class="pageLink next" data-last-page="${totalPages}" th:if="${currentPage<totalPages-5}">&raquo;</a>
+		</div>
+		
 	</div>
 	
 	<!--shop js link-->

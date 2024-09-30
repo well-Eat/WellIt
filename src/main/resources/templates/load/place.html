@@ -45,7 +45,7 @@
 					</div>
 				</div>
 				<div class="col-1 recommendButton">
-					<button type="submit" class="btn">확인</button>
+					<button type="submit" class="btn hm-btn-green">확인</button>
 				</div>
 			</div>
 		</form>
@@ -151,10 +151,10 @@
 			</div>
 		</div>
 		<div th:if="${findStores != null}" class="text-center my-4">
-			<button id="load-more" class="btn btn-secondary" th:if="${findStores.size() > 8}">더보기</button>
+			<button id="load-more" class="btn hm-btn-light" th:if="${findStores.size() > 8}">더보기</button>
 		</div>
 		<div th:if="${randomStores != null}" class="text-center my-4">
-			<button id="load-more" class="btn btn-secondary" th:if="${randomStores.size() > 8}">더보기</button>
+			<button id="load-more" class="btn hm-btn-light" th:if="${randomStores.size() > 8}">더보기</button>
 		</div>
 	</div>
 	<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
