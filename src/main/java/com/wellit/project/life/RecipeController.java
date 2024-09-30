@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
+import com.wellit.project.shop.ProdCnt;
 import com.wellit.project.shop.Product;
 import com.wellit.project.shop.ShopService;
 
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -228,38 +230,40 @@ public class RecipeController {
 
 	@GetMapping("/recipe/detail")
 	public String getRecipeDetail(@RequestParam("id") Long id, Model model, HttpSession session) {
-		Recipe recipe = recipeService.getRecipeById(id); // ID로 레시피를 가져오는 서비스 메서드
-		if (recipe == null) {
-			// 레시피가 없을 경우 처리 (예: 에러 페이지로 리다이렉트)
-			return "error/recipe_not_found"; // 에러 페이지로 리턴
-		}
+	    Recipe recipe = recipeService.getRecipeById(id); // ID로 레시피를 가져오는 서비스 메서드
+	    if (recipe == null) {
+	        return "error/recipe_not_found"; // 레시피가 없을 경우 처리
+	    }
 
-		// 조회수 증가
-		if (recipe.getViewCount() == null) {
-			recipe.setViewCount(1);
-		} else {
-			recipe.setViewCount(recipe.getViewCount() + 1);
-		}
-		recipeService.updateRecipe(recipe); // 변경된 레시피 저장
+	    // 조회수 증가
+	    recipe.setViewCount(recipe.getViewCount() == null ? 1 : recipe.getViewCount() + 1);
+	    recipeService.updateRecipe(recipe); // 변경된 레시피 저장
 
-		// 세션에서 사용자 가져오기
-		String userId = (String) session.getAttribute("UserId");
-		Member member = memberService.getMember(userId); // 사용자 객체 가져오기
+	    // 세션에서 사용자 가져오기
+	    String userId = (String) session.getAttribute("UserId");
+	    Member member = memberService.getMember(userId); // 사용자 객체 가져오기
 
-		// 사용자의 좋아요 목록에 현재 레시피가 있는지 확인
-		boolean isFavorite = favoriteRecipeService.isFavoriteRecipe(member, recipe.getId());
-		model.addAttribute("isFavorite", isFavorite); // 좋아요 여부 추가
+	    // 사용자의 좋아요 목록에 현재 레시피가 있는지 확인
+	    boolean isFavorite = favoriteRecipeService.isFavoriteRecipe(member, recipe.getId());
+	    model.addAttribute("isFavorite", isFavorite); // 좋아요 여부 추가
 
-		// 조리 카드 리스트 정렬
-		List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
-		orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum)); // 순서 번호로 정렬
-		
+	    // 조리 카드 리스트 정렬
+	    List<CookOrderCard> orderCards = recipe.getCookOrderCardList();
+	    orderCards.sort(Comparator.comparingInt(CookOrderCard::getCookOrderNum)); // 순서 번호로 정렬
+	    
 	    List<Product> productList = shopService.findAll(); // 모든 상품 리스트 가져오기
 
-		model.addAttribute("recipe", recipe); // 모델에 레시피 추가
-	    model.addAttribute("productList", productList);
+	    // 리뷰 수를 가져오는 부분
+	    List<ProdCnt> prodCnts = shopService.getProdCntList(productList);
+	    Map<Long, Integer> revCntMap = prodCnts.stream()
+	                                           .collect(Collectors.toMap(ProdCnt::getProdId, ProdCnt::getRevCnt));
 
-		return "life/recipe_detail"; // 상세 정보를 보여줄 뷰 이름
+	    // 모델에 추가
+	    model.addAttribute("recipe", recipe); // 모델에 레시피 추가
+	    model.addAttribute("productList", productList);
+	    model.addAttribute("revCntMap", revCntMap); // 리뷰 수 추가
+
+	    return "life/recipe_detail"; // 상세 정보를 보여줄 뷰 이름
 	}
 
 	@PostMapping("/recipe/edit/{id}")

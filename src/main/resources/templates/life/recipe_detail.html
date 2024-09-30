@@ -165,7 +165,7 @@
 											</div>
 
 											<!-- 담기버튼 -->
-											<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary"
+											<a href="javascript:void(0);" class="addCartBtn btn btn-outline-secondary w-100"
 												th:onclick="addToCart([[${product.prodId}]], 1);"><i
 													class="fa-solid fa-cart-shopping" style="color: #666;"></i> 담기</a>
 
@@ -185,7 +185,7 @@
 															th:text="${#numbers.formatPercent(product.prodDiscount,2,0)}">
 														</p>
 														<p class="prodFinalPrice card-text c333"
-															th:text="|${#numbers.formatInteger( product.prodOrgPrice - product.prodOrgPrice * product.prodDiscount ,3,'COMMA') }원|">
+															th:text="|${#numbers.formatInteger(product.prodOrgPrice - product.prodOrgPrice * product.prodDiscount ,3,'COMMA') }원|">
 														</p>
 													</th:block>
 
@@ -197,7 +197,6 @@
 
 													<!--상품 카운트 뷰 라인-->
 													<div class="prodCount card-text d-flex ">
-
 														<!--조회수-->
 														<p class="prodView d-inline-block me-2">
 															<i class="fa-regular fa-eye"></i>
@@ -207,7 +206,7 @@
 														<!--리뷰수-->
 														<p class="prodReview d-inline-block me-2">
 															<i class="fa-regular fa-comment-dots"></i>
-															<span th:text="${product.prodId ?: 0}"></span>
+															<span th:text="${revCntMap[product.prodId] ?: 0}"></span>
 														</p>
 
 														<!--하트수-->
@@ -217,13 +216,10 @@
 														</p>
 													</div>
 
-
-
 													<div class="prodTags">
 														<!--할인율 있는 경우 세일상품 태그 표시-->
 														<span class="badge text-bg-success" th:text="️세일상품"
 															th:if="${product.prodDiscount != null and product.prodDiscount > 0}"></span>
-
 													</div>
 												</a>
 											</div> <!-- //card-body -->
@@ -233,13 +229,17 @@
 							</th:block>
 						</th:block>
 					</th:block>
+
+					<!-- 페이지네이션 버튼 -->
+					<th:block th:if="${#lists.size(productList) > 4}">
+						<div class="pagination">
+							<button id="prevButton" class="" onclick="changePage(-1)"><</button>
+							<button id="nextButton" class="" onclick="changePage(1)">></button>
+						</div>
+					</th:block>
 				</div>
 			</div>
-			<!-- 페이지네이션 버튼 -->
-			<div class="pagination">
-				<button id="prevButton" class="btn btn-secondary" onclick="changePage(-1)">이전</button>
-				<button id="nextButton" class="btn btn-secondary" onclick="changePage(1)">다음</button>
-			</div>
+
 
 			<!-- 조리 순서 -->
 			<h2 class="mt-4">조리 순서</h2>
@@ -289,9 +289,9 @@
 					card.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
 				});
 
-				// 이전 버튼과 다음 버튼의 표시 여부 설정
-				document.getElementById('prevButton').style.display = (page === 0) ? 'none' : 'inline-block';
-				document.getElementById('nextButton').style.display = (page === totalPages - 1) ? 'none' : 'inline-block';
+				// 버튼 활성화/비활성화 설정
+				    document.getElementById('prevButton').disabled = (page === 0);
+				    document.getElementById('nextButton').disabled = (page === totalPages - 1);
 			}
 
 			function changePage(direction) {
