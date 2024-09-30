@@ -1,16 +1,15 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <html layout:decorate="~{layout}">
 
 <head>
 	<title>비건 레시피 올리기</title>
-	
+
 	<style>
- 
+
 	</style>
 
-<!-- 임시 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+	<!-- 임시 -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
 		integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -22,7 +21,8 @@
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28da3dbc8c389b574e0c32075b4e02ba"></script>
+	<script type="text/javascript"
+		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28da3dbc8c389b574e0c32075b4e02ba"></script>
 
 
 </head>
@@ -31,34 +31,34 @@
 
 
 <div layout:fragment="content" class="container">
-	
-	
+
+
 	<!-- jQuery UI 라이브러리 -->
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-	
+
 	<!-- jQuery UI CSS 파일 -->
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-	
-	
-	
+
+
+
 	<!--recipe style link-->
 	<link rel="stylesheet" th:href="@{/css/util.css}">
-  <link rel="stylesheet" th:href="@{/css/recipe.css}">
-  
-  <!--recipe js link-->
-  <script src="/js/recipe.js"></script>
-	
+	<link rel="stylesheet" th:href="@{/css/recipe.css}">
+
+	<!--recipe js link-->
+	<script src="/js/recipe.js"></script>
+
 	<!--페이지 제목-->
 	<div class="row my-5">
 		<div class="pageTitle col text-center">
 			내 레시피 등록하기
 		</div>
 	</div>
-	
-	
+
+
 	<form th:action="@{/life/recipe/create}" th:object="${recipeForm}" method="post" enctype="multipart/form-data">
 		<section class="main">
-		<div class="card mainCookCard">
+			<div class="card mainCookCard">
 				<div class="card-header">
 					<p>요리 정보</p>
 				</div>
@@ -66,32 +66,36 @@
 					<div class="col-lg-3 col-md-5">
 						<div class="drop-area" id="mainDropArea" style="z-index: 999;">
 							<p>이미지를 여기에 드래그 앤 드롭하세요</p>
-							
+
 							<div class="mainImgFrame drop-area gallery">
-								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg1" accept="image/*" style="display: none" name="recpMainImgList[0]">
+								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg1"
+									accept="image/*" style="display: none" name="recpMainImgList[0]">
 								<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 							</div>
-							
-							
+
+
 							<div class="mainImgFrame drop-area gallery">
-								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg2" accept="image/*" style="display: none" name="recpMainImgList[1]">
+								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg2"
+									accept="image/*" style="display: none" name="recpMainImgList[1]">
 								<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 							</div>
-							
-							
+
+
 							<div class="mainImgFrame drop-area gallery">
-								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg3" accept="image/*" style="display: none" name="recpMainImgList[2]">
+								<input type="file" class="form-control recpMainImg drop-area" id="recpMainImg3"
+									accept="image/*" style="display: none" name="recpMainImgList[2]">
 								<button type="button" class="remove-btn">X</button> <!-- 이미지 삭제 버튼 -->
 							</div>
-						
-						
+
+
 						</div> <!-- //drop-area -->
-						
+
 					</div> <!-- //메인 이미지 영역 -->
 					<div class="col-lg-5 col-md-7 recpInfo">
 						<div class="infoGroup">
 							<label for="recpName" class="form-label">요리 제목</label>
-							<input type="text" class="form-control" id="recpName" th:field="*{recpName}">
+							<input type="text" class="form-control" id="recpName" th:field="*{recpName}"
+								placeholder="요리 제목을 입력해주세요">
 						</div>
 						<div class="infoGroup">
 							<label for="recpIntroduce" class="form-label">소개글</label>
@@ -108,105 +112,217 @@
 								<input type="text" class="form-control" id="cookTime" th:field="*{cookTime}">
 							</div>
 						</div>
-							<label class="form-label mr-2">난이도</label>
+						<label class="form-label mr-2">난이도</label>
 						<div class="infoGroup">
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="difficulty" id="diff_easy" value="diff_easy">
+								<input class="form-check-input" type="radio" name="difficulty" id="diff_easy"
+									value="diff_easy">
 								<label class="form-check-label" for="diff_easy">하</label>
 							</div>
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="difficulty" id="diff_normal" value="diff_normal">
+								<input class="form-check-input" type="radio" name="difficulty" id="diff_normal"
+									value="diff_normal">
 								<label class="form-check-label" for="diff_normal">중</label>
 							</div>
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="difficulty" id="diff_hard" value="diff_hard">
+								<input class="form-check-input" type="radio" name="difficulty" id="diff_hard"
+									value="diff_hard">
 								<label class="form-check-label" for="diff_hard">상</label>
 							</div>
 						</div>
-						
+
 						<div class="infoGroup">
 							<label for="recpTags" class="form-label">태그</label>
-							<input type="text" class="form-control" id="recpTags" th:field="*{recpTags}">
+							<input type="text" class="form-control" id="recpTags" th:field="*{recpTags}"
+								placeholder="#을 포함해서 입력해주세요">
 						</div>
-						
+
 					</div> <!-- //인포영역 -->
 					<div class="col-lg-4 col-md-12">
 						<!-- <label class="form-label">재료 및 양</label> -->
 						<table class="table table-sm">
 							<thead>
-							<tr>
-								<th scope="col"></th>
-								<th scope="col">재료</th>
-								<th scope="col">양</th>
-								<th scope="col"></th>
-							</tr>
+								<tr>
+									<th scope="col"></th>
+									<th scope="col">재료</th>
+									<th scope="col">양</th>
+									<th scope="col"></th>
+								</tr>
 							</thead>
 							<tbody id="ingredientList">
-							<tr>
-								<td><input type="button" class="form-control form-control-sm removeRow" value="(-)" ></td>
-								<td><input type="text" class="form-control form-control-sm ingrName" name="recpIngredientList[0].ingredientName" placeholder="재료"></td>
-								<td><input type="text" class="form-control form-control-sm ingrAmount" name="recpIngredientList[0].amount" placeholder="양"></td>
-								<td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
-							</tr>
+								<tr>
+									<td><input type="button" class="form-control form-control-sm removeRow" value="(-)">
+									</td>
+									<td><input type="text" class="form-control form-control-sm ingrName"
+											name="recpIngredientList[0].ingredientName" placeholder="재료"></td>
+									<td><input type="text" class="form-control form-control-sm ingrAmount"
+											name="recpIngredientList[0].amount" placeholder="양"></td>
+									<td><input type="button" class="form-control form-control-sm addRow" value="(+)">
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</div> <!-- //infoGroup 재료 -->
 				</div> <!-- //row card-body -->
-				
+
 			</div> <!-- //main card -->
 		</section>
-		
-	
+
+
 		<section class="cookingSec">
 			<ol id="cookOrderCardList">
-				
+
 				<li class="card cookOrderCard my-3 border-3 border-success-subtle">
 					<div class="card-header">
 						<div class="row">
 							<div class="col-md-2">
-								<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="step 제외 (-)"/>
+								<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100"
+									value="step 제외 (-)" />
 							</div>
 							<div class="col-md-8">
 								<!-- 레시피 순서 -->
-								<p class="text-center mb-0"><span class="textStep ">Step</span><input type="text" readonly
-								                           class="form-control-plaintext cookOrderNum text-left" value="1" name="cookOrderCardList[0].cookOrderNum" tabindex="-1"></p>
-								
+								<p class="text-center mb-0"><span class="textStep ">Step</span><input type="text"
+										readonly class="form-control-plaintext cookOrderNum text-left" value="1"
+										name="cookOrderCardList[0].cookOrderNum" tabindex="-1"></p>
+
 							</div>
 							<div class="col-md-2">
-								<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="step 추가 (+)"/>
+								<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100"
+									value="step 추가 (+)" />
 							</div>
 						</div>
 					</div> <!-- //card-header -->
 					<div class="card-body">
 						<div class="row">
-							
+
 							<div class="col-md-6">
 								<div class="drop-area cookingDropArea">
-									<input type="file" class="form-control cookingImgInput" accept="image/*" name="cookOrderCardList[0].cookOrderImg">
+									<input type="file" class="form-control cookingImgInput" accept="image/*"
+										name="cookOrderCardList[0].cookOrderImg">
 									<div class="preview border" style="position: relative;">
 										<p>이미지를 여기에 드래그 앤 드롭하세요</p>
 									</div>
-										<!--<button type="button" class="remove-btn">X</button> &lt;!&ndash; 삭제 버튼 &ndash;&gt;-->
+									<!--<button type="button" class="remove-btn">X</button> &lt;!&ndash; 삭제 버튼 &ndash;&gt;-->
 								</div>
-							
+
 							</div> <!-- // cookOrderImgArea -->
-							
+
 							<div class="col-md-6">
-								<textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요"  name="cookOrderCardList[0].cookOrderText"></textarea>
+								<textarea class="form-control howToMake" placeholder="조리 방법을 입력하세요"
+									name="cookOrderCardList[0].cookOrderText"></textarea>
 							</div> <!--cookOrderText-->
-							
+
 						</div>
-					
+
 					</div> <!-- //card-body -->
 				</li> <!-- //card -->
 			</ol>
 		</section>
 		<section class="mb-3">
 			<!--레시피 등록 버튼 #2-->
-				<input type="submit" class="form-control btn btn-lg hm-btn-green" value="레시피 등록하기">
+			<input type="submit" class="form-control hm-btn-green w-100" value="레시피 등록하기">
 		</section>
-	
+
 	</form>
+	<script>
+		function validateForm(event) {
+			event.preventDefault(); // 기본 제출 동작 방지
+
+			const recpName = document.getElementById("recpName").value;
+			const recpIntroduce = document.getElementById("recpIntroduce").value;
+			const servings = document.getElementById("servings").value;
+			const cookTime = document.getElementById("cookTime").value;
+			const difficulty = document.querySelector('input[name="difficulty"]:checked');
+			const recpTags = document.getElementById("recpTags").value;
+			const ingredients = document.querySelectorAll('input[name^="recpIngredientList"]');
+			const mainImg = document.querySelector('input[name="recpMainImgList[0]"]:not([value=""])');
+			const cookOrderCards = document.querySelectorAll('textarea[name^="cookOrderCardList"]');
+
+			// 유효성 검사
+			if (!recpName) {
+				alert("요리 제목은 필수 입력입니다.");
+				return;
+			}
+			if (recpName.length > 10) {
+				alert("요리 제목은 10자 이하로 입력해주세요.");
+				return;
+			}
+			if (!recpIntroduce) {
+				alert("소개글은 필수 입력입니다.");
+				return;
+			}
+			if (!servings) {
+				alert("기준 인원은 필수 입력입니다.");
+				return;
+			}
+
+			if (servings > 5 || isNaN(servings)) {
+				alert("기준 인원은 5 이하의 숫자만 가능해야 합니다.");
+				return;
+			}
+			if (!cookTime) {
+				alert("예상 소요 시간은 필수 입력입니다.");
+				return;
+			}
+			if (isNaN(cookTime)) {
+				alert("예상 소요 시간은 숫자만 가능해야 합니다.");
+				return;
+			}
+			if (!difficulty) {
+				alert("난이도를 선택해주세요.");
+				return;
+			}
+			if (!recpTags) {
+				alert("태그를 입력해주세요.");
+				return;
+			}
+			const tagPattern = /(^#[^\s]+)(\s+|$)/;
+			if (!tagPattern.test(recpTags)) {
+				alert("태그는 #김치 #야채 형식으로 입력해주세요.");
+				return;
+			}
+			if (ingredients[0].value == 0) {
+				alert("재료를 입력해주세요.");
+				return;
+			}
+			for (let i = 0; i < ingredients.length; i++) {
+				if (ingredients[i].value.length > 10) {
+					alert("재료는 10자 이하로 입력해주세요.");
+					return;
+				}
+			}
+			if (!mainImg || mainImg.files.length === 0) {
+				alert("메인 이미지는 필수입니다.");
+				return;
+			}
+			let hasCookOrder = true; // 기본값 true로 설정
+			cookOrderCards.forEach(card => {
+			    const cookOrderText = card.value.trim();
+			    const cookOrderImg = card.parentNode.previousElementSibling.querySelector('input[type="file"]');
+
+			    if (cookOrderText === "") {
+			        alert("조리 방법을 입력해야 합니다.");
+			        hasCookOrder = false; // 유효성 검사 실패
+			    }
+			    if (!cookOrderImg || cookOrderImg.files.length === 0) {
+			        alert("조리 이미지는 필수입니다.");
+			        hasCookOrder = false; // 유효성 검사 실패
+			    }
+			});
+
+			// 조리 단계가 없으면 알림
+			if (!hasCookOrder) {
+			    alert("조리 단계가 필요합니다.");
+			    return;
+			}
+
+
+			// 모든 유효성 검사를 통과하면 폼 제출
+			event.target.submit();
+		}
+
+		document.querySelector('form').addEventListener('submit', validateForm);
+	</script>
 
 </div> <!--//layout::content-->
 

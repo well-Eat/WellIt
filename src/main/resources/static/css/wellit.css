@@ -237,11 +237,12 @@ input[type="radio"]:checked+label {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	border: 1px solid #444444;
-	padding: 20px;
+	border: 1px solid var(--main-color);
+	padding: 10px 15px;
 	border-radius: 50%;
 	background-color: transparent;
 	transition: background-color 0.5s;
+	color: var(--main-color);
 }
 #prevButton{
 	left: -20px;
