@@ -236,7 +236,7 @@ header .custom-menu ul.custom-main li a {
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-color: var(--sub-light);
+	background-color: var(--main-color);
 	overflow: hidden;
 	z-index: 31;
 }

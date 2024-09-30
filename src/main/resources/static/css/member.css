@@ -102,7 +102,7 @@ header {
 	max-width: 100%;
 	max-height: 500px;
 	overflow-y: auto;
-
+}
 
 
 
@@ -141,4 +141,3 @@ header {
 	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */	
 
 }
-
