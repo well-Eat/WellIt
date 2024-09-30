@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface ProductRepositoryCustom {
-    Page<Product> findProductsByCriteria(
+    Page<ProductAdminDTO> findProductsByCriteria(
             String category, String itemSort, String sortDirection, int page, int size, Timestamp startDate, Timestamp endDate, String status, String search);
 }
 

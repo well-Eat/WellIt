@@ -31,6 +31,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -278,6 +279,7 @@ public class KakaoLoginController {
 				try {
 					// 기존 이미지 경로를 폼에서 가져와서 전달
 					String existingImagePath = existingMember.getImageFile();
+					int mileage = existingMember.getMileage();
 
 					memberService.updateMember(existingMember, kakaoUpdateForm.getMemberPassword(),
 							kakaoUpdateForm.getMemberName(), kakaoUpdateForm.getMemberAlias(),
@@ -287,7 +289,7 @@ public class KakaoLoginController {
 							kakaoUpdateForm.getZipcode(), kakaoUpdateForm.getRoadAddress(),
 							kakaoUpdateForm.getAddressDetail(), kakaoUpdateForm.getBirth_year(),
 							kakaoUpdateForm.getBirth_month(), kakaoUpdateForm.getBirth_day(), imageFile,
-							existingImagePath);
+							existingImagePath , mileage);
 
 					redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
 
@@ -444,4 +446,6 @@ public class KakaoLoginController {
 	    return ResponseEntity.ok("Session and DB data cleared");
 	
 	}
+	
+	
 }
