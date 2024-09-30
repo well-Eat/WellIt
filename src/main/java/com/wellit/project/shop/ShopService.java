@@ -351,8 +351,21 @@ public class ShopService {
         product.setProdStatus(productForm.getProdStatus());
         product.setProdDesc(productForm.getProdDesc());
         product.setProdStock(productForm.getProdStock());
-        product.setProdDiscount(productForm.getProdDiscount());
+//        product.setProdDiscount(productForm.getProdDiscount());
         product.setProdOrgPrice(productForm.getProdOrgPrice());
+
+        if (productForm.getProdDiscount() == null) {
+            product.setProdFinalPrice(productForm.getProdOrgPrice());
+            product.setProdDiscount(0.0);
+        } else if (productForm.getProdDiscount() > 0) {
+            double v = productForm.getProdOrgPrice() * (1 - productForm.getProdDiscount());
+            int i = ((int) (v / 100)) * 100;
+            product.setProdFinalPrice(i);
+            product.setProdDiscount(productForm.getProdDiscount());
+        } else {
+            product.setProdDiscount(0.0);
+            product.setProdFinalPrice(productForm.getProdOrgPrice());
+        }
 
         // 기존 상품 세부 정보 삭제 -> 수정 내용으로 새로운 리스트 추가
         prodInfoRepository.deleteAllByProduct(product);

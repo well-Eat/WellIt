@@ -1,4 +1,4 @@
-<section th:fragment="products" id="products">
+<section th:fragment="products" id="products" class="vstack">
 	<!-- Link Swiper's CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -19,84 +19,145 @@
 		.goodsSwiper {
 			width: 100%;
 			/*병합 후 높이 수정할 것!!!*/
-			height: 500px;
+			/*height: 500px;*/
+				height: 100%;
+				max-height: 60vh;
 		}
 
 		#products {
 			background-color: rgba(242, 232, 207, 0.30);
 		}
 
+		/*슬라이드 크기*/
 		.goodsSwiper .swiper-slide {
+			width: 100vw;
+			height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				overflow: hidden;
+		}
+		
+		/*배경이미지 위치*/
+		.goodsSwiper .bgBox {
 			background-position: center;
 			background-size: 100% 100%;
-			width: 100%;
+        width: 100%;
 			height: 100%;
+        /*aspect-ratio: 3.84;*/
+				background-repeat: no-repeat;
+				
+				
+				display: flex;
+				justify-content: center;
+				align-items: center;
 		}
-		.btnBox {
-				opacity: 0;
-				transition: opacity 0.3s ease-in-out;
-		}
-    .goodsSwiper:hover .btnBox{
-        opacity: 0.6;
-    }
+		
+		
 		/*goods 이미지 스타일*/
 		.goodsSwiper .imgBox {
-			width: 100%;
 			height: 100%;
-			background: center no-repeat;
-			background-size: auto;
+			aspect-ratio: 3.84;
+			background: center center no-repeat;
+			background-size: auto 100%;
 		}
 
-    .goodsSwiper .swiper-slide.goods01{
-        background-image: url("/imgs/shop/product/main/event_products/hanlabong_bg.png");
+		/*배경*/
+    .goodsSwiper .swiper-slide .bgBox.goods01{
+        background-image: url("/imgs/main/event_products/hanlabong_bg.png");
     }
 		
+    /*컨텐츠*/
 		.goodsSwiper .imgBox#goods01 {
-			background-image: url("/imgs/shop/product/main/event_products/hanlabong_content.png");
+			background-image: url("/imgs/main/event_products/hanlabong_content.png");
 		}
 
-    .goodsSwiper .swiper-slide.goods02{
-        background-image: url("/imgs/shop/product/main/event_products/dduck_bg.png");
+    .goodsSwiper .swiper-slide .bgBox.goods02{
+        background-image: url("/imgs/main/event_products/dduck_bg.png");
     }
 
     .goodsSwiper .imgBox#goods02 {
-        background-image: url("/imgs/shop/product/main/event_products/dduck_content.png");
+        background-image: url("/imgs/main/event_products/dduck_content.png");
     }
 
-    .goodsSwiper .swiper-slide.goods03{
-        background-image: url("/imgs/shop/product/main/event_products/bokbunja_bg.png");
+    .goodsSwiper .swiper-slide .bgBox.goods03{
+        background-image: url("/imgs/main/event_products/bokbunja_bg.png");
     }
 
     .goodsSwiper .imgBox#goods03 {
-        background-image: url("/imgs/shop/product/main/event_products/bokbunja_content.png");
+        background-image: url("/imgs/main/event_products/bokbunja_content.png");
+    }
+    
+    
+    @media (max-width: 1200px) {
+		    /*1200미만에서 스와이퍼 컨테이너 xl*/
+        .goodsSwiper {
+            width: 100%;
+		        aspect-ratio: 12/5;
+            height: auto;
+        }
+    }
+    
+    
+    
+    
+    /*모바일 사이즈에서  products 사이즈, 이미지교체*/
+    @media (max-width: 768px) {
+
+        /*768미만에서 스와이퍼 컨테이너 md*/
+        .goodsSwiper {
+            width: 100%;
+            aspect-ratio: 1;
+            height: auto;
+		        max-height: none;
+        }
+		    
+        .goodsSwiper .swiper-slide {
+            width: 100vw;
+            height: 100vw;
+        }
+
+        /*배경이미지 위치*/
+        .goodsSwiper .bgBox {
+            background-position: center;
+            background-size: 100% 100%;
+            height: 100%;
+            aspect-ratio: 1;
+            background-repeat: no-repeat;
+
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .goodsSwiper .swiper-slide .bgBox.goods01{
+            background-image: url("/imgs/main/event_products/hanlabong_square.png");
+        }
+        .goodsSwiper .swiper-slide .bgBox.goods02{
+            background-image: url("/imgs/main/event_products/dduck_square.png");
+        }
+        .goodsSwiper .swiper-slide .bgBox.goods03{
+            background-image: url("/imgs/main/event_products/bokbunja_square.png");
+        }
+
+
+        .goodsSwiper .imgBox {
+            background-image: none !important;
+        }
     }
 
+    /*스와이퍼 버튼 위치*/
+    .btnBox {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
 
+    .goodsSwiper:hover .btnBox{
+        opacity: 0.6;
+    }
 
-
-
-
-
-
-
-/*
-		.goodsSwiper .imgBox#goods04 {
-			background-image: url("/imgs/main/goods04_v2.jpg");
-		}
-
-		.goodsSwiper .imgBox#goods05 {
-			background-image: url("/imgs/main/goods05.jpg");
-		}
-
-		.goodsSwiper .imgBox#goods06 {
-			background-image: url("/imgs/main/goods06.jpg");
-		}
-
-		.goodsSwiper .imgBox#goods07 {
-			background-image: url("/imgs/main/goods07.jpg");
-		}*/
-
-		/*goods 텍스트 스타일*/
+    
+    /*goods 텍스트 스타일*/
 		.goodsSwiper .descBox {
 			width: 100%;
 			height: 100%;
@@ -231,16 +292,6 @@
 				transform: translateY(2px);
 		}
 
-		/*페이지네이션 버튼*/
-/*		.goodsSwiper .pagination {
-			height: 20px;
-			z-index: 9;
-			bottom: 0px;
-			position: absolute;
-			width: 100%;
-			justify-content: center;
-		}*/
-
     .swiper-pagination-bullet {
         background: #eeeeee;
         width: 12px;
@@ -270,44 +321,46 @@
     }
 
 
-		@media (max-width: 768px) {
+    /*버튼스타일*/
+    @media (max-width: 768px) {
 
-			/*goods tablet 이하에서 버튼 변경*/
-			.goodsSwiper .swiper-btn.swiper-prev {
-				left: 20px;
-			}
+        /*goods tablet 이하에서 버튼 변경*/
+        .goodsSwiper .swiper-btn.swiper-prev {
+            left: 20px;
+        }
 
-			.goodsSwiper .swiper-prev .btnBox {
-				background: url("/imgs/main/icon/prev-btn.png") no-repeat;
-				background-size: 100px;
-				background-position-y: 50%;
-				background-position-x: 50%;
-				border-radius: 50%;
-				padding: 10px;
-				/*opacity: 0.8;*/
-			}
+        .goodsSwiper .swiper-prev .btnBox {
+            /*background: url("/imgs/main/icon/prev-btn.png") no-repeat;
+						background-size: 100px;*/
+            background-position-y: 50%;
+            background-position-x: 50%;
+            border-radius: 50%;
+            padding: 10px;
+            /*opacity: 0.8;*/
+        }
 
-			.goodsSwiper .swiper-btn.swiper-next {
-				right: 20px;
-				left: auto;
-			}
+        .goodsSwiper .swiper-btn.swiper-next {
+            right: 20px;
+            left: auto;
+        }
 
-			.goodsSwiper .swiper-next .btnBox {
-				background: url("/imgs/main/icon/next-btn.png") no-repeat;
-				background-size: 100px;
-				background-position-y: 50%;
-				background-position-x: 50%;
-				border-radius: 50%;
-				padding: 10px;
-				/*opacity: 0.6;*/
-			}
+        .goodsSwiper .swiper-next .btnBox {
+            /*background: url("/imgs/main/icon/next-btn.png") no-repeat;
+						background-size: 100px;*/
 
-			.goodsSwiper .swiper-btn .btnBox {
-				top: calc(50% + 15px);
-			}
-			
+            background-position-y: 50%;
+            background-position-x: 50%;
+            border-radius: 50%;
+            padding: 10px;
+            /*opacity: 0.6;*/
+        }
 
-		}
+        .goodsSwiper .swiper-btn .btnBox {
+            top: calc(50% + 15px);
+        }
+
+
+    }
 
 		@media (min-width: 768px) {
 
@@ -319,11 +372,10 @@
 	</style>
 
 	<div class="row mb-5">
-
-	</div>
-	<div class="d-block"></div>
-	<div class="text-center my-5 titleText">
-		지금 핫한 그 상품💥
+		<!--<div class="d-block"></div>-->
+		<div class="text-center my-5 titleText">
+			지금 핫한 그 상품💥
+		</div>
 	</div>
 	<!-- Swiper -->
 	<div class="swiper goodsSwiper">
@@ -338,32 +390,30 @@
 		<!--goods 슬라이드-->
 		<div class="swiper-wrapper">
 			<div class="swiper-slide goods01">
-				<div class="imgBox" id="goods01"> <!--한라봉-->
-					<div class="descBox">
-						<div class="goodsBottomLine">
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
+				<div class="bgBox goods01" >
+					<div class="imgBox" id="goods01"> <!--한라봉-->
+						<!--todo: 중요!!!!! 링크 상품페이지로-->
+						<a href="/shop/detail/341" class="d-block w-100 h-100"></a>
+						
 					</div>
 				</div>
 			</div> <!--//goods01-->
 
 			<div class="swiper-slide goods02">
-				<div class="imgBox" id="goods02"> <!--방앗간-->
-					<div class="descBox">
-						<div class="goodsBottomLine">
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
+				<div class="bgBox goods02">
+				 <div class="imgBox" id="goods02"> <!--방앗간-->
+					 <!--todo: 중요!!!!! 링크 상품페이지로-->
+					 <a href="/shop/detail/341" class="d-block w-100 h-100"></a>
+				 </div>
 				</div>
 			</div> <!--//goods02-->
 
 			<div class="swiper-slide goods03">
-				<div class="imgBox" id="goods03">
-					<div class="descBox">
-						<div class="goodsBottomLine">
-							<a href="javascript:void(0);" class="btn btn-outline-success font-weight-bold">자세히보기</a>
-						</div>
-					</div>
+				<div class="bgBox goods03"> <!--복분자-->
+				 <div class="imgBox" id="goods03">
+					 <!--todo: 중요!!!!! 링크 상품페이지로-->
+					 <a href="/shop/detail/341" class="d-block w-100 h-100"></a>
+				 </div>
 				</div>
 			</div> <!--//goods03-->
 
@@ -376,10 +426,7 @@
 			
 			
 		</div> <!--//wrapper-->
-		<!--<div class="pagination" style=""></div>-->
 		<div class="swiper-pagination"></div>
-		<!--<div class="swiper-button-prev"></div>
-		<div class="swiper-button-next"></div>-->
 	</div>
 
 	<!-- Swiper JS -->
@@ -396,10 +443,17 @@
           el: '.swiper-pagination',
           clickable: true,
 			},
+      autoplay: {
+          delay: 5000,
+      },
 			// 기본 설정
 			slidesPerView: "1",
 			 effect: "slide",
 		});
+
+  
+  
+  
 
 		// prev,next slide 클릭 시 슬라이드
 		goods_swiper.slides.forEach(function (slide) {

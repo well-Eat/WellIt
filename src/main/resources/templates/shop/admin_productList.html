@@ -1,7 +1,7 @@
 <html layout:decorate="~{member/mypage_layout}">
 <div layout:fragment="tabcontent">
 	<link rel="stylesheet" th:href="@{/css/shop.css}">
-	<div class="d-flex flex-column min-vh-100 adminProdList" id="wrapper">
+	<div class="d-flex flex-column min-vh-100 adminProdList overflow-hidden" id="wrapper">
 		<!--페이지 제목-->
 		<div class="row my-5">
 			<div class="pageTitle col text-center">
@@ -61,11 +61,6 @@
 							<button type="button" class="btn btn-success align-self-stretch" onclick="fetchProducts()"><i class="fa-solid fa-magnifying-glass text-white px-3 fa-2x" ></i></button>
 						</div>
 						
-						<div class="hiddenInputs">
-							<button type="button" class="btn hm-btn-green align-self-stretch" onclick="fetchProducts()">Search</button>
-						</div>
-						
-						
 					</div> <!--row-->
 
 				</form>
@@ -77,9 +72,9 @@
 				</p>
 				<span class="sortDirectionBtn d-inline-block float-end"></span>
 				<!-- 상품 목록 테이블 -->
-				<div class="prodTableBox border">
+				<div class="prodTableBox border sticky-top">
 					<table class="table table-hover" id="prodTable" >
-						<thead class="prodTableHead">
+						<thead class="prodTableHead sticky-top">
 						<tr>
 							<th scope="col">No.</th>
 							<th scope="col" class="tableSort" data-order="prodId" data-item-sort="prod_id">

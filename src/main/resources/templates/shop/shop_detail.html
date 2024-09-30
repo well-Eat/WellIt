@@ -60,8 +60,12 @@
 				<th:block th:if="${product.prodDiscount != null and product.prodDiscount > 0}">
 					<p class="prodOrgPrice card-text mb-1"
 					   th:text="|${#numbers.formatInteger(product.prodOrgPrice,3,'COMMA')}원|"></p>
+					
 					<p class="prodDiscount card-text mr-4"
-					   th:text="${#numbers.formatPercent(product.prodDiscount,2,0)}"></p>
+					   th:text="${#numbers.formatPercent(product.prodDiscount,1,0)}" th:if="${product.prodDiscount < 0.1}"></p><!--10%미만-->
+					<p class="prodDiscount card-text mr-4"
+					   th:text="${#numbers.formatPercent(product.prodDiscount,2,0)}" th:unless="${product.prodDiscount < 0.1}"></p><!--10%이상-->
+					
 				</th:block>
 				<p class="card-text d-inline-block">
 					<span class="prodFinalPrice" th:text="${#numbers.formatInteger(product.prodFinalPrice,3,'COMMA')}"></span>

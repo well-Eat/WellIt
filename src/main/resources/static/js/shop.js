@@ -471,7 +471,7 @@ function renderReviews(reviews) {
 /** shop_create : 상품 상세정보 입력 **/
 /** shop_create : 상품 상세정보 입력 **/
 /*상품정보 추가/제거*/
-$(function () {
+/*$(function () {
 
 
     $(document).on('click', '.removeRow', function () {
@@ -488,7 +488,74 @@ $(function () {
 
     });
 
+});*/
+
+/*상품정보 추가/제거*/
+$(function () {
+
+    $(document).on('click', '.removeRow', function () {
+        $(this).closest('tr').remove();
+        updateProdInfoIndices(); // 삭제 후 인덱스 업데이트
+    });
+
+    $(document).on('click', '.addRow', function () {
+        const curIndex = $(this).index();
+        const rowCount = $('#prodInfoList tr').length;
+        const newRow = `
+    <tr>
+      <td><input type="button" class="form-control form-control-sm removeRow" value="(-)"></td>
+      <td><input type="text" class="form-control form-control-sm infoKey" name="prodInfoList[${rowCount}].infoKey" placeholder="항목"></td>
+      <td><input type="text" class="form-control form-control-sm infoValue" name="prodInfoList[${rowCount}].infoValue" placeholder="값"></td>
+      <td><input type="button" class="form-control form-control-sm addRow" value="(+)"></td>
+    </tr>`;
+        // + 클릭 시 바로 다음에 행추가 & 키로 포커스 이동
+        $('#prodInfoList tr').eq(curIndex).after(newRow);
+        $('.infoKey').eq(curIndex + 1).focus();
+        updateProdInfoIndices(); // 인덱스를 다시 업데이트
+    });
+
+
 });
+/*상품입력 폼 validation*/
+$(function() {
+
+
+    if($(".productForm")){
+
+        var $input = $('#prodOrgPrice');
+        var min = parseInt($input.attr('min')) || 0;
+        var step = 1000;  // 1000 단위로 설정
+
+
+
+    }
+
+    // 수동 입력 처리
+    $input.on('input', function() {
+        var value = parseInt($input.val()) || 0;
+
+        // 값이 최소값 미만일 경우 최소값으로 설정
+        if (value < min) {
+            $input.val(min);
+        }
+    });
+
+    // 기본 증감 버튼 클릭 시 동작 (change 이벤트 활용)
+    $input.on('change', function() {
+        var value = parseInt($input.val()) || 0;
+
+        // 증감 버튼 클릭 시 항상 1000 단위로 값이 증가/감소
+        if (value % step !== 0) {
+            $input.val(Math.round(value / step) * step);  // 가장 가까운 1000 단위로 맞춤
+        }
+
+        // 값이 최소값 미만일 경우 최소값으로 설정
+        if (value < min) {
+            $input.val(min);
+        }
+    });
+});
+
 
 
 
@@ -501,6 +568,18 @@ function updateProdInfoIndices() {
     });
 }
 
+function validateInputs() {
+    if ($("#prodName").trim()==null || $("#prodName").val().trim()==""){
+        alert("상품명을 입력해주세요.");
+        input.focus();
+        return false;
+    } else if ($("#prodDesc").trim()==null || $("#prodDesc").val().trim()==""){
+        alert("상품설명을 입력해주세요.");
+        input.focus();
+        return false;
+    }
+    return true; // 모든 input이 올바르면 폼 제출 허용
+}
 
 /** shop_form : 상품 delete **/
 /** shop_form : 상품 delete **/
