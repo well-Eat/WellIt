@@ -51,7 +51,7 @@
 								th:if="${session.UserId == 'admin'}">
 								답변 등록하기
 							</div>
-							<div th:if="${session.UserId == 'admin' || memberAlias == question.qAuthor}"
+							<div th:if="${session.UserId == 'admin' || loggedInMemberAlias == question.qAuthor}"
 								class="btn-group float-end">
 								<a th:if="${pageType.equals('qna')}" th:href="@{/notice/qnaEdit(id=${question.qId})}" class="btn hm-btn-border-green">수정</a>
 								<a th:if="${pageType.equals('announcement')}" th:href="@{/notice/announcementEdit(id=${question.qId})}" class="btn btn hm-btn-border-green">수정</a>

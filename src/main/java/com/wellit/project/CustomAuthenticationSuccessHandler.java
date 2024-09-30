@@ -16,6 +16,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         request.getSession().setAttribute("UserId", authentication.getName());
         
         // 로그인 성공 후 리다이렉트할 URL
-        response.sendRedirect("/member/mypage");
+        response.sendRedirect("/");
     }
 }

@@ -98,7 +98,7 @@ public class KakaoLoginController {
 			// 사용자 인증 처리
 			authenticateUser(member, request);
 
-			return "redirect:/member/mypage"; // 홈 페이지로 이동
+			return "redirect:/"; // 홈 페이지로 이동
 		} catch (CustomUserAlreadyExistsException e) {
 			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
 			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
@@ -126,7 +126,7 @@ public class KakaoLoginController {
 				authenticateUser(existingMember, request);
 			}
 
-			return "redirect:/member/mypage"; // 홈 페이지로 이동
+			return "redirect:/"; // 홈 페이지로 이동
 		}
 	}
 

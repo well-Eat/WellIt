@@ -1,4 +1,4 @@
-<html layout:decorate="~{member/mypage_layout}">
+<html layout:decorate="~{member/mypage}">
 
 <div layout:fragment="tabcontent">
 	
@@ -218,7 +218,7 @@
 								<tr>
 									<th>결제 시간</th>
 									<td>
-										<span th:text="${#temporals.format(poDetail.paidAt, 'yyyy.MM.dd. hh:mm:ss')}"></span>
+										<span th:text="${#temporals.format(poDetail.paidAt, 'yyyy.MM.dd. HH:mm:ss')}"></span>
 									</td>
 								</tr>
 								<tr  class="milege">

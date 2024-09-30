@@ -89,6 +89,13 @@ public class QuestionController {
 
 		// 세션에서 UserId 가져오기
 		String userId = (String) session.getAttribute("UserId");
+		
+		// 로그인된 사용자의 닉네임 가져오기
+	    Member loggedInMember = memberService.findByMemberId(userId);
+	    String loggedInMemberAlias = loggedInMember != null ? loggedInMember.getMemberAlias() : null;
+	    
+	    //로그인된 사용자 모델에 추가
+	    model.addAttribute("loggedInMemberAlias", loggedInMemberAlias);
 
 		// admin 질문과 일반 질문 분리
 		List<Question> adminQuestions = new ArrayList<>();
