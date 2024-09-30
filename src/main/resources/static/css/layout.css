@@ -446,8 +446,9 @@ ul.small-main .small-bold {
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: rgba(136, 136, 136, 0.3); /* 반투명 연회색 스크롤바 */
+	background-color: rgba(85, 85, 85, 0.4); /* 반투명 연회색 스크롤바 */
 	border-radius: 10px;      /* 스크롤바 모서리를 둥글게 */
+	transition: background-color 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -459,9 +460,9 @@ ul.small-main .small-bold {
 }
 
 /* Firefox 커스텀 스크롤바 */
-* {
+body {
 	scrollbar-width: thin;          /* 얇은 스크롤바 */
-	scrollbar-color: rgba(136, 136, 136, 0.3) rgba(240, 240, 240, 0.8);  /* 반투명한 연회색 스크롤바와 트랙 색상 */
+	scrollbar-color: rgb(29, 31, 31) rgba(240, 240, 240, 0.8);  /* 반투명한 연회색 스크롤바와 트랙 색상 */
 }
 
 /* 페이지 내용물과 맞추기 위한 스타일 */

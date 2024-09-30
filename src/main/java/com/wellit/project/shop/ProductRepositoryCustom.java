@@ -3,7 +3,6 @@ package com.wellit.project.shop;
 import org.springframework.data.domain.Page;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public interface ProductRepositoryCustom {
     Page<ProductAdminDTO> findProductsByCriteria(

@@ -20,7 +20,7 @@
 		
 		<form
 				th:action="${productForm.prodId != null} ? @{/shop/update/{prodId}(prodId=${productForm.prodId})} : @{/shop/save}"
-				th:object="${productForm}" method="post" enctype="multipart/form-data" class="productForm">
+				th:object="${productForm}" method="post" enctype="multipart/form-data" class="productForm" onsubmit="return validateInputs()">
 			
 			<input type="hidden" id="toBeDeleted" name="toBeDeleted" value="">
 			
@@ -73,7 +73,7 @@
 									<div class="infoGroup col-md-6">
 										<label for="prodOrgPrice" class="form-label">기준판매가격</label>
 										<input type="number" class="form-control text-end" id="prodOrgPrice" th:field="*{prodOrgPrice}"
-										       th:value="${prodOrgPrice == null? 10000 : prodOrgPrice}" step="1000">
+										       th:value="${prodOrgPrice == null? 10000 : prodOrgPrice}" step="1000" min="0">
 									</div>
 									
 									
@@ -87,7 +87,7 @@
 									<div class="infoGroup col-md-4">
 										<label for="prodStock" class="form-label">재고수량</label>
 										<input type="number" class="form-control" id="prodStock" th:field="*{prodStock}"
-										       th:value="${prodStock == null? 1000 : prodStock}" step="10">
+										       th:value="${prodStock == null? 1000 : prodStock}" min="0">
 									</div>
 									<div class="infoGroup col-md-4">
 										<label for="prodCate" class="form-label">카테고리</label>
@@ -182,7 +182,8 @@
 							<div class="addCardBtnBox" style="aspect-ratio: 1;">
 								<div class="addCard cardPlusBtn w-100 h-100"></div>
 							</div> <!--+버튼-->
-						</div>
+						</div><!--card-header-->
+						
 						<div class="card-body">
 							<div class="row">
 								<div class="">
@@ -200,12 +201,14 @@
 					<!-- 기존 이미지들 로딩 -->
 					<th:block th:each="prodImageSrc, iterStat : ${imageFiles}">
 						<li class="card prodImageCard my-3 border-3 border-success-subtle">
-							<div class="card-header">
-								<div class="row">
-									<div class="col-md-2">
-										<input type="button" class="btn btn-outline-secondary btn-sm btn-block removeCard w-100" value="이미지 제외 (-)" />
-									</div>
-									<div class="col-md-8">
+							<div class="card-header d-flex align-items-stretch">
+								
+								
+								<div class="removeCardBtnBox" style="aspect-ratio: 1;">
+									<div class="removeCard cardMinusBtn w-100 h-100"></div>
+								</div> <!-- -버튼-->
+								
+									<div class="cardStep flex-grow-1">
 										<!-- 이미지 순서 -->
 										<p class="text-center mb-0">
 											<span class="textStep">No</span>
@@ -213,16 +216,17 @@
 											       th:value="${iterStat.index + 1}" name="prodImageNums[]" tabindex="-1" />
 										</p>
 									</div>
-									<div class="col-md-2">
-										<input type="button" class="btn border-1 border-success btn-sm btn-block addCard w-100" value="이미지 추가 (+)" />
-									</div>
-								</div>
-							</div>
+								
+								<div class="addCardBtnBox" style="aspect-ratio: 1;">
+									<div class="addCard cardPlusBtn w-100 h-100"></div>
+								</div> <!--+버튼-->
+							</div> <!--card-header-->
+							
 							<div class="card-body">
 								<div class="row">
 									<div class="">
 										<div class="drop-area prodImageDropArea">
-											<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" th:data-image-num="${iterStat.index + 1}" />
+											<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" th:data-image-num="${iterStat.index + 1}"/>
 											<div class="preview border" style="position: relative;">
 												<img th:src="@{|${prodImageSrc.imagePath}|}" alt="" class="img-fluid">
 												<button class="remove-btn" type="button" style="display: inline-block;">-</button>
@@ -245,7 +249,7 @@
 				</script>
 				
 				<div class="col"><input type="submit" class="form-control btn btn-lg btn-success d-block"
-				                              th:value="|${productForm.prodId != null ? '상품 수정' : '상품 등록하기'} |"></div>
+				                              th:value="|${productForm.prodId != null ? '상품 수정' : '상품 등록하기'} |" id="shopFormSubmitBtn" onclick="if (!validateInputs()) { event.preventDefault(); }"></div>
 			</section>
 		
 		</form>

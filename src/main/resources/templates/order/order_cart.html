@@ -94,8 +94,12 @@
 										<p class="prodOrgPrice card-text mb-1 c999 f14 text-decoration-line-through d-inline-block"
 										   th:text="|${#numbers.formatInteger(cartItem.product.prodOrgPrice  * cartItem.quantity ,3,'COMMA')}원|"></p>
 										<span>&nbsp;</span>
+										
 										<p class="prodDiscount card-text mr-4 d-inline-block f14 fw700" style="color:orangered;"
-										   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,2,0)}"></p>
+										   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,1,0)}" th:if="${cartItem.product.prodDiscount<0.1}"></p> <!--10%미만-->
+										<p class="prodDiscount card-text mr-4 d-inline-block f14 fw700" style="color:orangered;"
+										   th:text="${#numbers.formatPercent(cartItem.product.prodDiscount,2,0)}" th:unless="${cartItem.product.prodDiscount<0.1}"></p> <!--10%이상-->
+										
 									</div>
 								</th:block>
 								<!--할인 후 가격 * 수량-->

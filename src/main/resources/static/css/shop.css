@@ -157,6 +157,9 @@ ul.sortBox li:not(:last-of-type)::after{
 
 /*card-body : 아이템 정보*/
 /**** shop/list, shop/detail 공통 *****/
+.prodInfo .card{
+    color: #333333;
+}
 .prodInfo h5.prodName,
 .prodItem h5.prodName{
     font-weight: 700;

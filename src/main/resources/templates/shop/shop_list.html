@@ -94,7 +94,10 @@
 						<!--할인율 있는 경우 가격 표시 -->
 						<th:block th:if="${item.prodDiscount != null and item.prodDiscount > 0}">
 							<p class="prodOrgPrice card-text" th:text="|${#numbers.formatInteger(item.prodOrgPrice,3,'COMMA')}원|"></p>
-							<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,2,0)}"></p>
+							
+							<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,1,0)}" th:if="${item.prodDiscount < 0.1}"></p><!--10%미만-->
+							<p class="prodDiscount card-text mr-4" th:text="${#numbers.formatPercent(item.prodDiscount,2,0)}" th:unless="${item.prodDiscount < 0.1}"></p><!--10%이상-->
+							
 							<p class="prodFinalPrice card-text c333" th:text="|${#numbers.formatInteger( item.prodOrgPrice - item.prodOrgPrice * item.prodDiscount ,3,'COMMA') }원|"></p>
 						</th:block>
 						
