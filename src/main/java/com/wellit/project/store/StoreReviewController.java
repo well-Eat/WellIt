@@ -88,7 +88,7 @@ public class StoreReviewController {
 
     private String saveImage(MultipartFile file) {
         // 저장할 디렉토리 경로
-        String directory = "C:/Users/GREEN/git/WellIte/src/main/resources/static/imgs/place"; // 실제 경로로 변경
+        String directory = "C:/Users/GREEN/git/WellIt/src/main/resources/static/imgs/place"; // 실제 경로로 변경
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename(); // 고유한 파일 이름 생성
         Path filePath = Paths.get(directory, fileName);
 
