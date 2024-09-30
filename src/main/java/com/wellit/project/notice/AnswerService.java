@@ -1,4 +1,4 @@
-package com.wellit.project.notice;
+ package com.wellit.project.notice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

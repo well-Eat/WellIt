@@ -179,7 +179,7 @@ public class RecipeService {
 
     public String saveImage(MultipartFile stoImage, Long recipeId) {
         // 이미지 저장 경로 설정
-    	String directory = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\" + recipeId;
+    	String directory = "C:\\Users\\GREEN\\git\\WellIt\\src\\main\\resources\\static\\imgs\\life\\recipe\\" + recipeId;
         String fileName = System.currentTimeMillis() + "_" + stoImage.getOriginalFilename();
         Path filePath = Paths.get(directory, fileName);
         System.out.println("================================================파일 저장 경로: " + filePath.toString());

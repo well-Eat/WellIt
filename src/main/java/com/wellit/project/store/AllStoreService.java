@@ -156,7 +156,7 @@ public class AllStoreService {
 	}
 
 	public String saveImage(MultipartFile stoImage) {
-		String directory = "C:/Users/GREEN/git/WellIte/src/main/resources/static/imgs/map"; // 실제 경로로 변경
+		String directory = "C:/Users/GREEN/git/WellIt/src/main/resources/static/imgs/map"; // 실제 경로로 변경
 		String fileName = System.currentTimeMillis() + "_" + stoImage.getOriginalFilename();
 		Path filePath = Paths.get(directory, fileName);
 

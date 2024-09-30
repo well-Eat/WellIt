@@ -160,7 +160,7 @@ public class QuestionController {
 	}
 
 	private String saveImage(MultipartFile file) {
-		String directory = "C:/Users/GREEN/git/WellIte/src/main/resources/static/imgs/notice"; // 실제 경로로 변경
+		String directory = "C:/Users/GREEN/git/WellIt/src/main/resources/static/imgs/notice"; // 실제 경로로 변경
 		String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 		Path filePath = Paths.get(directory, fileName);
 
