@@ -48,7 +48,7 @@ public class RecipeController {
 	@Autowired
 	private final ShopService shopService;
 
-	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
+	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIt\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
 
 	@GetMapping("/wellit")
 	public String getWellit() {

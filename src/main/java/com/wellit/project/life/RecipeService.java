@@ -31,7 +31,7 @@ public class RecipeService {
     private final RecpMainImgRepository recpMainImgRepository;
     private final CookOrderCardRepository cookOrderCardRepository;
 
-	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIte\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
+	private String UPLOAD_DIR = "C:\\Users\\GREEN\\git\\WellIt\\src\\main\\resources\\static\\imgs\\life\\recipe\\";
 
     //레시피 저장
     public Recipe createRecipe(Recipe recipe){
