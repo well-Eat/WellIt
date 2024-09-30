@@ -17,10 +17,10 @@
 	</div>
 
 	<div class="container mt-5">
-		<div class="mb-3 col-2">
+		<div class="mb-3 col-4 col-md-2">
 			<input type="text" id="searchInput" class="form-control" placeholder="회원 검색..." onkeyup="filterMembers()">
 		</div>
-		<div style="max-width: 100%; overflow-x: auto;">
+		<div class="listTable">
 		<table class="table table-hover">
 			<thead class="table-dark">
 				<tr>
@@ -94,31 +94,64 @@
 		}
 
 		function filterMembers() {
-			// 검색어 가져오기
-			const input = document.getElementById("searchInput");
-			const filter = input.value.toLowerCase();
-			const table = document.getElementById("memberTableBody");
-			const rows = table.getElementsByTagName("tr");
+		    const input = document.getElementById("searchInput");
+		    const filter = input.value.toLowerCase();
+		    const table = document.getElementById("memberTableBody");
+		    const rows = table.getElementsByTagName("tr");
 
-			// 각 행을 순회하며 필터링
-			for (let i = 0; i < rows.length; i++) {
-				const cells = rows[i].getElementsByTagName("td");
-				let found = false;
+		    // 입력란이 비어있으면 모든 행을 표시
+		    if (filter === "") {
+		        for (let i = 0; i < rows.length; i++) {
+		            rows[i].style.display = ""; // 모든 행 표시
+		        }
+		        return; // 빈 검색어 처리 후 함수 종료
+		    }
 
-				// 각 셀에서 검색어가 포함되어 있는지 확인
-				for (let j = 0; j < cells.length; j++) {
-					if (cells[j]) {
-						const txtValue = cells[j].textContent || cells[j].innerText;
-						if (txtValue.toLowerCase().indexOf(filter) > -1) {
-							found = true;
-							break; // 검색어가 포함된 셀을 찾으면 더 이상 체크할 필요 없음
-						}
-					}
-				}
-				// 행 표시 여부 결정
-				rows[i].style.display = found ? "" : "none";
-			}
+		    // 각 행을 순회하며 필터링
+		    for (let i = 0; i < rows.length; i++) {
+		        const cells = rows[i].getElementsByTagName("td");
+		        const headerCells = rows[i].getElementsByTagName("th"); // 추가: th 태그를 검색에 포함
+
+		        let found = false;
+
+		        // 각 셀에서 검색어가 포함되어 있는지 확인 (td와 th 모두 검사)
+		        for (let j = 0; j < cells.length; j++) {
+		            if (cells[j]) {
+		                const txtValue = cells[j].textContent || cells[j].innerText;
+		                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+		                    found = true;
+		                    break;
+		                }
+		            }
+		        }
+
+		        // 추가: th 태그도 검색하도록 수정
+		        for (let j = 0; j < headerCells.length; j++) {
+		            if (headerCells[j]) {
+		                const txtValue = headerCells[j].textContent || headerCells[j].innerText;
+		                // 숫자 비교 처리 추가
+		                if (!isNaN(filter)) {
+		                    if (!isNaN(txtValue) && parseFloat(txtValue) === parseFloat(filter)) {
+		                        found = true;
+		                        break;
+		                    }
+		                } else {
+		                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+		                        found = true;
+		                        break;
+		                    }
+		                }
+		            }
+		        }
+
+		        // 행 표시 여부 결정
+		        rows[i].style.display = found ? "" : "none";
+		    }
 		}
+
+
+
+
 	</script>
 </div>
 
