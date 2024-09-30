@@ -119,7 +119,7 @@
 								</div>
 								
 								<!-- quantity 오류 메시지 -->
-								<div class="messageBox" id="quantityMessage" style="color: orangered; margin-top: 3px; font-size: 12px; min-height:15px;"></div>
+								<div class="messageBox" th:id="'quantityMessage_' + ${iterStat.index}" style="color: orangered; margin-top: 3px; font-size: 12px; min-height:15px;"></div>
 								
 								<th:block class="hiddenInput">
 									<!--1개가격-->

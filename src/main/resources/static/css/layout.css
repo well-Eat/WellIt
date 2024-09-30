@@ -3,8 +3,12 @@
 	margin: 0;
 	padding: 0;
 	font-family: "Noto Sans KR", sans-serif;
-	color: #333333;
 	/*font-family: 'NanumGothic';*/
+}
+
+/*폰트color *-> body*/
+body{
+	color: #333333;
 }
 :root {
     --main-color: #00592D;

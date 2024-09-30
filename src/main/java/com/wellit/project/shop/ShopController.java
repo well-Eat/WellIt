@@ -39,21 +39,13 @@ public class ShopController {
     }
 
 
-    /* 삭제예정 */
-/*    @GetMapping("/test/products")
-    public ResponseEntity<List<Product>> testGetAllProducts() {
-        List<Product> products = shopService.getAllProducts();
-        return ResponseEntity.ok(products);
-    }*/
-
-
     /*상품 리스트 페이지 이동*/
     @GetMapping("/list")
     public String getShopList(Model model,
                               @RequestParam(value = "category", required = false, defaultValue = "all") String category,
-                              @RequestParam(value = "order", required = false, defaultValue = "default") String itemSort,
+                              @RequestParam(value = "order", required = false, defaultValue = "lastest") String itemSort,
                               @RequestParam(value = "page", defaultValue = "1") int page,
-                              @RequestParam(value = "size", defaultValue = "20") int size,
+                              @RequestParam(value = "size", defaultValue = "12") int size,
                               @RequestParam(value = "search", required = false) String search
                              ) {
 
@@ -74,8 +66,8 @@ public class ShopController {
         model.addAttribute("favoriteCntMap", favoriteCntMap);
 
         model.addAttribute("prodlist", prodList); // 상품 리스트
-        model.addAttribute("currentPage", page);
-        //model.addAttribute("totalPages", prodList.getTotalPages());
+        model.addAttribute("currentPage",  page); //눈에보이는페이지번호
+        model.addAttribute("totalPages", prodList.getTotalPages());
         //model.addAttribute("totalItems", prodList.getTotalElements());
         model.addAttribute("pageSize", size);
 
@@ -317,16 +309,21 @@ public class ShopController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
+            @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
+            @RequestParam(value = "order", defaultValue = "prodId") String itemSort,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction
+            ) {
 
         // 서비스 호출
-        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page, pageSize);
+        Page<ProductAdminDTO> productsPage = shopService.findProducts(search, prodCate, status, startDate, endDate, page, pageSize, itemSort, direction);
+
+
 
         // 반환할 데이터 구성
         Map<String, Object> response = new HashMap<>();
         response.put("products", productsPage.getContent());
         response.put("totalPages", productsPage.getTotalPages());
-        response.put("currentPage", productsPage.getNumber() + 1);
+        response.put("currentPage", productsPage.getNumber()); /*-1된상태*/
         response.put("totalItems", productsPage.getTotalElements());
 
         return ResponseEntity.ok(response);

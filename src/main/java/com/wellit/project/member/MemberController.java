@@ -509,6 +509,14 @@ public class MemberController {
 	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session,
 			Model model) {
 
+    //로그인 여부 확인
+    @GetMapping("/auth/status")
+    public ResponseEntity<Boolean> checkLoginStatus(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(true);  // 로그인 중일 경우 true 반환
+        }
+        return ResponseEntity.ok(false);  // 로그인 중이 아닐 경우 false 반환
+    }
 		Optional<Member> thisMember = memberService.findByMemberEmail(email);
 
 		if (!thisMember.isPresent()) {
@@ -578,12 +586,16 @@ public class MemberController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		memberService.getPrincipal(authentication, model);
 
-		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-		if (!model.containsAttribute("member")) {
-			return "redirect:/member/login";
-		}
-		return "/shop/mypage_favoriteProduct";
-	}
+    @GetMapping("/mypage/favorite/product")
+    public String getFavoriteShop(Model model) {
+    	String memberId = memberService.getMemberId();
+        Member member = memberService.getMember(memberId);
+        model.addAttribute("member", member);
+        model.addAttribute("memberId", memberId);
+
+        return "/shop/mypage_favoriteProduct";
+    }
+
 
 	@GetMapping("/mypage/favorite/store")
 	public String getFavoriteStore(Model model) {
