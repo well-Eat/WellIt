@@ -79,7 +79,7 @@
 								                                            <p class="c333 f32 fw700 text-center mb-3">아직 예약하신 장소가 없습니다.</p>				                                        
 																		<p class="c333 f20 text-center">흥미 있는 장소가 있으면 예약해 주세요</p>
 																		</div>
-																	<a href="/shop/list" class="btn-back btn btn-success btn-lg">장소 보러 가기</a>				                                  
+																	<a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">장소 보러 가기</a>				                                  
 								                                    </div>
 								                                </div>
 								                            </div>
@@ -112,7 +112,7 @@
 		                                <td style="vertical-align: middle;">수락됨</td>
 		                                <td style="vertical-align: middle;">
 		                                    ${isPast ?
-							`<a class="btn btn-primary" href="/load/place/${reservation.stoId}">리뷰 쓰기</a>` :
+							`<a class="btn hm-btn-green" href="/load/place/${reservation.stoId}">리뷰 쓰기</a>` :
 							`<button class="btn btn-danger" onclick="cancelReservation(${index}, '${reservation.memberId}')">취소</button>`
 						}
 		                                </td>

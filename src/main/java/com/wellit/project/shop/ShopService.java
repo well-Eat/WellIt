@@ -608,6 +608,14 @@ public class ShopService {
 
 
 
+	public List<Product> findAll() {
+        return productRepository.findAll();
+	}
+
+
+
+
+
 }
 
 

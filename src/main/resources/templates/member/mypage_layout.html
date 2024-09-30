@@ -1,73 +1,86 @@
 <html layout:decorate="~{layout}">
-<div layout:fragment="content" >
+<div layout:fragment="content">
 	<!-- font font-awesome CDN -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-	      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-	      crossorigin="anonymous" referrerpolicy="no-referrer"/>
-	
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 	<link rel="stylesheet" href="/css/member.css" />
 	<!--order style link-->
 	<link rel="stylesheet" href="/css/order.css" />
 	<link rel="stylesheet" href="/css/util.css" />
-	
+
 	<div class="bg-light">
-	<section id="mypage" class="position-relative">
-		<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
-		<div class="container-fluid">
-			<div class="row">
-				<!-- 사이드바? -->
-				<div class="col-xl-3 col-xs-12 p-xs-none p-sm-5">
-										<nav class="sidebar card py-2 mb-4 border-0 bg-body">
-											<div class="row">												
-												<div class="col d-flex">
-													<ul class="nav nav-tabs flex-column flex-sm-row flex-xl-column tabnav container"
-														id="nav_accordion">
-														<!-- Admin 전용 항목들 -->
-														<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-															<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
-															<ul class="submenu">
-																<li><a class="nav-link link-dark fw-bold"
-																		href="/order/admin/po/list">주문확인</a></li>
-																<li><a class="nav-link link-dark fw-bold"
-																		href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
-															</ul>
-														</li>
-														<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
-															<a class="nav-link disabled fw-bolder" href="#"
-																data-target="#customer-center">Admin 전용 : 상품 관리</a>
-															<ul class="submenu">
-																<li><a class="nav-link link-dark fw-bold" href="/shop/admin/list">상품리스트</a></li>
-																<li><a class="nav-link link-dark fw-bold" href="/shop/admin/form">신규상품등록</a>
-																</li>
-															</ul>
-														</li>
-														<li class="nav-item has-submenu mt-3">
-															<a class="nav-link disabled fw-bolder" href="#"
-																data-target="#customer-center">가게 관련
-																</a>
-															<ul class="submenu">
-																<li>
-																	<a class="nav-link link-dark fw-bold"
-																		th:href="@{/member/load/admin/store/create}">가게 생성</a>
-																</li>
-															</ul>
-														</li>
-													</ul>
-												</div>
+		<section id="mypage" class="position-relative">
+			<!-- width 스마트폰일때 w-100, 보다 클때부터 작은 width/container/fluid 지정-->
+			<div class="container-fluid">
+				<div class="row">
+					<!-- 사이드바? -->
+					<div class="col-xl-3 col-xs-12 p-xs-none p-sm-5">
+						<nav class="sidebar card py-2 mb-4 border-0 bg-body">
+							<div class="row">
+								<div class="col d-flex">
+									<ul class="nav nav-tabs flex-column flex-sm-row flex-xl-column tabnav container"
+										id="nav_accordion">
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">회원 관련</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/member/admin/memberList">회원 리스트</a></li>
+											</ul>
+										</li>
+										<!-- Admin 전용 항목들 -->
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#">Admin 전용 : 주문관련</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/po/list">주문확인</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/order/admin/cancel/request/list">주문취소승인대기</a></li>
+											</ul>
+										</li>
+										<li class="nav-item col-sm-6 col-xl-12 has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">Admin 전용 : 상품 관리</a>
+											<ul class="submenu">
+												<li><a class="nav-link link-dark fw-bold"
+														href="/shop/admin/list">상품리스트</a></li>
+												<li><a class="nav-link link-dark fw-bold"
+														href="/shop/admin/form">신규상품등록</a>
+												</li>
+											</ul>
+										</li>
+										<li class="nav-item has-submenu mt-3">
+											<a class="nav-link disabled fw-bolder" href="#"
+												data-target="#customer-center">Admin 전용 : 가게 관리
+											</a>
+											<ul class="submenu">
+												<li>
+													<a class="nav-link link-dark fw-bold"
+														th:href="@{/member/load/admin/store/create}">가게 생성</a>
+												</li>
+												<li>
+													<a class="nav-link link-dark fw-bold"
+														th:href="@{/load/admin/store/list}">가게 리스트</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
 
 
-											</div>
-										</nav>
-									</div>
-				<div class="col-xl-9 col-xs-12 tabcontent container" layout:fragment="tabcontent">
-				
+							</div>
+						</nav>
+					</div>
+					<div class="col-xl-9 col-xs-12 tabcontent container" layout:fragment="tabcontent">
+
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
 	</div>
 	<script>
-	
+
 	</script>
 </div>
 

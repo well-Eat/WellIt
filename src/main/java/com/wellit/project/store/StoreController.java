@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wellit.project.member.Member;
+import com.wellit.project.member.MemberService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -35,6 +36,9 @@ public class StoreController {
     
     @Autowired
     private FavoriteStoreService favoriteStoreService;
+    
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("/map")
 	public String getMap() {
@@ -165,6 +169,18 @@ public class StoreController {
         allStoreService.updateStore(store);
         
         return "load/place_detail"; // 디테일 페이지로 이동
+    }
+    
+ // admin:상품 리스트 이동
+    @GetMapping("/admin/store/list")
+    public String getAdminProductList(Model model) {
+        String memberId = memberService.getMemberId();
+        // 현재 로그인한 사용자가 admin인지 확인
+        if (memberId == null || !"admin".equals(memberId)) {
+            return "/order/admin_po_list";  // 상품 리스트 페이지로 리다이렉트
+        }
+
+        return "/load/admin_storeList";
     }
 
     

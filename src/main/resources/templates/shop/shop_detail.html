@@ -116,8 +116,8 @@
 						<!--버튼 라인-->
 						<div class="mb-3 btns gx-1 d-flex align-items-stretch justify-content-between">
 							
-							<a href="javascript:void(0);" class="btn btn-outline-success heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
-							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn btn-success goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
+							<a href="javascript:void(0);" class="btn hm-btn-border-green heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn hm-btn-green goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
 
 						</div>
 					</form>
@@ -163,8 +163,8 @@
 			
 			<!-- 리뷰 페이지 버튼 -->
 			<div class="pagination justify-content-center my-3" th:if="${reviewCnt.cnt>5}">
-				<button class="pageBtn pagePrev btn btn-sm btn-outline-success mx-2">&laquo;</button>
-				<button class="pageBtn pageNext btn btn-sm btn-outline-success mx-2">&raquo;</button>
+				<button class="pageBtn pagePrev btn btn-sm hm-btn-border-green mx-2">&laquo;</button>
+				<button class="pageBtn pageNext btn btn-sm hm-btn-border-green mx-2">&raquo;</button>
 			</div>
 		</div>
 		

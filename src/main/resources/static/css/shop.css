@@ -39,6 +39,7 @@ section {
 nav header {
     background-color:  #03c75a !important;
     /* #70d68aff */
+	background-color: var(--main-color);
     position: relative;
 }
 

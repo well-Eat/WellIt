@@ -68,7 +68,7 @@
 												                                            <p class="c333 f32 fw700 text-center mb-3">찜한 가게가 없습니다</p>
 												                                            <p class="c333 f20 text-center">가게 페이지에서 마음에 드는 상품을 골라 찜한 가게 리스트를 만들어보세요</p>
 												                                        </div>
-												                                        <a href="/load/place" class="btn-back btn btn-success btn-lg">가게 보러 가기</a>
+												                                        <a href="/load/place" class="btn-back btn hm-btn-green btn-lg">가게 보러 가기</a>
 												                                    </div>
 												                                </div>
 												                            </div>
@@ -90,7 +90,7 @@
 								            <p class="card-text"><strong>내용:</strong> ${store.stoContent || '내용 없음'}</p>
 								            <p class="card-text"><strong>위치:</strong> ${store.stoAddress || '위치 없음'}</p>
 								            <div class="d-flex justify-content-end btns">
-								                <a href="/load/place/${store.stoId}" class="btn btn-primary">자세히 보기</a>
+								                <a href="/load/place/${store.stoId}" class="btn hm-btn-green">자세히 보기</a>
 								                <button class="btn btn-danger mx-2" onclick="removeFromFavorites('${store.stoId}')">찜 취소</button>
 								            </div>
 								        </div>

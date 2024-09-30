@@ -102,7 +102,7 @@
 			                            <td style="vertical-align: middle;">${reservation.memberId}</td>
 			                            <td style="vertical-align: middle;">
 			                                ${!isPast && !reservation.accepted ?
-						`<button class="btn btn-success" onclick="checkReservation(${reservation.id}, '${reservation.memberId}')">수락</button>` :
+						`<button class="btn hm-btn-green" onclick="checkReservation(${reservation.id}, '${reservation.memberId}')">수락</button>` :
 						''
 					}
 			                                ${isPast && reservation.accepted ?

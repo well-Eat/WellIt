@@ -34,7 +34,7 @@ section {
 /********************** common : 메뉴바 재설정 *********************/
 /********************** common : 메뉴바 재설정 *********************/
 nav header {
-    background-color: #386641;
+	background-color: var(--main-color);
     position: relative;
 }
 

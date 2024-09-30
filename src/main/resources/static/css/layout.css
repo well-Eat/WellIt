@@ -11,7 +11,7 @@ body{
 	color: #333333;
 }
 :root {
-    --main-color: rgb(134, 143, 52);
+    --main-color: #00592D;
 	--sub-box: rgb(88, 143, 52);
 	--sub-box-hover: rgb(68, 113, 40);
 	--sub-green: rgb(153, 164, 60);

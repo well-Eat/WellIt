@@ -15,10 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.wellit.project.DataNotFoundException;
@@ -163,7 +165,7 @@ public class MemberService {
 		if (member == null) {
 			throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
 		}
-
+		
 		// 프로필 이미지 삭제 로직 추가
 		String imagePath = member.getImageFile();
 		if (imagePath != null && !imagePath.isEmpty()) {
@@ -261,4 +263,31 @@ public class MemberService {
 		return null;
 	}
 
+	
+	public void getPrincipal(Authentication authentication, Model model) {
+		if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String memberId = null;
+
+            if (principal instanceof String) {
+                memberId = (String) principal;
+            } else if (principal instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) principal;
+                memberId = userDetails.getUsername();
+            }
+
+            if (memberId != null) {
+                Member member = memberRepository.findByMemberId(memberId);
+                if (member != null) {
+                	                	                	          	
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String formattedRegDate = member.getMemberRegDate().format(formatter);
+                    model.addAttribute("member", member);
+                    model.addAttribute("formattedRegDate", formattedRegDate);
+                } else {
+                    model.addAttribute("error", "회원 정보를 찾을 수 없습니다.");
+                }
+            }
+        }
+    }
 }

@@ -1,5 +1,7 @@
 header {
 	position: relative;	
+	background-color: var(--main-color);
+
 }
 
 .formStyle {
@@ -14,6 +16,14 @@ header {
 .greenBtn {
 	background-color: #6A994E;
 }
+
+.mpBtn{
+	background-color:#FFE74C;
+}
+.mpBtn:hover{
+	background-color: #FFF199;
+}
+
 .sidebar {
 	border-radius: 10px;
 }
@@ -124,6 +134,7 @@ header {
 
 /* tbody에서 테이블이 깨지지 않도록 */
 .prodTableBox tbody td {
-	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */
+	overflow-wrap: break-word; /* 내용이 긴 경우 자동으로 줄바꿈 */	
+
 }
 
