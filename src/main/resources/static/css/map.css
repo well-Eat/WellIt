@@ -282,7 +282,7 @@ footer{
 	.searchWrapper {
 		width: 90%;
 		left: 5%;
-		height: 20%;
+		height: 25%;
 		transition: height 1s;
 		max-width: 768px;
 	}

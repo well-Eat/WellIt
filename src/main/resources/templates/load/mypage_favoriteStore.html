@@ -116,6 +116,7 @@
 				})
 					.then(response => {
 						if (response.ok) {
+							alert("찜 취소 성공")
 							fetchFavoriteStores(); // 목록 새로고침
 						} else {
 							throw new Error('찜 취소 실패');
