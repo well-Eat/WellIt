@@ -301,10 +301,14 @@ public class RecipeController {
 
 	    // 레시피 저장
 	    recipeService.updateRecipe(recipe);
+	    
+	    // 재료 리스트 업데이트
+	    List<RecpIngredient> newIngredients = recipeForm.getRecpIngredientList();
+	    recipeService.updateIngredients(recipe, newIngredients); // 서비스 메서드를 호출하여 재료 업데이트
 
 	    // 메인 이미지 처리
 	    List<MultipartFile> mainImgMultiList = recipeForm.getRecpMainImgList();
-	    List<RecpMainImg> existingImages = new ArrayList<>(); // 리스트 초기화
+	    List<RecpMainImg> existingImages = new ArrayList<>(); // 리스트 초기화   
 
 	    // 기존 이미지 삭제
 	    recipeService.deleteExistingImagesByRecipeId(recipe.getId()); // DB에서 기존 이미지 삭제

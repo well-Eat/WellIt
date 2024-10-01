@@ -131,7 +131,7 @@ public class StoreReservationController {
         if (member == null) {
             throw new RuntimeException("회원이 존재하지 않습니다.");
         }
-
+        
         // 예약 찾기
         Optional<StoreReservation> optionalReservation = reservationRepository.findById(reservationId);
         if (optionalReservation.isPresent()) {

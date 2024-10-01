@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
+				
 	<style>
 		.recipe-image {
 			width: 100%;
@@ -151,7 +152,8 @@
 				<div class="row" id="productRow">
 					<th:block th:each="ingredient : ${recipe.recpIngredientList}">
 						<th:block th:each="product : ${productList}">
-							<th:block th:if="${#lists.contains(product.prodName, ingredient.ingredientName)}">
+							
+						<th:block th:if="${productList != null and ingredient.ingredientName != null and product.prodName != null and #lists.contains(product.prodName, ingredient.ingredientName)}">
 								<div class="col-md-3 mb-3 product-card"> <!-- 4개씩 배치하기 위해 col-md-3 사용 -->
 									<div class="card">
 										<div class="card-body">
@@ -248,7 +250,7 @@
 
 			<!-- 조리 순서 -->
 			<h2 class="mt-4">조리 순서</h2>
-			<ol class="mb-4">
+			<ol class="mb-4 ps-0">
 				<th:block th:each="orderCard, iterStat : ${recipe.cookOrderCardList}">
 					<li class="step">
 						<div class="card mb-3">
@@ -271,7 +273,7 @@
 			</ol>
 			<!-- 수정 및 삭제 버튼 -->
 			<div class="btn-group" th:if="${session.UserId == recipe.writer} or ${session.UserId == 'admin'}">
-				<a th:href="@{/life/recipe/edit/{id}(id=${recipe.id})}" class="btn btn-primary">수정</a>
+				<a th:href="@{/life/recipe/edit/{id}(id=${recipe.id})}" class="btn hm-btn-green">수정</a>
 				<form th:action="@{/life/recipe/delete/{id}(id=${recipe.id})}" method="post" style="display:inline;"
 					onsubmit="return confirmDelete();">
 					<button type="submit" class="btn btn-danger">삭제</button>
