@@ -253,7 +253,7 @@ public class ShopService {
 
     /* Create : 상품 생성 */
     @Transactional
-    public Product saveProduct(ProductForm productForm, MultipartFile thumbFile, List<MultipartFile> imageFiles)
+    public Product saveProduct(ProductForm productForm, MultipartFile thumbFile, List<MultipartFile> newImages, List<Integer> newImageOrders)
             throws IOException {
 
 
@@ -299,6 +299,7 @@ public class ShopService {
 
         // 여러 이미지 업로드 처리
         List<ProdImage> prodImageList = new ArrayList<>();
+/*      기존 코드 (241001 이전)
         for (MultipartFile imageFile : imageFiles) {
             if (!imageFile.isEmpty()) {
                 String imageFileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
@@ -310,7 +311,35 @@ public class ShopService {
                 prodImage.setProduct(product);
                 prodImageList.add(prodImage);
             }
+        }*/
+
+        // 새로운 이미지 처리 (순서 유지하여 저장)
+        if (newImages != null && newImageOrders != null) {
+            for (int i = 0; i < newImages.size(); i++) {
+                MultipartFile newImageFile = newImages.get(i);
+                int order = newImageOrders.get(i);
+
+                // 이미지가 비어있지 않을 경우에만 처리
+                if (!newImageFile.isEmpty()) {
+                    // 고유한 파일명을 생성하여 이미지 저장
+                    String fileName = UUID.randomUUID().toString() + "_" + newImageFile.getOriginalFilename();
+                    Path imagePath = Paths.get(UPLOAD_DIR, fileName);
+                    Files.write(imagePath, newImageFile.getBytes());
+
+                    // ProdImage 엔티티 생성 후 이미지 경로와 순서를 설정
+                    ProdImage newImage = new ProdImage();
+                    newImage.setImagePath("/imgs/shop/product/" + fileName); // 저장된 이미지 경로 설정
+                    newImage.setProdImageNum(order);  // 이미지 순서 저장
+                    newImage.setProduct(product); // 연관된 상품 설정
+
+                    // DB에 새로운 이미지 정보 저장
+                    prodImageRepository.save(newImage);
+                }
+            }
         }
+
+
+
         product.setProdImages(prodImageList);
 
         Product savedProduct = productRepository.save(product);
