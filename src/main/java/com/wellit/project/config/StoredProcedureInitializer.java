@@ -39,9 +39,9 @@ public class StoredProcedureInitializer {
                         "        p.prod_stock, p.view_cnt, p.created_at, p.updated_at,  " +
                         "        COALESCE(COUNT(r.rev_id), 0) AS review_count,  " +
                         "COALESCE(AVG(r.rev_rating), 0) AS review_rating,  " +
-                        "COALESCE(COUNT(oi.id), 0) AS sales_count, " +
-                        "COALESCE(SUM(oi.quantity), 0) AS total_sales_quantity, " +
-                        "COALESCE(SUM(oi.sum_org_price + oi.sum_disc_price), 0) AS total_sales_amount " +
+                        "COALESCE(COUNT(CASE WHEN po.status != 'CANCELLED' THEN oi.id END), 0) AS sales_count, " +
+                        "COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN oi.quantity END), 0) AS total_sales_quantity, " +
+                        "COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN (oi.sum_org_price + oi.sum_disc_price) END), 0) AS total_sales_amount " +
                         "FROM product p " +
                         "LEFT JOIN order_item oi ON p.prod_id = oi.product_id " +
                         "LEFT JOIN purchase_order po ON oi.order_id = po.order_id " +
@@ -50,7 +50,8 @@ public class StoredProcedureInitializer {
                         "LEFT JOIN prod_review r ON oi.id = r.order_item_id " +
                         "WHERE (p_category = 'all' OR p_category IS NULL OR p.prod_cate = p_category) " +
                         "AND (p_status IS NULL OR p.prod_status = p_status) " +
-                        "AND (p_search IS NULL OR LOWER(p.prod_name) LIKE '%' || LOWER(p_search) || '%') " +
+                        "AND (p_search IS NULL OR LOWER(p.prod_name) LIKE '%' || LOWER(p_search) || '%' " +
+                        "        OR TO_CHAR(p.prod_id) = p_search) " +
                         "GROUP BY p.prod_id, p.prod_status, p.prod_main_img, p.prod_name, p.prod_desc, " +
                         "        p.prod_org_price, p.prod_discount, p.prod_cate, p.prod_final_price, " +
                         "        p.prod_stock, p.view_cnt, p.created_at, p.updated_at " +
@@ -58,12 +59,13 @@ public class StoredProcedureInitializer {
                         "CASE " +
                         "WHEN p_item_sort = 'reviewCountDESC' THEN COALESCE(COUNT(r.rev_id), 0) " +
                         "WHEN p_item_sort = 'reviewRatingDESC' THEN COALESCE(AVG(r.rev_rating), 0) " +
-                        "WHEN p_item_sort = 'salesCountDESC' THEN COALESCE(COUNT(oi.id), 0) " +
-                        "WHEN p_item_sort = 'salesQuantityDESC' THEN COALESCE(SUM(oi.quantity), 0) " +
-                        "WHEN p_item_sort = 'salesAmountDESC' THEN COALESCE(SUM(oi.sum_org_price + oi.sum_disc_price), 0) " +
+                        "WHEN p_item_sort = 'salesCountDESC' THEN COALESCE(COUNT(CASE WHEN po.status != 'CANCELLED' THEN oi.id END), 0) " +
+                        "WHEN p_item_sort = 'salesQuantityDESC' THEN COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN oi.quantity END), 0) " +
+                        "WHEN p_item_sort = 'salesAmountDESC' THEN COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN (oi.sum_org_price + oi.sum_disc_price) END), 0) " +
                         "WHEN p_item_sort = 'viewCountDESC' THEN p.view_cnt  " +
                         "WHEN p_item_sort = 'highPriceDESC' THEN p.prod_final_price " +
                         "WHEN p_item_sort = 'favoriteCountDESC' THEN (SELECT COALESCE(COUNT(fp.id), 0) FROM favorite_product fp WHERE fp.product_id = p.prod_id) " +
+                        "WHEN p_item_sort = 'latestDESC' THEN TO_NUMBER(TO_CHAR(p.created_at, 'YYYYMMDDHH24MISS'))  " +
                         "WHEN p_item_sort = 'prodIdDESC' THEN p.prod_id " +
                         "WHEN p_item_sort = 'prodStockDESC' THEN p.prod_stock   " +
                         "WHEN p_item_sort = 'prodNameDESC' THEN NULL   " +
@@ -73,9 +75,9 @@ public class StoredProcedureInitializer {
                         "        CASE " +
                         "WHEN p_item_sort = 'reviewCountASC' THEN COALESCE(COUNT(r.rev_id), 0)   " +
                         "WHEN p_item_sort = 'reviewRatingASC' THEN COALESCE(AVG(r.rev_rating), 0)   " +
-                        "WHEN p_item_sort = 'salesCountASC' THEN COALESCE(COUNT(oi.id), 0)       " +
-                        "WHEN p_item_sort = 'salesQuantityASC' THEN COALESCE(SUM(oi.quantity), 0)       " +
-                        "WHEN p_item_sort = 'salesAmountASC' THEN COALESCE(SUM(oi.sum_org_price + oi.sum_disc_price), 0)       " +
+                        "WHEN p_item_sort = 'salesCountASC' THEN COALESCE(COUNT(CASE WHEN po.status != 'CANCELLED' THEN oi.id END), 0)       " +
+                        "WHEN p_item_sort = 'salesQuantityASC' THEN COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN oi.quantity END), 0)       " +
+                        "WHEN p_item_sort = 'salesAmountASC' THEN COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN (oi.sum_org_price + oi.sum_disc_price) END), 0)       " +
                         "WHEN p_item_sort = 'viewCountASC' THEN p.view_cnt                       " +
                         "WHEN p_item_sort = 'highPriceASC' THEN p.prod_final_price               " +
                         "WHEN p_item_sort = 'favoriteCountASC' THEN (SELECT COALESCE(COUNT(fp.id), 0) FROM favorite_product fp WHERE fp.product_id = p.prod_id)   " +

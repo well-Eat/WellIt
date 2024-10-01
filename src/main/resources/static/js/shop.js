@@ -470,36 +470,17 @@ function renderReviews(reviews) {
 
 /** shop_create : 상품 상세정보 입력 **/
 /** shop_create : 상품 상세정보 입력 **/
-/*상품정보 추가/제거*/
-/*$(function () {
-
-
-    $(document).on('click', '.removeRow', function () {
-        $(this).closest('tr').remove();
-        updateProdInfoIndices(); // 삭제 후 인덱스 업데이트
-    });
-
-
-    $(document).on('click', '.drop-area:not(.remove-btn)', function () {
-        const dropArea = $(this).closest(".drop-area").not(".remove-btn");
-        const fileInput = $(this).find(".prodImageInput");
-
-        fileInput.click();
-
-    });
-
-});*/
-
-/*상품정보 추가/제거*/
 $(function () {
 
+
     $(document).on('click', '.removeRow', function () {
         $(this).closest('tr').remove();
         updateProdInfoIndices(); // 삭제 후 인덱스 업데이트
     });
 
+
     $(document).on('click', '.addRow', function () {
-        const curIndex = $(this).index();
+        const curIndex = $(this).closest('tr').index();
         const rowCount = $('#prodInfoList tr').length;
         const newRow = `
     <tr>
@@ -516,51 +497,9 @@ $(function () {
 
 
 });
-/*상품입력 폼 validation*/
-$(function() {
 
 
-    if($(".productForm")){
-
-        var $input = $('#prodOrgPrice');
-        var min = parseInt($input.attr('min')) || 0;
-        var step = 1000;  // 1000 단위로 설정
-
-
-
-    }
-
-    // 수동 입력 처리
-    $input.on('input', function() {
-        var value = parseInt($input.val()) || 0;
-
-        // 값이 최소값 미만일 경우 최소값으로 설정
-        if (value < min) {
-            $input.val(min);
-        }
-    });
-
-    // 기본 증감 버튼 클릭 시 동작 (change 이벤트 활용)
-    $input.on('change', function() {
-        var value = parseInt($input.val()) || 0;
-
-        // 증감 버튼 클릭 시 항상 1000 단위로 값이 증가/감소
-        if (value % step !== 0) {
-            $input.val(Math.round(value / step) * step);  // 가장 가까운 1000 단위로 맞춤
-        }
-
-        // 값이 최소값 미만일 경우 최소값으로 설정
-        if (value < min) {
-            $input.val(min);
-        }
-    });
-});
-
-
-
-
-
-// 상품정보 행 인덱스 업데이트 함수
+// 재료 행 인덱스 업데이트 함수
 function updateProdInfoIndices() {
     $('#prodInfoList tr').each(function (index) {
         $(this).find('.infoKey').attr('name', `prodInfoList[${index}].infoKey`);
@@ -569,13 +508,16 @@ function updateProdInfoIndices() {
 }
 
 function validateInputs() {
-    if ($("#prodName").trim()==null || $("#prodName").val().trim()==""){
+    var prodName = $("#prodName").val().trim();
+    var prodDesc = $("#prodDesc").val().trim();
+
+    if (prodName === null || prodName === "") {
         alert("상품명을 입력해주세요.");
-        input.focus();
+        $("#prodName").focus();  // prodName에 포커스 설정
         return false;
-    } else if ($("#prodDesc").trim()==null || $("#prodDesc").val().trim()==""){
+    } else if (prodDesc === null || prodDesc === "") {
         alert("상품설명을 입력해주세요.");
-        input.focus();
+        $("#prodDesc").focus();  // prodDesc에 포커스 설정
         return false;
     }
     return true; // 모든 input이 올바르면 폼 제출 허용
@@ -855,18 +797,6 @@ $(function () {
                 }
             });
 
-            // 상품 상세 정보(prodInfoList) 리스트
-            $('#prodInfoList tr').each(function (index) {
-                const infoKey = $(this).find('.infoKey').val();
-                const infoValue = $(this).find('.infoValue').val();
-
-                if (infoKey && infoValue) {
-                    formData.append(`prodInfoList[${index}].infoKey`, infoKey);
-                    formData.append(`prodInfoList[${index}].infoValue`, infoValue);
-                }
-            });
-
-
             // Fetch API로 폼 데이터 전송
             fetch($(this).attr('action'), {
                 method: $(this).attr('method'),
@@ -1041,7 +971,7 @@ function renderFavoriteProducts(products) {
                                 <div class="col-12">
                                     <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
                                         <div class="icon-heart my-5">
-                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                            <i class="fa-solid fa-carrot fa-10x" style="color:#bbbbbb;"></i>
                                         </div>
                                         <div class="message mb-5">
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
@@ -1102,7 +1032,7 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
                                 <div class="col-12">
                                     <div class="no-favorites d-flex flex-column justify-content-center align-items-center">
                                         <div class="icon-heart my-5">
-                                            <i class="fa-regular fa-heart fa-10x" style="color:#bbbbbb;"></i>
+                                            <i class="fa-solid fa-carrot fa-10x" style="color:#bbbbbb;"></i>
                                         </div>
                                         <div class="message mb-5">
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
@@ -1133,6 +1063,7 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
 /***************** admin : productList ******************/
+
 $(function() {
     if ($('#prodTable').length) {
         // 현재 달의 1일과 오늘 날짜를 기본값으로 설정
@@ -1161,23 +1092,47 @@ $(function() {
         // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();
 
+
         // 상품명 검색 input에서 enter 입력 시 검색 실행
         $('#searchInput').on('keydown', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                fetchProducts();
+                goToPageFirstAndFetchProducts();
             }
         });
 
-        //상품 보기 개수 바꾸는 경우, 1페이지부터 다시 로딩
+        //input 내용 바꾸는 경우, 1페이지부터 다시 로딩(보기개수, select, 보기개수, 검색어)
         $("#pageSizeSelect").on("change", function (event){
             event.preventDefault();
-            $("#pagenum").val(1);
+            goToPageFirstAndFetchProducts();
+        })
+        $("#categorySelect").on("change", function (event){
+            goToPageFirstAndFetchProducts();
+        })
+        $("#statusSelect").on("change", function (event){
+            goToPageFirstAndFetchProducts();
+        })
+
+        //날짜 바꿀 시 집계조건만 변경되므로
+        $("#startDate").on("change", function (event){
+            fetchProducts();
+        })
+        $("#endDate").on("change", function (event){
             fetchProducts();
         })
 
+
+
     }
 });
+
+//admin 상품 리스트 검색 결과를 반환 -> 1페이지를 로딩
+function goToPageFirstAndFetchProducts(){
+    $("#pagenum").val(1);
+    fetchProducts();
+}
+
+
 
 //admin:productList 소팅 : 테이블 헤더 클릭 시
 $(".tableSort").on("click", function (){
@@ -1293,10 +1248,10 @@ async function fetchProducts() {
 
         const row = `
             <tr class="prodRow ${rowClass}">
-                <td>${index + 1}</td>
+                <td>${((page-1)*pageSize) + index + 1}</td>
                 <td>${product.prodId}</td>
                 <td class="${statClass}"><a href="/shop/detail/${product.prodId}">${product.prodName}</a></td>
-                <td class="${statClass}">${toKoreanProdStatus(product.prodStatus)}</td>
+                <td class="${statClass} text-center">${toKoreanProdStatus(product.prodStatus)}</td>
                 <td class="text-end pe-2">${product.prodStock == null ? 0 : product.prodStock.toLocaleString('ko-KR')}</td>
                 <td class="text-end pe-2">${product.sumQuantity == null ? 0 : product.sumQuantity.toLocaleString('ko-KR')}</td>
                 <td class="text-end pe-2">${product.totalFinalPrice == null ? 0 : product.totalFinalPrice.toLocaleString('ko-KR')}</td>
@@ -1308,7 +1263,7 @@ async function fetchProducts() {
     });
 
     const totalRow = `
-        <tr class="table-light fw700">
+        <tr class="table-light fw700 aggregate">
             <td class="text-center" colspan="4">소&nbsp;&nbsp;계</td>
             <td class="text-end pe-2">${sumStock.toLocaleString('ko-KR')}</td>
             <td class="text-end pe-2">${sumSalesProd.toLocaleString('ko-KR')}</td>
@@ -1345,6 +1300,24 @@ async function fetchProducts() {
     $(`.pageLink[data-page-link='${page}']`).addClass("active");
 }
 
+/*admin_productList, shop_list : 기존 검색어 제거*/
+$(function() {
+    if ($("#searchForm")){ //admin
+        $('#clearBtn').on('click', function() {
+            $('#searchInput').val('');  // 입력 필드 내용 삭제
+            goToPageFirstAndFetchProducts(); // 검색어 없이 1페이지 다시 로딩(나머지 조건 유지)
+            $('#searchInput').focus();
+        });
+    }
+});
+$(function() {
+if ($(".prodSearchSort")){ //shop
+        $('#clearBtn').on('click', function() {
+            $('#search-input').val('');  // 입력 필드 내용 삭제
+            $('#search-input').focus();
+        });
+    }
+});
 
 
 

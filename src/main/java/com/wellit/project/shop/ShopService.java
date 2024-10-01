@@ -4,6 +4,8 @@ import com.wellit.project.member.Member;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.order.OrderItem;
 import com.wellit.project.order.OrderItemRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
@@ -26,6 +28,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShopService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     private final ProductRepository productRepository;
     private final ProdReviewRepository prodReviewRepository;
@@ -40,15 +45,6 @@ public class ShopService {
 
     // 파일 업로드 위치 (서버 대신 업로드 할 임시 위치)
     private static final String UPLOAD_DIR = "C:/uploads/";
-
-
-/* 테스트용
-    @Transactional(readOnly = true)
-    public List<Product> getAllProducts() {
-        return productRepository.findAllProducts();
-    }
-*/
-
 
 
     /*서비스 : 상품 리스트 리턴*/
@@ -207,8 +203,6 @@ public class ShopService {
                                                    .filter(review -> review != null && review.getRevImg() != null)
                                                    .collect(Collectors.toList());
 
-        log.info("############### ShopService(getImgReview)");
-        log.info("Image Review Count: " + imgReviewList.size());
         return imgReviewList;
     }
 
@@ -369,6 +363,9 @@ public class ShopService {
 
         // 기존 상품 세부 정보 삭제 -> 수정 내용으로 새로운 리스트 추가
         prodInfoRepository.deleteAllByProduct(product);
+
+        entityManager.flush();
+
         List<ProdInfo> prodInfoList = productForm.getProdInfoList();
         if (prodInfoList != null && !prodInfoList.isEmpty()) {
             for (ProdInfo prodInfo : prodInfoList) {

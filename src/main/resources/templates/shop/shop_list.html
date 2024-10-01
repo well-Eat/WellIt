@@ -2,7 +2,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <html layout:decorate="~{layout}">
 <head>
-	<title>상품 리스트</title>
+	<!--<title>상품 리스트</title>-->
 	
 	<!-- font font-awesome CDN -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -22,7 +22,7 @@
 	<!--페이지 제목-->
 	<div class="row my-5">
 		<div class="pageTitle col text-center">
-			Shop
+			오가닉샵
 		</div>
 	</div>
 	
@@ -44,9 +44,11 @@
 	</div>
 	
 	<div class="row mb-3 justify-content-between prodSearchSort">
-		<div class="col-lg-5 d-flex gx-1 searchForm mb-3">
-			<input type="text" class="form-control form-control-sm flex-grow-1" id="search-input" placeholder="상품명 검색">
-			<input type="button" class="form-control form-control-sm px-2 ms-1" value="검색" id="searchBtn">
+		<div class="col-lg-5 position-relative gx-1 searchForm mb-3">
+			<input type="text" class="form-control form-control-sm flex-grow-1 rounded-pill px-5" id="search-input" placeholder="상품명 검색">
+			<!--<input type="button" class="form-control form-control-sm px-2 ms-1" value="검색" id="searchBtn">-->
+			<span  id="searchBtn"> <i class="fa-solid fa-magnifying-glass"></i></span>
+			<span class="clear-btn" id="clearBtn">&times;</span>
 		</div>
 		
 		<div class="col-lg-7 d-flex justify-content-end  gx-1 gap-2 sortForm">
@@ -78,7 +80,10 @@
 				<!-- 상품이미지 -->
 				<div class="card-img-wrapper rounded-2 mb-3">
 					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
-						<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|"></div>
+						<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|" th:if="${item.prodMainImg!=null}"></div>
+						<div class="card-img-box thumbNull d-flex justify-content-center align-items-center" th:if="${item.prodMainImg==null}">
+							<div th:text="${item.prodName}" class="thumbNullText"></div>
+						</div>
 					</a>
 				</div>
 				

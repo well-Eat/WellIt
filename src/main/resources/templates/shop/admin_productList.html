@@ -22,7 +22,10 @@
 						<div class="flex-grow-1">  <!-- 좌측 열 -->
 							<div class="d-flex mb-1"> <!-- 첫째줄 -->
 									<!--상품명 검색어 입력-->
-									<input type="text" id="searchInput" class="form-control me-2 w-50" placeholder="상품명검색" name="search">
+								<div class="position-relative w-50 me-2">
+									<input type="text" id="searchInput" class="form-control" placeholder="상품번호 또는 상품명 검색" name="search">
+									<span class="clear-btn" id="clearBtn">&times;</span> <!-- X 버튼 -->
+								</div>
 									
 									<!--카테고리 select-->
 									<select class="form-select me-2 w-25" id="categorySelect" name="category">
@@ -58,7 +61,7 @@
 							</div>
 						</div>
 						<div class="d-flex">
-							<button type="button" class="btn btn-success align-self-stretch" onclick="fetchProducts()"><i class="fa-solid fa-magnifying-glass text-white px-3 fa-2x" ></i></button>
+							<button type="button" class="btn btn-success align-self-stretch" onclick="goToPageFirstAndFetchProducts();"><i class="fa-solid fa-magnifying-glass text-white px-3 fa-2x" ></i></button>
 						</div>
 						
 					</div> <!--row-->
@@ -72,36 +75,36 @@
 				</p>
 				<span class="sortDirectionBtn d-inline-block float-end"></span>
 				<!-- 상품 목록 테이블 -->
-				<div class="prodTableBox border sticky-top">
+				<div class="prodTableBox border">
 					<table class="table table-hover" id="prodTable" >
-						<thead class="prodTableHead sticky-top">
+						<thead class="prodTableHead">
 						<tr>
-							<th scope="col">No.</th>
+							<th scope="col" class="c666">No.</th>
 							<th scope="col" class="tableSort" data-order="prodId" data-item-sort="prod_id">
 								상품코드
-								<span class="sortDirectionBtn mx-2"></span>
+								<span class="sortDirectionBtn"></span>
 							</th>
 							<th scope="col" class="tableSort flex-grow-1" data-order="prodName" data-item-sort="prod_name">
 								상품명
-								<span class="sortDirectionBtn mx-2"></span>
+								<span class="sortDirectionBtn"></span>
 							</th>
-							<th scope="col" class="tableSort" data-order="prodStatus" data-item-sort="prod_status">
+							<th scope="col" class="text-center c666" data-order="prodStatus" data-item-sort="prod_status">
 								판매상태
-								<span class="sortDirectionBtn mx-2"></span>
+								<!--<span class="sortDirectionBtn"></span>-->
 							</th>
-							<th scope="col" class="tableSort" data-order="prodStock" data-item-sort="prod_stock">
+							<th scope="col" class="tableSort text-end" data-order="prodStock" data-item-sort="prod_stock">
+								<span class="sortDirectionBtn"></span>
 								재고수량
-								<span class="sortDirectionBtn mx-2"></span>
 							</th>
-							<th scope="col" class="tableSort" data-order="salesQuantity" data-item-sort="sales_quantity">
+							<th scope="col" class="tableSort text-end" data-order="salesQuantity" data-item-sort="sales_quantity">
+								<span class="sortDirectionBtn"></span>
 								판매수량
-								<span class="sortDirectionBtn mx-2"></span>
 							</th>
-							<th scope="col" class="tableSort" data-order="salesAmount" data-item-sort="sales_amount">
+							<th scope="col" class="tableSort text-end" data-order="salesAmount" data-item-sort="sales_amount">
+								<span class="sortDirectionBtn"></span>
 								매출금액
-								<span class="sortDirectionBtn mx-2"></span>
 							</th>
-							<th scope="col">상품수정</th>
+							<th scope="col" class="text-center c666">상품수정</th>
 						</tr>
 						</thead>
 						<tbody id="prodTableBody">
