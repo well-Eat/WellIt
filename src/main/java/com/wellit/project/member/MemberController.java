@@ -525,7 +525,7 @@ public class MemberController {
 	        Member thisMember = member.get();
 	        model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
 	    } else {
-	        model.addAttribute("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
+	        model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
 	    }
 
 	    session.setAttribute("emailVerified", false);
@@ -576,12 +576,12 @@ public class MemberController {
 	}
 
 	@PostMapping("/findPassword")
-	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email, HttpSession session,
+	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email,@RequestParam("memberId") String id,@RequestParam("memberName") String name, HttpSession session,
 			Model model) {
-		Optional<Member> thisMember = memberService.findByMemberEmail(email);
+		Optional<Member> thisMember = memberService.findByIdAndNameAndEmail(id,name,email);
 
 		if (!thisMember.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력하신 이메일이 존재하지 않습니다.");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 회원이 존재하지 않습니다.");
 		}
 
 		// 이메일 인증 여부 확인
