@@ -28,15 +28,14 @@
 										인증</button>
 								</div>
 								<div class="col-3 mt-2">
-									<input type="text" id="verificationCode" class="form-control"
-										placeholder="인증번호">
+									<input type="text" id="verificationCode" class="form-control" placeholder="인증번호">
 								</div>
 								<div class="col-4 mt-2">
 									<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호
 										확인</button>
 								</div>
 							</div>
-							<button type="submit" class="btn hm-btn-green float-end" onclick="checkInputs()">확인</button>
+							<button type="submit" class="btn hm-btn-green float-end" onclick="return checkInputs()">확인</button>
 						</form>
 					</div>
 				</div>
@@ -51,18 +50,18 @@
 			alert(errorElement.innerText);
 		}
 
-		function checkInput() {
-			const name = document.getElementById('memberName').value;
-			const email = document.getElementById('memberEmail').value;
+		function checkInputs() {
+			var memberName = document.getElementById("memberName").value;
+			var memberEmail = document.getElementById("memberEmail").value;
 
-			if (!name) {
+			if (memberName.trim() === "") {
 				alert("이름을 입력해주세요.");
-				return;
+				return false; // 폼 제출을 막음
 			}
 
-			if (!email) {
+			if (memberEmail.trim() === "") {
 				alert("이메일을 입력해주세요.");
-				return;
+				return false; // 폼 제출을 막음
 			}
 		}
 		function checkIdEmail() {

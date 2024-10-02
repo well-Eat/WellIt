@@ -328,6 +328,12 @@ nav~.container {
 	border-radius: 4px;
 }
 
+@media (max-width: 992px) { /* lg 화면 크기: 992px 이상 */
+    .placeInfo .card-img-box {
+      height: 50vh;
+    }
+}
+
 .no-reviews-box {
 	background-color: #f8f9fa;
 	/* 연한 회색 배경 */

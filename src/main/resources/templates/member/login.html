@@ -1,12 +1,6 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 	
-	<head>
-			<title>
-				로그인
-			</title>
-		</head>
-	
 	<link rel="stylesheet" href="/css/member.css" />
 	<section class="d-flex justify-content-center align-items-center py-5">
 		<div class="container py-5 align-middle">
@@ -45,7 +39,7 @@
 									onchange="checkSave()">
 								<label class="form-check-label" for="exampleCheck1">아이디 저장</label>
 							</div>
-							<div class="row mt-3">
+							<div class="d-grid col-6 mt-3 mx-auto">
 								<button type="submit" class="btn btn-block hm-btn-green"
 									onclick="return validateForm()">로그인</button>
 							</div>

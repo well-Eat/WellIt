@@ -1,21 +1,20 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	
+
 	<head>
-			<title>
-				회원가입
-			</title>
-		</head>
-	
-	
+		<title>
+			회원가입
+		</title>
+	</head>
+
+
 	<link rel="stylesheet" href="/css/member.css" />
 	<!-- 회원가입 시작 -->
 	<section class="position-relative h-100">
 		<div class="row py-5 justify-content-center">
 			<div class="col-xl-5 col-lg-6 col-xs-12 py-5 border rounded formStyle">
 				<h1 class="text-center mb-3">WellIt 회원가입</h1>
-				<div th:if="${errorMessage}" class="alert alert-danger">
-					<p th:text="${errorMessage}"></p>
+				<div th:if="${errorMessage}" th:text="${errorMessage}" id="errorMessage" style="display:none;">
 				</div>
 				<form th:action="@{/member/register}" method="post" enctype="multipart/form-data"
 					th:object="${memberRegisterForm}" id="memberForm">
@@ -74,10 +73,10 @@
 						<!-- 이메일 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="member_email" class="form-label">이메일</label>
-							<div class="col-9">
+							<div class="col-8">
 								<input type="email" id="memberEmail" class="form-control" th:field="*{memberEmail}">
 							</div>
-							<div class="col-3">
+							<div class="col-4">
 								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
 							</div>
 						</div>
@@ -621,6 +620,12 @@
 			} else {
 				businessNameField.style.display = "none"; // 가게 이름 필드 숨기기
 			}
+		}
+
+		var errorElement = document.getElementById("errorMessage");
+		// div의 텍스트 내용이 비어 있지 않으면 alert 창을 띄웁니다.
+		if (errorElement && errorElement.innerText.trim() !== "") {
+			alert(errorElement.innerText);
 		}
 	</script>
 </div>

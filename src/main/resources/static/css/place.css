@@ -1,9 +1,10 @@
-body{
-	color:rgb(68, 68, 68)
+body {
+	color: rgb(68, 68, 68)
 }
+
 header {
 	position: fixed;
-	background-color: var( --main-color);
+	background-color: var(--main-color);
 }
 
 .content {
@@ -84,31 +85,38 @@ header {
 	margin-left: 10px;
 	position: relative;
 }
-.cardIcons .redIcon{
+
+.cardIcons .redIcon {
 	fill: red;
-	color:red;
-	
+	color: red;
+
 	position: relative;
 	margin-left: -20px;
 }
-.heart{
+
+.heart {
 	position: relative;
 }
+
 .vegetarian svg {
 	width: 16px;
 	height: 16px;
 	fill: gray
 }
-.carousel-item .col{
+
+.carousel-item .col {
 	width: 20%;
 }
+
 .form-select {
 	border-radius: 0.25rem;
 	/* 모서리 둥글게 */
 }
-.containerTitle{
+
+.containerTitle {
 	font-weight: bold;
 }
+
 .videoBox {
 	width: 1000px;
 	max-width: 1300px;
@@ -227,9 +235,11 @@ label {
 	height: 150px;
 	color: black;
 }
-.restaurant-item .card-body{
+
+.restaurant-item .card-body {
 	height: 150px;
 }
+
 .carousel-controls {
 	position: relative;
 	display: flex;
@@ -303,6 +313,12 @@ label {
 		height: 80px;
 		line-height: 80px;
 	}
+
+	.recommendedRestaurant .card-body {
+		height: 200px;
+		width: 170px;
+	}
+
 }
 
 @media (max-width: 768px) {
@@ -328,6 +344,7 @@ label {
 		height: 250px;
 		padding: 20px;
 	}
+
 }
 
 @media (max-width: 1024px) {
@@ -353,5 +370,14 @@ label {
 
 	.recommendedPlaceText {
 		width: calc(100% - 250px);
+	}
+
+	.recommendedRestaurant .card-body {
+		height: 200px;
+		width: 180px;
+	}
+
+	.carouIcons {
+		display: none;
 	}
 }
