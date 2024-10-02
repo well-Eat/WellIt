@@ -27,6 +27,9 @@
 			</div>
 		</div>
 	</div>
+	<style>
+ 
+	</style>
 	
 	
 
@@ -38,13 +41,13 @@
 				<h3 class="text-center py-3"><img src="/imgs/shop/bestshop/twinkle.gif" alt="best" height="40px">&nbsp;New 신상템&nbsp;<img src="/imgs/shop/bestshop/twinkle.gif" alt="best" height="40px"></h3>
 			</div>
 			<!--아이템 리스트-->
-			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-xxl-4  justify-content-start ms-n1">
 				<!-- 상품(prodItem) 템플릿 -->
 				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${latestList}">
 					<div class="card">
 						
 						<!-- 상품이미지 -->
-						<div class="card-img-wrapper rounded-2 mb-3">
+						<div class="card-img-wrapper rounded-2">
 							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block position-relative">
 								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|" th:if="${item.prodMainImg!=null}"></div>
 								<div class="card-img-box thumbNull d-flex justify-content-center align-items-center" th:if="${item.prodMainImg==null}">
@@ -75,13 +78,13 @@
 				<h3 class="text-center py-3"><img src="/imgs/shop/bestshop/hot_ani_v2.gif" alt="best" height="40px">&nbsp;요즘 핫해요&nbsp;<img src="/imgs/shop/bestshop/hot_ani_v2.gif" alt="best" height="40px"></h3>
 			</div>
 			<!--아이템 리스트-->
-			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1 pt-3">
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-xxl-4  justify-content-start ms-n1 pt-3">
 				<!-- 상품(prodItem) 템플릿 -->
 				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${salesList}">
-					<div class="card">
+					<div class="card" style="background-color: rgba(248,249,250,0.5)">
 						
 						<!-- 상품이미지 -->
-						<div class="card-img-wrapper rounded-2 mb-3">
+						<div class="card-img-wrapper rounded-2">
 							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block position-relative">
 								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|" th:if="${item.prodMainImg!=null}"></div>
 								<div class="card-img-box thumbNull d-flex justify-content-center align-items-center" th:if="${item.prodMainImg==null}">
@@ -114,13 +117,13 @@
 				<h3 class="text-center py-3">MD's 강력추천 잇템&nbsp;<img src="/imgs/shop/bestshop/recommand_ani.gif" alt="best" height="40px"></h3>
 			</div>
 			<!--아이템 리스트-->
-			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-lg-3 row-cols-xxl-4  justify-content-start ms-n1">
+			<div class="prodList row row-cols-1 row-cols-md-2  row-cols-xxl-4  justify-content-start ms-n1">
 				<!-- 상품(prodItem) 템플릿 -->
 				<div class="prodItem col mb-4" th:attr="data-prodcate=${item.prodCate}" th:each="item : ${favoriteList}">
 					<div class="card">
 						
 						<!-- 상품이미지 -->
-						<div class="card-img-wrapper rounded-2 mb-3">
+						<div class="card-img-wrapper rounded-2">
 							<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block position-relative">
 								<div class="card-img-box" th:style="|background-image: url(@{  ${item.prodMainImg}  });|" th:if="${item.prodMainImg!=null}"></div>
 								<div class="card-img-box thumbNull d-flex justify-content-center align-items-center" th:if="${item.prodMainImg==null}">

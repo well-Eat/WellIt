@@ -840,6 +840,13 @@ section.mdlist .bestBadge{
     background-size: 100% 100%;
 }
 
-
+/*lg, xl 레이아웃*/
+@media (min-width: 992px) and (max-width: 1399.98px) {
+    section.latestlist .container,
+    section.hotlist .container,
+    section.mdlist .container {
+        max-width: 960px; /* md와 동일하게 설정 */
+    }
+}
 
 

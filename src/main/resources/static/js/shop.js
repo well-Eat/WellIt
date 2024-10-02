@@ -767,7 +767,7 @@ function updateCardOrderNumbers() {
 }
 
 
-// admin : 상품 등록 & 수정
+// admin : 상품 등록 & 수정 form, save, update
 $(function () {
     const currentUrl = window.location.href;
 
@@ -816,8 +816,53 @@ $(function () {
                 });
         });
     } else {
-        // 상품 신규 등록 : submit
-        $('form.productForm').off('submit');
+        // 상품 신규 등록 : 241001 상품 저장 이미지 번호 수정
+        updateCardOrderNumbers();
+
+        $('form.productForm').on('submit', function (e) {
+            e.preventDefault();
+
+            updateCardOrderNumbers();
+
+            let formData = new FormData(this);
+
+            // 이미지 카드  -> 기존 이미지와 새 이미지를 구분 & 순서 부여
+            $('li.prodImageCard').each(function () {
+                //const imgSrc = $(this).find('.preview img').attr('src');
+                const fileInput = $(this).find('.prodImageInput');
+                const imageOrder = fileInput.attr('data-image-num'); // 이미지 순서(카드순서)
+
+/*                if (imgSrc && imgSrc.startsWith('/imgs/shop/product/')) { //기존 이미지
+                    formData.append('existingImages[]', imgSrc);
+                    formData.append('existingImageOrders[]', imageOrder);
+                } else */
+                    if (fileInput[0].files.length > 0) { // 새 이미지
+                    formData.append('newImages[]', fileInput[0].files[0]);
+                    formData.append('newImageOrders[]', imageOrder);
+                }
+            });
+
+            // Fetch API로 폼 데이터 전송
+            fetch($(this).attr('action'), {
+                method: $(this).attr('method'),
+                body: formData,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.location.href = '/shop/admin/list';
+                })
+                .catch(error => {
+                    console.error('Error submitting form:', error);
+                });
+        });
+
+
+        /*$('form.productForm').off('submit');*/
     }
 });
 
@@ -1081,13 +1126,6 @@ $(function() {
         if ($("#pageSizeSelect").val()==null ||$("#pageSizeSelect").val()==''){
             $("#pageSizeSelect").val(20);
         }
-        if ($("#sortSelect").val()==null ||$("#sortSelect").val()==''){
-            $("#sortSelect").val("prodId");
-        }
-        if ($("#directionSelect").val()==null ||$("#directionSelect").val()==''){
-            $("#directionSelect").val("ASC");
-        }
-
 
         // 페이지 로드 시 상품 목록 불러오기
         fetchProducts();

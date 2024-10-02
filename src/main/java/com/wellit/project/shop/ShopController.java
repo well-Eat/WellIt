@@ -106,7 +106,7 @@ public class ShopController {
         // 이미지 리스트를 prod_image_num 순서로 정렬
         List<ProdImage> sortedImages = product.getProdImages().stream()
                                               .sorted(Comparator.comparing(ProdImage::getProdImageNum)) // prod_image_num으로 정렬
-                                              .collect(Collectors.toList());
+                                              .      collect(Collectors.toList());
 
         List<ProdReview> imgReviewList = shopService.getImgReviews(prodId);
         CartItemRequest cartItemRequest = new CartItemRequest();
@@ -180,19 +180,23 @@ public class ShopController {
 
     //admin:상품 저장하기
     @PostMapping("/save")
-    public String saveProduct(@ModelAttribute ProductForm productForm) throws IOException {
+    @ResponseBody
+    public ResponseEntity<String> saveProduct(@ModelAttribute ProductForm productForm,
+                              @RequestParam(value = "newImages[]",required=false) List<MultipartFile> newImages,
+                              @RequestParam(value = "newImageOrders[]",required=false) List<Integer> newImageOrders) throws IOException {
 
         String memberId = memberService.getMemberId();
         // 현재 로그인한 사용자가 admin인지 확인
         if (memberId == null || !"admin".equals(memberId)) {
-            return "redirect:/shop/list";  // 상품 리스트 페이지로 리다이렉트
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("{\"status\":\"fail\", \"message\":\"Unauthorized access\"}");
         }
         List<MultipartFile> imageFiles = productForm.getProdImages();
         MultipartFile thumbFile = productForm.getProdMainImg();
 
-        shopService.saveProduct(productForm, thumbFile, imageFiles);
+        shopService.saveProduct(productForm, thumbFile, newImages, newImageOrders);
 
-        return "redirect:/shop/list";
+        return ResponseEntity.ok("{\"status\":\"success\"}");
     }
 
 
@@ -311,7 +315,7 @@ public class ShopController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
             @RequestParam(value = "order", defaultValue = "prodId") String itemSort,
-            @RequestParam(value = "direction", defaultValue = "ASC") String direction
+            @RequestParam(value = "direction", defaultValue = "DESC") String direction
             ) {
 
         // 서비스 호출
