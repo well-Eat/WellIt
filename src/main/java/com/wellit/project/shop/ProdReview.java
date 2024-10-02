@@ -1,12 +1,7 @@
 package com.wellit.project.shop;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.wellit.project.member.Member;
 import com.wellit.project.order.OrderItem;
 import jakarta.persistence.*;
-import jakarta.validation.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;

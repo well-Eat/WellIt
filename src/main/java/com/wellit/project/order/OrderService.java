@@ -348,13 +348,6 @@ public class OrderService {
             dto.setInvoiceNum(delivery.getInvoiceNum());
         } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
 
-
-
-
-        //ItemList 추가 (PO별 구매 아이템)
-        //List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
-        //dto.setOrderItems(orderItemDTOList);
-
         return dto;
 
     }

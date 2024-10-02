@@ -100,11 +100,11 @@ $(document).on("click", ".openReviewFormBtn", function () {
                                 <i class="fa-solid fa-star" id="star2"></i>
                                 <i class="fa-solid fa-star" id="star1"></i>
                             </div>
-                            <p class="border rounded-2 py-2 px-3" style="min-height: 72px;">
-                                <span class="f14 c444">${data.revText}</span>
+                            <p class="py-2 px-1" style="min-height: 72px;">
+                                <span class="f14 c444 fw600">${data.revText}</span>
                             </p>
                             
-                            <button type="button" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end openReviewFormBtn openEditForm">리뷰 수정하기</button>
+                            <button type="button" class="btn badge rounded-pill border-success text-success f14 px-5 py-2 d-inline-block flex-grow-1 float-end openReviewFormBtn openEditForm"><i class="fa-regular fa-pen-to-square"></i>&nbsp;&nbsp;&nbsp;리뷰 수정하기</button>
                         </div>
                         <div id="drop-area" style="visibility: hidden;"></div>
                         <div id="gallery" style="visibility: hidden;"></div>
@@ -140,8 +140,8 @@ $(document).on("click", ".openReviewFormBtn", function () {
                         <div class="col-6 modalColLeft border">
                             <div id="drop-area">
                                 <p class="c666 fw700">리뷰 이미지 등록</p>
-                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple><span>드래그앤드롭 또는 </span>
-                                <label class="button inputFileBtn rounded-pill bg-light border ms-1" for="prodRevImg">파일 선택</label>
+                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple><div>드래그앤드롭 또는 </div>
+                                <label class="button inputFileBtn rounded-pill bg-light border mt-3 ms-1 d-block" for="prodRevImg">파일 선택</label>
                                 <div id="gallery"></div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
                             <input type="hidden" id="paid" name="paid"/>
                             <input type="hidden" id="orderItemId" name="orderItemId" value="${orderItemId}"/>
                             
-                            <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end submitReviewForm">리뷰 제출하기</button>
+                            <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 px-5 py-2 d-inline-block flex-grow-1 float-end submitReviewForm"><i class="fa-solid fa-square-pen"></i>&nbsp;&nbsp;&nbsp;리뷰 제출하기</button>
                         </div>
                     </div>
                 </form>

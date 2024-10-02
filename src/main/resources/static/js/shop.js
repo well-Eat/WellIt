@@ -92,7 +92,7 @@ $(function() {
 
 
 /** shop_detail : section.prodInfo : 총 구매 금액 calculate : START **/
-/** shop_detail : section.prodInfo : 총 구매 금액 calculate : START **/
+ /** shop_detail : section.prodInfo : 총 구매 금액 calculate  : START **/
 $(function () {
     const $prodInfo = $("section.prodInfo");
     if ($prodInfo.length) {
@@ -1302,11 +1302,11 @@ async function fetchProducts() {
 
     const totalRow = `
         <tr class="table-light fw700 aggregate">
-            <td class="text-center" colspan="4">소&nbsp;&nbsp;계</td>
-            <td class="text-end pe-2">${sumStock.toLocaleString('ko-KR')}</td>
-            <td class="text-end pe-2">${sumSalesProd.toLocaleString('ko-KR')}</td>
-            <td class="text-end pe-2">${sumSalesAmount.toLocaleString('ko-KR')}</td>
-            <td></td>
+            <td class="text-center flex-grow-1" colspan="4">소&nbsp;&nbsp;&nbsp;계</td>
+            <td class="text-end pe-2" style="width: 110px;">${sumStock.toLocaleString('ko-KR')}</td>
+            <td class="text-end pe-2" style="width: 110px;">${sumSalesProd.toLocaleString('ko-KR')}</td>
+            <td class="text-end pe-2" style="width: 110px;">${sumSalesAmount.toLocaleString('ko-KR')}</td>
+            <td style="width: 80px;"></td>
         </tr>
     `;
     $prodTableBody.prepend(totalRow);
