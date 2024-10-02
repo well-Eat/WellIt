@@ -68,10 +68,10 @@ public class MemberController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		// 로그인된 사용자가 있으며, 익명 사용자가 아닌 경우
-	    if (authentication != null && authentication.isAuthenticated() 
-	        && !(authentication instanceof AnonymousAuthenticationToken)) {
-	        return "redirect:/member/mypage"; // 마이페이지로 리다이렉트
-	    }
+		if (authentication != null && authentication.isAuthenticated()
+				&& !(authentication instanceof AnonymousAuthenticationToken)) {
+			return "redirect:/member/mypage"; // 마이페이지로 리다이렉트
+		}
 
 		return "/member/login";
 	}
@@ -97,10 +97,10 @@ public class MemberController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		// 로그인된 사용자가 있으며, 익명 사용자가 아닌 경우
-	    if (authentication != null && authentication.isAuthenticated() 
-	        && !(authentication instanceof AnonymousAuthenticationToken)) {
-	        return "redirect:/member/mypage"; // 마이페이지로 리다이렉트
-	    }
+		if (authentication != null && authentication.isAuthenticated()
+				&& !(authentication instanceof AnonymousAuthenticationToken)) {
+			return "redirect:/member/mypage"; // 마이페이지로 리다이렉트
+		}
 
 		return "/member/register";
 	}
@@ -240,12 +240,12 @@ public class MemberController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		// 세션의 passwordVerified 플래그 초기화 (비밀번호 재입력 요구 시 항상 초기화)
-	    session.setAttribute("passwordVerified", false);
-		
+		session.setAttribute("passwordVerified", false);
+
 		// 서비스 메소드 호출
 		memberService.getPrincipal(authentication, model);
-		
-		if(authentication != null && authentication.getPrincipal() instanceof String) {
+
+		if (authentication != null && authentication.getPrincipal() instanceof String) {
 			return "redirect:/member/mypage";
 		}
 
@@ -269,10 +269,10 @@ public class MemberController {
 
 			// 사용자가 입력한 비밀번호와 데이터베이스에 저장된 비밀번호를 비교
 			if (passwordEncoder.matches(enterPassword, member.getMemberPassword())) {
-				
-				 // 비밀번호가 일치하면 세션에 플래그 설정
-	            session.setAttribute("passwordVerified", true);
-				
+
+				// 비밀번호가 일치하면 세션에 플래그 설정
+				session.setAttribute("passwordVerified", true);
+
 				// 비밀번호가 일치하면 프로필 수정 페이지로 이동
 				return "redirect:/member/update_profile";
 			} else {
@@ -288,18 +288,18 @@ public class MemberController {
 	@GetMapping("/update_profile")
 	public String getUpdateProfile(Model model, HttpSession session) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		if(authentication != null && authentication.getPrincipal() instanceof String) {
+
+		if (authentication != null && authentication.getPrincipal() instanceof String) {
 			return "redirect:/member/mypage";
 		}
-		
+
 		// 세션에 저장된 passwordVerified 플래그 확인
-	    Boolean isPasswordVerified = (Boolean) session.getAttribute("passwordVerified");
-	    
-	    // 비밀번호 검증을 하지 않았거나 인증 정보가 없는 경우 비밀번호 입력 페이지로 리다이렉트
-	    if (isPasswordVerified == null || !isPasswordVerified) {
-	        return "redirect:/enter_password";
-	    }
+		Boolean isPasswordVerified = (Boolean) session.getAttribute("passwordVerified");
+
+		// 비밀번호 검증을 하지 않았거나 인증 정보가 없는 경우 비밀번호 입력 페이지로 리다이렉트
+		if (isPasswordVerified == null || !isPasswordVerified) {
+			return "redirect:/enter_password";
+		}
 
 		// 서비스 메소드 호출
 		memberService.getPrincipal(authentication, model);
@@ -323,7 +323,7 @@ public class MemberController {
 	public String updateProfile(@Valid MemberUpdateForm memberUpdateForm, BindingResult bindingResult,
 			@RequestParam("imageFile") MultipartFile imageFile, HttpSession session, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
-		
+
 		if (bindingResult.hasErrors()) {
 			// 에러 메시지를 추출하여 줄바꿈으로 구분된 문자열로 변환
 			String errorMessages = bindingResult.getAllErrors().stream().map(error -> {
@@ -442,21 +442,21 @@ public class MemberController {
 	}
 
 	@GetMapping("/delete_password")
-	public String getDeleteMember(Model model,HttpSession session) {
+	public String getDeleteMember(Model model, HttpSession session) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		memberService.getPrincipal(authentication, model);
-		
-		if(authentication != null && authentication.getPrincipal() instanceof String) {
+
+		if (authentication != null && authentication.getPrincipal() instanceof String) {
 			return "redirect:/member/mypage";
 		}
-		
+
 		// 세션에 저장된 passwordVerified 플래그 확인
-	    Boolean isPasswordVerified = (Boolean) session.getAttribute("passwordVerified");
-	    
-	    // 비밀번호 검증을 하지 않았거나 인증 정보가 없는 경우 비밀번호 입력 페이지로 리다이렉트
-	    if (isPasswordVerified == null || !isPasswordVerified) {
-	        return "redirect:/enter_password";
-	    }
+		Boolean isPasswordVerified = (Boolean) session.getAttribute("passwordVerified");
+
+		// 비밀번호 검증을 하지 않았거나 인증 정보가 없는 경우 비밀번호 입력 페이지로 리다이렉트
+		if (isPasswordVerified == null || !isPasswordVerified) {
+			return "redirect:/enter_password";
+		}
 
 		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
 		if (!model.containsAttribute("member")) {
@@ -471,11 +471,11 @@ public class MemberController {
 			RedirectAttributes redirectAttributes, Model model) {
 		// 인증된 사용자 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		if(authentication != null && authentication.getPrincipal() instanceof String) {
+
+		if (authentication != null && authentication.getPrincipal() instanceof String) {
 			return "redirect:/member/mypage";
 		}
-		
+
 		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			String memberId = userDetails.getUsername();
@@ -509,27 +509,29 @@ public class MemberController {
 	}
 
 	@PostMapping("/findId")
-	public ModelAndView findId(@RequestParam("memberName") String memberName,
-			@RequestParam("memberEmail") String memberEmail, HttpSession session) {
-		Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
-		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+	public String findId(@RequestParam("memberName") String memberName,
+	                     @RequestParam("memberEmail") String memberEmail, 
+	                     HttpSession session, 
+	                     Model model) {
+	    Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
+	    Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
 
-		if (!isEmailVerified || isEmailVerified == null) {
-			ModelAndView modelAndView = new ModelAndView("/member/findMemberId");
-			modelAndView.addObject("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-			return modelAndView;
-		}
+	    if (isEmailVerified == null || !isEmailVerified) {
+	        model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+	        return "/member/findMemberId";
+	    }
 
-		ModelAndView modelAndView = new ModelAndView("member/findId");
-		if (member.isPresent()) {
-			Member thisMember = member.get();
-			modelAndView.addObject("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
-		} else {
-			modelAndView.addObject("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
-		}
-		session.setAttribute("emailVerified", false);
-		session.removeAttribute("verificationCode");
-		return modelAndView;
+	    if (member.isPresent()) {
+	        Member thisMember = member.get();
+	        model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
+	    } else {
+	        model.addAttribute("errorMessage", "입력하신 정보와 일치하는 회원이 없습니다.");
+	    }
+
+	    session.setAttribute("emailVerified", false);
+	    session.removeAttribute("verificationCode");
+
+	    return "member/findId"; // 뷰 이름 반환
 	}
 
 	@PostMapping("/id-email")
@@ -662,28 +664,11 @@ public class MemberController {
 	@GetMapping("/mypage/favorite/store")
 	public String getFavoriteStore(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null) {
-			Object principal = authentication.getPrincipal();
-			// Principal이 String 타입으로 가정
-			if (principal instanceof String) {
-				String memberId = (String) principal;
-				Member member = memberService.getMember(memberId);
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				String formattedRegDate = member.getMemberRegDate().format(formatter);
-				model.addAttribute("member", member);
-				model.addAttribute("formattedRegDate", formattedRegDate);
-			} else {
-				// UserDetails를 사용하는 경우
-				if (principal instanceof UserDetails) {
-					UserDetails userDetails = (UserDetails) principal;
-					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-					Member member = memberService.getMember(memberId);
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String formattedRegDate = member.getMemberRegDate().format(formatter);
-					model.addAttribute("member", member);
-					model.addAttribute("formattedRegDate", formattedRegDate);
-				}
-			}
+		// 서비스 메소드 호출
+		memberService.getPrincipal(authentication, model);
+		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+		if (!model.containsAttribute("member")) {
+			return "redirect:/member/login";
 		}
 		return "/load/mypage_favoriteStore";
 	}
@@ -691,28 +676,11 @@ public class MemberController {
 	@GetMapping("/mypage/favorite/recipe")
 	public String getFavoriteRecipe(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null) {
-			Object principal = authentication.getPrincipal();
-			// Principal이 String 타입으로 가정
-			if (principal instanceof String) {
-				String memberId = (String) principal;
-				Member member = memberService.getMember(memberId);
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				String formattedRegDate = member.getMemberRegDate().format(formatter);
-				model.addAttribute("member", member);
-				model.addAttribute("formattedRegDate", formattedRegDate);
-			} else {
-				// UserDetails를 사용하는 경우
-				if (principal instanceof UserDetails) {
-					UserDetails userDetails = (UserDetails) principal;
-					String memberId = userDetails.getUsername(); // 일반적으로 username이 memberId와 같음
-					Member member = memberService.getMember(memberId);
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					String formattedRegDate = member.getMemberRegDate().format(formatter);
-					model.addAttribute("member", member);
-					model.addAttribute("formattedRegDate", formattedRegDate);
-				}
-			}
+		// 서비스 메소드 호출
+		memberService.getPrincipal(authentication, model);
+		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+		if (!model.containsAttribute("member")) {
+			return "redirect:/member/login";
 		}
 		return "/life/mypage_favoriteRecipe";
 	}
@@ -736,11 +704,11 @@ public class MemberController {
 	public String getMemberInfo(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		// 서비스 메소드 호출
-			memberService.getPrincipal(authentication, model);
-			// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
-			if (!model.containsAttribute("member")) {
-				return "redirect:/member/login";
-			}
+		memberService.getPrincipal(authentication, model);
+		// 인증 정보가 없는 경우 로그인 페이지로 리다이렉트
+		if (!model.containsAttribute("member")) {
+			return "redirect:/member/login";
+		}
 		return "/member/memberinfo";
 	}
 
