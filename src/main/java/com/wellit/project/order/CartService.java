@@ -27,9 +27,6 @@ public class CartService {
     /* 장바구니 상품 추가 */
     public void addToCart(CartItemRequest cartItemRequest, Member member) {
 
-        // 회원의 장바구니 조회 (없으면 새로 생성)
-        //Cart cart = cartRepository.findByMember(member).orElseGet(() -> new Cart(member));
-
         Cart cart = member.getCart();
         if(cart == null){
             cart = new Cart(member);

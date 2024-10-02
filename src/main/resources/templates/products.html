@@ -57,6 +57,7 @@
 		.goodsSwiper .imgBox {
 			height: 100%;
         width: 100%;
+				max-width: 1400px;
 			background: center center no-repeat;
 			background-size: contain;
 		}
@@ -69,8 +70,9 @@
         }
         .mobile-wrapper .imgBox{
             height: 100%;
-            background-size: cover;
+            background-size: contain;
             background-position: center;
+		        background-repeat: no-repeat;
         }
     }
 		/*배경*/
@@ -130,33 +132,35 @@
 
 		/*goods 네비게이션 버튼*/
 		.goodsSwiper .swiper-btn {
-			width: 30px;
+			width: 10%;
+			min-width: 80px;
 			height: 100%;
 			position: absolute;
 			background-color: transparent;
 			z-index: 99;
 			cursor: pointer;
 		}
-
+		
 		.goodsSwiper .swiper-btn.swiper-prev {
-			left: 50px;
+			left: 0px;
 			
 		}
 
 		.goodsSwiper .swiper-btn.swiper-next {
-			right: 50px;
+			right: 0px;
 		}
 
 		.goodsSwiper .swiper-btn .btnBox {
 			width: 40px;
 			height: 40px;
-			position: relative;
+			position: absolute;
 			top: calc(50% - 20px);
 				/*opacity: 60%;*/
         filter: drop-shadow(0 3px 2px rgba(167, 201, 87, 0.50));
 		}
 
 		.goodsSwiper .swiper-prev .btnBox {
+				right: 10px;
 			background: url("/imgs/main/icon/prev-btn.png") no-repeat;
 			background-size: contain;
 			background-position-y: 50%;
@@ -165,6 +169,7 @@
 
 
 		.goodsSwiper .swiper-next .btnBox {
+				left: 10px;
 			background: url("/imgs/main/icon/next-btn.png") center no-repeat;
 			background-size: contain;
 		}
@@ -379,9 +384,9 @@
           el: '.swiper-pagination',
           clickable: true,
 			},
-/*      autoplay: {
+      autoplay: {
           delay: 5000,
-      },*/
+      },
 			// 기본 설정
 			slidesPerView: "1",
 			 effect: "slide",

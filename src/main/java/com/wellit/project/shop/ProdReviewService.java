@@ -34,7 +34,7 @@ public class ProdReviewService {
         return reviewRepository.existsProdReviewByOrderItem_Id(orderItemId);
     }
 
-    public ProdReview getOneReview(Long orderItemId){
+    public ProdReview  getOneReview(Long orderItemId){
         return reviewRepository.findByOrderItem_Id(orderItemId);
     }
 
