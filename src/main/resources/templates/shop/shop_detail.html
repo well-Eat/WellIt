@@ -53,8 +53,8 @@
 					      th:if="${reviewCnt != null and reviewCnt.cnt > 100}">인기상품</span>
 				</div>
 				
-				<h5 class="prodName card-title f28" th:text="${product.prodName}"></h5> <!--상품명-->
 				<p class="prodDesc card-text f20 c999" th:text="${product.prodDesc}"></p>
+				<h5 class="prodName card-title f28" th:text="${product.prodName}"></h5> <!--상품명-->
 				
 				<!-- 단위당 금액 : 할인율 있는 경우 가격 표시 -->
 				<th:block th:if="${product.prodDiscount != null and product.prodDiscount > 0}">
@@ -120,7 +120,7 @@
 						<!--버튼 라인-->
 						<div class="mb-3 btns gx-1 d-flex align-items-stretch justify-content-between">
 							
-							<a href="javascript:void(0);" class="btn hm-btn-border-green heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
+							<a href="javascript:void(0);" class="btn heart" ><i class="fa-regular fa-heart" style="color: #6A994E;"></i></a>
 							<a href="javascript:void(0);" th:onclick="addToCart([[${product.prodId}]], Number( document.querySelector('#quantity').value ));" class="btn hm-btn-green goToCart d-inline-flex justify-content-center align-items-center"><i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>&nbsp; 장바구니</a>
 
 						</div>
@@ -190,16 +190,86 @@
       });
 
       // 찜하기 선택 여부 확인 -> 버튼 색상 변경
-      function isFavoriteProduct(isFavorite){
+      function isFavoriteProduct(isFavorite) {
           const heartBtn = $(".heart");
-          if (isFavorite){
-              heartBtn.css("backgroundColor", "#198754");
+
+          // 기본 상태 설정
+          if (isFavorite) {
+              heartBtn.css({
+                  "backgroundColor": "#00592D",
+                  "border": "none" // 테두리 없음
+              });
               heartBtn.find(".fa-heart").css("color", "#ffffff");
           } else {
-              heartBtn.css("backgroundColor", "#ffffff");
-              heartBtn.find(".fa-heart").css("color", "#198754");
+              heartBtn.css({
+                  "backgroundColor": "#ffffff",
+                  "border": "1px solid #00592D" // 배경이 흰색일 때 테두리 추가
+              });
+              heartBtn.find(".fa-heart").css("color", "#00592D");
           }
+
+          // 마우스 오버
+          heartBtn.hover(
+              function () {
+                  // 마우스가 버튼 위에 있을 때
+                      $(this).css({
+                          "backgroundColor": "#00753c",
+                          "border": "1px solid #00592D" // 테두리 추가
+                      });
+                      $(this).find(".fa-heart").css("color", "#ffffff");
+                  
+              },
+              function () {
+                  // 마우스가 버튼에서 벗어났을 때 원래 상태로 복귀
+                  if (isFavorite) {
+                      $(this).css({
+                          "backgroundColor": "#00592D",
+                          "border": "none" // 테두리 없음
+                      });
+                      $(this).find(".fa-heart").css("color", "#ffffff");
+                  } else {
+                      $(this).css({
+                          "backgroundColor": "#ffffff",
+                          "border": "1px solid #00592D" // 테두리 추가
+                      });
+                      $(this).find(".fa-heart").css("color", "#00592D");
+                  }
+              }
+          );
+          // 마우스 클릭
+          heartBtn.mousedown(
+              function () {
+                  // 마우스가 버튼 위에 있을 때
+                  $(this).css({
+                      "backgroundColor": "#004826",
+                      "border": "1px solid #00592D" // 테두리 추가
+                  });
+                  $(this).find(".fa-heart").css("color", "#ffffff");
+
+              },
+          );
+          heartBtn.mouseup(
+              function () {
+                  // 마우스가 버튼에서 벗어났을 때 원래 상태로 복귀
+                  if (isFavorite) {
+                      $(this).css({
+                          "backgroundColor": "#00592D",
+                          "border": "none" // 테두리 없음
+                      });
+                      $(this).find(".fa-heart").css("color", "#ffffff");
+                  } else {
+                      $(this).css({
+                          "backgroundColor": "#ffffff",
+                          "border": "1px solid #00592D" // 테두리 추가
+                      });
+                      $(this).find(".fa-heart").css("color", "#00592D");
+                  }
+              }
+          );
       }
+      
+
+
 
       // 버튼 클릭 시 찜 상태 변경
       $(".heart").on("click", function (){

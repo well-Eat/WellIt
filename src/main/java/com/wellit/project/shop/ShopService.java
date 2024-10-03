@@ -71,7 +71,7 @@ public class ShopService {
 
         String status = "AVAILABLE";
 
-        // 수정된 리포지토리 메서드 호출
+        // 리포지토리 메서드 호출
         Page<ProductAdminDTO> productAdminPages = productRepositoryCustom.findProductsByCriteria(category, itemSort, sortDirection, page, size, sqlStartDate, sqlEndDate, status, search);
 
         return new PageImpl<>(productAdminPages.getContent().stream()

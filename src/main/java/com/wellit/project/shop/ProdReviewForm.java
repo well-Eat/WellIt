@@ -1,6 +1,5 @@
 package com.wellit.project.shop;
 
-import com.wellit.project.order.OrderItem;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

@@ -46,7 +46,7 @@ public class OrderController {
 
 		return "redirect:/order/po/" + oi;
 	}
-	// todo : orderstatus != payment_wait -> 주문 정보 페이지로 이동
+
 
 	// 카트 -> 주문서 생성 -> 생성된 주문서 뷰페이지
 	@GetMapping("/po/{orderId}")
@@ -178,8 +178,8 @@ public class OrderController {
 	@GetMapping("/admin/cancel/request/list")
 	public String viewCancelRequestList(Model model) {
 
-		List<CancelRequestForm> cancelRequestList = orderService.getCancelRequestList();
 
+		List<CancelRequestForm> cancelRequestList = orderService.getCancelRequestList();
 		model.addAttribute("cancelRequestList", cancelRequestList);
 
 		return "/order/admin_cancelRequestList";
