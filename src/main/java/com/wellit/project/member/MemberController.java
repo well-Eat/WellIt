@@ -509,29 +509,36 @@ public class MemberController {
 	}
 
 	@PostMapping("/findId")
-	public String findId(@RequestParam("memberName") String memberName,
-	                     @RequestParam("memberEmail") String memberEmail, 
-	                     HttpSession session, 
-	                     Model model) {
-	    Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
-	    Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+	public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail,
+			HttpSession session, Model model) {
+		Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
+		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
 
-	    if (isEmailVerified == null || !isEmailVerified) {
-	        model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-	        return "/member/findMemberId";
-	    }
+		if (isEmailVerified == null || !isEmailVerified) {
+			model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+			return "/member/findMemberId";
+		}
 
-	    if (member.isPresent()) {
-	        Member thisMember = member.get();
-	        model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
-	    } else {
-	        model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
-	    }
+		// 회원 정보 확인
+		if (member.isPresent()) {
+			Member thisMember = member.get();
 
-	    session.setAttribute("emailVerified", false);
-	    session.removeAttribute("verificationCode");
+			// memberType이 'KAKAO'이면 경고 메시지 표시
+			if ("KAKAO".equals(thisMember.getMemberType())) {
+				model.addAttribute("errorMessage", "카카오 계정은 아이디 찾기를 지원하지 않습니다.");
+				return "/member/findMemberId"; // 다시 아이디 찾기 페이지로
+			}
 
-	    return "member/findId"; // 뷰 이름 반환
+			// 일반 계정일 경우 아이디 표시
+			model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
+		} else {
+			model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
+		}
+
+		session.setAttribute("emailVerified", false);
+		session.removeAttribute("verificationCode");
+
+		return "member/findId"; // 뷰 이름 반환
 	}
 
 	@PostMapping("/id-email")
