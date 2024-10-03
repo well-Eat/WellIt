@@ -321,7 +321,7 @@ public class KakaoLoginController {
 			// 프로필 수정 폼 페이지로 이동
 			return "member/update_profile"; // 경로 수정
 		}
-		
+
 
 		// 년도 값이 null인 경우 기존 값을 유지
 		if (kakaoUpdateForm.getBirth_year() == null || kakaoUpdateForm.getBirth_year().isEmpty()) {
@@ -346,7 +346,7 @@ public class KakaoLoginController {
 			if (principal instanceof String) {
 				String memberId = (String) principal;
 				Member existingMember = memberService.getMember(memberId);
-				
+
 				// 이메일 변경 확인 및 이메일 인증 처리
 				if (!existingMember.getMemberEmail().equals(kakaoUpdateForm.getMemberEmail())) {
 					Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
