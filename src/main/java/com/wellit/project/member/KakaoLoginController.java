@@ -89,7 +89,6 @@ public class KakaoLoginController {
 
 			// 1. 카카오에서 accessToken을 얻음
 			String accessToken = kakaoService.getAccessTokenFromKakao(code);
-			System.out.println("========================================" + accessToken);
 
 			// 액세스 토큰 세션에 저장
 			session.setAttribute("accessToken", accessToken);
@@ -116,6 +115,7 @@ public class KakaoLoginController {
 			authenticateUser(member, request);
 
 			return "redirect:/"; // 홈 페이지로 이동
+			
 		} catch (CustomUserAlreadyExistsException e) {
 			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
 			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
@@ -177,7 +177,6 @@ public class KakaoLoginController {
 	// 카카오 로그인 후 callback (POST 방식) - 액세스 토큰 직접 처리
 	@PostMapping("/callback")
 	public ResponseEntity<String> kakaoLogin(@RequestParam String accessToken) {
-		System.out.println("123123123213123123" + accessToken);
 
 		// 액세스 토큰을 사용해 사용자 정보를 저장
 		Member member = kakaoService.registerKakaoUser(accessToken);
