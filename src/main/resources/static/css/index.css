@@ -111,7 +111,7 @@
 .videoBoxText {
 	font-size: 30px;
 	margin: 20px;
-	color: #6a994e;
+	
 	font-weight: bold;
 }
 
@@ -128,7 +128,7 @@ section {
 .recommendedPlace {
     overflow: hidden;
     float: left;
-    transition: width 0.5s ease;
+    transition: width 0.5s ease-out;
     width: 5%;
     height: 500px;
     margin: 0 1%;

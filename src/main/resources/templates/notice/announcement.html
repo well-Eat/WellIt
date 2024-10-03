@@ -37,7 +37,7 @@
 						<span th:if="${question.qAuthor != 'admin'}" th:text="${question.qCategory}"
 							class="badge text-bg-primary mx-2"></span>
 						<div class="question-content" style="display: none;">
-							<img th:src="${question.qImageUrl}" alt="" />
+							<img th:src="${question.qImageUrl}" alt="" class="img-fluid" />
 							<p class="border-bottom">Q. <span th:text="${question.qContent}"></span></p>
 							<div class="answers mt-2">
 								<div class="deleteAnswers" th:if="${session.UserId == 'admin'}"></div>

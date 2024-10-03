@@ -131,6 +131,8 @@
 			}
 			const reservation = reservations[index]; // 취소할 예약 정보 가져오기
 			const reservationId = reservation.id; // 예약 ID를 가져옵니다.
+			
+			console.log("Sending cancel request for reservation ID:", reservationId);
 
 			// 서버에 취소 요청
 			fetch(`/store/cancelReservation`, {

@@ -18,8 +18,9 @@ public interface AllStoreRepository extends JpaRepository<AllStore, Long> {
 	@Query("SELECT s FROM AllStore s JOIN FETCH s.storeReviews r ORDER BY r.createdAt DESC")
 	List<AllStore> findAllStoresWithSortedReviews();
 
-    List<AllStore> findByStoVegetarianTypeAndStoRegionProvinceAndStoRegionCity(String stoVegetarianType, String stoRegionProvince, String stoRegionCity);
-
+	List<AllStore> findByStoVegetarianTypeContainingAndStoRegionProvinceAndStoRegionCity(
+            String stoVegetarianType, String stoRegionProvince, String stoRegionCity);
+	
     @Query("SELECT s FROM AllStore s WHERE s.stoName LIKE CONCAT('%', :stoName, '%') AND s.stoCategory LIKE CONCAT('%', :stoCategory, '%') AND s.stoVegetarianType = :stoVegetarianType")
     Page<AllStore> findByStoNameContainingAndStoCategoryContainingAndStoVegetarianType(
         @Param("stoName") String stoName, 

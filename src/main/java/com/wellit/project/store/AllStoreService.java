@@ -111,42 +111,42 @@ public class AllStoreService {
 
 	public List<AllStore> findStoresByVegetarianAndLocation(String stoVegetarianType, String stoRegionProvince,
 			String stoRegionCity) {
-		return allStoreRepository.findByStoVegetarianTypeAndStoRegionProvinceAndStoRegionCity(stoVegetarianType,
-				stoRegionProvince, stoRegionCity);
+		return allStoreRepository.findByStoVegetarianTypeContainingAndStoRegionProvinceAndStoRegionCity(
+				stoVegetarianType, stoRegionProvince, stoRegionCity);
 	}
 
 	public boolean updateStore(AllStore store) {
-	    // 가게 정보를 데이터베이스에서 찾아서 수정합니다.
-	    AllStore existingStore = allStoreRepository.findById(store.getStoId()).orElse(null);
+		// 가게 정보를 데이터베이스에서 찾아서 수정합니다.
+		AllStore existingStore = allStoreRepository.findById(store.getStoId()).orElse(null);
 
-	    if (existingStore != null) {
-	        existingStore.setStoName(store.getStoName());
-	        existingStore.setStoTitle(store.getStoTitle());
-	        existingStore.setStoContent(store.getStoContent());
-	        existingStore.setStoCategory(store.getStoCategory());
-	        existingStore.setStoRegionProvince(store.getStoRegionProvince());
-	        existingStore.setStoRegionCity(store.getStoRegionCity());
-	        existingStore.setStoContact(store.getStoContact());
-	        existingStore.setStoAddress(store.getStoAddress());
+		if (existingStore != null) {
+			existingStore.setStoName(store.getStoName());
+			existingStore.setStoTitle(store.getStoTitle());
+			existingStore.setStoContent(store.getStoContent());
+			existingStore.setStoCategory(store.getStoCategory());
+			existingStore.setStoRegionProvince(store.getStoRegionProvince());
+			existingStore.setStoRegionCity(store.getStoRegionCity());
+			existingStore.setStoContact(store.getStoContact());
+			existingStore.setStoAddress(store.getStoAddress());
 
-	        // 이미지 업데이트
-	        if (store.getStoImage() != null) {
-	            existingStore.setStoImage(store.getStoImage());
-	        }
+			// 이미지 업데이트
+			if (store.getStoImage() != null) {
+				existingStore.setStoImage(store.getStoImage());
+			}
 
-	        existingStore.setStoOperatingHours(store.getStoOperatingHours());
-	        existingStore.setStoClosedDays(store.getStoClosedDays());
-	        existingStore.setStoRecommendedMenu(store.getStoRecommendedMenu());
-	        existingStore.setStoParkingInfo(store.getStoParkingInfo());
-	        existingStore.setStoLatitude(store.getStoLatitude());
-	        existingStore.setStoLongitude(store.getStoLongitude());
-	        existingStore.setStoVegetarianType(store.getStoVegetarianType());
-	        existingStore.setKakaoStoreId(store.getKakaoStoreId());
+			existingStore.setStoOperatingHours(store.getStoOperatingHours());
+			existingStore.setStoClosedDays(store.getStoClosedDays());
+			existingStore.setStoRecommendedMenu(store.getStoRecommendedMenu());
+			existingStore.setStoParkingInfo(store.getStoParkingInfo());
+			existingStore.setStoLatitude(store.getStoLatitude());
+			existingStore.setStoLongitude(store.getStoLongitude());
+			existingStore.setStoVegetarianType(store.getStoVegetarianType());
+			existingStore.setKakaoStoreId(store.getKakaoStoreId());
 
-	        allStoreRepository.save(existingStore);
-	        return true;
-	    }
-	    return false;
+			allStoreRepository.save(existingStore);
+			return true;
+		}
+		return false;
 	}
 
 	// stoId로 스토어 조회
@@ -192,7 +192,7 @@ public class AllStoreService {
 		store.setStoParkingInfo(stoParkingInfo);
 		store.setStoLatitude(stoLatitude);
 		store.setStoLongitude(stoLongitude);
-	    store.setKakaoStoreId(kakaoStoreId); // 카카오 스토어 ID 설정
+		store.setKakaoStoreId(kakaoStoreId); // 카카오 스토어 ID 설정
 		store.setStoVegetarianType(stoVegetarianType);
 		allStoreRepository.save(store);
 
@@ -200,32 +200,33 @@ public class AllStoreService {
 // return saved store
 		return store; // 저장된 가게 객체 반환
 	}
-	
-	
-	//랜덤으로 가게 가져오기
+
+	// 랜덤으로 가게 가져오기
 	public List<AllStore> getRandomStores(List<AllStore> allStores) {
-        Collections.shuffle(allStores); // 리스트를 랜덤하게 섞음
-        return allStores.stream().limit(20).collect(Collectors.toList()); // 상위 20개 선택
-    }
+		Collections.shuffle(allStores); // 리스트를 랜덤하게 섞음
+		return allStores.stream().limit(20).collect(Collectors.toList()); // 상위 20개 선택
+	}
 
-	public Page<AllStore> findStores(String stoName, String stoCategory, String stoVegetarianType, int page, int pageSize) {
-	    Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지 요청 생성
+	public Page<AllStore> findStores(String stoName, String stoCategory, String stoVegetarianType, int page,
+			int pageSize) {
+		Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지 요청 생성
 
-        // 검색 조건에 따라 가게 정보를 조회
-        if (stoName != null && !stoName.isEmpty()) {
-            return allStoreRepository.findByStoNameContainingAndStoCategoryContainingAndStoVegetarianType(stoName, stoCategory, stoVegetarianType, pageable);
-        } else {
-            return allStoreRepository.findByStoCategoryContainingAndStoVegetarianType(stoCategory, stoVegetarianType, pageable);
-        }
-    }
+		// 검색 조건에 따라 가게 정보를 조회
+		if (stoName != null && !stoName.isEmpty()) {
+			return allStoreRepository.findByStoNameContainingAndStoCategoryContainingAndStoVegetarianType(stoName,
+					stoCategory, stoVegetarianType, pageable);
+		} else {
+			return allStoreRepository.findByStoCategoryContainingAndStoVegetarianType(stoCategory, stoVegetarianType,
+					pageable);
+		}
+	}
 
 	public Page<AllStore> findAllStores(int page, int pageSize) {
-        // Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지는 0부터 시작하므로 -1
+		// Pageable 객체 생성
+		Pageable pageable = PageRequest.of(page - 1, pageSize); // 페이지는 0부터 시작하므로 -1
 
-        // 모든 가게를 페이지네이션하여 반환
-        return allStoreRepository.findAll(pageable);
-    }
-	
-	
+		// 모든 가게를 페이지네이션하여 반환
+		return allStoreRepository.findAll(pageable);
+	}
+
 }

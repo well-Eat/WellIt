@@ -36,6 +36,25 @@
 									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
 							</div>
 						</div>
+						<!-- 이메일 -->
+						<div class="row mt-3 justify-content-start">
+							<label for="member_email" class="form-label">이메일</label>
+							<div class="col-8">
+								<input type="email" id="memberEmail" class="form-control" th:field="*{memberEmail}">
+							</div>
+							<div class="col-4">
+								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
+							</div>
+						</div>
+						<div class="row mt-3 justify-content-start">
+							<div class="col-7">
+								<input type="text" id="verificationCode" class="form-control"
+									placeholder="이메일로 받은 인증번호">
+							</div>
+							<div class="col-4">
+								<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
+							</div>
+						</div>
 						<!-- 전화번호 -->
 						<div class="row mt-3 justify-content-start">
 							<label for="memberPhone" class="form-label">전화번호</label>
@@ -312,6 +331,11 @@
 			// 이름 유효성 검사
 			const nameInput = document.getElementById('memberName');
 			const memberName = nameInput.value;
+
+			// 닉네임 유효성 검사
+			const aliasInput = document.getElementById('memberAlias');
+			const memberAlias = document.getElementById('memberAlias').value;
+
 			// 전화번호 유효성 검사
 			const phoneInput = document.getElementById('memberPhone');
 			const memberPhone = phoneInput.value;
@@ -321,6 +345,11 @@
 			const postAddress = addressInput.value;
 			const roadAddress = document.getElementById('sample4_roadAddress').value;
 			const detailAddress = document.getElementById('sample4_detailAddress').value;
+
+			// 이메일 유효성 검사
+			const emailInput = document.getElementById("memberEmail");
+			const memberEmail = document.getElementById('memberEmail').value;
+
 			if (!memberName) {
 				alert("이름을 입력해주세요.");
 				nameInput.focus();
@@ -333,7 +362,36 @@
 				alert("이름은 특수기호 없이 입력해주세요.");
 				nameInput.focus();
 				isValid = false;
-			} else if (!memberPhone) {
+			}
+
+			else if (!memberAlias) {
+				alert("닉네임을 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (memberAlias.length > 10) {
+				alert("닉네임은 최대 10자 이내여야 합니다.");
+				aliasInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z가-힣0-9]*$/.test(memberAlias)) {
+				alert("닉네임은 특수기호 없이 입력해주세요.");
+				aliasInput.focus();
+				isValid = false;
+			}
+
+			else if (!memberEmail) {
+				alert("이메일을 입력해주세요.");
+				emailInput.focus();
+				isValid = false;
+			}
+			else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(memberEmail)) {
+				alert("유효한 이메일 주소를 입력해주세요.");
+				emailInput.focus();
+				isValid = false;
+			}
+
+			else if (!memberPhone) {
 				alert("전화번호를 입력해주세요.");
 				phoneInput.focus();
 				isValid = false;
@@ -341,7 +399,7 @@
 				alert("유효한 전화번호를 입력해 주세요.");
 				phoneInput.focus();
 				isValid = false;
-			}else if (!roadAddress || !detailAddress || !postAddress) {
+			} else if (!roadAddress || !detailAddress || !postAddress) {
 				alert("주소를 입력해주세요.");
 				addressInput.focus();
 				isValid = false;
@@ -350,9 +408,9 @@
 			// 유효성 검사에 통과한 경우 폼 제출
 			if (isValid) {
 				this.submit(); // 폼 제출
-			} 
-				
-			
+			}
+
+
 		});
 
 
@@ -430,6 +488,65 @@
 				window.location.href = '/member/login';
 			}
 		});
+
+		function checkEmail() {
+			const email = document.getElementById('memberEmail').value;
+
+			if (!email) {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+				alert("유효한 이메일 주소를 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/send-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'email': email
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
+
+		function verifyCode() {
+			const code = document.getElementById('verificationCode').value;
+
+			if (!code) {
+				alert("인증 코드를 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/verify-code', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'code': code
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
 
 	</script>
 </div>

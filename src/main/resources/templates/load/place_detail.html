@@ -2,7 +2,7 @@
 <html layout:decorate="~{layout}">
 
 <head>
-	<title>상품 상세페이지</title>
+	<title>가게 상세페이지</title>
 
 </head>
 <div layout:fragment="content" class="container">
@@ -34,15 +34,15 @@
 
 
 	<!-- 가게 정보 요약 & 주문 폼 -->
-	<div class="container p-5 pt-0 my-5">
-		<section class="placeInfo row p-5 rounded-2">
-			<div class="placeImg col-5">
+	<div class="p-0 p-lg-5 pt-0 my-5">
+		<section class="placeInfo row p-0 p-lg-5 rounded-2">
+			<div class="placeImg col-11 col-lg-5">
 				<!-- 상품이미지 -->
 				<div class="card-img-wrapper rounded-2 mb-3">
 					<div class="card-img-box" th:style="|background-image: url(@{  ${store.stoImage}  });|"></div>
 				</div>
 			</div> <!--placeImg-->
-			<div class="col-7 card">
+			<div class="col-11 col-lg-7 card">
 				<!-- 상품정보 -->
 				<div class="card-body">
 					<p class="card-text placeTitle d-flex justify-content-between align-items-center">

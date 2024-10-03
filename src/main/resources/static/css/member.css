@@ -6,6 +6,8 @@ header {
 
 .formStyle {
 	background-color: #f2e8cf;
+	box-shadow:0px 4px 8px rgba(0, 0, 0, 0.1);
+	font-weight: 600;
 }
 
 .enter-password {
