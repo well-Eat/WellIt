@@ -509,36 +509,29 @@ public class MemberController {
 	}
 
 	@PostMapping("/findId")
-	public String findId(@RequestParam("memberName") String memberName, @RequestParam("memberEmail") String memberEmail,
-			HttpSession session, Model model) {
-		Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
-		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+	public String findId(@RequestParam("memberName") String memberName,
+	                     @RequestParam("memberEmail") String memberEmail, 
+	                     HttpSession session, 
+	                     Model model) {
+	    Optional<Member> member = memberService.findByNameAndEmail(memberName, memberEmail);
+	    Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
 
-		if (isEmailVerified == null || !isEmailVerified) {
-			model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
-			return "/member/findMemberId";
-		}
+	    if (isEmailVerified == null || !isEmailVerified) {
+	        model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+	        return "/member/findMemberId";
+	    }
 
-		// 회원 정보 확인
-		if (member.isPresent()) {
-			Member thisMember = member.get();
+	    if (member.isPresent()) {
+	        Member thisMember = member.get();
+	        model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
+	    } else {
+	        model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
+	    }
 
-			// memberType이 'KAKAO'이면 경고 메시지 표시
-			if ("KAKAO".equals(thisMember.getMemberType())) {
-				model.addAttribute("errorMessage", "카카오 계정은 아이디 찾기를 지원하지 않습니다.");
-				return "/member/findMemberId"; // 다시 아이디 찾기 페이지로
-			}
+	    session.setAttribute("emailVerified", false);
+	    session.removeAttribute("verificationCode");
 
-			// 일반 계정일 경우 아이디 표시
-			model.addAttribute("message", "회원님의 아이디는 " + thisMember.getMemberId() + "입니다.");
-		} else {
-			model.addAttribute("message", "입력하신 정보와 일치하는 회원이 없습니다.");
-		}
-
-		session.setAttribute("emailVerified", false);
-		session.removeAttribute("verificationCode");
-
-		return "member/findId"; // 뷰 이름 반환
+	    return "member/findId"; // 뷰 이름 반환
 	}
 
 	@PostMapping("/id-email")
@@ -584,35 +577,25 @@ public class MemberController {
 
 	@PostMapping("/findPassword")
 	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email,
-	                                           @RequestParam("memberId") String id, 
-	                                           @RequestParam("memberName") String name, 
+	                                           @RequestParam("memberId") String id,
+	                                           @RequestParam("memberName") String name,
 	                                           HttpSession session,
 	                                           Model model) {
 	    Optional<Member> thisMember = memberService.findByIdAndNameAndEmail(id, name, email);
 
-	    // 입력된 정보에 해당하는 회원이 없을 때
-	    if (!thisMember.isPresent()) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 회원이 존재하지 않습니다.");
-	    }
+		if (!thisMember.isPresent()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 회원이 존재하지 않습니다.");
+		}
 
-	    Member member = thisMember.get();
+		// 이메일 인증 여부 확인
+		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+		System.out.println("isEmailVerified: " + isEmailVerified);
+		// 이메일 인증이 완료되지 않았을 때
+		if (isEmailVerified == null || !isEmailVerified) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
+		}
 
-	    // memberType이 'KAKAO'일 경우 비밀번호 찾기 제한
-	    if ("KAKAO".equals(member.getMemberType())) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("카카오 계정은 비밀번호 찾기를 지원하지 않습니다.");
-	    }
-
-	    // 이메일 인증 여부 확인
-	    Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-	    System.out.println("isEmailVerified: " + isEmailVerified);
-
-	    // 이메일 인증이 완료되지 않았을 때
-	    if (isEmailVerified == null || !isEmailVerified) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
-	    }
-
-	    // 비밀번호 재설정 이메일 전송 서비스 호출
-	    return memberService.sendPasswordResetEmail(email);
+		return memberService.sendPasswordResetEmail(email);
 	}
 
 	// 로그인 여부 확인
