@@ -1,4 +1,5 @@
-<section th:fragment="products" id="products" class="d-flex flex-column">
+<section th:fragment="products" id="products">
+	
 	<!-- Link Swiper's CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
@@ -14,6 +15,10 @@
 		section#products {
 			/*background-color: #eee;*/
 		}
+		
+		.productsWrapper{
+        height: 100%;
+		}
 
 		/*goods Swiper style Start*/
 		.goodsSwiper {
@@ -21,7 +26,7 @@
 			/*병합 후 높이 수정할 것!!!*/
 			/*height: 500px;*/
 				height: 100%;
-				
+        align-self: stretch;
 		}
 
 		#products {
@@ -290,86 +295,86 @@
 
 	</style>
 	
-
-	<div class="row">
-		<div class="my-5">
+	<div class="productsWrapper d-flex flex-column">
+		<div class="row">
+			<div class="my-5">
+			
+			</div>
+			<div class="col text-center my-5 titleText">
+				지금 핫한 그 상품💥
+			</div>
+		</div>
+		<!-- pc 스타일 : Swiper -->
+		<div class="swiper goodsSwiper d-none d-lg-block flex-grow-1">
+			<!--네비게이션버튼-->
+			<div class="swiper-btn swiper-prev">
+				<div class="btnBox"></div>
+			</div>
+			<div class="swiper-btn swiper-next">
+				<div class="btnBox"></div>
+			</div>
+			
+			<!--goods 슬라이드-->
+			<div class="swiper-wrapper">
+				<div class="swiper-slide goods01">
+					<div class="bgBox goods01">
+						<div class="imgBox goods01"> <!--한라봉-->
+							<!--todo: 중요!!!!! 링크 상품페이지로-->
+							<a href="/shop/detail/1" class="d-block w-100 h-100"></a>
+						</div>
+					</div>
+				</div> <!--//goods01-->
+				
+				<div class="swiper-slide goods02">
+					<div class="bgBox goods02">
+						<div class="imgBox goods02"> <!--방앗간-->
+							<!--todo: 중요!!!!! 링크 상품페이지로-->
+							<a href="/shop/detail/2" class="d-block w-100 h-100"></a>
+						</div>
+					</div>
+				</div> <!--//goods02-->
+				
+				<div class="swiper-slide goods03">
+					<div class="bgBox goods03"> <!--복분자-->
+						<div class="imgBox goods03">
+							<!--todo: 중요!!!!! 링크 상품페이지로-->
+							<a href="/shop/detail/3" class="d-block w-100 h-100"></a>
+						</div>
+					</div>
+				</div> <!--//goods03-->
+			</div> <!--//wrapper-->
+			
+			<div class="swiper-pagination"></div>
+		</div>
 		
-		</div>
-		<div class="col text-center my-5 titleText">
-			지금 핫한 그 상품💥
-		</div>
-	</div>
-	<!-- pc 스타일 : Swiper -->
-	<div class="swiper goodsSwiper d-none d-lg-block flex-grow-1">
-		<!--네비게이션버튼-->
-		<div class="swiper-btn swiper-prev">
-			<div class="btnBox"></div>
-		</div>
-		<div class="swiper-btn swiper-next">
-			<div class="btnBox"></div>
-		</div>
-
-		<!--goods 슬라이드-->
-		<div class="swiper-wrapper">
-			<div class="swiper-slide goods01">
-				<div class="bgBox goods01" >
-					<div class="imgBox goods01"> <!--한라봉-->
-						<!--todo: 중요!!!!! 링크 상품페이지로-->
+		<!--모바일 스타일-->
+		<!-- 모바일 스타일: 제목 부분 제외한 나머지 영역을 슬라이드가 3등분 -->
+		<div class="mobile-wrapper row gx-0 flex-grow-1 d-lg-none">
+			<div class="mobile-slide goods01 col-12 d-flex align-items-stretch">
+				<div class="bgBox goods01 w-100">
+					<div class="imgBox goods01 h-100">
 						<a href="/shop/detail/1" class="d-block w-100 h-100"></a>
 					</div>
 				</div>
-			</div> <!--//goods01-->
-
-			<div class="swiper-slide goods02">
-				<div class="bgBox goods02">
-				 <div class="imgBox goods02"> <!--방앗간-->
-					 <!--todo: 중요!!!!! 링크 상품페이지로-->
-					 <a href="/shop/detail/2" class="d-block w-100 h-100"></a>
-				 </div>
+			</div> <!-- //goods01 -->
+			
+			<div class="mobile-slide goods02 col-12 d-flex align-items-stretch">
+				<div class="bgBox goods02 w-100">
+					<div class="imgBox goods02 h-100">
+						<a href="/shop/detail/2" class="d-block w-100 h-100"></a>
+					</div>
 				</div>
-			</div> <!--//goods02-->
-
-			<div class="swiper-slide goods03">
-				<div class="bgBox goods03"> <!--복분자-->
-				 <div class="imgBox goods03">
-					 <!--todo: 중요!!!!! 링크 상품페이지로-->
-					 <a href="/shop/detail/3" class="d-block w-100 h-100"></a>
-				 </div>
+			</div> <!-- //goods02 -->
+			
+			<div class="mobile-slide goods03 col-12 d-flex align-items-stretch">
+				<div class="bgBox goods03 w-100">
+					<div class="imgBox goods03">
+						<a href="/shop/detail/3" class="d-block w-100 h-100"></a>
+					</div>
 				</div>
-			</div> <!--//goods03-->
-		</div> <!--//wrapper-->
-		
-		<div class="swiper-pagination"></div>
+			</div> <!-- //goods03 -->
+		</div> <!-- //wrapper -->
 	</div>
-	
-	<!--모바일 스타일-->
-	<!-- 모바일 스타일: 제목 부분 제외한 나머지 영역을 슬라이드가 3등분 -->
-	<div class="mobile-wrapper row gx-0 flex-grow-1 d-lg-none">
-		<div class="mobile-slide goods01 col-12 d-flex align-items-stretch">
-			<div class="bgBox goods01 w-100">
-				<div class="imgBox goods01 h-100">
-					<a href="/shop/detail/1" class="d-block w-100 h-100"></a>
-				</div>
-			</div>
-		</div> <!-- //goods01 -->
-		
-		<div class="mobile-slide goods02 col-12 d-flex align-items-stretch">
-			<div class="bgBox goods02 w-100">
-				<div class="imgBox goods02 h-100">
-					<a href="/shop/detail/2" class="d-block w-100 h-100"></a>
-				</div>
-			</div>
-		</div> <!-- //goods02 -->
-		
-		<div class="mobile-slide goods03 col-12 d-flex align-items-stretch">
-			<div class="bgBox goods03 w-100">
-				<div class="imgBox goods03">
-					<a href="/shop/detail/3" class="d-block w-100 h-100"></a>
-				</div>
-			</div>
-		</div> <!-- //goods03 -->
-	</div> <!-- //wrapper -->
-
 	<!-- Swiper JS -->
 	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 	<script>

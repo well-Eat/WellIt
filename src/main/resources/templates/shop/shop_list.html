@@ -93,8 +93,8 @@
 				<!-- 상품설명 -->
 				<div class="card-body">
 					<a th:href="@{|/shop/detail/${item.prodId}|}" class="d-block">
-						<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
 						<p class="prodDesc card-text" th:text="${item.prodDesc}"></p>
+						<h5 class="prodName card-title c333" th:text="${item.prodName}"></h5>
 						
 						<!--할인율 있는 경우 가격 표시 -->
 						<th:block th:if="${item.prodDiscount != null and item.prodDiscount > 0}">

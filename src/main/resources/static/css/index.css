@@ -28,15 +28,18 @@
 	z-index: 1;
 	top: 70%;
 	height: 20vh;
-	/*min-height: 170px;*/
 	background-color: var(--sub-light);
 	border-radius: 45px;
 	display: block;
 
-
 	left: 50%;
 	transform: translate(-50%, 0%); /* 가로 및 세로 중앙 정렬 */
 }
+
+
+
+
+
 .videoBox.vertical {
 	position: relative;
 	top: auto;
@@ -98,7 +101,6 @@
 	padding-right: 0;
 }
 
-
 .recommendButton button {
 	width: 100%;
 	font-size: 20px;
@@ -117,6 +119,7 @@ label {
 	color: gray;
 }
 
+
 section {
 	height: 100vh;
 	box-sizing: border-box;
@@ -125,7 +128,7 @@ section {
 .recommendedPlace {
     overflow: hidden;
     float: left;
-    transition: width 0.5s;
+    transition: width 0.5s ease;
     width: 5%;
     height: 500px;
     margin: 0 1%;
@@ -229,7 +232,7 @@ header {
 
 
 header .custom-logo img {
-	width: 125px;
+	width: 150px;
 	height: 48px;
 }
 
@@ -436,4 +439,57 @@ header .custom-menu ul.custom-main li a {
 	opacity: 0.95;
 	box-shadow: 0px 10px 15px rgba(87, 87, 87, 0.44);
 }
+*/
+/*
+
+!*241002:ys*!
+.videoBox select {
+	background-color: rgba(44, 44, 44, 0.7);
+	!*background-color: rgba(98, 108, 92, 0.78);
+	background-color: rgba(196, 204, 115, 0.73);
+	background-color: rgba(88, 143, 52, 0.62);
+	background-color: rgba(0, 89, 45, 0.57);*!
+	filter: drop-shadow(0 3px 2px rgba(73, 73, 73, 0.24));
+	color: #343a40;
+	color: whitesmoke;
+	font-weight: 400;
+	border-radius: 5px;
+}
+
+
+!*241002:ys*!
+.videoBox{
+	background-color: rgba(44, 44, 44, 0.7);
+	filter: drop-shadow(0 3px 2px rgba(191, 192, 187, 0.24));
+	border-radius: 30px;
+}
+
+
+
+!*241002:ys*!
+.videoBoxText {
+	color: whitesmoke;
+	!*	color: #00592DE8;
+        color: rgba(51, 51, 51, 0.92);*!
+}
+!*241002:ys*!
+label{
+	color: #343a40;
+}
+!*241002:ys*!
+.recommendButton button.btn.hm-btn-green{
+	background-color: #00592DE8;
+	background-color: rgba(0, 89, 45, 0.57);
+	font-weight: 500;
+	border-radius: 8px;
+	filter: drop-shadow(0 3px 2px rgba(96, 96, 96, 0.21));
+}
+!*241002:ys2*!
+!*
+.videoBox{
+	background-color: rgba(0, 89, 45,0.95);
+	background-color: rgba(196, 204, 115, 0.8);
+}
+
+*!
 */

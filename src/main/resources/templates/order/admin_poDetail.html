@@ -87,6 +87,7 @@
               console.log(cancelInfo);  // poDetail 객체 확인용 로그
 		          
               viewOrderItems(orderId); // 페이지 로드 시 주문 목록 불러오기
+		          
           });
 
           <!-- 주문 상세 정보 비동기 불러오기 -->
@@ -104,19 +105,19 @@
                       throw new Error('에러 발생');
                   }
 
-                  // 응답을 JSON 형식으로 변환
                   poDetail = await response.json();
-
-                  // 변환된 데이터를 콘솔에 출력
                   console.log(poDetail);
+
+                  if (poDetail.orderStatus=='주문취소'){
+                      $("#cancelBtn").remove();
+                  }
 
                   orderInfoRender(poDetail);
                   orderItemRender(poDetail);
                   orderMemberRender(poDetail);
                   deliveryRender(poDetail);
                   paymentRender(poDetail);
-
-
+                  
               } catch (error) {
                   // 에러 처리
                   alert(error.message);

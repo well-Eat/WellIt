@@ -46,7 +46,7 @@
 						
 						<td><a th:href="@{|/order/admin/po/${cancelRequest.orderId}?reason=${cancelRequest.cancelReason}|}"><span
 								th:text="${cancelRequest.orderId}"></span></a></td>
-						<td th:text="${cancelRequest.totalPay}"></td>
+						<td th:text="|${#numbers.formatInteger(cancelRequest.totalPay,3,'COMMA')}원|" class="text-end pe-3"></td>
 						<td th:text="${cancelRequest.orderStatus.renderStatus()}"></td>
 						
 						<td th:text="${cancelRequest.cancelReason}"></td>
