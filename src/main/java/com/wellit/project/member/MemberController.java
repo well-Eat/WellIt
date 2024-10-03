@@ -584,23 +584,35 @@ public class MemberController {
 
 	@PostMapping("/findPassword")
 	public ResponseEntity<String> findPassword(@RequestParam("memberEmail") String email,
-			@RequestParam("memberId") String id, @RequestParam("memberName") String name, HttpSession session,
-			Model model) {
-		Optional<Member> thisMember = memberService.findByIdAndNameAndEmail(id, name, email);
+	                                           @RequestParam("memberId") String id, 
+	                                           @RequestParam("memberName") String name, 
+	                                           HttpSession session,
+	                                           Model model) {
+	    Optional<Member> thisMember = memberService.findByIdAndNameAndEmail(id, name, email);
 
-		if (!thisMember.isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 회원이 존재하지 않습니다.");
-		}
+	    // 입력된 정보에 해당하는 회원이 없을 때
+	    if (!thisMember.isPresent()) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당하는 회원이 존재하지 않습니다.");
+	    }
 
-		// 이메일 인증 여부 확인
-		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
-		System.out.println("isEmailVerified: " + isEmailVerified);
-		// 이메일 인증이 완료되지 않았을 때
-		if (isEmailVerified == null || !isEmailVerified) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
-		}
+	    Member member = thisMember.get();
 
-		return memberService.sendPasswordResetEmail(email);
+	    // memberType이 'KAKAO'일 경우 비밀번호 찾기 제한
+	    if ("KAKAO".equals(member.getMemberType())) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("카카오 계정은 비밀번호 찾기를 지원하지 않습니다.");
+	    }
+
+	    // 이메일 인증 여부 확인
+	    Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+	    System.out.println("isEmailVerified: " + isEmailVerified);
+
+	    // 이메일 인증이 완료되지 않았을 때
+	    if (isEmailVerified == null || !isEmailVerified) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 완료되지 않았습니다.");
+	    }
+
+	    // 비밀번호 재설정 이메일 전송 서비스 호출
+	    return memberService.sendPasswordResetEmail(email);
 	}
 
 	// 로그인 여부 확인
