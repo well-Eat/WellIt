@@ -14,7 +14,7 @@
 			</div>
 			<div class="col-10 mt-5">
 				<div class="row align-middle">
-					<div th:if="${member.memberType != 'KAKAO'}" class="col">
+					<div class="col">
 						<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>
 						<p>닉네임 : <span th:text="${member.memberAlias}"></span></p>
 						<p>이메일 : <span th:text="${member.memberEmail}"></span></p>
@@ -26,17 +26,7 @@
 								th:text="${member.memberVeganType}"></span>
 						</p>
 					</div>
-					<div th:if="${member.memberType == 'KAKAO'}" class="col">
-						<p>사용자 이름 : <span th:text="${member.memberName}"></span></p>
-						<p>닉네임 : <span th:text="${member.memberAlias}"></span></p>
-						<p>회원가입 일시 : <span th:text="${formattedRegDate}"></span></p>
-						<p>주소 : <span th:text="${member.roadAddress}"></span></p>
-						<p>비건 종류 :
-							<span th:if="${member.memberVeganType == null}">미정</span>
-							<span th:unless="${member.memberVeganType == null}"
-								th:text="${member.memberVeganType}"></span>
-						</p>
-					</div>
+					
 				</div>
 				<div class="row mb-3 float-end">
 					<div class="col">

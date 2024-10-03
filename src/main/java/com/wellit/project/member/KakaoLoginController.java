@@ -68,15 +68,15 @@ public class KakaoLoginController {
 	private final CartRepository cartRepository;
 
 	@GetMapping("/callback")
-	public String callback(@RequestParam(value = "code", required = false) String code, RedirectAttributes redirectAttributes,
-			HttpServletRequest request, HttpSession session) {
+	public String callback(@RequestParam(value = "code", required = false) String code,
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession session) {
 		try {
-			
+
 			if (code == null || code.isEmpty()) {
-		        // code 파라미터가 없는 경우 처리
-		        redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
-		        return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
-		    }
+				// code 파라미터가 없는 경우 처리
+				redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
+				return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
+			}
 
 			// 현재 사용자의 인증 상태 확인
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -89,7 +89,6 @@ public class KakaoLoginController {
 
 			// 1. 카카오에서 accessToken을 얻음
 			String accessToken = kakaoService.getAccessTokenFromKakao(code);
-			System.out.println("========================================" + accessToken);
 
 			// 액세스 토큰 세션에 저장
 			session.setAttribute("accessToken", accessToken);
@@ -116,16 +115,17 @@ public class KakaoLoginController {
 			authenticateUser(member, request);
 
 			return "redirect:/"; // 홈 페이지로 이동
+
 		} catch (CustomUserAlreadyExistsException e) {
 			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
 			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
 			Member existingMember = memberRepository.findByMemberId(kakaoUserId);
-			
+
 			if (code == null || code.isEmpty()) {
-		        // code 파라미터가 없는 경우 처리
-		        redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
-		        return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
-		    }
+				// code 파라미터가 없는 경우 처리
+				redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
+				return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
+			}
 
 			// 현재 사용자의 인증 상태 확인
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -177,7 +177,6 @@ public class KakaoLoginController {
 	// 카카오 로그인 후 callback (POST 방식) - 액세스 토큰 직접 처리
 	@PostMapping("/callback")
 	public ResponseEntity<String> kakaoLogin(@RequestParam String accessToken) {
-		System.out.println("123123123213123123" + accessToken);
 
 		// 액세스 토큰을 사용해 사용자 정보를 저장
 		Member member = kakaoService.registerKakaoUser(accessToken);
@@ -244,6 +243,12 @@ public class KakaoLoginController {
 
 			// 추가 정보 입력 폼 페이지로 이동
 			return "member/kakao_signup";
+		}
+
+		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+		if (isEmailVerified == null || !isEmailVerified) {
+			model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+			return "/member/kakao_signup";
 		}
 
 		try {
@@ -316,6 +321,7 @@ public class KakaoLoginController {
 			// 프로필 수정 폼 페이지로 이동
 			return "member/update_profile"; // 경로 수정
 		}
+		
 
 		// 년도 값이 null인 경우 기존 값을 유지
 		if (kakaoUpdateForm.getBirth_year() == null || kakaoUpdateForm.getBirth_year().isEmpty()) {
@@ -340,6 +346,16 @@ public class KakaoLoginController {
 			if (principal instanceof String) {
 				String memberId = (String) principal;
 				Member existingMember = memberService.getMember(memberId);
+				
+				// 이메일 변경 확인 및 이메일 인증 처리
+				if (!existingMember.getMemberEmail().equals(kakaoUpdateForm.getMemberEmail())) {
+					Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+					if (isEmailVerified == null || Boolean.FALSE.equals(isEmailVerified)) {
+						model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+						model.addAttribute("member", kakaoUpdateForm); // 여기에 추가
+						return "/member/update_profile";
+					}
+				}
 
 				try {
 					// 기존 이미지 경로를 폼에서 가져와서 전달
