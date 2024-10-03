@@ -114,6 +114,10 @@
                   }
 */
 
+                  if (poDetail.orderStatus=='주문취소'){
+                      $("#cancelBtn").remove();
+                  }
+
                   orderInfoRender(poDetail);
                   orderItemRender(poDetail);
                   orderMemberRender(poDetail);
