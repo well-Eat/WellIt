@@ -493,7 +493,7 @@
 				emailInput.focus();
 				isValid = false;
 			}
-			else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberEmail)) {
+			else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(memberEmail)) {
 				alert("유효한 이메일 주소를 입력해주세요.");
 				emailInput.focus();
 				isValid = false;
@@ -562,6 +562,11 @@
 
 			if (!email) {
 				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(memberEmail)) {
+				alert("유효한 이메일 주소를 입력해주세요.");
 				return;
 			}
 
