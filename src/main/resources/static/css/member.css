@@ -125,11 +125,11 @@ header {
 }
 
 /* tbody에 스크롤 기능 추가 */
-.prodTableBox tbody {
+/*.prodTableBox tbody {
 	display: block;
-	max-height: 80vh; /* 높이를 고정해서 스크롤 발생 */
-	overflow-y: visible; /* 세로 스크롤 x */
-}
+	max-height: 80vh;
+	overflow-y: visible;
+}*/
 
 /* tbody 내의 tr과 td가 잘 맞도록 설정 */
 .prodTableBox thead, .prodTableBox tbody tr {

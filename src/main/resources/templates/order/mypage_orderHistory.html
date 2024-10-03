@@ -31,7 +31,7 @@
 									<p class="c333 f20 text-center">신선하고 다채로운 웨릿샵의 상품을 경험해보세요. 특별한 쇼핑의 시작이 기다리고 있습니다!</p>
 								
 								</div>
-								<a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">상품 보러 가기</a>
+								<a href="/shop/list" class="btn-back btn hm-btn-green btn-lg rounded-pill">상품 보러 가기 &raquo;</a>
 							</div> <!--no-favorites-->
 						</div>
 					</div>
@@ -58,6 +58,7 @@
 									<div class="prodImageBox border flex-grow-0"
 									     style="aspect-ratio: 1; background-size: cover; background-position: center;  max-width: 140px;"
 									     th:style="|background-image: url(@{  ${orderItem.prodThumb}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
+										<a th:href="@{|/shop/detail/${orderItem.prodId}|}" class="w-100 h-100 d-block"></a>
 									</div>
 								</div> <!-- // prodImageBoxWrapper -->
 								

@@ -891,55 +891,81 @@ $(function () {
 
 
 /** 장바구니 상품 추가 **/
+/** 장바구니 상품 추가 **/
 function addToCart(prodId, quantity) {
     const cartItem = {
         prodId: prodId,
         quantity: quantity
     };
 
-    fetch('/cart/data/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(cartItem)
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Cart updated successfully', data);
-            updateCartBadge();
+    // checkLoginStatus()의 결과에 따라 처리
+    checkLoginStatus()
+        .then(isLoggedIn => {
+            if (isLoggedIn) {
+                // 로그인 상태가 확인되면 장바구니에 추가
+                fetch('/cart/data/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(cartItem)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Cart updated successfully', data);
+                        updateCartBadge();
 
-            Swal.fire({
-                title: '상품이 장바구니에 추가되었습니다!',
-                text: "장바구니로 이동하시겠습니까?",
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: '장바구니로 이동',
-                cancelButtonText: '상품 목록',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // '장바구니로 이동'을 선택한 경우
-                    window.location.href = '/cart/list';
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    const currentPath = window.location.pathname;
+                        Swal.fire({
+                            title: '상품이 장바구니에 추가되었습니다!',
+                            text: "장바구니로 이동하시겠습니까?",
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: '장바구니로 이동',
+                            cancelButtonText: '상품 목록',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/cart/list';
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                const currentPath = window.location.pathname;
 
-                    // 현재 페이지가 /shop/detail/~~~이면 /shop/list로 이동
-                    if (currentPath.startsWith('/shop/detail/')) {
-                        window.location.href = '/shop/list';
-                    } else {
-                        // 그 외의 경우 현재 페이지를 리로드
-                        window.location.reload();
+                                console.log(currentPath);
+
+                                if (currentPath.startsWith('/shop/detail/')) {
+                                    window.location.href = '/shop/list';
+                                } else {
+                                    window.location.reload();
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('오류 발생', '상품을 장바구니에 추가하는 중 오류가 발생했습니다.', 'error');
+                    });
+            } else {
+                Swal.fire({
+                    title: '장바구니 추가 오류',
+                    text: "로그인이 필요합니다.",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonText: '로그인',
+                    cancelButtonText: '취소',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // '로그인'을 선택한 경우
+                        window.location.href = '/member/login';
                     }
-                }
-            });
-
+                });
+            }
         })
         .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('오류 발생', '상품을 장바구니에 추가하는 중 오류가 발생했습니다.', 'error');
+            console.error('Error checking login status:', error);
+            Swal.fire('오류 발생', '로그인 상태를 확인하는 중 오류가 발생했습니다.', 'error');
         });
 }
+
 
 
 //찜한 상품 목록 가져오기
@@ -1022,7 +1048,7 @@ function renderFavoriteProducts(products) {
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
                                             <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
                                         </div>
-                                        <a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">상품 보러 가기</a>
+                                        <a href="/shop/list" class="btn-back btn hm-btn-green btn-lg rounded-pill">상품 보러 가기 &raquo;</a>
                                     </div>
                                 </div>
                             </div>
@@ -1083,7 +1109,7 @@ $(document).on("click", ".removeFavoriteProductBtn", function () {
                                             <p class="c333 f32 fw700 text-center mb-3">찜한 상품이 없습니다</p>
                                             <p class="c333 f20 text-center">상품 페이지에서 마음에 드는 상품을 골라 찜한 상품 리스트를 만들어보세요</p>
                                         </div>
-                                        <a href="/shop/list" class="btn-back btn btn-success btn-lg">상품 보러 가기</a>
+                                        <a href="/shop/list" class="btn-back btn hm-btn-green btn-lg rounded-pill">상품 보러 가기 &raquo;</a>
                                     </div>
                                 </div>
                             </div>
