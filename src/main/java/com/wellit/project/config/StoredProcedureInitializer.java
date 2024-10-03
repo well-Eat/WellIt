@@ -22,14 +22,14 @@ public class StoredProcedureInitializer {
         String sql =
                 "CREATE OR REPLACE PROCEDURE find_products_by_criteria ( " +
                         "        p_category IN VARCHAR2, " +
-                        "p_item_sort IN VARCHAR2, " +
+                        "        p_item_sort IN VARCHAR2, " +
                         "        p_page IN NUMBER, " +
-                        "p_size IN NUMBER, " +
+                        "        p_size IN NUMBER, " +
                         "        p_start_date IN DATE, " +
-                        "p_end_date IN DATE, " +
-                        "p_status IN VARCHAR2,  " +
-                        "p_search IN VARCHAR2,  " +
-                        "p_cur OUT SYS_REFCURSOR " +
+                        "        p_end_date IN DATE, " +
+                        "        p_status IN VARCHAR2,  " +
+                        "        p_search IN VARCHAR2,  " +
+                        "        p_cur OUT SYS_REFCURSOR " +
                         ") " +
                         "AS " +
                         "        BEGIN " +
@@ -38,10 +38,10 @@ public class StoredProcedureInitializer {
                         "        p.prod_org_price, p.prod_discount, p.prod_cate, p.prod_final_price,  " +
                         "        p.prod_stock, p.view_cnt, p.created_at, p.updated_at,  " +
                         "        COALESCE(COUNT(r.rev_id), 0) AS review_count,  " +
-                        "COALESCE(AVG(r.rev_rating), 0) AS review_rating,  " +
-                        "COALESCE(COUNT(CASE WHEN po.status != 'CANCELLED' THEN oi.id END), 0) AS sales_count, " +
-                        "COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN oi.quantity END), 0) AS total_sales_quantity, " +
-                        "COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN (oi.sum_org_price + oi.sum_disc_price) END), 0) AS total_sales_amount " +
+                        "        COALESCE(AVG(r.rev_rating), 0) AS review_rating,  " +
+                        "        COALESCE(COUNT(CASE WHEN po.status != 'CANCELLED' THEN oi.id END), 0) AS sales_count, " +
+                        "        COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN oi.quantity END), 0) AS total_sales_quantity, " +
+                        "        COALESCE(SUM(CASE WHEN po.status != 'CANCELLED' THEN (oi.sum_org_price + oi.sum_disc_price) END), 0) AS total_sales_amount " +
                         "FROM product p " +
                         "LEFT JOIN order_item oi ON p.prod_id = oi.product_id " +
                         "LEFT JOIN purchase_order po ON oi.order_id = po.order_id " +

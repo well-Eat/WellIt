@@ -570,8 +570,8 @@ public class ShopService {
 
 
     //admin : 상품 리스트 페이징 리턴
-    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate, int page, int pageSize, String itemSort, String direction) {
-
+    public Page<ProductAdminDTO> findProducts(String search, String prodCate, String status, String startDate, String endDate,
+                                              int page, int pageSize, String itemSort, String direction) {
 
         LocalDateTime startDateTime = null;
         LocalDateTime endDateTime = null;
@@ -608,11 +608,6 @@ public class ShopService {
 
         products.stream()
                     .forEach(product -> log.info("sumQuantity: {}", product.getSumQuantity()));
-
-        // 반환된 Product 목록을 DTO로 변환하고 매출 데이터를 추가
-//        return new PageImpl<>(products.stream()
-//                                      .map(this::convertToProductAdminDTO)
-//                                      .collect(Collectors.toList()), products.getPageable(), products.getTotalElements());
 
         return products;
     }
