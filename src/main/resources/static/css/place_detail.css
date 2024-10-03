@@ -52,15 +52,16 @@ body {
 }
 
 .carousel-control-next {
-	background-color: purple;
 	margin-right: -50px;
 }
 
 .carousel-control-prev {
-	background-color: purple;
 	margin-left: -50px;
 }
-
+.carousel-control-prev-icon, .carousel-control-next-icon{
+	border-radius: 50%;
+	background-color: var(--main-color);
+}
 #loadMoreBtn {
 	opacity: 0.4;
 	/* 투명도 설정 */
