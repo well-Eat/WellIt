@@ -68,15 +68,15 @@ public class KakaoLoginController {
 	private final CartRepository cartRepository;
 
 	@GetMapping("/callback")
-	public String callback(@RequestParam(value = "code", required = false) String code, RedirectAttributes redirectAttributes,
-			HttpServletRequest request, HttpSession session) {
+	public String callback(@RequestParam(value = "code", required = false) String code,
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession session) {
 		try {
-			
+
 			if (code == null || code.isEmpty()) {
-		        // code 파라미터가 없는 경우 처리
-		        redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
-		        return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
-		    }
+				// code 파라미터가 없는 경우 처리
+				redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
+				return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
+			}
 
 			// 현재 사용자의 인증 상태 확인
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -115,17 +115,17 @@ public class KakaoLoginController {
 			authenticateUser(member, request);
 
 			return "redirect:/"; // 홈 페이지로 이동
-			
+
 		} catch (CustomUserAlreadyExistsException e) {
 			// 기존 회원일 경우, 로그인 처리 후 메인 페이지로 리다이렉트
 			String kakaoUserId = e.getKakaoUserId(); // 커스텀 예외에서 카카오 사용자 ID 추출
 			Member existingMember = memberRepository.findByMemberId(kakaoUserId);
-			
+
 			if (code == null || code.isEmpty()) {
-		        // code 파라미터가 없는 경우 처리
-		        redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
-		        return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
-		    }
+				// code 파라미터가 없는 경우 처리
+				redirectAttributes.addFlashAttribute("errorMessage", "인증 코드가 없습니다. 다시 시도해주세요.");
+				return "redirect:/member/login"; // 로그인 페이지로 리다이렉트
+			}
 
 			// 현재 사용자의 인증 상태 확인
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -245,6 +245,12 @@ public class KakaoLoginController {
 			return "member/kakao_signup";
 		}
 
+		Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+		if (isEmailVerified == null || !isEmailVerified) {
+			model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+			return "/member/kakao_signup";
+		}
+
 		try {
 			// 카카오 로그인으로 저장된 회원을 업데이트
 			Member member = kakaoService.updateKakaoMember(kakaoSignupForm);
@@ -315,6 +321,7 @@ public class KakaoLoginController {
 			// 프로필 수정 폼 페이지로 이동
 			return "member/update_profile"; // 경로 수정
 		}
+		
 
 		// 년도 값이 null인 경우 기존 값을 유지
 		if (kakaoUpdateForm.getBirth_year() == null || kakaoUpdateForm.getBirth_year().isEmpty()) {
@@ -339,6 +346,16 @@ public class KakaoLoginController {
 			if (principal instanceof String) {
 				String memberId = (String) principal;
 				Member existingMember = memberService.getMember(memberId);
+				
+				// 이메일 변경 확인 및 이메일 인증 처리
+				if (!existingMember.getMemberEmail().equals(kakaoUpdateForm.getMemberEmail())) {
+					Boolean isEmailVerified = (Boolean) session.getAttribute("emailVerified");
+					if (isEmailVerified == null || Boolean.FALSE.equals(isEmailVerified)) {
+						model.addAttribute("errorMessage", "이메일 인증이 완료되지 않았습니다.");
+						model.addAttribute("member", kakaoUpdateForm); // 여기에 추가
+						return "/member/update_profile";
+					}
+				}
 
 				try {
 					// 기존 이미지 경로를 폼에서 가져와서 전달

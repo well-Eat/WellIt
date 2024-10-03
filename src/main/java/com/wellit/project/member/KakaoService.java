@@ -189,6 +189,7 @@ public class KakaoService {
         // 2. 추가 정보를 업데이트
         member.setMemberName(kakaoSignupForm.getMemberName());
         member.setMemberAlias(kakaoSignupForm.getMemberAlias());
+        member.setMemberEmail(kakaoSignupForm.getMemberEmail());
         member.setMemberPhone(kakaoSignupForm.getMemberPhone()); 
         member.setMemberAddress(kakaoSignupForm.getMemberAddress());
         member.setZipcode(kakaoSignupForm.getZipcode());
