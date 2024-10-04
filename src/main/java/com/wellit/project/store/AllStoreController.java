@@ -106,19 +106,6 @@ public class AllStoreController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping("/store/save")
-	public ResponseEntity<AllStore> createStore(@RequestBody AllStore storeData) {
-
-		// 데이터 저장 로직
-		AllStore savedStore = allStoreService.saveStore(storeData.getStoName(), storeData.getStoTitle(),
-				storeData.getStoContent(), storeData.getStoCategory(), storeData.getStoRegionProvince(),
-				storeData.getStoRegionCity(), storeData.getStoContact(), storeData.getStoAddress(),
-				storeData.getStoImage(), storeData.getStoOperatingHours(), storeData.getStoClosedDays(),
-				storeData.getStoRecommendedMenu(), storeData.getStoParkingInfo(), storeData.getKakaoStoreId(),
-				storeData.getStoLatitude(), storeData.getStoLongitude(), storeData.getStoVegetarianType());
-		return ResponseEntity.status(HttpStatus.CREATED).body(savedStore);
-	}
-
 	@PostMapping("/store/create")
 	public ResponseEntity<AllStore> createStore(@RequestParam("stoName") String stoName,
 			@RequestParam("stoTitle") String stoTitle, @RequestParam("stoContent") String stoContent,
@@ -141,6 +128,19 @@ public class AllStoreController {
 				stoRegionCity, stoContact, stoAddress, imageUrl, // 저장된 이미지 URL 사용
 				stoOperatingHours, stoClosedDays, stoRecommendedMenu, stoParkingInfo, stoLatitude, stoLongitude,
 				kakaoStoreId, stoVegetarianType);
+		return ResponseEntity.status(HttpStatus.CREATED).body(savedStore);
+	}
+	
+	@PostMapping("/store/save")
+	public ResponseEntity<AllStore> createStore(@RequestBody AllStore storeData) {
+
+		// 데이터 저장 로직
+		AllStore savedStore = allStoreService.saveStore(storeData.getStoName(), storeData.getStoTitle(),
+				storeData.getStoContent(), storeData.getStoCategory(), storeData.getStoRegionProvince(),
+				storeData.getStoRegionCity(), storeData.getStoContact(), storeData.getStoAddress(),
+				storeData.getStoImage(), storeData.getStoOperatingHours(), storeData.getStoClosedDays(),
+				storeData.getStoRecommendedMenu(), storeData.getStoParkingInfo(), storeData.getKakaoStoreId(),
+				storeData.getStoLatitude(), storeData.getStoLongitude(), storeData.getStoVegetarianType());
 		return ResponseEntity.status(HttpStatus.CREATED).body(savedStore);
 	}
 
