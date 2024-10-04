@@ -31,7 +31,7 @@ public class ProdReviewController {
 
 
     @GetMapping("/get/{orderItemId}")
-    public ResponseEntity<ProdReviewLoadForm> getReviewContent(@PathVariable Long orderItemId){
+    public ResponseEntity<ProdReviewLoadForm> getReviewContent(@PathVariable(value = "orderItemId") Long orderItemId){
 
         ProdReviewLoadForm prodReviewLoadForm = new ProdReviewLoadForm();
         ProdReview prodReview = reviewService.getOneReview(orderItemId);
@@ -50,7 +50,7 @@ public class ProdReviewController {
 
     // 작성된 리뷰가 있는지 여부를 리턴
     @GetMapping("/exist/{orderItemId}")
-    public ResponseEntity<Boolean> checkReviewed(@PathVariable Long orderItemId){
+    public ResponseEntity<Boolean> checkReviewed(@PathVariable(value = "orderItemId") Long orderItemId){
         boolean reviewed = reviewService.checkReviewed(orderItemId);
         return ResponseEntity.ok(reviewed);
     }

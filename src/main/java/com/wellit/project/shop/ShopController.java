@@ -1,5 +1,6 @@
 package com.wellit.project.shop;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
@@ -225,14 +226,16 @@ public class ShopController {
     //admin:상품 수정내용 저장하기
     @PostMapping("/update/{prodId}")
     @ResponseBody
-    public ResponseEntity<String> updateProduct(@PathVariable Long prodId,
+    public ResponseEntity<String> updateProduct(@PathVariable(value = "prodId") Long prodId,
                                                 @ModelAttribute ProductForm productForm,
-                                                @RequestParam(required=false) List<String> toBeDeleted,
+                                                @RequestParam(value="toBeDeleted", required = false) List<String> toBeDeleted,
                                                 @RequestParam(value = "existingImages[]",required=false) List<String> existingImages,
                                                 @RequestParam(value = "existingImageOrders[]",required=false) List<Integer> existingImageOrders,
                                                 @RequestParam(value = "newImages[]",required=false) List<MultipartFile> newImages,
                                                 @RequestParam(value = "newImageOrders[]",required=false) List<Integer> newImageOrders
                                                ) throws IOException {
+
+        log.info(toBeDeleted);
 
         // 현재 로그인한 사용자가 admin인지 확인
         String memberId = memberService.getMemberId();
