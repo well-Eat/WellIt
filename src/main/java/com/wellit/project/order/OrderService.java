@@ -511,8 +511,7 @@ public class OrderService {
      //주문 출고 처리 메서드
     public void shipOrder(String orderId, String invoiceNum) {
         PurchaseOrder order = getOnePO(orderId);
-
-
+        
         // 배송 정보 업데이트 및 송장번호 저장
         Delivery delivery = order.getDelivery();
         delivery.setInvoiceNum(invoiceNum);
