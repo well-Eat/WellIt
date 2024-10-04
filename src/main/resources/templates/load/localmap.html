@@ -638,7 +638,7 @@
 
 				// 고유 ID 존재 여부 체크
 				// 이 코드는 데이터베이스 삽입 후 꼭 들어가야함, 있으면 코드 삽입 안됌
-				
+
 
 				// API를 통해 데이터 저장
 				await saveStoreData(storeData);
@@ -979,8 +979,17 @@
 
 			// 마커 추가
 			const markerPosition = new kakao.maps.LatLng(lat, lng);
+
+			// 마커 이미지 설정
+			const markerImage = new kakao.maps.MarkerImage(
+				'/imgs/mar.png', // 여기에 마커 이미지 URL을 입력하세요
+				new kakao.maps.Size(100, 100), // 이미지 크기 설정 (가로, 세로)
+				{offset: new kakao.maps.Point(50, 50)} // 이미지의 기준점 설정
+			);
+			
 			const marker = new kakao.maps.Marker({
 				position: markerPosition,
+				image: markerImage, // 사용자 정의 이미지 추가
 				title: placeName
 			});
 			marker.setMap(map);
