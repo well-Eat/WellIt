@@ -316,6 +316,7 @@ section.row > p.subtle::after {
     width: 100%;
     margin: 0 auto;
     text-align: center;
+    height: 100%;
 }
 
 #drop-area.highlight {
@@ -408,8 +409,9 @@ section.row > p.subtle::after {
 }
 
 label.button.inputFileBtn{
-    position: absolute;
-    display: inline-block;
+    /*position: absolute;*/
+    /*display: inline-block;*/
     padding: 2px 6px;
+    margin: 0 auto;
     cursor: pointer;
 }

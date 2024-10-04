@@ -2,7 +2,7 @@
 /****** mypage : order_history *****/
 /****** mypage : order_history *****/
 // 버튼 클릭 시, 이벤트
-$(function(){
+$(function () {
     // $('.viewReviewBtn').trigger("click");
 })
 $(document).on("click", ".openReviewFormBtn", function () {
@@ -19,30 +19,27 @@ $(document).on("click", ".openReviewFormBtn", function () {
     let prodReviewForm;
 
     // 리뷰 쓰기 버튼 클릭 시 => 새로운 리뷰 쓰기 폼 열기
-    if (clickedBtn.hasClass('newReviewBtn')){
+    if (clickedBtn.hasClass('newReviewBtn')) {
         renderForm(null, clickedBtn);
     }
     //내 리뷰 보기 버튼 클릭 시
-    else if (clickedBtn.hasClass('viewReviewBtn')){
+    else if (clickedBtn.hasClass('viewReviewBtn')) {
         loadReview(orderItemId, clickedBtn);
 
-    } else if (clickedBtn.hasClass('openEditForm')){ //수정하기 버튼 클릭 시
+    } else if (clickedBtn.hasClass('openEditForm')) { //수정하기 버튼 클릭 시
         loadReview(orderItemId, clickedBtn);
-    } else if (clickedBtn.hasClass('submitReviewForm')){
+    } else if (clickedBtn.hasClass('submitReviewForm')) {
         submitForm();
     }
-
-
-
 
 
     const sumFinalPrice = $(this).parents('.calcItem').find('.sumFinalPrice').attr('data-nums');
 
 
     // 리뷰 내용 불러오기 함수
-    async function loadReview(orderItemId, clickedBtn){
-        try{
-            const response = await fetch(`/shop/review/get/${orderItemId}`,{
+    async function loadReview(orderItemId, clickedBtn) {
+        try {
+            const response = await fetch(`/shop/review/get/${orderItemId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,24 +52,23 @@ $(document).on("click", ".openReviewFormBtn", function () {
             console.log(data);
 
             //내 리뷰 버튼 클릭 시 리뷰 랜더링 함수 호출
-            if (clickedBtn.hasClass('viewReviewBtn')){
+            if (clickedBtn.hasClass('viewReviewBtn')) {
                 renderView(data, clickedBtn);
-            } else if (clickedBtn.hasClass('openEditForm')){ //수정하기 버튼 클릭 시
+            } else if (clickedBtn.hasClass('openEditForm')) { //수정하기 버튼 클릭 시
                 renderForm(data, clickedBtn);
-            } else if (clickedBtn.hasClass('submitReviewForm')){
+            } else if (clickedBtn.hasClass('submitReviewForm')) {
                 renderView(data, clickedBtn);
             }
 
 
-
-        }catch (error) {
+        } catch (error) {
             console.error('리뷰 불러오기 실패 : ', error);
         }
 
     }
 
     //리뷰 보기 렌더링
-    function renderView(data, clickedBtn){
+    function renderView(data, clickedBtn) {
         // 리뷰 보기 폼을 동적으로 생성
         prodReviewForm = `
             <div class="card-text reviewWrap">
@@ -100,11 +96,11 @@ $(document).on("click", ".openReviewFormBtn", function () {
                                 <i class="fa-solid fa-star" id="star2"></i>
                                 <i class="fa-solid fa-star" id="star1"></i>
                             </div>
-                            <p class="border rounded-2 py-2 px-3" style="min-height: 72px;">
-                                <span class="f14 c444">${data.revText}</span>
+                            <p class="py-2 px-1" style="min-height: 72px;">
+                                <span class="f14 c444 fw600">${data.revText}</span>
                             </p>
                             
-                            <button type="button" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end openReviewFormBtn openEditForm">리뷰 수정하기</button>
+                            <button type="button" class="btn badge rounded-pill border-success text-success f14 px-5 py-2 d-inline-block flex-grow-1 float-end openReviewFormBtn openEditForm"><i class="fa-regular fa-pen-to-square"></i>&nbsp;&nbsp;&nbsp;리뷰 수정하기</button>
                         </div>
                         <div id="drop-area" style="visibility: hidden;"></div>
                         <div id="gallery" style="visibility: hidden;"></div>
@@ -131,7 +127,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
     let filesArray = []; // 새로 업로드된 파일을 저장하는 배열
 
     //리뷰 폼 렌더링
-    function renderForm(data, clickedBtn){
+    function renderForm(data, clickedBtn) {
         // 리뷰 쓰기 폼을 동적으로 생성
         prodReviewForm = `
             <div class="card-text reviewWrap">
@@ -140,8 +136,8 @@ $(document).on("click", ".openReviewFormBtn", function () {
                         <div class="col-6 modalColLeft border">
                             <div id="drop-area">
                                 <p class="c666 fw700">리뷰 이미지 등록</p>
-                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple><span>드래그앤드롭 또는 </span>
-                                <label class="button inputFileBtn rounded-pill bg-light border ms-1" for="prodRevImg">파일 선택</label>
+                                <input type="file" class="form-control form-control-sm" name="prodRevImgList" id="prodRevImg" accept="image/*" multiple><div>드래그앤드롭 또는 </div>
+                                <label class="button inputFileBtn rounded-pill bg-light border mt-3 ms-1 d-block" for="prodRevImg">파일 선택</label>
                                 <div id="gallery"></div>
                             </div>
                         </div>
@@ -169,7 +165,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
                             <input type="hidden" id="paid" name="paid"/>
                             <input type="hidden" id="orderItemId" name="orderItemId" value="${orderItemId}"/>
                             
-                            <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block flex-grow-1 float-end submitReviewForm">리뷰 제출하기</button>
+                            <button type="button" id="submitReviewForm" class="btn badge rounded-pill border-success text-success f14 px-5 py-2 d-inline-block flex-grow-1 float-end submitReviewForm"><i class="fa-solid fa-square-pen"></i>&nbsp;&nbsp;&nbsp;리뷰 제출하기</button>
                         </div>
                     </div>
                 </form>
@@ -178,16 +174,13 @@ $(document).on("click", ".openReviewFormBtn", function () {
 
         // let existImageSrc = []; // 기존 리뷰 이미지 주소를 저장
 
-        if (data == null){
+        if (data == null) {
             $(".reviewWrap").remove(); // 기존에 열린 폼이 있으면 닫고,
             $('.itemBtnLine').show(); // 다른 버튼라인들은 모두 나타나도록
             //  동적으로 생성된 폼을 DOM에 추가
             clickedBtn.closest('.itemBtnLine').after(prodReviewForm);
             clickedBtn.parents('.itemBtnLine').hide(); // 현재 열린 버튼라인만 hide
-        }
-
-
-        else if (data != null){
+        } else if (data != null) {
             //  동적으로 생성된 폼을 DOM에 추가
             $(".reviewWrap").empty(); // 기존에 열린 폼이 있으면 닫고,
             //clickedBtn.closest('.calcItem').after(prodReviewForm);
@@ -206,14 +199,14 @@ $(document).on("click", ".openReviewFormBtn", function () {
         }
 
         /**** 리뷰 이미지 드래그앤드롭 등록 START****/
-            // 이미지 드래그 앤 드롭 영역
+        // 이미지 드래그 앤 드롭 영역
         const dropArea = document.getElementById("drop-area");
         const gallery = document.getElementById("gallery");
         const fileInput = document.getElementById("prodRevImg");
         // let filesArray = []; // 업로드할 파일들을 저장할 배열
 
 
-// 기본 동작 방지
+        // 기본 동작 방지
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
@@ -224,7 +217,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
             e.stopPropagation();
         }
 
-// 드래그 오버시 하이라이트 주기
+        // 드래그 오버시 하이라이트 주기
         ['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
         });
@@ -233,14 +226,14 @@ $(document).on("click", ".openReviewFormBtn", function () {
             dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
         });
 
-// 파일 드롭 시 처리
+        // 파일 드롭 시 처리
         dropArea.addEventListener('drop', handleDrop, false);
         fileInput.addEventListener('change', handleFiles, false);
 
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
-            handleFiles({ target: { files: files } });
+            handleFiles({target: {files: files}});
         }
 
         function handleFiles(e) {
@@ -252,7 +245,6 @@ $(document).on("click", ".openReviewFormBtn", function () {
             }
 
             filesArray = filesArray.concat(newFiles).slice(0, 3 - existImageSrc.length); // 최대 3개까지만 허용
-
             updateGallery();
         }
 
@@ -305,7 +297,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
         /**** 리뷰 이미지 드래그앤드롭 등록 END ****/
 
         $("#submitReviewForm").on("click", function () {
-            submitForm(filesArray, existImageSrc,  $(this));
+            submitForm(filesArray, existImageSrc, $(this));
         });
 
     }
@@ -342,9 +334,8 @@ $(document).on("click", ".openReviewFormBtn", function () {
     }
 
 
-
     // 리뷰 제출 버튼 클릭 이벤트
-    function submitForm(filesArray, existImageSrc, clickedBtn){
+    function submitForm(filesArray, existImageSrc, clickedBtn) {
         let formData = new FormData(document.getElementById('prodReviewForm'));
 
         // filesArray에 있는 파일들을 FormData에 추가

@@ -7,7 +7,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +29,6 @@ public class ShopController {
     private final MemberService memberService;
 
     private static final String UPLOAD_DIR = "C:/uploads/";
-
-    /*인기상품 리스트 이동*/
-    @GetMapping("/")
-    @ResponseBody
-    public String getShopPopular() {
-        return "shop_popular";
-    }
-
 
     /*상품 리스트 페이지 이동*/
     @GetMapping("/list")

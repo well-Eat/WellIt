@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -348,13 +349,6 @@ public class OrderService {
             dto.setInvoiceNum(delivery.getInvoiceNum());
         } else dto.setInvoiceNum("99999"); //송장번호 입력 전인 경우 '99999' 전달
 
-
-
-
-        //ItemList 추가 (PO별 구매 아이템)
-        //List<OrderItemDTO> orderItemDTOList = this.getOrderItemDtoList(po);
-        //dto.setOrderItems(orderItemDTOList);
-
         return dto;
 
     }
@@ -668,6 +662,8 @@ public class OrderService {
              cancelRequestFormList.add(form);
 
         }
+        cancelRequestFormList.sort(Comparator.comparing(CancelRequestForm::getCancelRequestAt).reversed());
+
         return cancelRequestFormList;
     }
 

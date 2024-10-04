@@ -31,7 +31,7 @@
 									<p class="c333 f20 text-center">신선하고 다채로운 웨릿샵의 상품을 경험해보세요. 특별한 쇼핑의 시작이 기다리고 있습니다!</p>
 								
 								</div>
-								<a href="/shop/list" class="btn-back btn hm-btn-green btn-lg">상품 보러 가기</a>
+								<a href="/shop/list" class="btn-back btn hm-btn-green btn-lg rounded-pill">상품 보러 가기 &raquo;</a>
 							</div> <!--no-favorites-->
 						</div>
 					</div>
@@ -58,6 +58,7 @@
 									<div class="prodImageBox border flex-grow-0"
 									     style="aspect-ratio: 1; background-size: cover; background-position: center;  max-width: 140px;"
 									     th:style="|background-image: url(@{  ${orderItem.prodThumb}  }); width: 100%; aspect-ratio: 1; background-size: cover; background-position: center;|">
+										<a th:href="@{|/shop/detail/${orderItem.prodId}|}" class="w-100 h-100 d-block"></a>
 									</div>
 								</div> <!-- // prodImageBoxWrapper -->
 								
@@ -78,20 +79,20 @@
 										<a th:href="@{|/shop/detail/${orderItem.prodId}|}" class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block px-5"
 										   th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
 										   th:unless="${poHistory.orderStatus.renderStatus()=='배송완료'}">
-										<span>상품상세보기</span></a>
+										<span><i class="fa-solid fa-file-lines"></i>&nbsp;&nbsp;상품상세보기</span></a>
 										
 										<!-- 리뷰 작성되지 않은 경우 -->
 										<span
 												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block openReviewFormBtn newReviewBtn px-5"
 												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId}"
-												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && !orderItem.reviewed}">리뷰쓰기</span>
+												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && !orderItem.reviewed}"><i class="fa-solid fa-pen"></i>&nbsp;&nbsp; 리뷰쓰기</span>
 										
 										<!-- 리뷰가 작성된 경우, prodReview가 null이 아닐 때만 접근 -->
 										<span
 												class="btn badge rounded-pill border-success text-success f14 py-2 d-inline-block openReviewFormBtn viewReviewBtn px-5"
 												th:attr="data-product-id=${orderItem.prodId}, data-reviewed=${orderItem.reviewed}, data-orderitem-id=${orderItem.orderItemId},
                    data-review-rating=${orderItem.prodReview.revRating}, data-review-text=${orderItem.prodReview.revText}"
-												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && orderItem.reviewed}">내 리뷰 보기</span>
+												th:if="${poHistory.orderStatus.renderStatus()=='배송완료' && orderItem.reviewed}"><i class="fa-solid fa-book-open"></i>&nbsp;&nbsp; 내 리뷰 보기</span>
 									
 									</p>
 								

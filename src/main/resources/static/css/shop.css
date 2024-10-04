@@ -166,13 +166,20 @@ ul.sortBox li:not(:last-of-type)::after{
 .prodInfo .card{
     color: #333333;
 }
+.prodInfo h5.prodName{
+    margin-bottom: 16px;
+}
 .prodInfo h5.prodName,
 .prodItem h5.prodName{
     font-weight: 700;
 }
+.prodInfo p.prodDesc{
+    margin-bottom: 0.5rem;
+}
 .prodItem p.prodDesc{
     color : #999;
     font-size: 16px;
+    margin-bottom: 0.3rem !important;
 }
 .prodInfo p.prodOrgPrice,
 .prodItem p.prodOrgPrice{
@@ -323,6 +330,7 @@ div.prodCount.card-text p span{
     align-items: center;
     margin-right: 5px;
 }
+
 
 .prodInfo .btns a.goToCart{
     width: calc(100% - 60px);
