@@ -86,7 +86,6 @@ public class KakaoService {
 
     
     public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
-    	System.out.println("getUserInfo 액세스 토큰 : "+accessToken);
     	
         String response = WebClient.create("https://kapi.kakao.com")
         		
@@ -140,17 +139,14 @@ public class KakaoService {
 
         // ID 설정
         member.setMemberId(String.valueOf(kakaoUserInfo.getId()));
-
         // 닉네임
         member.setMemberAlias(profile.getNickName());
-
         // 이미지 파일 URL
         member.setImageFile(profile.getProfileImageUrl());
-
         // 나머지 정보들 설정
         member.setMemberRegDate(LocalDateTime.now());
-        member.setMileage(0); // 기본 마일리지 설정
-        
+        // 기본 마일리지 설정  
+        member.setMileage(0);      
         // 카카오 회원임을 명시
         member.setMemberType("KAKAO");
 
@@ -161,7 +157,6 @@ public class KakaoService {
 
     // 액세스 토큰을 받아 회원 정보를 저장하는 전체 로직
     public Member registerKakaoUser(String accessToken) {
-        System.out.println("액세스 토큰 : " + accessToken);
 
         // 카카오 사용자 정보 가져오기
         KakaoUserInfoResponseDto kakaoUserInfo = getUserInfo(accessToken);
@@ -194,6 +189,7 @@ public class KakaoService {
         // 2. 추가 정보를 업데이트
         member.setMemberName(kakaoSignupForm.getMemberName());
         member.setMemberAlias(kakaoSignupForm.getMemberAlias());
+        member.setMemberEmail(kakaoSignupForm.getMemberEmail());
         member.setMemberPhone(kakaoSignupForm.getMemberPhone()); 
         member.setMemberAddress(kakaoSignupForm.getMemberAddress());
         member.setZipcode(kakaoSignupForm.getZipcode());

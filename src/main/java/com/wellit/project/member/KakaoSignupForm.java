@@ -23,6 +23,9 @@ public class KakaoSignupForm {
 	
 	private String memberId;
 	
+	
+	private String memberEmail;
+	
 	@NotBlank(message = "전화번호를 입력해주세요")
 	@Pattern(regexp = "^[0-9]{10,11}$", message = "전화번호는 숫자만 가능합니다")
 	private String memberPhone;

@@ -1,13 +1,13 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
-	
-			<head>
-				<title>
-					회원 수정
-				</title>
-			</head>
-	
-	
+
+	<head>
+		<title>
+			회원 수정
+		</title>
+	</head>
+
+
 	<link rel="stylesheet" href="/css/member.css" />
 
 	<!-- 회원수정 시작 -->
@@ -19,7 +19,7 @@
 				</div>
 				<form th:action="@{/member/update_kakao}" th:object="${member}" method="post" id="memberForm"
 					enctype="multipart/form-data">
-					
+
 					<div class="container">
 						<!-- 아이디 -->
 						<div class="row justify-content-center">
@@ -44,6 +44,26 @@
 							<div class="col-6">
 								<input type="text" id="memberAlias" class="form-control" th:field="*{memberAlias}"
 									name="memberAlias" th:value="${member.getMemberAlias}" placeholder="최대 10자">
+							</div>
+						</div>
+						<!-- 이메일 -->
+						<div class="row mt-3 justify-content-start">
+							<label for="member_email" class="form-label">이메일</label>
+							<div class="col-9">
+								<input type="email" id="memberEmail" class="form-control"
+									th:value="${member.getMemberEmail}" th:field="*{memberEmail}">
+							</div>
+							<div class="col-3">
+								<button type="button" class="btn btn-secondary" onclick="checkEmail()">이메일 인증</button>
+							</div>
+						</div>
+						<div class="row mt-3 justify-content-start">
+							<div class="col-7">
+								<input type="text" id="verificationCode" class="form-control"
+									placeholder="이메일로 받은 인증번호">
+							</div>
+							<div class="col-4">
+								<button type="button" class="btn btn-secondary" onclick="verifyCode()">인증번호 확인</button>
 							</div>
 						</div>
 						<!-- 전화번호 -->
@@ -355,6 +375,10 @@
 			const aliasInput = document.getElementById('memberAlias');
 			const memberAlias = aliasInput.value;
 
+			// 이메일 유효성 검사
+			const emailInput = document.getElementById("memberEmail");
+			const memberEmail = document.getElementById('memberEmail').value;
+
 			// 전화번호 유효성 검사
 			const phoneInput = document.getElementById('memberPhone');
 			const memberPhone = document.getElementById('memberPhone').value;
@@ -415,6 +439,17 @@
 				isValid = false;
 			}
 
+			else if (!memberEmail) {
+				alert("이메일을 입력해주세요.");
+				emailInput.focus();
+				isValid = false;
+			}
+			else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(memberEmail)) {
+				alert("유효한 이메일 주소를 입력해주세요.");
+				emailInput.focus();
+				isValid = false;
+			}
+
 
 			else if (!memberPhone) {
 				alert("전화번호를 입력해주세요.");
@@ -440,6 +475,65 @@
 				this.submit(); // 폼 제출
 			}
 		});
+
+		function checkEmail() {
+			const email = document.getElementById('memberEmail').value;
+
+			if (!email) {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(memberEmail)) {
+				alert("유효한 이메일 주소를 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/send-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'email': email
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
+
+		function verifyCode() {
+			const code = document.getElementById('verificationCode').value;
+
+			if (!code) {
+				alert("인증 코드를 입력해주세요.");
+				return;
+			}
+
+			fetch('/member/verify-code', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'code': code
+				})
+			})
+				.then(response => response.text())
+				.then(data => {
+					alert(data);
+				})
+				.catch(error => {
+					alert('Error occurred: ' + error.message);
+					console.error('Error:', error);
+				});
+		}
 
 		function deleteMember() {
 			if (confirm("정말로 회원탈퇴 하시겠습니까?")) {
