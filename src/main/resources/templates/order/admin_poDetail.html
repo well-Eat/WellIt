@@ -107,10 +107,12 @@
 
                   poDetail = await response.json();
                   console.log(poDetail);
+/*                인코딩문제?
 
                   if (poDetail.orderStatus=='주문취소'){
                       $("#cancelBtn").remove();
                   }
+*/
 
                   orderInfoRender(poDetail);
                   orderItemRender(poDetail);
