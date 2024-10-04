@@ -229,7 +229,7 @@
 											<input type="file" class="form-control prodImageInput" accept="image/*" name="prodImages[]" th:data-image-num="${iterStat.index + 1}"/>
 											<div class="preview border" style="position: relative;">
 												<img th:src="@{|${prodImageSrc.imagePath}|}" alt="" class="img-fluid">
-												<button class="remove-btn" type="button" style="visibility: hidden;">-</button>
+												<button class="remove-btn prodImgRemoveBtn" type="button" style="visibility: hidden;">-</button>
 											</div>
 										</div>
 									</div>

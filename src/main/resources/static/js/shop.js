@@ -614,7 +614,7 @@ $(document).ready(function () {
     });
 
     // 이미지 삭제 버튼 클릭 시
-    $(".mainImgFrame").on("click", ".remove-btn", function (e) {
+    $(".mainImgFrame").on("click", ".prodImgRemoveBtn", function (e) {
         e.stopPropagation();
 
         let parentDiv = $(this).closest('.mainImgFrame');
@@ -678,7 +678,7 @@ function handleProdImage(file, dropArea) {
             const preview = dropArea.find('.preview');
             preview.empty();
             preview.append($('<img>').attr('src', e.target.result));
-            const rmvBtn = $('<button>').addClass('remove-btn').attr({'type': 'button'}).text('-').css('display', 'inline-block');
+            const rmvBtn = $('<button>').addClass('prodImgRemoveBtn').attr({'type': 'button'}).text('-').css('display', 'inline-block');
             preview.append(rmvBtn);
         };
         reader.readAsDataURL(file);
@@ -689,13 +689,13 @@ function handleProdImage(file, dropArea) {
 
 // 파일이 있으면 삭제 버튼을 보여주는 함수
 function showRemoveButton(dropArea) {
-    const removeBtn = dropArea.find('.remove-btn');
+    const removeBtn = dropArea.find('.prodImgRemoveBtn');
     removeBtn.show();
 }
 
 
 // 이미지 삭제 버튼 클릭 시
-$(document).on('click', '.remove-btn', function () {
+$(document).on('click', '.prodImgRemoveBtn', function () {
     const dropArea = $(this).closest('.prodImageDropArea');
     const fileInput = dropArea.find('.prodImageInput');
     const imgSrc = $('.preview').find('img').attr('src')
@@ -704,6 +704,7 @@ $(document).on('click', '.remove-btn', function () {
     if (imgSrc.startsWith('/imgs/shop/product/')) {
 
         let toBeDeletedList = toBeDeletedInput.val() ? toBeDeletedInput.val().split(',') : [];
+        console.log(toBeDeletedList);
         toBeDeletedList.push(imgSrc);
         toBeDeletedInput.val(toBeDeletedList.join(','));  // 리스트를 문자열로 변환하여 hidden input에 저장
     }
@@ -742,10 +743,11 @@ function addCard(e) {
 // 상세이미지 카드 제거 함수
 function removeCard(button) {
     if ($('.prodImageCard').length > 1) {
-        const removeBtn = button.closest('.prodImageCard').find('remove-btn');
+        const removeBtn = button.closest('.prodImageCard').find('.prodImgRemoveBtn');
 
         const imgSrc = button.closest('.prodImageCard').find('img').attr('src')
         const toBeDeletedInput = $('#toBeDeleted');
+        console.log(toBeDeletedInput.val());
 
         // 기존 이미지 중 제거할 이미지 파일 목록을 hidden 으로 전송
         if (imgSrc != null && imgSrc.startsWith('/imgs/shop/product/')) {

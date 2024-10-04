@@ -54,7 +54,7 @@ public class OrderRestController {
 
     // 주문 처리용 상세 정보 1건 API
     @GetMapping("/{orderId}")
-    public ResponseEntity<PoProcessForm> getOrderDetails(@PathVariable String orderId) {
+    public ResponseEntity<PoProcessForm> getOrderDetails(@PathVariable(value = "orderId") String orderId) {
         PoProcessForm poProcessForm = orderService.getOnePoProcess(orderId);
 
         return ResponseEntity.ok(poProcessForm);
@@ -65,7 +65,7 @@ public class OrderRestController {
 
     // 출고 처리 API
     @PostMapping("/{orderId}/ship")
-    public ResponseEntity<String> processShipment(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> processShipment(@PathVariable(value = "orderId") String orderId, @RequestBody Map<String, String> body) {
         String invoiceNum = body.get("invoiceNum");
         orderService.shipOrder(orderId, invoiceNum);
 
@@ -74,7 +74,7 @@ public class OrderRestController {
 
     // 배송완료 처리 API
     @PostMapping("/{orderId}/deliveryComplete")
-    public ResponseEntity<String> processDeliveryComplete(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> processDeliveryComplete(@PathVariable(value = "orderId") String orderId, @RequestBody Map<String, String> body) {
         String invoiceNum = body.get("invoiceNum");
         orderService.deliveryComplete(orderId, invoiceNum);
 
