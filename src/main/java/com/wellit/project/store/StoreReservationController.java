@@ -79,11 +79,11 @@ public class StoreReservationController {
 
         // 예약 저장
         reservationRepository.save(reservation);
-
+        String memberName = member.getMemberName();
      // 이메일 전송
         String subject = "예약 확인";
         String body = String.format("안녕하세요! %s님, 예약 신청이 완료되었습니다. 예약 시간: %s", 
-            userId, reservationTime);
+        		memberName, reservationTime);
         emailService.sendSimpleMessage(member.getMemberEmail(), subject, body); // 회원 이메일로 전송
         
         // JSON 형태로 응답 생성
@@ -240,7 +240,7 @@ public class StoreReservationController {
         	    "더 좋은 서비스를 위해 최선을 다하겠습니다.\n\n" +
         	    "감사합니다!\n" +
         	    "레스토랑 팀 드림",
-        	    reservation.getMember().getMemberId(),
+        	    reservation.getMember().getMemberName(),
         	    reservation.getAllStore().getStoName(), // 가게 이름
         	    reservation.getAllStore().getStoAddress(), // 가게 주소
         	    reservation.getReserveTime() // 예약 시간
