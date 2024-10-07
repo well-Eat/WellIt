@@ -1,6 +1,5 @@
 package com.wellit.project.shop;
 
-import com.sun.tools.jconsole.JConsoleContext;
 import com.wellit.project.member.MemberService;
 import com.wellit.project.order.CartItemRequest;
 import lombok.RequiredArgsConstructor;
@@ -183,7 +182,7 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body("{\"status\":\"fail\", \"message\":\"Unauthorized access\"}");
         }
-        List<MultipartFile> imageFiles = productForm.getProdImages();
+        //List<MultipartFile> imageFiles = productForm.getProdImages();
         MultipartFile thumbFile = productForm.getProdMainImg();
 
         shopService.saveProduct(productForm, thumbFile, newImages, newImageOrders);
@@ -234,8 +233,6 @@ public class ShopController {
                                                 @RequestParam(value = "newImages[]",required=false) List<MultipartFile> newImages,
                                                 @RequestParam(value = "newImageOrders[]",required=false) List<Integer> newImageOrders
                                                ) throws IOException {
-
-        log.info(toBeDeleted);
 
         // 현재 로그인한 사용자가 admin인지 확인
         String memberId = memberService.getMemberId();

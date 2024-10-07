@@ -543,6 +543,10 @@ $(document).on('dragover drop', function (e) {
 });
 
 $(document).ready(function () {
+
+    /* 상품 메인 이미지 handle START */
+    /* 상품 메인 이미지 handle START */
+
     // 파일 선택창 열기
     $(".mainImgFrame").click(function () {
         //$(this).find("input.prodMainImg").click();
@@ -614,7 +618,7 @@ $(document).ready(function () {
     });
 
     // 이미지 삭제 버튼 클릭 시
-    $(".mainImgFrame").on("click", ".prodImgRemoveBtn", function (e) {
+    $(".mainImgFrame").on("click", ".remove-btn", function (e) {
         e.stopPropagation();
 
         let parentDiv = $(this).closest('.mainImgFrame');
@@ -623,9 +627,15 @@ $(document).ready(function () {
         $(this).hide(); // 삭제 버튼 숨기기
     });
 
+    /* 상품 메인 이미지 handle END */
+    /* 상품 메인 이미지 handle END */
+
+
 
 });
 
+/* 상품 상세 이미지 handle START */
+/* 상품 상세 이미지 handle START */
 
 // .prodImageDropArea와 관련된 코드 수정
 $(document).on('dragover', '.prodImageDropArea', function (e) {
@@ -678,7 +688,8 @@ function handleProdImage(file, dropArea) {
             const preview = dropArea.find('.preview');
             preview.empty();
             preview.append($('<img>').attr('src', e.target.result));
-            const rmvBtn = $('<button>').addClass('prodImgRemoveBtn').attr({'type': 'button'}).text('-').css('display', 'inline-block');
+            //const rmvBtn = $('<button>').addClass('prodImgRemoveBtn').attr({'type': 'button'}).text('-').css('display', 'inline-block');
+            const rmvBtn = $('<button>').addClass('prodImgRemoveBtn').attr({'type': 'button'}).text('-').css({"display":"inline-block", "visibility":"hidden"});
             preview.append(rmvBtn);
         };
         reader.readAsDataURL(file);
@@ -768,6 +779,9 @@ function updateCardOrderNumbers() {
     });
 }
 
+/* 상품 상세 이미지 handle END */
+/* 상품 상세 이미지 handle END */
+
 
 // admin : 상품 등록 & 수정 form, save, update
 $(function () {
@@ -828,16 +842,11 @@ $(function () {
 
             let formData = new FormData(this);
 
-            // 이미지 카드  -> 기존 이미지와 새 이미지를 구분 & 순서 부여
+            // 이미지 카드
             $('li.prodImageCard').each(function () {
-                //const imgSrc = $(this).find('.preview img').attr('src');
                 const fileInput = $(this).find('.prodImageInput');
                 const imageOrder = fileInput.attr('data-image-num'); // 이미지 순서(카드순서)
 
-/*                if (imgSrc && imgSrc.startsWith('/imgs/shop/product/')) { //기존 이미지
-                    formData.append('existingImages[]', imgSrc);
-                    formData.append('existingImageOrders[]', imageOrder);
-                } else */
                     if (fileInput[0].files.length > 0) { // 새 이미지
                     formData.append('newImages[]', fileInput[0].files[0]);
                     formData.append('newImageOrders[]', imageOrder);
@@ -863,8 +872,6 @@ $(function () {
                 });
         });
 
-
-        /*$('form.productForm').off('submit');*/
     }
 });
 
@@ -1282,7 +1289,6 @@ async function fetchProducts() {
     let sumSalesAmount = 0;
 
     $.each(data.products, function(index, product) {
-        console.log(product.prodName, product.sumQuantity);
         // 상태에 따라 배경색 클래스를 동적으로 설정
         let rowClass = '';
         if (product.prodStock !=null) sumStock += product.prodStock;
@@ -1358,8 +1364,6 @@ async function fetchProducts() {
 
     $paginationContainer.empty();
     $paginationContainer.append(pageBtns);
-
-    console.log( $("#pagenum").val());
 
     // 페이지 번호에 css 효과 적용
     $(".pageLink").removeClass("active");

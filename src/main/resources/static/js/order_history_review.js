@@ -198,102 +198,101 @@ $(document).on("click", ".openReviewFormBtn", function () {
             }
         }
 
-        /**** 리뷰 이미지 드래그앤드롭 등록 START****/
-        // 이미지 드래그 앤 드롭 영역
-        const dropArea = document.getElementById("drop-area");
-        const gallery = document.getElementById("gallery");
-        const fileInput = document.getElementById("prodRevImg");
-        // let filesArray = []; // 업로드할 파일들을 저장할 배열
+        /**** 리뷰 이미지 드래그앤드롭 등록 START ****/
+        $(document).ready(function () {
+            // 이미지 드래그 앤 드롭 영역
+            const $dropArea = $("#drop-area");
+            const $gallery = $("#gallery");
+            const $fileInput = $("#prodRevImg");
 
+            // let filesArray = []; // 업로드할 파일들을 저장할 배열
 
-        // 기본 동작 방지
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        // 드래그 오버시 하이라이트 주기
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
-        });
-
-        // 파일 드롭 시 처리
-        dropArea.addEventListener('drop', handleDrop, false);
-        fileInput.addEventListener('change', handleFiles, false);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles({target: {files: files}});
-        }
-
-        function handleFiles(e) {
-            const newFiles = Array.from(e.target.files);
-
-            if (existImageSrc.length + filesArray.length + newFiles.length > 3) {
-                alert('최대 3개의 이미지만 업로드할 수 있습니다.');
-                return;
-            }
-
-            filesArray = filesArray.concat(newFiles).slice(0, 3 - existImageSrc.length); // 최대 3개까지만 허용
-            updateGallery();
-        }
-
-        // 파일 추가 후 갤러리 업데이트
-        function previewFile(file, index) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onloadend = function () {
-                const imgWrap = document.createElement('div');
-                imgWrap.className = 'imgWrap';
-                imgWrap.style.position = 'relative';
-                imgWrap.style.display = 'inline-block';
-
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.style.width = '100px';
-                img.style.margin = '10px';
-
-                const removeBtn = document.createElement('button');
-                removeBtn.innerText = 'ㅡ';
-                removeBtn.className = 'remove-btn';
-
-
-                removeBtn.addEventListener('click', function () {
-                    imgWrap.remove();
-                    filesArray.splice(index, 1); // filesArray에서 해당 파일 제거
-                    updateGallery(); // 갤러리 업데이트
-                });
-
-                imgWrap.appendChild(img);
-                imgWrap.appendChild(removeBtn);
-                gallery.appendChild(imgWrap);
-            }
-        }
-
-        //삭제 후 업데이트
-        function updateGallery() {
-            gallery.innerHTML = '';
-
-            // 기존 이미지 렌더링
-            existImageSrc.forEach((imgUrl) => {
-                addExistingImage(imgUrl);
+            // 기본 동작 방지
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                $dropArea.on(eventName, preventDefaults);
+                $(document.body).on(eventName, preventDefaults);
             });
 
-            // 새로 추가된 이미지 렌더링
-            filesArray.forEach((file, index) => previewFile(file, index));
-        }
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
+            // 드래그 오버시 하이라이트 주기
+            $dropArea.on('dragenter dragover', function () {
+                $dropArea.addClass('highlight');
+            });
 
+            // 드래그가 끝나거나 파일을 드롭했을 때 하이라이트 제거
+            $dropArea.on('dragleave drop', function () {
+                $dropArea.removeClass('highlight');
+            });
+
+            // 파일 드롭 시 처리
+            $dropArea.on('drop', handleDrop);
+            $fileInput.on('change', handleFiles);
+
+            //드래그앤드랍으로 추가된 이미지 처리
+            function handleDrop(e) {
+                const dt = e.originalEvent.dataTransfer;
+                const files = dt.files;
+                handleFiles({ target: { files: files } });
+            }
+
+            //input file로 추가된 이미지 처리
+            function handleFiles(e) {
+                const newFiles = Array.from(e.target.files);
+
+                if (existImageSrc.length + filesArray.length + newFiles.length > 3) {
+                    alert('최대 3개의 이미지만 업로드할 수 있습니다.');
+                    return;
+                }
+
+                filesArray = filesArray.concat(newFiles).slice(0, 3 - existImageSrc.length); // 최대 3개까지만 허용
+                updateGallery();
+            }
+
+            // 파일 추가 후 갤러리 업데이트
+            function previewFile(file, index) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    const $imgWrap = $('<div>').addClass('imgWrap').css({
+                        position: 'relative',
+                        display: 'inline-block'
+                    });
+
+                    const $img = $('<img>').attr('src', reader.result).css({
+                        width: '100px',
+                        margin: '10px'
+                    });
+
+                    const $removeBtn = $('<button>').text('ㅡ').addClass('remove-btn');
+
+                    $removeBtn.on('click', function () {
+                        $imgWrap.remove();
+                        filesArray.splice(index, 1); // filesArray에서 해당 파일 제거
+                        updateGallery(); // 갤러리 업데이트
+                    });
+
+                    $imgWrap.append($img).append($removeBtn);
+                    $gallery.append($imgWrap);
+                }
+            }
+
+            // 삭제 후 업데이트
+            function updateGallery() {
+                $gallery.empty();
+
+                // 기존 이미지 렌더링
+                existImageSrc.forEach((imgUrl) => {
+                    addExistingImage(imgUrl);
+                });
+
+                // 새로 추가된 이미지 렌더링
+                filesArray.forEach((file, index) => previewFile(file, index));
+            }
+        });
         /**** 리뷰 이미지 드래그앤드롭 등록 END ****/
 
         $("#submitReviewForm").on("click", function () {
@@ -302,45 +301,42 @@ $(document).on("click", ".openReviewFormBtn", function () {
 
     }
 
-    // 기존 이미지를 갤러리에 추가하는 함수
+    // 기존 이미지를 갤러리에 추가
     function addExistingImage(imgUrl) {
-        const imgWrap = document.createElement('div');
-        imgWrap.className = 'imgWrap';
-        imgWrap.style.position = 'relative';
-        imgWrap.style.display = 'inline-block';
-        imgWrap.setAttribute("data-img-url", imgUrl);
+        const $imgWrap = $('<div>').addClass('imgWrap').css({
+            position: 'relative',
+            display: 'inline-block'
+        }).attr("data-img-url", imgUrl);
 
-        const img = document.createElement('img');
-        img.src = imgUrl;
-        img.style.width = '100px';
-        img.style.margin = '10px';
+        const $img = $('<img>').attr('src', imgUrl).css({
+            width: '100px',
+            margin: '10px'
+        });
 
-        const removeBtn = document.createElement('button');
-        removeBtn.innerText = 'ㅡ';
-        removeBtn.className = 'remove-btn';
+        const $removeBtn = $('<button>').text('ㅡ').addClass('remove-btn');
 
-
-        removeBtn.addEventListener('click', function () {
-            imgWrap.remove();
+        // 기존 이미지 삭제 이벤트
+        $removeBtn.on('click', function () {
+            $imgWrap.remove();
             const index = existImageSrc.indexOf(imgUrl);
             if (index !== -1) {
                 existImageSrc.splice(index, 1); // 배열에서 기존 이미지 제거
             }
         });
 
-        imgWrap.appendChild(img);
-        imgWrap.appendChild(removeBtn);
-        gallery.appendChild(imgWrap);
+        // 이미지와 삭제 버튼을 감싸는 div에 추가
+        $imgWrap.append($img).append($removeBtn);
+        $('#gallery').append($imgWrap);
     }
 
-
-    // 리뷰 제출 버튼 클릭 이벤트
+// 리뷰 제출 버튼 클릭 이벤트
     function submitForm(filesArray, existImageSrc, clickedBtn) {
-        let formData = new FormData(document.getElementById('prodReviewForm'));
+        let formData = new FormData($('#prodReviewForm')[0]); // jQuery로 폼 선택
 
         // filesArray에 있는 파일들을 FormData에 추가
+        // 241008 : 버튼클릭으로 이미지 등록 시 중복등록 현상 수정
         filesArray.forEach(file => {
-            formData.append('prodRevImgList', file); // 새로 추가된 이미지 파일들
+            formData.append('addedImgList', file); // 새로 추가된 이미지 파일들
         });
 
         // existImageSrc에 있는 이미지 URL들을 FormData에 추가
@@ -350,6 +346,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
             });
         }
 
+        // 추가적인 form 데이터 설정
         formData.set('paid', sumFinalPrice);
         formData.set('reviewed', true);
         formData.set('orderItemId', orderItemId);
@@ -379,7 +376,7 @@ $(document).on("click", ".openReviewFormBtn", function () {
                 alert('리뷰 저장에 실패했습니다.');
                 location.reload();
             });
-
     }
+
 
 });

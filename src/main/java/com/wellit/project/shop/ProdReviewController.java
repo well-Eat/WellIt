@@ -2,7 +2,7 @@ package com.wellit.project.shop;
 
 
 import com.wellit.project.member.MemberService;
-import com.wellit.project.order.*;
+import com.wellit.project.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -60,7 +60,7 @@ public class ProdReviewController {
     @PostMapping("/save/{prodId}")
     public ResponseEntity<String> saveReview(@PathVariable("prodId") Long prodId,
                                              @Valid @ModelAttribute ProdReviewForm prodReviewForm,
-                                             @RequestParam(value = "prodRevImgList", required = false) List<MultipartFile> images,
+                                             @RequestParam(value = "addedImgList", required = false) List<MultipartFile> images,
                                              @RequestParam(value = "existingImgUrls", required = false) List<String> existingImgUrls
     ) throws IOException {
 
